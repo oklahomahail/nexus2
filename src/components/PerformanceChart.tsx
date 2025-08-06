@@ -1,35 +1,103 @@
-// src/components/PerformanceChart.tsx
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
-interface DataPoint {
-  date: string;
-  value: number;
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+
+type ComparisonData = {
+  currentPeriod: {
+    startDate: string;
+    endDate: string;
+    totalRaised: number;
+    donorCount: number;
+    campaignCount: number;
+  };
+  previousPeriod: {
+    startDate: string;
+    endDate: string;
+    totalRaised: number;
+    donorCount: number;
+    campaignCount: number;
+  };
+  growthMetrics: {
+    raisedChange: number;
+    donorsChange: number;
+    campaignsChange: number;
+  };
+};
+
+type CampaignSuccessData = {
+  campaignId: string;
+  name: string;
+  totalRaised: number;
+  goalAchievement: number;
+  donorCount: number;
+  roi: number;
+}[];
+
+type ChartType = 'comparison' | 'success-rate' | 'roi';
+
+interface PerformanceChartProps {
+  title: string;
+  type: ChartType;
+  data: ComparisonData | CampaignSuccessData;
 }
 
-interface Props {
-  data: DataPoint[];
-  label?: string;
-}
+const PerformanceChart: React.FC<PerformanceChartProps> = ({ title, type, data }) => {
+  let labels: string[] = [];
+  let datasetLabel = '';
+  let datasetData: number[] = [];
 
-const PerformanceChart: React.FC<Props> = ({ data, label = 'Performance' }) => {
+  if (type === 'comparison') {
+    const d = data as ComparisonData;
+    labels = ['Funds Raised', 'Donors', 'Campaigns'];
+    datasetLabel = 'Growth %';
+    datasetData = [
+      d.growthMetrics.raisedChange,
+      d.growthMetrics.donorsChange,
+      d.growthMetrics.campaignsChange
+    ];
+  } else if (type === 'success-rate') {
+    const d = data as CampaignSuccessData;
+    labels = d.map(c => c.name);
+    datasetLabel = 'Goal Achievement (%)';
+    datasetData = d.map(c => c.goalAchievement);
+  } else if (type === 'roi') {
+    const d = data as CampaignSuccessData;
+    labels = d.map(c => c.name);
+    datasetLabel = 'ROI';
+    datasetData = d.map(c => c.roi);
+  }
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: datasetLabel,
+        data: datasetData,
+        backgroundColor: '#3B82F6'
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    }
+  };
+
   return (
-    <div className="bg-white p-4 shadow rounded">
-      <h3 className="text-sm text-gray-500 mb-2">{label}</h3>
-      <ResponsiveContainer width="100%" height={240}>
-        <LineChart data={data}>
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#4f46e5"
-            strokeWidth={2}
-            dot={{ r: 3 }}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+    <div className="bg-white rounded-lg border p-4 shadow">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
+      <Bar data={chartData} options={options} />
     </div>
   );
 };

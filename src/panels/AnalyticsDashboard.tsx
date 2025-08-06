@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { OrganizationAnalytics, DonorInsights, AnalyticsFilters } from '../models/analytics';
 import { analyticsService } from '../services/analyticsService';
 import { MetricsOverview } from '../components/MetricsOverview';
-import { PerformanceChart } from '../components/PerformanceChart';
-import { DonorInsightsPanel } from '../components/DonorInsightsPanel';
-import { CampaignPerformanceTable } from '../components/CampaignPerformanceTable';
-import { AnalyticsFiltersComponent } from '../components/AnalyticsFilters';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import AnalyticsFiltersComponent from '../components/AnalyticsFilters';
+import PerformanceChart from '../components/PerformanceChart';
+import DonorInsightsPanel from '../components/DonorInsightsPanel';
+import CampaignPerformanceTable from '../components/CampaignPerformanceTable';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 type AnalyticsView = 'overview' | 'campaigns' | 'donors' | 'export';
 
@@ -31,12 +31,12 @@ export const AnalyticsDashboard: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const [orgData, donorData] = await Promise.all([
         analyticsService.getOrganizationAnalytics(filters),
         analyticsService.getDonorInsights(filters)
       ]);
-      
+
       setOrgAnalytics(orgData);
       setDonorInsights(donorData);
     } catch (err) {
@@ -97,7 +97,6 @@ export const AnalyticsDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
@@ -105,7 +104,7 @@ export const AnalyticsDashboard: React.FC = () => {
             Comprehensive insights into your fundraising performance and donor engagement
           </p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <button
             onClick={loadAnalyticsData}
@@ -128,13 +127,8 @@ export const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Filters */}
-      <AnalyticsFiltersComponent
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+      <AnalyticsFiltersComponent filters={filters} onFiltersChange={setFilters} />
 
-      {/* Navigation Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {navigationItems.map((item) => (
@@ -154,54 +148,27 @@ export const AnalyticsDashboard: React.FC = () => {
         </nav>
       </div>
 
-      {/* Content */}
       <div className="space-y-6">
         {activeView === 'overview' && orgAnalytics && (
           <>
             <MetricsOverview analytics={orgAnalytics} />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <PerformanceChart
-                title="Fundraising Growth"
-                data={orgAnalytics.performanceComparisons}
-                type="comparison"
-              />
-              
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Performance vs Industry</h3>
-                <div className="space-y-4">
-                  {Object.entries(orgAnalytics.benchmarkData.performanceRatings).map(([key, rating]) => (
-                    <div key={key} className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700 capitalize">
-                        {key.replace('Rating', '')}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        rating === 'Excellent' ? 'bg-green-100 text-green-800' :
-                        rating === 'Good' ? 'bg-blue-100 text-blue-800' :
-                        rating === 'Average' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {rating}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <PerformanceChart
+              title="Fundraising Growth"
+              data={orgAnalytics.performanceComparisons}
+              type="comparison"
+            />
           </>
         )}
 
         {activeView === 'campaigns' && orgAnalytics && (
           <div className="space-y-6">
             <CampaignPerformanceTable campaigns={orgAnalytics.topPerformingCampaigns} />
-            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PerformanceChart
                 title="Campaign Success Rate"
                 data={orgAnalytics.topPerformingCampaigns}
                 type="success-rate"
               />
-              
               <PerformanceChart
                 title="ROI by Campaign"
                 data={orgAnalytics.topPerformingCampaigns}
@@ -216,77 +183,15 @@ export const AnalyticsDashboard: React.FC = () => {
         )}
 
         {activeView === 'export' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg border border-gray-200 p-6 text-sm text-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Export Analytics Data</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button
-                onClick={() => analyticsService.exportAnalyticsData('organization', filters)}
-                className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600">📊</span>
-                  </div>
-                  <span className="font-medium text-gray-900">Organization Report</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Complete organizational analytics including all campaigns, donors, and performance metrics
-                </p>
-              </button>
-
-              <button
-                onClick={() => analyticsService.exportAnalyticsData('campaign', filters)}
-                className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600">🎯</span>
-                  </div>
-                  <span className="font-medium text-gray-900">Campaign Analytics</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Detailed campaign performance data including conversion rates and channel effectiveness
-                </p>
-              </button>
-
-              <button
-                onClick={() => analyticsService.exportAnalyticsData('donor', filters)}
-                className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600">👥</span>
-                  </div>
-                  <span className="font-medium text-gray-900">Donor Insights</span>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Donor demographics, giving patterns, and segmentation analysis
-                </p>
-              </button>
-            </div>
-
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">Export Options</h4>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <label className="flex items-center">
-                  <input type="checkbox" className="rounded mr-2" defaultChecked />
-                  <span>Include Charts</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="rounded mr-2" defaultChecked />
-                  <span>Include Raw Data</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="rounded mr-2" />
-                  <span>Include Projections</span>
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" className="rounded mr-2" />
-                  <span>Include Recommendations</span>
-                </label>
-              </div>
-            </div>
+            <p className="mb-2">Download fundraising and donor performance data filtered by the current date range and selected criteria.</p>
+            <button
+              onClick={handleExportData}
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Export All Data
+            </button>
           </div>
         )}
       </div>
