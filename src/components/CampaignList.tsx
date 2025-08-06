@@ -4,7 +4,7 @@ import { Campaign, CampaignFilters } from '../models/campaign';
 import { campaignService } from '../services/campaignService';
 import { Panel, CampaignPanel, AlertPanel } from '../components/ui-kit/Panel';
 import { Card, CampaignQuickCard } from '../components/ui-kit/Card';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 interface CampaignListProps {
   onEditCampaign: (campaign: Campaign) => void;

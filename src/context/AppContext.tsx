@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Campaign, CampaignFilters } from '../models/campaign';
 import { Donor } from '../models/donor';
-import { OrganizationAnalytics, DonorInsights } from '../models/analytics';
+import { OrganizationAnalytics, DonorInsights } from '../models/analytics'; 
 
 export interface AppNotification {
   id: string;
@@ -92,6 +92,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Hooks
 export const useAppContext = () => {
   const context = useContext(AppContext);
   if (!context) throw new Error('useAppContext must be used within AppProvider');
@@ -99,11 +100,14 @@ export const useAppContext = () => {
 };
 
 export const useUI = () => useAppContext().ui;
+
 export const useNotifications = () => useAppContext().notifications;
+
 export const useCampaigns = () => {
   const { campaigns, setCampaigns, filters, setFilters } = useAppContext();
   return { campaigns, setCampaigns, filters, setFilters };
 };
+
 export const useAnalytics = () => {
   const { orgAnalytics, donorInsights, setOrgAnalytics, setDonorInsights } = useAppContext();
   return { orgAnalytics, donorInsights, setOrgAnalytics, setDonorInsights };

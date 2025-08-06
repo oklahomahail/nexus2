@@ -4,7 +4,7 @@ import { campaignService } from '../services/campaignService';
 import { CampaignList } from '../components/CampaignList';
 import { CampaignModal } from '../components/CampaignModal';
 import { CampaignDetail } from '../components/CampaignDetail';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 type ViewMode = 'list' | 'detail';
 

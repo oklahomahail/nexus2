@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DonorSegment, DonorSegmentAnalytics, SegmentComparison as SegmentComparisonType } from '../models/donorSegments';
-import { donorSegmentService } from '../services/donorSegmentService';
-import { LoadingSpinner } from '../components/LoadingSpinner';
+import donorSegmentService from '../services/donorSegmentService';
+import LoadingSpinner from './LoadingSpinner';
 
 interface SegmentComparisonProps {
   segments: DonorSegment[];
