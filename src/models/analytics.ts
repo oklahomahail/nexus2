@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface CampaignAnalytics {
   campaignId: string;
   campaignName: string;
@@ -55,6 +57,10 @@ export interface CampaignAnalytics {
 }
 
 export interface DonorInsights {
+  averageGift: any;
+  recurringDonors: ReactNode;
+  newDonors: ReactNode;
+  lapsedDonors: ReactNode;
   totalDonors: number;
   newDonorsThisMonth: number;
   retentionRate: number;

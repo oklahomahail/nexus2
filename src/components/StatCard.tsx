@@ -1,25 +1,23 @@
-// ✅ src/components/StatCard.tsx
 import React from 'react';
 
-interface StatCardProps {
+export interface StatCardProps {
   title: string;
   value: string;
-  icon: string;
-  color: string;
+  icon: React.ReactNode;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, color }) => (
-  <div className="bg-white rounded-lg border border-gray-200 p-6">
-    <div className="flex items-center gap-3">
-      <div className={`w-12 h-12 ${color} rounded-lg flex items-center justify-center text-xl`}>
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => {
+  return (
+    <div className="bg-white rounded-xl shadow p-4 flex items-center space-x-4">
+      <div className="flex-shrink-0 text-blue-500">
         {icon}
       </div>
       <div>
-        <p className="text-sm font-medium text-gray-600">{title}</p>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <div className="text-sm text-gray-500">{title}</div>
+        <div className="text-lg font-semibold text-gray-900">{value}</div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default StatCard;

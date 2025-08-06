@@ -49,3 +49,19 @@ coverage/
 # Temp
 tmp/
 temp/
+
+# Optional lock files (if not needed in team)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional local backup files
+*.bak
+*.tmp
+
+# Local .env backup (if you ever use it)
+.env.backup
+
+# Vercel & Netlify build artifacts (if deploying)
+.vercel/
+.netlify/

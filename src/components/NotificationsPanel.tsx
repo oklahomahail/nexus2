@@ -1,81 +1,95 @@
-// ✅ src/components/NotificationsPanel.tsx
-import React, { useState } from 'react';
-import { useNotifications } from '../context/AppContext';
+import React from 'react';
+import { AppNotification } from '../context/types';
+import { XCircleIcon } from 'lucide-react';
 
-interface NotificationsPanelProps {
+export interface NotificationsPanelProps {
   show: boolean;
   onClose: () => void;
+  markAsRead: (id: string) => void;
+  clear: () => void;
 }
 
-const NotificationsPanel: React.FC<NotificationsPanelProps> = ({ show, onClose }) => {
-  const { notifications, actions } = useNotifications();
-  const [showNotifications, setShowNotifications] = useState(false);
+const sampleNotifications: AppNotification[] = [
+  {
+    id: '1',
+    type: 'success',
+    title: 'Campaign Launched',
+    message: 'The summer campaign has started successfully.',
+    timestamp: new Date(),
+    read: false,
+  },
+  {
+    id: '2',
+    type: 'info',
+    title: 'Reminder',
+    message: 'Donor reports are due this Friday.',
+    timestamp: new Date(),
+    read: true,
+  },
+];
+
+const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
+  show,
+  onClose,
+  markAsRead,
+  clear,
+}) => {
+  // You would use actual context notifications instead of sampleNotifications
+  const notifications = sampleNotifications;
 
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      <div className="absolute inset-0 bg-black bg-opacity-25" onClick={onClose} />
-      <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-xl">
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+    <aside className="w-full max-w-sm bg-white shadow-xl border-l border-gray-200 fixed right-0 top-0 bottom-0 z-50">
+      <div className="flex justify-between items-center p-4 border-b">
+        <h2 className="text-lg font-semibold text-gray-800">Notifications</h2>
+        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <XCircleIcon className="w-6 h-6" />
+        </button>
+      </div>
 
-        <div className="overflow-y-auto h-full pb-20 p-4">
-          {notifications.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="text-4xl mb-2">🔔</div>
-              <p className="text-gray-600">No notifications yet</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {notifications.map((notification: { id: any; read: any; title: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; message: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; timestamp: { toLocaleTimeString: () => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }; }) => (
-                <div
-                  key={notification.id ?? Math.random().toString()}
-                  className={`p-3 rounded-lg border ${
-                    notification.read ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-200'
-                  }`}
-                  onClick={() => {
-                    if (typeof notification.id === 'string') {
-                      actions.markRead(notification.id);
-                    }
-                  }}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{notification.title}</p>
-                      <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {notification.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
-                    {!notification.read && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full ml-2 mt-1" />
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {notifications.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
-            <button
-              onClick={actions.clear}
-              className="w-full py-2 text-sm text-gray-600 hover:text-gray-900"
+      <div className="overflow-y-auto max-h-[80vh] p-4">
+        {notifications.length === 0 ? (
+          <p className="text-gray-500 text-sm">No notifications.</p>
+        ) : (
+          notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`mb-4 p-4 rounded-md border ${
+                notification.read ? 'bg-gray-100' : 'bg-white'
+              }`}
             >
-              Clear All Notifications
-            </button>
-          </div>
+              <h3 className="text-sm font-medium text-gray-800">{notification.title}</h3>
+              <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+              <div className="mt-2 flex justify-between items-center">
+                <span className="text-xs text-gray-400">
+                  {notification.timestamp.toLocaleString()}
+                </span>
+                {!notification.read && (
+                  <button
+                    onClick={() => markAsRead(notification.id)}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    Mark as read
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
         )}
       </div>
-    </div>
+
+      {notifications.length > 0 && (
+        <div className="p-4 border-t">
+          <button
+            onClick={clear}
+            className="w-full bg-red-100 text-red-600 text-sm font-medium px-4 py-2 rounded hover:bg-red-200"
+          >
+            Clear All
+          </button>
+        </div>
+      )}
+    </aside>
   );
 };
 

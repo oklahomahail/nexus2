@@ -30,10 +30,12 @@ export interface InternalDonorFilters {
 export type ViewKey = 'dashboard' | 'campaigns' | 'donors' | 'analytics' | 'messaging';
 
 export interface UIState {
+  sidebarCollapsed: boolean;
+  activeView: ViewKey;
+  isSidebarOpen: boolean;
   loading: boolean;
   error: string | null;
-  activeView: ViewKey;
-  sidebarCollapsed: boolean;
+  showNotifications: boolean;
 }
 
 // Notification state
@@ -44,13 +46,16 @@ export interface NotificationsState {
 
 // Global app state
 export interface AppState {
+  user: any;
+  campaigns: any;
+  donors: any;
+  analytics: any;
   ui: UIState;
   notifications: NotificationsState;
   filters: {
     campaigns: InternalCampaignFilters;
     donors: InternalDonorFilters;
   };
-  // Add future modules like campaigns, donors, analytics, etc.
 }
 
 // Action types
@@ -62,10 +67,7 @@ export type AppAction =
   | { type: 'TOGGLE_NOTIFICATIONS' }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'CLEAR_NOTIFICATIONS' }
-  // Optional future expansion:
-  // | { type: 'SET_CAMPAIGNS'; payload: Campaign[] }
-  // | { type: 'SET_ANALYTICS'; payload: AnalyticsData }
-  ;
+  | { type: 'ADD_NOTIFICATION'; payload: AppNotification }; // <- Note the correct `|` above and `;` at the end
 
 // Context type
 export interface AppContextType {

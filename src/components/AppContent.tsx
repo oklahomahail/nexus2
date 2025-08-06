@@ -1,6 +1,6 @@
 // ✅ src/components/AppContent.tsx
 import React from 'react';
-import { useUI, useNotifications, useAppContext } from '../context/AppContext';
+import { useUI, useNotifications } from '../context/AppContext';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import NotificationsPanel from './NotificationsPanel';
@@ -20,9 +20,8 @@ interface NavigationItem {
 }
 
 const AppContent: React.FC = () => {
-  const { state } = useAppContext();
   const { activeView, loading, error } = useUI();
-  const { notifications } = useNotifications();
+  const { show, toggle, markAsRead, clear } = useNotifications();
 
   const navigationItems: NavigationItem[] = [
     {
@@ -89,7 +88,12 @@ const AppContent: React.FC = () => {
           )}
         </div>
       </main>
-      <NotificationsPanel show={notifications} onClose={() => useNotifications(false)} />
+      <NotificationsPanel
+        show={show}
+        onClose={toggle}
+        markAsRead={markAsRead}
+        clear={clear}
+      />
     </div>
   );
 };
