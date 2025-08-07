@@ -10,7 +10,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 type AnalyticsView = 'overview' | 'campaigns' | 'donors' | 'export';
 
-export const AnalyticsDashboard: React.FC = () => {
+const AnalyticsDashboard: React.FC = () => {
   const [activeView, setActiveView] = useState<AnalyticsView>('overview');
   const [orgAnalytics, setOrgAnalytics] = useState<OrganizationAnalytics | null>(null);
   const [donorInsights, setDonorInsights] = useState<DonorInsights | null>(null);
@@ -185,7 +185,9 @@ export const AnalyticsDashboard: React.FC = () => {
         {activeView === 'export' && (
           <div className="bg-white rounded-lg border border-gray-200 p-6 text-sm text-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Export Analytics Data</h3>
-            <p className="mb-2">Download fundraising and donor performance data filtered by the current date range and selected criteria.</p>
+            <p className="mb-2">
+              Download fundraising and donor performance data filtered by the current date range and selected criteria.
+            </p>
             <button
               onClick={handleExportData}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -198,3 +200,5 @@ export const AnalyticsDashboard: React.FC = () => {
     </div>
   );
 };
+
+export default AnalyticsDashboard;

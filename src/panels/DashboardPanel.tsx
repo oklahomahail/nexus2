@@ -22,11 +22,11 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, subtext }) => (
   </div>
 );
 
-export default function DashboardPanel({
+const DashboardPanel: React.FC<DashboardPanelProps> = ({
   totalDonors,
   totalRevenue,
   activeCampaigns,
-}: DashboardPanelProps) {
+}) => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,23 +34,14 @@ export default function DashboardPanel({
   const handleSaveCampaign = async (data: CampaignCreateRequest | CampaignUpdateRequest): Promise<void> => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
       console.log('Saved campaign:', data);
-      
-      // Here you would typically:
-      // 1. Call your campaign service
-      // 2. Update local state or refresh data
-      // 3. Show success notification
-      
-      // For now, just close the modal
       setShowModal(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save campaign');
-      throw err; // Re-throw so the modal can handle it
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -61,9 +52,7 @@ export default function DashboardPanel({
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-semibold">Campaign Dashboard</h2>
-          <p className="text-sm text-gray-600">
-            Monitor campaign performance and progress.
-          </p>
+          <p className="text-sm text-gray-600">Monitor campaign performance and progress.</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -88,26 +77,10 @@ export default function DashboardPanel({
       )}
 
       <div className="flex flex-wrap gap-4">
-        <StatCard
-          title="Active Campaigns"
-          value={String(activeCampaigns)}
-          subtext="Current active campaigns"
-        />
-        <StatCard
-          title="Donors Engaged"
-          value={String(totalDonors)}
-          subtext="Last 30 days"
-        />
-        <StatCard
-          title="Funds Raised"
-          value={`$${totalRevenue.toLocaleString()}`}
-          subtext="Year to date"
-        />
-        <StatCard
-          title="Emails Sent"
-          value="8,290"
-          subtext="All campaigns"
-        />
+        <StatCard title="Active Campaigns" value={String(activeCampaigns)} subtext="Current active campaigns" />
+        <StatCard title="Donors Engaged" value={String(totalDonors)} subtext="Last 30 days" />
+        <StatCard title="Funds Raised" value={`$${totalRevenue.toLocaleString()}`} subtext="Year to date" />
+        <StatCard title="Emails Sent" value="8,290" subtext="All campaigns" />
       </div>
 
       <div className="mt-8">
@@ -127,4 +100,6 @@ export default function DashboardPanel({
       />
     </div>
   );
-}
+};
+
+export default DashboardPanel;

@@ -31,6 +31,8 @@ export interface AnalyticsTrend {
 // ---------- ORGANIZATION DASHBOARD ----------
 
 export interface OrganizationAnalytics {
+  performanceComparisons: ComparisonData | CampaignSuccessData;
+  topPerformingCampaigns: any;
   currentPeriod: {
     startDate: string;
     endDate: string;
@@ -53,7 +55,18 @@ export interface OrganizationAnalytics {
 }
 
 // ---------- DONOR INSIGHTS ----------
-
+export interface ComparisonData {
+  label: string;
+  current: number;
+  previous: number;
+}
+export interface CampaignSuccessData {
+  name: string;
+  successRate: number;
+  totalRaised: number;
+  goal: number;
+  roi: number;
+}
 export interface DonorInsights {
   topDonors: {
     id: string;

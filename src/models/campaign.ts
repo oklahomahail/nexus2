@@ -2,6 +2,9 @@ import { ReactNode } from "react";
 import { DateRange } from "./analytics";
 
 export interface Campaign {
+  roi: ReactNode;
+  totalRevenue: any;
+  totalDonors: ReactNode;
   progress: ReactNode;
   id: string;
   name: string;

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Campaign, CampaignCreateRequest, CampaignUpdateRequest, CampaignStats } from '../models/campaign';
+import {
+  Campaign,
+  CampaignCreateRequest,
+  CampaignUpdateRequest,
+  CampaignStats
+} from '../models/campaign';
 import { campaignService } from '../services/campaignService';
 import { CampaignList } from '../components/CampaignList';
 import { CampaignModal } from '../components/CampaignModal';
@@ -8,7 +13,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 type ViewMode = 'list' | 'detail';
 
-export const CampaignsPanel: React.FC = () => {
+const CampaignsPanel: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -60,37 +65,42 @@ export const CampaignsPanel: React.FC = () => {
     } else {
       await campaignService.updateCampaign(data as CampaignUpdateRequest);
     }
-    
-    // Refresh stats
+
     loadStats();
-    
-    // If we're viewing the campaign that was edited, refresh it
+
     if (modalMode === 'edit' && selectedCampaign && viewMode === 'detail') {
-      const updatedCampaign = await campaignService.getCampaignById(selectedCampaign.id);
-      if (updatedCampaign) {
-        setSelectedCampaign(updatedCampaign);
-      }
+      const updated = await campaignService.getCampaignById(selectedCampaign.id);
+      if (updated) setSelectedCampaign(updated);
     }
   };
 
-  const StatCard: React.FC<{ title: string; value: string | number; subtext?: string; color?: string }> = ({ 
-    title, 
-    value, 
-    subtext, 
-    color = 'blue' 
-  }) => (
-    <div className="bg-white rounded-lg border border-gray-200 p-4">
-      <div className="flex items-center">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className={`text-2xl font-bold text-${color}-600`}>
-            {typeof value === 'number' ? value.toLocaleString() : value}
-          </p>
-          {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
+  const StatCard: React.FC<{
+    title: string;
+    value: string | number;
+    subtext?: string;
+    color?: 'blue' | 'green' | 'purple' | 'indigo';
+  }> = ({ title, value, subtext, color = 'blue' }) => {
+    const colorMap: Record<string, string> = {
+      blue: 'text-blue-600',
+      green: 'text-green-600',
+      purple: 'text-purple-600',
+      indigo: 'text-indigo-600'
+    };
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <div className="flex items-center">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-gray-600">{title}</p>
+            <p className={`text-2xl font-bold ${colorMap[color]}`}>
+              {typeof value === 'number' ? value.toLocaleString() : value}
+            </p>
+            {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (viewMode === 'detail' && selectedCampaign) {
     return (
@@ -106,13 +116,13 @@ export const CampaignsPanel: React.FC = () => {
             Back to Campaigns
           </button>
         </div>
-        
-        <CampaignDetail 
+
+        <CampaignDetail
           campaign={selectedCampaign}
           onEdit={handleEditCampaign}
           onBack={handleBackToList}
         />
-        
+
         <CampaignModal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
@@ -126,12 +136,11 @@ export const CampaignsPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Stats Overview */}
       <div>
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">Campaign Overview</h2>
         {loadingStats ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-lg border border-gray-200 p-4">
                 <LoadingSpinner size="sm" />
               </div>
@@ -171,14 +180,12 @@ export const CampaignsPanel: React.FC = () => {
         )}
       </div>
 
-      {/* Campaign List */}
       <CampaignList
         onCreateCampaign={handleCreateCampaign}
         onEditCampaign={handleEditCampaign}
         onViewCampaign={handleViewCampaign}
       />
 
-      {/* Campaign Modal */}
       <CampaignModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -189,3 +196,5 @@ export const CampaignsPanel: React.FC = () => {
     </div>
   );
 };
+
+export default CampaignsPanel;
