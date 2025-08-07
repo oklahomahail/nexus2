@@ -71,7 +71,10 @@ export type AppAction =
 
 // Context type
 export interface AppContextType {
-  state: AppState;
-  dispatch: React.Dispatch<AppAction>;
-  actions?: any;
+  activeView: string;
+  loading: boolean;
+  error: string | null;
+  setActiveView: (view: string) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
 }
