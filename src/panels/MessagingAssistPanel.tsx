@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { generateClaudeResponse } from '../services/claudeService';
+import { generateClaudeResponse } from '../features/claude/claudeService';
 
 type MessageType = 'Email' | 'Subject Line' | 'Social Post' | 'CTA Button';
 

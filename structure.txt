@@ -1,0 +1,89 @@
+.
+├── env.d.ts
+├── generate-nexus-starter.js
+├── gitignore
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── project-structure.txt
+├── README.md
+├── src
+│   ├── App.tsx
+│   ├── assets
+│   ├── components
+│   │   ├── AnalyticsFilters.tsx
+│   │   ├── AppContent.tsx
+│   │   ├── CampaignDetail.tsx
+│   │   ├── CampaignFilters.tsx
+│   │   ├── CampaignList.tsx
+│   │   ├── CampaignModal.tsx
+│   │   ├── CampaignPerformanceTable.tsx
+│   │   ├── DashboardOverview.tsx
+│   │   ├── DonorInsightsPanel.tsx
+│   │   ├── LoadingSpinner.tsx
+│   │   ├── MetricsOverview.tsx
+│   │   ├── NotificationsPanel.tsx
+│   │   ├── PerformanceChart.tsx
+│   │   ├── SegmentComparison.tsx
+│   │   ├── Sidebar.tsx
+│   │   ├── SidebarItem.tsx
+│   │   ├── StatCard.tsx
+│   │   ├── Topbar.tsx
+│   │   └── ui-kit
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       ├── Input.tsx
+│   │       ├── Modal.tsx
+│   │       └── Panel.tsx
+│   ├── context
+│   │   ├── AppContext.tsx
+│   │   ├── index.ts
+│   │   ├── notifications
+│   │   │   └── NotificationsContext.tsx
+│   │   ├── selectors.ts
+│   │   └── ui
+│   │       ├── UIContext.tsx
+│   │       ├── uiReducer.ts
+│   │       └── uiTypes.ts
+│   ├── deprecated
+│   │   ├── components
+│   │   ├── context
+│   │   ├── models
+│   │   └── services
+│   │       ├── donorSegmentService.ts
+│   │       └── donorService.ts
+│   ├── hooks
+│   │   ├── selectors.ts
+│   │   ├── useAnalytics.ts
+│   │   ├── useAppContext.ts
+│   │   ├── useCampaigns.ts
+│   │   ├── useNotifications.ts
+│   │   └── useUI.ts
+│   ├── index.css
+│   ├── main.tsx
+│   ├── models
+│   │   ├── analytics.ts
+│   │   ├── campaign.ts
+│   │   ├── donor.ts
+│   │   └── donorSegments.ts
+│   ├── panels
+│   │   ├── AnalyticsDashboard.tsx
+│   │   ├── CampaignsPanel.tsx
+│   │   ├── DashboardPanel.tsx
+│   │   ├── DonorsPlaceholder.tsx
+│   │   └── MessagingAssistPanel.tsx
+│   ├── services
+│   │   ├── analyticsService.ts
+│   │   ├── apiClient.ts
+│   │   ├── campaignService.ts
+│   │   ├── claudeService.ts
+│   │   └── donorSegmentService.ts
+│   ├── utils
+│   └── vite-env.d.ts
+├── structure.txt
+├── tailwind.config.js
+├── tsconfig.json
+└── vite.config.ts
+
+18 directories, 69 files

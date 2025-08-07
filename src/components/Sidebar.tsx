@@ -1,5 +1,8 @@
 import React from 'react';
-import { useAppContext, useUI, useCampaigns, useAnalytics } from '../context/AppContext';
+import { useAppContext } from '../hooks/useAppContext';
+import { useUI } from '../hooks/useUI';
+import { useCampaigns } from '../hooks/useCampaigns';
+import { useAnalytics } from '../hooks/useAnalytics';
 import SidebarItem from './SidebarItem';
 
 interface SidebarProps {

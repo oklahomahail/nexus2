@@ -1,6 +1,6 @@
 // src/hooks/selectors.ts
 // Optional: Common selectors that can be used with useSelector hook
-import { AppState, InternalCampaignFilters } from '../context/types';
+import { AppState, InternalCampaignFilters } from '../context/ui/uiTypes';
 import { CampaignFilters } from '../models/campaign';
 
 // Helper function for conversion

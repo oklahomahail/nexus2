@@ -1,4 +1,7 @@
+import { ReactNode } from "react";
+
 export interface Campaign {
+  progress: ReactNode;
   id: string;
   name: string;
   description?: string;

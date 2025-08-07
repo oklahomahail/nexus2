@@ -1,11 +1,15 @@
 import React from 'react';
-import { AppProvider } from './context/AppContext';
+import { UIProvider, NotificationsProvider } from './context/AppProviders';
 import AppContent from './components/AppContent';
 
-const App: React.FC = () => (
-  <AppProvider>
-    <AppContent />
-  </AppProvider>
-);
+function App() {
+  return (
+    <UIProvider>
+      <NotificationsProvider>
+        <AppContent />
+      </NotificationsProvider>
+    </UIProvider>
+  );
+}
 
 export default App;

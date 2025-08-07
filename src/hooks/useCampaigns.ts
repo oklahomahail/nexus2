@@ -1,7 +1,7 @@
 // src/hooks/useCampaigns.ts
 import { useAppContext } from './useAppContext';
 import { selectors } from './selectors';
-import { AppState, InternalCampaignFilters } from '../context/types';
+import { AppState, InternalCampaignFilters } from '../context/ui/uiTypes';
 import { CampaignFilters } from '../models/campaign';
 
 // Helper function for conversion

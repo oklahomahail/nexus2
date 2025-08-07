@@ -1,6 +1,6 @@
 // src/hooks/selectors.ts
 
-import { AppState, InternalCampaignFilters } from '../context/types';
+import { AppState, InternalCampaignFilters } from './ui/uiTypes';
 import { CampaignFilters } from '../models/campaign';
 
 // Allowable enums

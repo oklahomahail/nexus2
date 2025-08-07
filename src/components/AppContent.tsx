@@ -1,6 +1,6 @@
 // ✅ src/components/AppContent.tsx
 import React from 'react';
-import { useUI, useNotifications } from '../context/AppContext';
+import { useUI, useNotifications } from '../context/AppProviders';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import NotificationsPanel from './NotificationsPanel';
@@ -9,7 +9,7 @@ import { AnalyticsDashboard } from '../panels/AnalyticsDashboard';
 import MessagingAssistantPanel from '../panels/MessagingAssistPanel';
 import DonorsPlaceholder from '../panels/DonorsPlaceholder';
 import DashboardOverview from './DashboardOverview';
-import { LoadingSpinner } from './LoadingSpinner';
+import LoadingSpinner from './LoadingSpinner';
 
 interface NavigationItem {
   key: string;
