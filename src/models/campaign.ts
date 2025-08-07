@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { DateRange } from "./analytics";
 
 export interface Campaign {
   progress: ReactNode;
@@ -60,10 +61,8 @@ export interface CampaignUpdateRequest {
 export interface CampaignFilters {
   status?: Campaign['status'][];
   category?: Campaign['category'][];
-  dateRange?: {
-    start: string;
-    end: string;
-  };
+
+dateRange?: DateRange;
   search?: string;
   tags?: string[];
 }

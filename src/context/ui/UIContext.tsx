@@ -1,7 +1,13 @@
 // src/context/ui/UIContext.tsx
 
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { AppContextType } from './uiTypes';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useState,
+  ReactNode,
+} from 'react';
+import { UIContextType } from './uiTypes';
 
 // ------------------------------------
 // State & Action Types
@@ -49,7 +55,7 @@ function uiReducer(state: UIState, action: UIAction): UIState {
 // Context
 // ------------------------------------
 
-export const AppContext = createContext<AppContextType | undefined>(undefined);
+export const UIContext = createContext<UIContextType | undefined>(undefined);
 
 // ------------------------------------
 // Provider
@@ -57,27 +63,41 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const UIProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(uiReducer, initialState);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const setActiveView = (view: string) => dispatch({ type: 'SET_ACTIVE_VIEW', payload: view });
-  const setLoading = (loading: boolean) => dispatch({ type: 'SET_LOADING', payload: loading });
-  const setError = (error: string | null) => dispatch({ type: 'SET_ERROR', payload: error });
+  const setActiveView = (view: string) =>
+    dispatch({ type: 'SET_ACTIVE_VIEW', payload: view });
 
-  const value: AppContextType = {
-    ...state,
+  const setLoading = (loading: boolean) =>
+    dispatch({ type: 'SET_LOADING', payload: loading });
+
+  const setError = (error: string | null) =>
+    dispatch({ type: 'SET_ERROR', payload: error });
+
+  const toggleSidebar = () => setSidebarCollapsed((prev) => !prev);
+
+  const value: UIContextType = {
+    activeView: state.activeView,
+    loading: state.loading,
+    error: state.error,
+    sidebarCollapsed,
     setActiveView,
     setLoading,
     setError,
+    toggleSidebar,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 };
 
 // ------------------------------------
 // Hook
 // ------------------------------------
 
-export const useUI = (): AppContextType => {
-  const context = useContext(AppContext);
-  if (!context) throw new Error('useUI must be used within a UIProvider');
+export const useUI = (): UIContextType => {
+  const context = useContext(UIContext);
+  if (!context) {
+    throw new Error('useUI must be used within a UIProvider');
+  }
   return context;
 };

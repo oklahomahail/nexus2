@@ -1,6 +1,7 @@
-// ✅ src/context/types.ts
+// ==============================
+// Notifications
+// ==============================
 
-// Notification type
 export interface AppNotification {
   id: string;
   type: 'success' | 'error' | 'warning' | 'info';
@@ -11,7 +12,15 @@ export interface AppNotification {
   actionUrl?: string;
 }
 
+export interface NotificationsState {
+  open: boolean;
+  items: AppNotification[];
+}
+
+// ==============================
 // Filters
+// ==============================
+
 export interface InternalCampaignFilters {
   status?: string[];
   category?: string[];
@@ -26,7 +35,10 @@ export interface InternalDonorFilters {
   lastGiftDate?: { start: string; end: string };
 }
 
-// UI state
+// ==============================
+// UI
+// ==============================
+
 export type ViewKey = 'dashboard' | 'campaigns' | 'donors' | 'analytics' | 'messaging';
 
 export interface UIState {
@@ -38,13 +50,22 @@ export interface UIState {
   showNotifications: boolean;
 }
 
-// Notification state
-export interface NotificationsState {
-  open: boolean;
-  items: AppNotification[];
+// Matches the return value of useUI()
+export interface UIContextType {
+  activeView: string;
+  loading: boolean;
+  error: string | null;
+  sidebarCollapsed: boolean;
+  setActiveView: (view: string) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  toggleSidebar: () => void;
 }
 
-// Global app state
+// ==============================
+// Global App State
+// ==============================
+
 export interface AppState {
   user: any;
   campaigns: any;
@@ -53,12 +74,15 @@ export interface AppState {
   ui: UIState;
   notifications: NotificationsState;
   filters: {
-    campaigns: InternalCampaignFilters;s: any
+    campaigns: InternalCampaignFilters;
     donors: InternalDonorFilters;
   };
 }
 
-// Action types
+// ==============================
+// Actions
+// ==============================
+
 export type AppAction =
   | { type: 'SET_ACTIVE_VIEW'; payload: ViewKey }
   | { type: 'TOGGLE_SIDEBAR' }
@@ -67,14 +91,4 @@ export type AppAction =
   | { type: 'TOGGLE_NOTIFICATIONS' }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
   | { type: 'CLEAR_NOTIFICATIONS' }
-  | { type: 'ADD_NOTIFICATION'; payload: AppNotification }; // <- Note the correct `|` above and `;` at the end
-
-// Context type
-export interface AppContextType {
-  activeView: string;
-  loading: boolean;
-  error: string | null;
-  setActiveView: (view: string) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-}
+  | { type: 'ADD_NOTIFICATION'; payload: AppNotification };
