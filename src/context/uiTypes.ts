@@ -1,6 +1,8 @@
-// ==============================
-// Notifications
-// ==============================
+// src/context/uiTypes.ts
+
+// ----------------------------------------
+// Notification Types
+// ----------------------------------------
 
 export interface AppNotification {
   id: string;
@@ -17,9 +19,9 @@ export interface NotificationsState {
   items: AppNotification[];
 }
 
-// ==============================
+// ----------------------------------------
 // Filters
-// ==============================
+// ----------------------------------------
 
 export interface InternalCampaignFilters {
   status?: string[];
@@ -35,42 +37,28 @@ export interface InternalDonorFilters {
   lastGiftDate?: { start: string; end: string };
 }
 
-// ==============================
-// UI
-// ==============================
-
-export type ViewKey = 'dashboard' | 'campaigns' | 'donors' | 'analytics' | 'messaging';
+// ----------------------------------------
+// UI State
+// ----------------------------------------
 
 export interface UIState {
-  sidebarCollapsed: boolean;
-  activeView: ViewKey;
-  isSidebarOpen: boolean;
-  loading: boolean;
-  error: string | null;
-  showNotifications: boolean;
-}
-
-// Matches the return value of useUI()
-export interface UIContextType {
   activeView: string;
   loading: boolean;
   error: string | null;
   sidebarCollapsed: boolean;
-  setActiveView: (view: string) => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  toggleSidebar: () => void;
+  isSidebarOpen: boolean;
+  showNotifications: boolean;
 }
 
-// ==============================
-// Global App State
-// ==============================
+// ----------------------------------------
+// AppState
+// ----------------------------------------
 
 export interface AppState {
-  user: any;
-  campaigns: any;
-  donors: any;
-  analytics: any;
+  user: { id: string; name: string } | null;
+  campaigns: any[]; // Replace with your actual Campaign type
+  donors: any[];    // Replace with your actual Donor type
+  analytics: Record<string, any>; // Or your specific Analytics type
   ui: UIState;
   notifications: NotificationsState;
   filters: {
@@ -79,16 +67,16 @@ export interface AppState {
   };
 }
 
-// ==============================
-// Actions
-// ==============================
+// ----------------------------------------
+// App Actions
+// ----------------------------------------
 
 export type AppAction =
-  | { type: 'SET_ACTIVE_VIEW'; payload: ViewKey }
-  | { type: 'TOGGLE_SIDEBAR' }
+  | { type: 'SET_ACTIVE_VIEW'; payload: string }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'TOGGLE_SIDEBAR' }
   | { type: 'TOGGLE_NOTIFICATIONS' }
+  | { type: 'ADD_NOTIFICATION'; payload: AppNotification }
   | { type: 'MARK_NOTIFICATION_READ'; payload: string }
-  | { type: 'CLEAR_NOTIFICATIONS' }
-  | { type: 'ADD_NOTIFICATION'; payload: AppNotification };
+  | { type: 'CLEAR_NOTIFICATIONS' };

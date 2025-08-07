@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppNotification } from '../context/ui/uiTypes';
+import { AppNotification } from '../context/uiTypes';
 import { XCircleIcon } from 'lucide-react';
 
 export interface NotificationsPanelProps {

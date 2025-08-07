@@ -1,38 +1,46 @@
-// src/context/reducer.ts
+// src/context/appReducer.ts
 import { AppState, AppAction, AppNotification } from './uiTypes';
+
+// UI Slice
+const initialUIState = {
+  activeView: 'dashboard',
+  loading: false,
+  error: null,
+  sidebarCollapsed: false,
+  isSidebarOpen: true,
+  showNotifications: false,
+};
+
+// Notifications
+const initialNotifications = {
+  open: false,
+  items: [],
+};
+
+// Filters
+const initialFilters = {
+  campaigns: {
+    status: [],
+    category: [],
+    dateRange: null,
+    search: '',
+    tags: [],
+  },
+  donors: {
+    segment: [],
+    giftRange: { min: 0, max: 0 },
+    lastGiftDate: { start: '', end: '' },
+  },
+};
 
 export const initialState: AppState = {
   user: null,
   campaigns: [],
   donors: [],
   analytics: {},
-  ui: {
-    activeView: 'dashboard',
-    sidebarCollapsed: false,
-    isSidebarOpen: true,
-    loading: false,
-    error: null,
-    showNotifications: false,
-  },
-  notifications: {
-    open: false,
-    items: [],
-  },
-  filters: {
-    campaigns: {
-      status: [],
-      category: [],
-      dateRange: null,
-      search: '',
-      tags: [],
-    },
-    donors: {
-      segment: [],
-      giftRange: { min: 0, max: 0 },
-      lastGiftDate: { start: '', end: '' },
-    },
-    s: undefined
-  },
+  ui: initialUIState,
+  notifications: initialNotifications,
+  filters: initialFilters,
 };
 
 export const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -41,12 +49,6 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
         ...state,
         ui: { ...state.ui, activeView: action.payload },
-      };
-
-    case 'TOGGLE_SIDEBAR':
-      return {
-        ...state,
-        ui: { ...state.ui, isSidebarOpen: !state.ui.isSidebarOpen },
       };
 
     case 'SET_LOADING':
@@ -59,6 +61,12 @@ export const appReducer = (state: AppState, action: AppAction): AppState => {
       return {
         ...state,
         ui: { ...state.ui, error: action.payload },
+      };
+
+    case 'TOGGLE_SIDEBAR':
+      return {
+        ...state,
+        ui: { ...state.ui, isSidebarOpen: !state.ui.isSidebarOpen, sidebarCollapsed: !state.ui.sidebarCollapsed },
       };
 
     case 'TOGGLE_NOTIFICATIONS':

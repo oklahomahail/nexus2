@@ -1,9 +1,9 @@
 // src/components/Sidebar.tsx
 
 import React from 'react';
-import { useUI } from '../context/ui/UIContext';
-import { useCampaigns } from '../hooks/useCampaigns';
-import { useAnalytics } from '../context/analytics/AnalyticsContext';
+import { useUI } from '@/context/useUI';
+import { useAnalytics } from '@/context/analytics/AnalyticsContext';
+import { useCampaigns } from '@/hooks/useCampaigns';
 import SidebarItem from './SidebarItem';
 
 interface SidebarProps {

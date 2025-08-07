@@ -1,51 +1,22 @@
 // src/hooks/useCampaigns.ts
-import { useAppContext } from './useAppContext';
-import { selectors } from './selectors';
-import { AppState, InternalCampaignFilters } from '../context/ui/uiTypes';
-import { CampaignFilters } from '../models/campaign';
 
-// Helper function for conversion
-const convertToCampaignFilters = (internal: InternalCampaignFilters): CampaignFilters => {
-  const external: CampaignFilters = {};
-  
-  if (internal.status?.length) {
-    external.status = internal.status as any[];
-  }
-  
-  if (internal.category?.length) {
-    external.category = internal.category as any[];
-  }
-  
-  if (internal.dateRange) {
-    external.dateRange = internal.dateRange;
-  }
-  
-  if (internal.search) {
-    external.search = internal.search;
-  }
-  
-  if (internal.tags?.length) {
-    external.tags = internal.tags;
-  }
-  
-  return external;
-};
+import { useAppContext } from '@/context/AppProviders';
 
-export const useCampaigns = () => {
-  const { state, actions } = useAppContext();
-  
+interface CampaignStats {
+  active: number;
+  totalRaised: number;
+}
+
+export const useCampaigns = (): { stats: CampaignStats } => {
+  const { state } = useAppContext();
+
+  const active = state.campaigns?.filter((c) => c.status === 'active').length || 0;
+  const totalRaised = state.campaigns?.reduce((sum, c) => sum + (c.amountRaised || 0), 0) || 0;
+
   return {
-    campaigns: state.campaigns,
-    loading: state.ui.loading,
-    error: state.ui.error,
-    filters: convertToCampaignFilters(state.filters.campaigns),
-    stats: selectors.getCampaignStats(state),
-    actions: {
-      load: actions.loadCampaigns,
-      create: actions.createCampaign,
-      update: actions.updateCampaign,
-      delete: actions.deleteCampaign,
-      setFilters: actions.setCampaignFilters
-    }
+    stats: {
+      active,
+      totalRaised,
+    },
   };
 };
