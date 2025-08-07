@@ -1,71 +1,97 @@
-// ✅ src/components/AppContent.tsx
-import React, { Suspense, lazy } from 'react';
+// src/components/AppContent.tsx - Quick update to use ClaudePanel
+import React, { Suspense, lazy, useState } from 'react';
 import { useUI, useNotifications } from '@/context/AppProviders';
-import Sidebar from './Sidebar';
-import Topbar from './Topbar';
-import NotificationsPanel from './NotificationsPanel';
+import { BarChart3, Target, TrendingUp, Users, Bot, Settings, Plus } from 'lucide-react';
 import LoadingSpinner from './LoadingSpinner';
-import DashboardOverview from './DashboardOverview';
 
-// Lazy-load panel components
+// Import ClaudePanel directly from features/claude instead of lazy loading
+import ClaudePanel from '../features/claude/ClaudePanel';
+
+// Lazy-load other panel components
 const CampaignsPanel = lazy(() =>
   import('@/panels/CampaignsPanel').then((mod) => ({ default: mod.default }))
 );
 const AnalyticsDashboard = lazy(() =>
   import('@/panels/AnalyticsDashboard').then((mod) => ({ default: mod.default }))
 );
-const MessagingAssistantPanel = lazy(() =>
-  import('@/panels/MessagingAssistPanel').then((mod) => ({ default: mod.default }))
-);
 const DonorsPlaceholder = lazy(() =>
   import('@/panels/DonorsPlaceholder').then((mod) => ({ default: mod.default }))
+);
+const DashboardPanel = lazy(() =>
+  import('@/panels/DashboardPanel').then((mod) => ({ default: mod.default }))
 );
 
 interface NavigationItem {
   key: string;
   label: string;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   component: React.ComponentType;
   description?: string;
 }
 
 const AppContent: React.FC = () => {
-  const { activeView, loading, error } = useUI();
-  const { show, toggle, markAsRead, clear } = useNotifications();
+  const { activeView, setActiveView, loading, error } = useUI();
+  const { toggle } = useNotifications();
+  const [showClaudePanel, setShowClaudePanel] = useState(false);
+
+  // Mock current campaign - replace with real campaign selection logic
+  const getCurrentCampaign = () => {
+    // This should come from your campaign context/state
+    // Using the utility function to create a proper Campaign object
+    return {
+      id: 'campaign_1',
+      name: 'End of Year Giving Campaign',
+      description: 'Annual fundraising campaign to support our programs',
+      goal: 50000,
+      raised: 15000,
+      progress: 30, // Now properly typed as number
+      daysLeft: 45, // Now properly typed as number
+      startDate: '2024-11-01',
+      endDate: '2024-12-31',
+      status: 'Active' as const,
+      category: 'General' as const,
+      targetAudience: 'Individual donors and families',
+      donorCount: 125,
+      averageGift: 120,
+      totalRevenue: 15000, // Now properly typed as number
+      totalDonors: 125, // Now properly typed as number
+      roi: 30, // Now properly typed as number
+      lastUpdated: new Date(),
+      createdAt: new Date('2024-10-15'),
+      createdBy: 'Dave Hail',
+      tags: ['year-end', 'annual'],
+      emailsSent: 450,
+      clickThroughRate: 12.5,
+      conversionRate: 8.2,
+    };
+  };
 
   const navigationItems: NavigationItem[] = [
     {
       key: 'dashboard',
       label: 'Dashboard',
-      icon: '📊',
-      component: DashboardOverview, // not lazy, likely small
+      icon: BarChart3,
+      component: DashboardPanel,
       description: 'Overview of key metrics and recent activity',
     },
     {
       key: 'campaigns',
       label: 'Campaigns',
-      icon: '🎯',
+      icon: Target,
       component: CampaignsPanel,
       description: 'Manage fundraising campaigns',
     },
     {
       key: 'analytics',
       label: 'Analytics',
-      icon: '📈',
+      icon: TrendingUp,
       component: AnalyticsDashboard,
       description: 'Performance insights and reports',
     },
     {
-      key: 'messaging',
-      label: 'AI Assistant',
-      icon: '🤖',
-      component: MessagingAssistantPanel,
-      description: 'AI-powered content generation',
-    },
-    {
       key: 'donors',
       label: 'Donors',
-      icon: '👥',
+      icon: Users,
       component: DonorsPlaceholder,
       description: 'Donor management and insights',
     },
@@ -76,47 +102,136 @@ const AppContent: React.FC = () => {
   const CurrentComponent = currentNavItem.component;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex">
-      <Sidebar navigationItems={navigationItems} />
+    <div className="min-h-screen bg-slate-950 text-white flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-slate-900/50 border-r border-slate-800/50 backdrop-blur-md">
+        <div className="p-6 border-b border-slate-800/50">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">Nexus</h1>
+              <p className="text-slate-400 text-xs">Nonprofit Platform</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="mb-6">
+            <div className="text-slate-500 text-xs uppercase tracking-wider font-medium mb-3 px-2">
+              Navigation
+            </div>
+            <nav className="space-y-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = item.key === activeView;
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => setActiveView(item.key)}
+                    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
+                      isActive 
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                );
+              })}
+              
+              {/* AI Assistant Button */}
+              <button
+                onClick={() => setShowClaudePanel(true)}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/50"
+              >
+                <Bot className="w-5 h-5" />
+                <span className="font-medium">AI Assistant</span>
+              </button>
+            </nav>
+          </div>
+
+          <div className="border-t border-slate-800/50 pt-4">
+            <div className="text-slate-500 text-xs mb-2 px-2">Current:</div>
+            <div className="text-slate-400 text-sm px-2">
+              <div>Dave Hail</div>
+              <div className="text-xs text-slate-500">Nexus Consulting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen">
-        <Topbar
-          title={currentNavItem.label}
-          description={currentNavItem.description}
-        />
+        {/* Header */}
+        <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md">
+          <div className="px-8 py-6 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-white mb-1">{currentNavItem.label}</h1>
+              <p className="text-slate-400">{currentNavItem.description}</p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button 
+                onClick={toggle}
+                className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800/50 rounded-lg"
+              >
+                🔔
+              </button>
+              <button 
+                onClick={() => setShowClaudePanel(true)}
+                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+              >
+                <Bot className="w-4 h-4" />
+                <span>AI Assistant</span>
+              </button>
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                <Plus className="w-4 h-4" />
+                <span>New Campaign</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
         <div className="flex-1 overflow-auto">
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <LoadingSpinner size="lg" text="Loading..." />
+              <LoadingSpinner size="lg" />
+              <span className="ml-3 text-slate-400">Loading...</span>
             </div>
           ) : error ? (
-            <div className="p-6">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                <h3 className="text-sm font-medium text-red-800">
+            <div className="p-8">
+              <div className="bg-red-900/20 border border-red-800/50 rounded-lg p-6">
+                <h3 className="text-sm font-medium text-red-400 mb-2">
                   Application Error
                 </h3>
-                <p className="text-sm text-red-700 mt-1">{error}</p>
+                <p className="text-sm text-red-300">{error}</p>
               </div>
             </div>
           ) : (
             <Suspense
               fallback={
                 <div className="flex justify-center items-center py-12">
-                  <LoadingSpinner size="lg" text="Loading panel..." />
+                  <LoadingSpinner size="lg" />
+                  <span className="ml-3 text-slate-400">Loading panel...</span>
                 </div>
               }
             >
-              <div className="p-6">
+              <div className="p-8">
                 <CurrentComponent />
               </div>
             </Suspense>
           )}
         </div>
       </main>
-      <NotificationsPanel
-        show={show}
-        onClose={toggle}
-        markAsRead={markAsRead}
-        clear={clear}
+
+      {/* Claude AI Panel */}
+      <ClaudePanel 
+        isOpen={showClaudePanel}
+        onClose={() => setShowClaudePanel(false)}
+        currentCampaign={getCurrentCampaign()}
       />
     </div>
   );

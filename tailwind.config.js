@@ -1,32 +1,40 @@
+// tailwind.config.js - Compatible with Tailwind CSS 4.x
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {},
-  },
-  plugins: [require('@tailwindcss/typography')],
-  theme: {
-  extend: {
-    colors: {
-      brand: {
-        primary: '#1D3557',
-        secondary: '#457B9D',
-        accent: '#E63946',
-        muted: '#F1FAEE',
-        dark: '#0C1A30',
+    extend: {
+      colors: {
+        // Custom dark theme colors
+        slate: {
+          950: '#0a0f1c', // Custom darker background
+        },
+        primary: {
+          DEFAULT: '#3b82f6',
+          dark: '#2563eb',
+        }
       },
-    },
-    fontFamily: {
-      sans: ['Inter', 'sans-serif'],
-      display: ['"Playfair Display"', 'serif'],
-    },
-    borderRadius: {
-      xl: '1rem',
-      '2xl': '1.5rem',
-    },
-    boxShadow: {
-      soft: '0 4px 12px rgba(0,0,0,0.06)',
+      backdropBlur: {
+        'xs': '2px',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      }
     },
   },
-},
-};
+  plugins: [],
+}

@@ -1,76 +1,265 @@
+// src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
 import React, { useState } from 'react';
 import { generateClaudeResponse } from '../features/claude/claudeService';
+import { Bot, Copy, RotateCcw, Zap, ArrowRight } from 'lucide-react';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 type MessageType = 'Email' | 'Subject Line' | 'Social Post' | 'CTA Button';
+
+interface QuickActionProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  type: MessageType;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+const QuickAction: React.FC<QuickActionProps> = ({ icon, title, description, type, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full group text-left transition-all duration-200 ${
+      isActive 
+        ? 'bg-blue-600/20 border-blue-500/50' 
+        : 'bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40'
+    } border rounded-xl p-4`}
+  >
+    <div className="flex items-start space-x-4">
+      <div className={`p-2 rounded-lg transition-colors ${
+        isActive 
+          ? 'bg-blue-500/30 text-blue-400' 
+          : 'bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/30'
+      }`}>
+        {icon}
+      </div>
+      <div className="flex-1">
+        <h3 className={`font-semibold mb-1 transition-colors ${
+          isActive ? 'text-blue-300' : 'text-white group-hover:text-blue-400'
+        }`}>
+          {title}
+        </h3>
+        <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
+      </div>
+      <ArrowRight className={`w-5 h-5 text-slate-400 transition-all duration-200 ${
+        isActive ? 'opacity-100 translate-x-1' : 'opacity-0 group-hover:opacity-100 group-hover:translate-x-1'
+      }`} />
+    </div>
+  </button>
+);
 
 export default function MessagingAssistantPanel() {
   const [messageType, setMessageType] = useState<MessageType>('Email');
   const [context, setContext] = useState('');
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const promptTemplate = {
-    Email: `Write a fundraising email for the following campaign:\n\n`,
-    'Subject Line': `Write 3 subject lines for a fundraising email based on this campaign:\n\n`,
-    'Social Post': `Write a short social media post to support this fundraising campaign:\n\n`,
-    'CTA Button': `Write 3 short CTA button texts for this fundraising ask:\n\n`,
+    Email: `Write a compelling fundraising email for the following campaign:\n\n`,
+    'Subject Line': `Write 5 attention-grabbing subject lines for a fundraising email based on this campaign:\n\n`,
+    'Social Post': `Write an engaging social media post to support this fundraising campaign:\n\n`,
+    'CTA Button': `Write 5 compelling call-to-action button texts for this fundraising ask:\n\n`,
   };
 
+  const messageTypes = [
+    {
+      type: 'Email' as MessageType,
+      icon: <span className="text-lg">✉️</span>,
+      title: 'Draft Donor Email',
+      description: 'Create a complete fundraising email with compelling storytelling and clear call-to-action'
+    },
+    {
+      type: 'Subject Line' as MessageType,
+      icon: <span className="text-lg">📧</span>,
+      title: 'Generate Subject Lines',
+      description: 'Get multiple attention-grabbing subject lines optimized for open rates'
+    },
+    {
+      type: 'Social Post' as MessageType,
+      icon: <span className="text-lg">📱</span>,
+      title: 'Social Media Post',
+      description: 'Craft engaging social content to amplify your campaign reach'
+    },
+    {
+      type: 'CTA Button' as MessageType,
+      icon: <span className="text-lg">🔘</span>,
+      title: 'Call-to-Action Text',
+      description: 'Generate compelling button text that drives donations'
+    },
+  ];
+
   const handleGenerate = async () => {
+    if (!context.trim()) return;
+    
     setLoading(true);
     setResult('');
+    setError(null);
+
     try {
       const prompt = `${promptTemplate[messageType]}${context}`;
       const response = await generateClaudeResponse(prompt);
       setResult(response.content);
     } catch (err: any) {
-      setResult(`Error: ${err.message}`);
+      setError(err.message || 'Failed to generate content');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const handleReset = () => {
+    setResult('');
+    setError(null);
+    setContext('');
+    setCopySuccess(false);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto bg-white p-6 mt-10 rounded-xl shadow space-y-4">
-      <h2 className="text-2xl font-semibold">AI Messaging Assistant</h2>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Select message type</label>
-        <select
-          value={messageType}
-          onChange={e => setMessageType(e.target.value as MessageType)}
-          className="w-full border rounded p-2 text-sm"
-        >
-          <option>Email</option>
-          <option>Subject Line</option>
-          <option>Social Post</option>
-          <option>CTA Button</option>
-        </select>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="text-center">
+        <div className="flex items-center justify-center space-x-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <Bot className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-white">AI Messaging Assistant</h1>
+        </div>
+        <p className="text-slate-400 text-lg">Generate compelling fundraising content powered by Claude AI</p>
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">Campaign context</label>
-        <textarea
-          rows={5}
-          value={context}
-          onChange={e => setContext(e.target.value)}
-          className="w-full border rounded p-2 text-sm"
-          placeholder="Describe the campaign, audience, and key goals..."
-        />
+      {/* Content Type Selection */}
+      <div>
+        <h2 className="text-white text-xl font-semibold mb-6">Choose Content Type</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {messageTypes.map(({ type, icon, title, description }) => (
+            <QuickAction
+              key={type}
+              icon={icon}
+              title={title}
+              description={description}
+              type={type}
+              isActive={messageType === type}
+              onClick={() => setMessageType(type)}
+            />
+          ))}
+        </div>
       </div>
 
-      <button
-        onClick={handleGenerate}
-        disabled={loading || !context}
-        className="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Generating...' : 'Generate Message'}
-      </button>
+      {/* Input Section */}
+      <div className="bg-slate-800/30 border border-slate-700/30 rounded-xl p-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-white font-medium mb-3">
+              Campaign Context & Details
+            </label>
+            <textarea
+              rows={6}
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              className="w-full bg-slate-800/50 border border-slate-700/50 text-white placeholder-slate-400 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+              placeholder={`Describe your campaign details:\n\n• Campaign name and goal\n• Target audience\n• Key message or story\n• Deadline or urgency\n• Any specific requirements...`}
+            />
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-slate-400">
+              Selected: <span className="text-blue-400 font-medium">{messageType}</span>
+            </div>
+            <button
+              onClick={handleGenerate}
+              disabled={loading || !context.trim()}
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"
+            >
+              <Zap className="w-4 h-4" />
+              <span>{loading ? 'Generating...' : `Generate ${messageType}`}</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-slate-800/30 border border-slate-700/30 rounded-xl p-8">
+          <div className="text-center space-y-4">
+            <LoadingSpinner size="lg" />
+            <div>
+              <h3 className="text-white font-medium mb-2">Claude is crafting your {messageType.toLowerCase()}...</h3>
+              <p className="text-slate-400 text-sm">This may take up to 30 seconds</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-6">
+          <div className="flex items-start space-x-3">
+            <div className="text-red-400 text-xl">⚠️</div>
+            <div>
+              <h3 className="text-red-300 font-medium mb-1">Generation Failed</h3>
+              <p className="text-red-400 text-sm">{error}</p>
+              <button
+                onClick={handleGenerate}
+                className="mt-3 text-red-300 hover:text-red-200 text-sm underline"
+              >
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Results */}
       {result && (
-        <div className="mt-6 border-t pt-4">
-          <h3 className="text-lg font-medium mb-2">AI-Generated Output:</h3>
-          <pre className="bg-gray-100 p-4 rounded text-sm whitespace-pre-wrap">{result}</pre>
+        <div className="bg-slate-800/30 border border-slate-700/30 rounded-xl overflow-hidden">
+          {/* Results Header */}
+          <div className="px-6 py-4 border-b border-slate-700/30 flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Bot className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-white font-semibold">AI-Generated {messageType}</h3>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleCopy}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  copySuccess 
+                    ? 'bg-green-500/20 text-green-300' 
+                    : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white'
+                }`}
+              >
+                <Copy className="w-4 h-4" />
+                <span>{copySuccess ? 'Copied!' : 'Copy'}</span>
+              </button>
+              <button
+                onClick={handleReset}
+                className="flex items-center space-x-2 px-3 py-2 bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white rounded-lg text-sm font-medium transition-all duration-200"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>New Request</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Results Content */}
+          <div className="p-6">
+            <div className="bg-slate-900/50 rounded-lg p-6">
+              <pre className="text-slate-200 text-sm whitespace-pre-wrap font-sans leading-relaxed">
+                {result}
+              </pre>
+            </div>
+          </div>
         </div>
       )}
     </div>
