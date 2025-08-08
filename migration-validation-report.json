@@ -1,0 +1,661 @@
+{
+  "timestamp": "2025-08-08T15:20:40.503Z",
+  "summary": {
+    "filesValidated": 71,
+    "totalIssues": 90,
+    "errorCount": 9,
+    "warningCount": 81,
+    "filesWithIssues": 36
+  },
+  "issuesByFile": {
+    "src/components/AnalyticsWidgets.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used KPIWidgetProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignSummaryProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonationTrendsProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ExportWidgetProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ActivityFeedProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used GoalTrackerProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/AppContent.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Icon but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Suspense but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CurrentComponent but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CampaignDetail.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignDetailProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CampaignDisplayComponetns.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignDisplayProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CampaignList.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignListProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignFiltersPanel but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CampaignModal.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignModalProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignFormData but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used HTMLInputElement but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Icon but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CampaignPerformanceTable.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignPerformanceTableProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/CommuincationTools.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used EmailTemplateBuilderProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used OutreachSchedulerProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonorCommunicationHistoryProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used QuickMessageComposerProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/DashboardOverview.tsx": [
+      {
+        "rule": "obsolete_imports",
+        "severity": "error",
+        "message": "Check for obsolete component imports failed",
+        "line": 2,
+        "autoFix": true
+      },
+      {
+        "rule": "missing_new_imports",
+        "severity": "error",
+        "message": "Uses StatCard/MetricCard but missing KPIWidget import",
+        "autoFix": false
+      }
+    ],
+    "src/components/DonorComponents.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonorCardProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonationHistoryProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonorSegmentWidgetProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DonorSearchBarProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/FormComponents.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used EnhancedInputProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used AdvancedSelectProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used HTMLDivElement but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used FileUploadProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used HTMLInputElement but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DateRangePickerProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/LoadingSpinner.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used LoadingSpinnerProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/MetricCard.tsx": [
+      {
+        "rule": "missing_new_imports",
+        "severity": "error",
+        "message": "Uses StatCard/MetricCard but missing KPIWidget import",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MetricCardProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/MetricsOverview.tsx": [
+      {
+        "rule": "missing_new_imports",
+        "severity": "error",
+        "message": "Uses StatCard/MetricCard but missing KPIWidget import",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MetricsOverviewProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MetricCard but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/NotificationsPanel.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used NotificationsPanelProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/PerformanceChart.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used PerformanceChartProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ChartComponent but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignPerformanceTableProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/SegmentComparison.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used SegmentComparisonProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used SegmentComparisonType but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used SegmentSelector but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ComparisonSummary but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MetricComparisonCard but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/Sidebar.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used SidebarProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/SidebarItem.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used SidebarItemProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/Topbar.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used TopbarProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/ui-kit/Button.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used HTMLButtonElement but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ButtonProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/ui-kit/Card.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CardProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Component but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Card but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/ui-kit/Input.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used HTMLInputElement but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used InputProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/ui-kit/Modal.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ModalProps but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/components/ui-kit/Panel.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used PanelProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Panel but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/context/notifications/NotificationsContext.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used NotificationsContextType but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/features/claude/ClaudePanel.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ClaudePanelProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ConversationSession but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used CampaignIcon but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/features/claude/claudeService.ts": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ClaudeResponse but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/features/claude/useClaude.ts": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ConversationSession but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used AbortController but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/main.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Imported React but not used",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Imported ReactDOM but not used",
+        "autoFix": false
+      }
+    ],
+    "src/models/campaign.ts": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Campaign but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/panels/AnalyticsDashboard.tsx": [
+      {
+        "rule": "obsolete_imports",
+        "severity": "error",
+        "message": "Check for obsolete component imports failed",
+        "line": 7,
+        "autoFix": true
+      },
+      {
+        "rule": "obsolete_imports",
+        "severity": "error",
+        "message": "Check for obsolete component imports failed",
+        "line": 2,
+        "autoFix": true
+      },
+      {
+        "rule": "obsolete_imports",
+        "severity": "error",
+        "message": "Check for obsolete component imports failed",
+        "line": 8,
+        "autoFix": true
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used AnalyticsView but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/panels/CampaignsPanel.tsx": [
+      {
+        "rule": "missing_new_imports",
+        "severity": "error",
+        "message": "Uses StatCard/MetricCard but missing KPIWidget import",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used ViewMode but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used StatCard but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "old_prop_patterns",
+        "severity": "warning",
+        "message": "StatCard missing format prop (should be KPIWidget with format prop)",
+        "line": null,
+        "autoFix": false
+      }
+    ],
+    "src/panels/DashboardPanel.tsx": [
+      {
+        "rule": "missing_new_imports",
+        "severity": "error",
+        "message": "Uses StatCard/MetricCard but missing KPIWidget import",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used QuickActionCardProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used Icon but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used DashboardPanelProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used QuickActionCard but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MilestoneItem but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/panels/MessagingAssistPanel.tsx": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used QuickActionProps but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used MessageType but not imported",
+        "autoFix": false
+      },
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used QuickAction but not imported",
+        "autoFix": false
+      }
+    ],
+    "src/services/apiClient.ts": [
+      {
+        "rule": "component_usage_mismatch",
+        "severity": "warning",
+        "message": "Used T but not imported",
+        "autoFix": false
+      }
+    ]
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "items": [
+        "Fix all error-level issues before proceeding",
+        "Update StatCard/MetricCard usage to KPIWidget",
+        "Replace DonorInsightsPanel with specialized components"
+      ]
+    },
+    {
+      "priority": "medium",
+      "items": [
+        "Review and fix warning-level issues",
+        "Add missing props to enhance component functionality",
+        "Clean up unused imports"
+      ]
+    },
+    {
+      "priority": "low",
+      "items": [
+        "Consider updating prop patterns for better UX",
+        "Add trend and target props to KPIWidgets where appropriate"
+      ]
+    }
+  ],
+  "nextSteps": [
+    "1. Fix all error-level validation issues",
+    "2. Run TypeScript check: npx tsc --noEmit",
+    "3. Test each panel individually",
+    "4. Run full application test suite",
+    "5. Perform visual regression testing"
+  ]
+}

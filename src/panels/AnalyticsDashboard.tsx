@@ -4,8 +4,6 @@ import MetricsOverview from '../components/MetricsOverview';
 import { AnalyticsFilters, OrganizationAnalytics, DonorInsights } from '../models/analytics';
 import DonorInsightsPanel from '../components/DonorInsightsPanel';
 import AnalyticsFiltersComponent from '../components/AnalyticsFiltersComponent';
-import PerformanceChart from '../components/PerformanceChart';
-import CampaignPerformanceTable from '../components/CampaignPerformanceTable';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 type AnalyticsView = 'overview' | 'campaigns' | 'donors' | 'export';
@@ -68,7 +66,7 @@ const AnalyticsDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <LoadingSpinner size="lg" text="Loading analytics..." />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
@@ -152,28 +150,41 @@ const AnalyticsDashboard: React.FC = () => {
         {activeView === 'overview' && orgAnalytics && (
           <>
             <MetricsOverview />
-            <PerformanceChart
-              title="Fundraising Growth"
-              data={orgAnalytics.performanceComparisons as any}
-              type="comparison"
-            />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Performance Overview</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">
+                    ${orgAnalytics.currentPeriod.totalRaised.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-600">Current Period</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">
+                    ${orgAnalytics.previousPeriod.totalRaised.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-600">Previous Period</p>
+                </div>
+              </div>
+            </div>
           </>
         )}
 
         {activeView === 'campaigns' && orgAnalytics && (
           <div className="space-y-6">
-            <CampaignPerformanceTable campaigns={orgAnalytics.topPerformingCampaigns} />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <PerformanceChart
-                title="Campaign Success Rate"
-                data={orgAnalytics.topPerformingCampaigns}
-                type="success-rate"
-              />
-              <PerformanceChart
-                title="ROI by Campaign"
-                data={orgAnalytics.topPerformingCampaigns}
-                type="roi"
-              />
+            <div className="bg-white p-6 rounded-lg shadow">
+              <h3 className="text-lg font-semibold mb-4">Top Performing Campaigns</h3>
+              <div className="space-y-3">
+                {orgAnalytics.topPerformingCampaigns.map((campaign: { id: React.Key | null | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; raised: { toLocaleString: () => string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }; goal: { toLocaleString: () => string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }; }) => (
+                  <div key={campaign.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <span className="font-medium">{campaign.name}</span>
+                    <div className="text-right">
+                      <p className="font-semibold">${campaign.raised.toLocaleString()}</p>
+                      <p className="text-sm text-gray-600">Goal: ${campaign.goal.toLocaleString()}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -183,14 +194,14 @@ const AnalyticsDashboard: React.FC = () => {
         )}
 
         {activeView === 'export' && (
-          <div className="bg-white rounded-lg border border-gray-200 p-6 text-sm text-gray-700">
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Export Analytics Data</h3>
-            <p className="mb-2">
+            <p className="text-gray-600 mb-4">
               Download fundraising and donor performance data filtered by the current date range and selected criteria.
             </p>
             <button
               onClick={handleExportData}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Export All Data
             </button>

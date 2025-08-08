@@ -1,0 +1,162 @@
+// src/components/MetricCard.tsx - Updated with unified design system
+import React from 'react';
+import clsx from 'clsx';
+
+interface MetricCardProps {
+  title: string;
+  value: string | number;
+  change?: number;
+  icon?: React.ReactNode | string;
+  trend?: 'up' | 'down' | 'stable';
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'success' | 'warning' | 'error';
+  loading?: boolean;
+}
+
+const MetricCard: React.FC<MetricCardProps> = ({ 
+  title, 
+  value, 
+  change, 
+  icon,
+  trend,
+  className,
+  size = 'md',
+  variant = 'default',
+  loading = false
+}) => {
+  const getTrendIcon = () => {
+    if (loading) return null;
+    if (trend === 'up' || (change !== undefined && change > 0)) return '↗️';
+    if (trend === 'down' || (change !== undefined && change < 0)) return '↘️';
+    return '➡️';
+  };
+
+  const getTrendColor = () => {
+    if (trend === 'up' || (change !== undefined && change > 0)) return 'text-green-400';
+    if (trend === 'down' || (change !== undefined && change < 0)) return 'text-red-400';
+    return 'text-slate-400';
+  };
+
+  const sizeClasses = {
+    sm: {
+      container: 'p-4',
+      title: 'text-xs',
+      value: 'text-lg',
+      change: 'text-xs',
+      icon: 'w-8 h-8 text-sm'
+    },
+    md: {
+      container: 'p-6',
+      title: 'text-sm',
+      value: 'text-2xl',
+      change: 'text-sm',
+      icon: 'w-10 h-10 text-base'
+    },
+    lg: {
+      container: 'p-8',
+      title: 'text-base',
+      value: 'text-3xl',
+      change: 'text-base',
+      icon: 'w-12 h-12 text-lg'
+    }
+  };
+
+  const variantClasses = {
+    default: {
+      container: 'card-base card-hover',
+      title: 'text-slate-400',
+      value: 'text-white',
+      icon: 'bg-blue-500/20 text-blue-400'
+    },
+    success: {
+      container: 'card-base border-green-500/30 bg-green-500/5',
+      title: 'text-green-400/80',
+      value: 'text-white',
+      icon: 'bg-green-500/20 text-green-400'
+    },
+    warning: {
+      container: 'card-base border-yellow-500/30 bg-yellow-500/5',
+      title: 'text-yellow-400/80',
+      value: 'text-white',
+      icon: 'bg-yellow-500/20 text-yellow-400'
+    },
+    error: {
+      container: 'card-base border-red-500/30 bg-red-500/5',
+      title: 'text-red-400/80',
+      value: 'text-white',
+      icon: 'bg-red-500/20 text-red-400'
+    }
+  };
+
+  const currentSize = sizeClasses[size];
+  const currentVariant = variantClasses[variant];
+
+  if (loading) {
+    return (
+      <div className={clsx(currentVariant.container, currentSize.container, className)}>
+        <div className="animate-pulse">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="h-4 bg-slate-700 rounded mb-2 w-3/4"></div>
+              <div className="h-8 bg-slate-700 rounded w-1/2"></div>
+            </div>
+            <div className={clsx(currentSize.icon, 'bg-slate-700 rounded-xl')}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={clsx(currentVariant.container, currentSize.container, 'relative overflow-hidden group', className)}>
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <p className={clsx('font-medium mb-1', currentSize.title, currentVariant.title)}>
+            {title}
+          </p>
+          <p className={clsx('font-bold leading-tight', currentSize.value, currentVariant.value)}>
+            {typeof value === 'number' ? value.toLocaleString() : value}
+          </p>
+          
+          {(change !== undefined || trend) && (
+            <div className="flex items-center mt-3 gap-1">
+              <span className="text-sm">{getTrendIcon()}</span>
+              <span className={clsx('font-medium', currentSize.change, getTrendColor())}>
+                {change !== undefined ? (
+                  `${change > 0 ? '+' : ''}${change}%`
+                ) : (
+                  trend === 'up' ? 'Trending up' : 
+                  trend === 'down' ? 'Trending down' : 
+                  'Stable'
+                )}
+              </span>
+              <span className={clsx('text-slate-500', currentSize.change)}>
+                vs last period
+              </span>
+            </div>
+          )}
+        </div>
+
+        {icon && (
+          <div className={clsx(
+            'rounded-xl flex items-center justify-center flex-shrink-0',
+            currentSize.icon,
+            currentVariant.icon
+          )}>
+            {typeof icon === 'string' ? (
+              <span>{icon}</span>
+            ) : (
+              icon
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Subtle background pattern for visual interest */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+    </div>
+  );
+};
+
+export default React.memo(MetricCard);
