@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { KPIWidget } from '../components/AnalyticsWidgets';
 import {
   Campaign,
   CampaignCreateRequest,
@@ -6,7 +7,7 @@ import {
   CampaignStats
 } from '../models/campaign';
 import { campaignService } from '../services/campaignService';
-import { CampaignList } from '../components/CampaignList';
+import CampaignList from '../components/CampaignList';
 import { CampaignModal } from '../components/CampaignModal';
 import { CampaignDetail } from '../components/CampaignDetail';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -74,34 +75,6 @@ const CampaignsPanel: React.FC = () => {
     }
   };
 
-  const StatCard: React.FC<{
-    title: string;
-    value: string | number;
-    subtext?: string;
-    color?: 'blue' | 'green' | 'purple' | 'indigo';
-  }> = ({ title, value, subtext, color = 'blue' }) => {
-    const colorMap: Record<string, string> = {
-      blue: 'text-blue-600',
-      green: 'text-green-600',
-      purple: 'text-purple-600',
-      indigo: 'text-indigo-600'
-    };
-
-    return (
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="flex items-center">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600">{title}</p>
-            <p className={`text-2xl font-bold ${colorMap[color]}`}>
-              {typeof value === 'number' ? value.toLocaleString() : value}
-            </p>
-            {subtext && <p className="text-xs text-gray-500 mt-1">{subtext}</p>}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   if (viewMode === 'detail' && selectedCampaign) {
     return (
       <div className="space-y-6">
@@ -148,29 +121,29 @@ const CampaignsPanel: React.FC = () => {
           </div>
         ) : stats ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard
+            <KPIWidget
               title="Total Campaigns"
               value={stats.totalCampaigns}
-              subtext="All time"
+              format="number"
               color="blue"
             />
-            <StatCard
+            <KPIWidget
               title="Active Campaigns"
               value={stats.activeCampaigns}
-              subtext="Currently running"
+              format="number"
               color="green"
             />
-            <StatCard
+            <KPIWidget
               title="Total Raised"
-              value={`$${stats.totalRaised.toLocaleString()}`}
-              subtext="Across all campaigns"
+              value={stats.totalRaised}
+              format="currency"
               color="purple"
             />
-            <StatCard
+            <KPIWidget
               title="Success Rate"
-              value={`${stats.successRate.toFixed(1)}%`}
-              subtext="Campaigns reaching goal"
-              color="indigo"
+              value={stats.successRate}
+              format="percentage"
+              color="red"
             />
           </div>
         ) : (

@@ -63,7 +63,7 @@ export const formatCampaignSummary = (campaign: Campaign) => ({
   goalFormatted: `$${campaign.goal.toLocaleString()}`,
   raisedFormatted: `$${campaign.raised.toLocaleString()}`,
   progressText: `${campaign.progress}% complete`,
-  daysLeftText: `${campaign.daysLeft} days remaining`,
+  daysLeftText: `${campaign.daysLeft || 0} days remaining`,
   donorText: `${campaign.donorCount} donors`,
   averageGiftText: `$${campaign.averageGift} avg gift`,
   status: campaign.status,
@@ -76,9 +76,9 @@ export const formatCampaignSummary = (campaign: Campaign) => ({
 export const getCampaignUrgency = (campaign: Campaign): 'low' | 'medium' | 'high' | 'critical' => {
   if (campaign.status !== 'Active') return 'low';
   
-  if (campaign.daysLeft <= 3) return 'critical';
-  if (campaign.daysLeft <= 7) return 'high';
-  if (campaign.daysLeft <= 30) return 'medium';
+  if (campaign.daysLeft || 0 <= 3) return 'critical';
+  if (campaign.daysLeft || 0 <= 7) return 'high';
+  if (campaign.daysLeft || 0 <= 30) return 'medium';
   return 'low';
 };
 

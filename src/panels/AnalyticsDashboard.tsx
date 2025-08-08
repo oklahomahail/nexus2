@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { OrganizationAnalytics, DonorInsights, AnalyticsFilters } from '../models/analytics';
 import { analyticsService } from '../services/analyticsService';
-import { MetricsOverview } from '../components/MetricsOverview';
-import AnalyticsFiltersComponent from '../components/AnalyticsFilters';
-import PerformanceChart from '../components/PerformanceChart';
+import MetricsOverview from '../components/MetricsOverview';
+import { AnalyticsFilters, OrganizationAnalytics, DonorInsights } from '../models/analytics';
 import DonorInsightsPanel from '../components/DonorInsightsPanel';
+import AnalyticsFiltersComponent from '../components/AnalyticsFiltersComponent';
+import PerformanceChart from '../components/PerformanceChart';
 import CampaignPerformanceTable from '../components/CampaignPerformanceTable';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -151,10 +151,10 @@ const AnalyticsDashboard: React.FC = () => {
       <div className="space-y-6">
         {activeView === 'overview' && orgAnalytics && (
           <>
-            <MetricsOverview analytics={orgAnalytics} />
+            <MetricsOverview />
             <PerformanceChart
               title="Fundraising Growth"
-              data={orgAnalytics.performanceComparisons}
+              data={orgAnalytics.performanceComparisons as any}
               type="comparison"
             />
           </>

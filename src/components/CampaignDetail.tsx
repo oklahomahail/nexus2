@@ -225,7 +225,7 @@ export const CampaignDetail: React.FC<CampaignDetailProps> = ({
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Tags</p>
                 <div className="flex flex-wrap gap-2">
-                  {campaign.tags.map((tag, index) => (
+                  {campaign.tags.map((tag: string, index: number) => (
                     <span
                       key={index}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"

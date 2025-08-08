@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-export const useKeyboardShortcuts = (dispatch, openModal) => {
+export const useKeyboardShortcuts = (dispatch: any, openModal: any) => {
   useEffect(() => {
-    const handleKey = (e) => {
+    const handleKey = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
         switch (e.key.toLowerCase()) {
           case 'k':

@@ -5,7 +5,7 @@ import { generateId } from '../utils/generateId';
 export const useNotifications = () => {
   const [notifications, dispatch] = useReducer(notificationsReducer, []);
 
-  const addNotification = useCallback((notification) => {
+  const addNotification = useCallback((notification: any) => {
     const newNotification = {
       ...notification,
       id: generateId(),
@@ -21,11 +21,11 @@ export const useNotifications = () => {
     return newNotification;
   }, []);
 
-  const markAsRead = useCallback((id) => {
-    dispatch({ type: 'MARK_READ', payload: id });
+  const markAsRead = useCallback((id: any) => {
+    dispatch({ type: 'MARK_NOTIFICATION_READ', payload: id });
   }, []);
 
-  const removeNotification = useCallback((id) => {
+  const removeNotification = useCallback((id: any) => {
     dispatch({ type: 'REMOVE_NOTIFICATION', payload: id });
   }, []);
 

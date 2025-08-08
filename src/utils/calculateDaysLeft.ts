@@ -1,4 +1,4 @@
-export const calculateDaysLeft = (deadline) => {
+export const calculateDaysLeft = (deadline: string | number | Date) => {
   if (!deadline) return 0;
   const today = new Date();
   const target = new Date(deadline);

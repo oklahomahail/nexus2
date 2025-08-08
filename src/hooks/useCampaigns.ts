@@ -10,8 +10,8 @@ interface CampaignStats {
 export const useCampaigns = (): { stats: CampaignStats } => {
   const { state } = useAppContext();
 
-  const active = state.campaigns?.filter((c) => c.status === 'active').length || 0;
-  const totalRaised = state.campaigns?.reduce((sum, c) => sum + (c.amountRaised || 0), 0) || 0;
+  const active = state.campaigns?.filter((c) => c.status === 'Active').length || 0;
+  const totalRaised = state.campaigns?.reduce((sum, c) => sum + (c.raised || 0), 0) || 0;
 
   return {
     stats: {

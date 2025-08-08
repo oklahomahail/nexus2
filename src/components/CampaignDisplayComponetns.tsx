@@ -11,20 +11,20 @@ export const CampaignProgressDisplay: React.FC<CampaignDisplayProps> = ({ campai
     <div className="w-20 bg-slate-700 rounded-full h-2">
       <div 
         className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
-        style={{ width: `${Math.min(campaign.progress, 100)}%` }}
+        style={{ width: `${Math.min(campaign.progress || 0, 100)}%` }}
       />
     </div>
-    <span className="text-sm font-medium text-slate-200">{campaign.progress}%</span>
+    <span className="text-sm font-medium text-slate-200">{campaign.progress || 0}%</span>
   </div>
 );
 
 export const CampaignDaysLeftDisplay: React.FC<CampaignDisplayProps> = ({ campaign }) => (
   <span className={`font-medium ${
-    campaign.daysLeft <= 7 ? 'text-red-400' : 
-    campaign.daysLeft <= 30 ? 'text-yellow-400' : 
+    campaign.daysLeft || 0 || 0 <= 7 ? 'text-red-400' : 
+    campaign.daysLeft || 0 || 0 <= 30 ? 'text-yellow-400' : 
     'text-slate-300'
   }`}>
-    {campaign.daysLeft} days left
+    {campaign.daysLeft || 0 || 0} days left
   </span>
 );
 

@@ -174,7 +174,17 @@ class AnalyticsService {
         raisedChange: 21.9,
         donorsChange: 14.5,
         campaignsChange: 20.0
-      }
+      },
+      performanceComparisons: {
+        current: 485600,
+        previous: 398200,
+        label: "Fundraising Performance"
+      },
+      topPerformingCampaigns: [
+        { id: "1", name: "Youth Sports Program", raised: 35000, goal: 35000 },
+        { id: "2", name: "Back to School Drive", raised: 32500, goal: 50000 },
+        { id: "3", name: "Emergency Food Relief", raised: 18750, goal: 25000 }
+      ]
     };
   }
 

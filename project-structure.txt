@@ -2,7 +2,7 @@
 ├── env.d.ts
 ├── env.local
 ├── generate-nexus-starter.js
-├── gitignore
+├── .gitignore
 ├── index.html
 ├── package-lock.json
 ├── package.json

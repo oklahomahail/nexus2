@@ -110,8 +110,8 @@ class CampaignService {
         filteredCampaigns = filteredCampaigns.filter(c => {
           const campaignStart = new Date(c.startDate);
           const campaignEnd = new Date(c.endDate);
-          const filterStart = new Date(filters.dateRange!.start);
-          const filterEnd = new Date(filters.dateRange!.end);
+          const filterStart = new Date(filters.dateRange!.startDate);
+          const filterEnd = new Date(filters.dateRange!.endDate);
           
           return campaignStart <= filterEnd && campaignEnd >= filterStart;
         });

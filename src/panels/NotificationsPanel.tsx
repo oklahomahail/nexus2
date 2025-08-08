@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const NotificationsPanel = ({ notifications = [], onClose }) => {
+const NotificationsPanel = ({ notifications = [], onClose }: { notifications?: any[], onClose?: any }) => {
   if (!notifications.length) return null;
 
   return (

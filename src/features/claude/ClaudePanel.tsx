@@ -207,12 +207,12 @@ const ClaudePanel: React.FC<ClaudePanelProps> = ({
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-white truncate">{currentCampaign.name}</h3>
               <div className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                currentCampaign.progress >= 75 ? 'bg-green-500/20 text-green-400' :
-                currentCampaign.progress >= 50 ? 'bg-blue-500/20 text-blue-400' :
-                currentCampaign.progress >= 25 ? 'bg-yellow-500/20 text-yellow-400' :
+                currentCampaign.progress || 0 || 0 >= 75 ? 'bg-green-500/20 text-green-400' :
+                currentCampaign.progress || 0 || 0 >= 50 ? 'bg-blue-500/20 text-blue-400' :
+                currentCampaign.progress || 0 || 0 >= 25 ? 'bg-yellow-500/20 text-yellow-400' :
                 'bg-red-500/20 text-red-400'
               }`}>
-                {currentCampaign.progress}% Complete
+                {currentCampaign.progress || 0 || 0}% Complete
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -225,11 +225,11 @@ const ClaudePanel: React.FC<ClaudePanelProps> = ({
               <div>
                 <span className="text-slate-400">Days Left:</span>
                 <span className={`ml-2 font-medium ${
-                  currentCampaign.daysLeft <= 7 ? 'text-red-400' :
-                  currentCampaign.daysLeft <= 30 ? 'text-yellow-400' :
+                  currentCampaign.daysLeft || 0 || 0 <= 7 ? 'text-red-400' :
+                  currentCampaign.daysLeft || 0 || 0 <= 30 ? 'text-yellow-400' :
                   'text-white'
                 }`}>
-                  {currentCampaign.daysLeft}
+                  {currentCampaign.daysLeft || 0 || 0}
                 </span>
               </div>
             </div>

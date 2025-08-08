@@ -1,7 +1,7 @@
 // src/context/analytics/AnalyticsContext.tsx
 
 import React, { createContext, useContext, ReactNode } from 'react';
-import { AnalyticsContextType } from './analyticsTypes';
+import { AnalyticsContextType } from './AnalyticsTypes';
 
 const AnalyticsContext = createContext<AnalyticsContextType | undefined>(undefined);
 

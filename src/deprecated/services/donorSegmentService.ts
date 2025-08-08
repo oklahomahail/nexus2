@@ -383,4 +383,5 @@ class DonorSegmentService {
 }
 
 // export const donorSegmentService = new DonorSegmentService();
+const donorSegmentService = new DonorSegmentService();
 export default donorSegmentService;

@@ -1,5 +1,6 @@
-// ✅ src/components/SidebarItem.tsx
+// src/components/SidebarItem.tsx - Unified with design system
 import React from 'react';
+import clsx from 'clsx';
 
 interface SidebarItemProps {
   icon: string;
@@ -10,20 +11,56 @@ interface SidebarItemProps {
   collapsed: boolean;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, description, isActive, onClick, collapsed }) => {
+const SidebarItem: React.FC<SidebarItemProps> = ({ 
+  icon, 
+  label, 
+  description, 
+  isActive, 
+  onClick, 
+  collapsed 
+}) => {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
-        isActive ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-      }`}
+      className={clsx(
+        'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group relative',
+        isActive 
+          ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/25' 
+          : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+      )}
       title={collapsed ? label : undefined}
     >
-      <span className="text-lg">{icon}</span>
+      {/* Icon */}
+      <span className="text-lg flex-shrink-0 w-5 h-5 flex items-center justify-center">
+        {icon}
+      </span>
+      
+      {/* Label and Description */}
       {!collapsed && (
         <div className="min-w-0 flex-1">
-          <div className="font-medium text-sm">{label}</div>
-          {description && <div className="text-xs text-gray-500 truncate">{description}</div>}
+          <div className="font-medium text-sm leading-tight">{label}</div>
+          {description && (
+            <div className="text-xs opacity-75 leading-tight truncate mt-0.5">
+              {description}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Active Indicator */}
+      {isActive && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-white rounded-full" />
+      )}
+
+      {/* Tooltip for collapsed state */}
+      {collapsed && (
+        <div className="absolute left-full ml-2 px-3 py-2 bg-slate-800 text-white text-sm rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50 whitespace-nowrap">
+          <div className="font-medium">{label}</div>
+          {description && (
+            <div className="text-xs opacity-75 mt-0.5">{description}</div>
+          )}
+          {/* Arrow */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-slate-800 rotate-45" />
         </div>
       )}
     </button>

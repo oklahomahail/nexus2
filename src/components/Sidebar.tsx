@@ -1,10 +1,10 @@
-// src/components/Sidebar.tsx
-
+// src/components/Sidebar.tsx - Modernized with unified design system
 import React from 'react';
 import { useUI } from '@/context/useUI';
 import { useAnalytics } from '@/context/analytics/AnalyticsContext';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import SidebarItem from './SidebarItem';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SidebarProps {
   navigationItems: {
@@ -22,52 +22,50 @@ const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
 
   return (
     <aside
-      className={`bg-white border-r border-gray-200 transition-all duration-300 ${
+      className={`bg-surface/50 border-r border-surface backdrop-blur-md transition-all duration-300 ${
         sidebarCollapsed ? 'w-16' : 'w-64'
-      } hidden sm:block relative`}
+      } hidden sm:block relative flex flex-col h-screen`}
     >
-      <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+      {/* Header */}
+      <div className="p-6 border-b border-surface/50 flex items-center justify-between flex-shrink-0">
         {!sidebarCollapsed && (
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Nexus</h1>
-            <p className="text-sm text-gray-600">Nonprofit Platform</p>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">N</span>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">Nexus</h1>
+              <p className="text-slate-400 text-xs">Nonprofit Platform</p>
+            </div>
           </div>
         )}
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-lg hover:bg-gray-100"
+          className="p-2 rounded-lg hover:bg-slate-800/50 text-slate-400 hover:text-white transition-all duration-200"
+          title={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <svg
-            className={`w-5 h-5 transition-transform ${
-              sidebarCollapsed ? 'rotate-180' : ''
-            }`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-            />
-          </svg>
+          {sidebarCollapsed ? (
+            <ChevronRight className="w-5 h-5" />
+          ) : (
+            <ChevronLeft className="w-5 h-5" />
+          )}
         </button>
       </div>
 
+      {/* User Profile */}
       {user?.id && (
-        <div className="p-4 border-b border-gray-200 flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-blue-600 font-medium text-sm">
+        <div className="p-4 border-b border-surface/50 flex items-center gap-3 flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-semibold text-sm">
               {user.name?.charAt(0) || 'U'}
             </span>
           </div>
           {!sidebarCollapsed && (
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {user.name || 'User'}
               </p>
-              <p className="text-xs text-gray-600 truncate">
+              <p className="text-xs text-slate-400 truncate">
                 {user.organizationName || 'Organization'}
               </p>
             </div>
@@ -75,44 +73,57 @@ const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
         </div>
       )}
 
-      <nav className="p-4 space-y-2">
-        {navigationItems.map((item) => (
-          <SidebarItem
-            key={item.key}
-            icon={item.icon}
-            label={item.label}
-            description={item.description}
-            isActive={activeView === item.key}
-            onClick={() => setActiveView(item.key)}
-            collapsed={sidebarCollapsed}
-          />
-        ))}
+      {/* Navigation */}
+      <nav className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+        <div className="space-y-2">
+          {!sidebarCollapsed && (
+            <div className="text-slate-500 text-xs uppercase tracking-wider font-medium mb-3 px-2">
+              Navigation
+            </div>
+          )}
+          {navigationItems.map((item) => (
+            <SidebarItem
+              key={item.key}
+              icon={item.icon}
+              label={item.label}
+              description={item.description}
+              isActive={activeView === item.key}
+              onClick={() => setActiveView(item.key)}
+              collapsed={sidebarCollapsed}
+            />
+          ))}
+        </div>
       </nav>
 
+      {/* Quick Stats Footer */}
       {!sidebarCollapsed && (
-        <div className="absolute bottom-4 left-4 right-4 bg-gray-50 rounded-lg p-3">
-          <h4 className="text-xs font-medium text-gray-700 mb-2">
-            Quick Stats
-          </h4>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Active Campaigns</span>
-              <span className="font-medium">{campaignStats.active}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total Raised</span>
-              <span className="font-medium">
-                ${campaignStats.totalRaised.toLocaleString()}
-              </span>
-            </div>
-            {organization && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Donors</span>
-                <span className="font-medium">
-                  {organization.overallMetrics.totalDonors.toLocaleString()}
+        <div className="p-4 border-t border-surface/50 flex-shrink-0">
+          <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700/50">
+            <h4 className="text-xs font-medium text-slate-400 mb-3 uppercase tracking-wider">
+              Quick Stats
+            </h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-300">Active Campaigns</span>
+                <span className="text-sm font-semibold text-white bg-blue-500/20 px-2 py-0.5 rounded-full">
+                  {campaignStats.active}
                 </span>
               </div>
-            )}
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-slate-300">Total Raised</span>
+                <span className="text-sm font-semibold text-green-400">
+                  ${campaignStats.totalRaised.toLocaleString()}
+                </span>
+              </div>
+              {organization && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-slate-300">Donors</span>
+                  <span className="text-sm font-semibold text-purple-400">
+                    {organization.overallMetrics.totalDonors.toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

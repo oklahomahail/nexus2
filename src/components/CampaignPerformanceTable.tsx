@@ -22,7 +22,7 @@ const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({ cam
             <tr key={c.id} className="border-t border-gray-200">
               <td className="px-4 py-2">{c.name}</td>
               <td className="px-4 py-2">{c.totalDonors}</td>
-              <td className="px-4 py-2">${c.totalRevenue.toLocaleString()}</td>
+              <td className="px-4 py-2">${(c.totalRevenue || 0).toLocaleString()}</td>
               <td className="px-4 py-2">{c.roi}%</td>
             </tr>
           ))}

@@ -97,3 +97,4 @@ src/__generated__/
 *.iml
 *.ipr
 *.iws
+.DS_Store
