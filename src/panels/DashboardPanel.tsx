@@ -1,24 +1,122 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-// src/panels/DashboardPanel.tsx - Fully modernized with unified design system
+/* eslint-disable */
+import React, { useState } from "react";
 import {
   Target,
   TrendingUp,
-  Bot,
   Users,
   DollarSign,
-  Mail,
+  Activity,
   Calendar,
+  AlertCircle,
+  CheckCircle,
+  Clock,
   Plus,
   BarChart3,
 } from "lucide-react";
-import React, { useState } from "react";
 
-import { KPIWidget } from "../components/AnalyticsWidgets";
-import { CampaignModal } from "../components/CampaignModal";
-import {
-  CampaignCreateRequest,
-  CampaignUpdateRequest,
-} from "../models/campaign";
+interface QuickActionCardProps {
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  onClick: () => void;
+  color?: "blue" | "green" | "purple" | "indigo";
+}
+
+const QuickActionCard: React.FC<QuickActionCardProps> = ({
+  title,
+  description,
+  icon: Icon,
+  onClick,
+  color = "blue",
+}) => {
+  const colorClasses = {
+    blue: "bg-blue-600 hover:bg-blue-700",
+    green: "bg-green-600 hover:bg-green-700",
+    purple: "bg-purple-600 hover:bg-purple-700",
+    indigo: "bg-indigo-600 hover:bg-indigo-700",
+  };
+
+  const iconColors = {
+    blue: "text-blue-100",
+    green: "text-green-100",
+    purple: "text-purple-100",
+    indigo: "text-indigo-100",
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`p-6 rounded-xl text-left transition-all duration-200 hover:scale-105 hover:shadow-lg ${
+        colorClasses[color]
+      }`}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <Icon className={`w-6 h-6 ${iconColors[color]}`} />
+      </div>
+      <h3 className="text-white font-semibold text-lg mb-2">{title}</h3>
+      <p className="text-white/80 text-sm">{description}</p>
+    </button>
+  );
+};
+
+const MetricCard: React.FC<{
+  title: string;
+  value: string | number;
+  change?: string;
+  trend?: "up" | "down" | "neutral";
+  icon: React.ComponentType<{ className?: string }>;
+}> = ({ title, value, change, trend = "neutral", icon: Icon }) => {
+  const trendColors = {
+    up: "text-green-400",
+    down: "text-red-400",
+    neutral: "text-slate-400",
+  };
+
+  return (
+    <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="p-2 bg-blue-600/20 rounded-lg">
+          <Icon className="w-5 h-5 text-blue-400" />
+        </div>
+        {change && (
+          <span className={`text-sm font-medium ${trendColors[trend]}`}>
+            {change}
+          </span>
+        )}
+      </div>
+      <h3 className="text-slate-400 text-sm font-medium mb-1">{title}</h3>
+      <p className="text-white text-2xl font-bold">{value}</p>
+    </div>
+  );
+};
+
+const ActivityItem: React.FC<{
+  title: string;
+  time: string;
+  type: "donation" | "campaign" | "alert";
+}> = ({ title, time, type }) => {
+  const typeIcons = {
+    donation: <DollarSign className="w-4 h-4 text-green-400" />,
+    campaign: <Target className="w-4 h-4 text-blue-400" />,
+    alert: <AlertCircle className="w-4 h-4 text-yellow-400" />,
+  };
+
+  const typeBg = {
+    donation: "bg-green-400/10",
+    campaign: "bg-blue-400/10",
+    alert: "bg-yellow-400/10",
+  };
+
+  return (
+    <div className="flex items-center space-x-3 p-3 hover:bg-slate-800/30 rounded-lg transition-colors">
+      <div className={`p-2 rounded-lg ${typeBg[type]}`}>{typeIcons[type]}</div>
+      <div className="flex-1 min-w-0">
+        <p className="text-white text-sm font-medium truncate">{title}</p>
+        <p className="text-slate-400 text-xs">{time}</p>
+      </div>
+    </div>
+  );
+};
 
 interface DashboardPanelProps {
   totalDonors?: number;
@@ -26,319 +124,179 @@ interface DashboardPanelProps {
   activeCampaigns?: number;
 }
 
-interface QuickActionCardProps {
-  title: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  onClick?: () => void;
-  color?: "blue" | "green" | "purple" | "indigo";
-}
-
-const QuickActionCard: React.FC<QuickActionCardProps> = ({
-  title,
-  _description,
-  icon: Icon,
-  _onClick,
-  _color = "blue",
-}) => {
-  const colorClasses = {
-    blue: "border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40",
-    green:
-      "border-green-500/20 bg-green-500/5 hover:bg-green-500/10 hover:border-green-500/40",
-    purple:
-      "border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40",
-    indigo:
-      "border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/40",
-  };
-
-  const iconColors = {
-    blue: "text-blue-400",
-    green: "text-green-400",
-    purple: "text-purple-400",
-    indigo: "text-indigo-400",
-  };
-
-  return (
-    <div
-      onClick={onClick}
-      className={`
-        group card-base p-6 cursor-pointer transition-all duration-300 border
-        ${colorClasses[color]}
-      `}
-    >
-      <div className="flex items-start space-x-4">
-        <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 group-hover:scale-105 transition-transform duration-200">
-          <Icon className={`w-6 h-6 ${iconColors[color]}`} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-300 transition-colors">
-            {title}
-          </h3>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            {description}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const MilestoneItem: React.FC<{
-  title: string;
-  date: string;
-  status: "upcoming" | "progress" | "completed";
-}> = ({ title, _date, _status }) => {
-  const statusColors = {
-    upcoming: { dot: "bg-yellow-400", text: "text-yellow-400" },
-    progress: { dot: "bg-blue-400", text: "text-blue-400" },
-    completed: { dot: "bg-green-400", text: "text-green-400" },
-  };
-
-  return (
-    <div className="flex items-start space-x-3 group">
-      <div
-        className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${statusColors[status].dot}`}
-      />
-      <div className="flex-1 min-w-0">
-        <p className="text-slate-300 text-sm font-medium group-hover:text-white transition-colors">
-          {title}
-        </p>
-        <p className={`text-xs mt-0.5 ${statusColors[status].text}`}>{date}</p>
-      </div>
-    </div>
-  );
-};
-
 const DashboardPanel: React.FC<DashboardPanelProps> = ({
-  totalDonors = 128,
-  _totalRevenue = 45750,
-  _activeCampaigns = 3,
+  totalDonors = 1247,
+  totalRevenue = 127500,
+  activeCampaigns = 4,
 }) => {
   const [_showModal, setShowModal] = useState(false);
-  const [_loading, setLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
 
-  const handleSaveCampaign = async (
-    data: CampaignCreateRequest | CampaignUpdateRequest,
-  ): Promise<void> => {
-    setLoading(true);
-    setError(null);
+  // Mock data for recent activity
+  const recentActivity = [
+    {
+      title: "New donation: $500 from John Smith",
+      time: "2 minutes ago",
+      type: "donation" as const,
+    },
+    {
+      title: "End of Year Campaign reached 75% of goal",
+      time: "1 hour ago",
+      type: "campaign" as const,
+    },
+    {
+      title: "Holiday Fundraiser launched successfully",
+      time: "3 hours ago",
+      type: "campaign" as const,
+    },
+    {
+      title: "New donation: $250 from Sarah Johnson",
+      time: "5 hours ago",
+      type: "donation" as const,
+    },
+    {
+      title: "Weekly goal deadline approaching",
+      time: "1 day ago",
+      type: "alert" as const,
+    },
+  ];
 
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Saved campaign:", data);
-      setShowModal(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save campaign");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Sample chart data for visualization
-  const chartData = [
-    { month: "Mar", donors: 140 },
-    { month: "Apr", donors: 165 },
-    { month: "May", donors: 180 },
-    { month: "Jun", donors: 175 },
-    { month: "Jul", donors: 160 },
-    { month: "Aug", donors: 185 },
-    { month: "Sep", donors: 200 },
+  const quickActions = [
+    {
+      title: "Create Campaign",
+      description: "Launch a new fundraising campaign",
+      icon: Target,
+      color: "green" as const,
+      onClick: () => setShowModal(true),
+    },
+    {
+      title: "View Analytics",
+      description: "See performance insights",
+      icon: BarChart3,
+      color: "blue" as const,
+      onClick: () => console.log("Navigate to analytics"),
+    },
+    {
+      title: "Manage Donors",
+      description: "View and organize donor data",
+      icon: Users,
+      color: "purple" as const,
+      onClick: () => console.log("Navigate to donors"),
+    },
+    {
+      title: "Schedule Outreach",
+      description: "Plan communication campaigns",
+      icon: Calendar,
+      color: "indigo" as const,
+      onClick: () => console.log("Navigate to messaging"),
+    },
   ];
 
   return (
     <div className="space-y-8">
-      {/* Error Display */}
-      {error && (
-        <div className="card-base p-4 border-red-500/30 bg-red-500/5 animate-fade-in">
-          <div className="flex items-start space-x-3">
-            <div className="w-5 h-5 text-red-400 mt-0.5">⚠️</div>
-            <div className="flex-1">
-              <p className="text-red-300 text-sm font-medium">Campaign Error</p>
-              <p className="text-red-400/80 text-sm mt-1">{error}</p>
-              <button
-                onClick={() => setError(null)}
-                className="text-red-300 hover:text-red-200 text-sm mt-2 underline"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Welcome Section */}
-      <div className="card-base p-6 border-l-4 border-l-blue-500">
-        <div className="flex justify-between items-start">
-          <div>
-            <h2 className="text-white text-2xl font-bold mb-2">
-              Welcome back! 👋
-            </h2>
-            <p className="text-slate-400 text-lg">
-              Here's what's happening with your campaigns today
-            </p>
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="button-primary flex items-center space-x-2 shadow-lg"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Campaign</span>
-          </button>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">
+          Welcome back, Dave! 👋
+        </h1>
+        <p className="text-slate-400">
+          Here's what's happening with your nonprofit today.
+        </p>
       </div>
 
       {/* Key Metrics */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-white text-xl font-semibold">
-            Performance Overview
-          </h3>
-          <button className="text-slate-400 hover:text-white text-sm flex items-center gap-2 transition-colors">
-            <BarChart3 className="w-4 h-4" />
-            View Detailed Analytics
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <MetricCard
+          title="Total Donors"
+          value={totalDonors.toLocaleString()}
+          change="+12% this month"
+          trend="up"
+          icon={Users}
+        />
+        <MetricCard
+          title="Total Revenue"
+          value={`$${totalRevenue.toLocaleString()}`}
+          change="+8% this month"
+          trend="up"
+          icon={DollarSign}
+        />
+        <MetricCard
+          title="Active Campaigns"
+          value={activeCampaigns}
+          change="2 ending soon"
+          trend="neutral"
+          icon={Target}
+        />
+        <MetricCard
+          title="Monthly Goal"
+          value="78%"
+          change="+5% this week"
+          trend="up"
+          icon={TrendingUp}
+        />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Quick Actions */}
+        <div className="lg:col-span-2">
+          <h2 className="text-xl font-semibold text-white mb-6">
+            Quick Actions
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {quickActions.map((action, index) => (
+              <QuickActionCard key={index} {...action} />
+            ))}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-white flex items-center">
+              <Activity className="w-5 h-5 mr-2 text-blue-400" />
+              Recent Activity
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {recentActivity.map((item, index) => (
+              <ActivityItem key={index} {...item} />
+            ))}
+          </div>
+          <button className="w-full mt-4 text-sm text-blue-400 hover:text-blue-300 transition-colors">
+            View all activity →
           </button>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <KPIWidget
-            title="Active Campaigns"
-            value={activeCampaigns}
-            trend="neutral"
-            icon={<Target className="w-5 h-5" />}
-          />
-          <KPIWidget
-            title="Total Donors"
-            value={totalDonors}
-            icon={<Users className="w-5 h-5" />}
-          />
-          <KPIWidget
-            title="Funds Raised"
-            value={`$${totalRevenue.toLocaleString()}`}
-            icon={<DollarSign className="w-5 h-5" />}
-          />
-          <KPIWidget
-            title="Emails Sent"
-            value="8,290"
-            icon={<Mail className="w-5 h-5" />}
-          />
-        </div>
       </div>
 
-      {/* Visual Chart Section */}
-      <div className="card-base p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h3 className="text-white text-xl font-semibold mb-2">
-              Donor Growth Trend
-            </h3>
-            <p className="text-slate-400">
-              Monthly donor acquisition over the last 7 months
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-bold text-green-400">+15.8%</p>
-            <p className="text-sm text-slate-400">Growth rate</p>
-          </div>
-        </div>
-
-        {/* Simple Chart Visualization */}
-        <div className="h-64 flex items-end justify-around p-4 space-x-2 bg-slate-900/50 rounded-xl border border-slate-700/30">
-          {chartData.map((item, index) => (
-            <div
-              key={index}
-              className="flex-1 flex flex-col items-center space-y-2"
-            >
-              <div
-                className="bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-sm w-full transition-all duration-500 hover:from-blue-500 hover:to-blue-300 cursor-pointer relative group"
-                style={{ height: `${(item.donors / 220) * 100}%` }}
-              >
-                {/* Tooltip */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  {item.donors} donors
-                </div>
-              </div>
-              <span className="text-xs text-slate-400 font-medium">
-                {item.month}
-              </span>
+      {/* Campaign Status */}
+      <div className="bg-slate-800/30 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">
+          Campaign Status
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex items-center space-x-3 p-4 bg-green-600/10 border border-green-600/20 rounded-lg">
+            <CheckCircle className="w-5 h-5 text-green-400" />
+            <div>
+              <p className="text-green-400 font-medium">Spring Fundraiser</p>
+              <p className="text-slate-400 text-sm">Goal achieved: $25,000</p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div>
-        <h3 className="text-white text-xl font-semibold mb-6">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <QuickActionCard
-            icon={Target}
-            title="Create Campaign"
-            description="Launch a new fundraising campaign with AI-powered content generation"
-            onClick={() => setShowModal(true)}
-            color="blue"
-          />
-          <QuickActionCard
-            icon={TrendingUp}
-            title="View Analytics"
-            description="Deep dive into campaign performance, donor insights, and ROI metrics"
-            color="green"
-          />
-          <QuickActionCard
-            icon={Bot}
-            title="AI Assistant"
-            description="Generate compelling campaign content, emails, and social media posts"
-            color="purple"
-          />
-        </div>
-      </div>
-
-      {/* Upcoming Milestones */}
-      <div>
-        <h3 className="text-white text-xl font-semibold mb-6">
-          Upcoming Milestones
-        </h3>
-        <div className="card-base p-6">
-          <div className="space-y-4">
-            <MilestoneItem
-              title="Girlstart EOY draft due"
-              date="Aug 12, 2024"
-              status="upcoming"
-            />
-            <MilestoneItem
-              title="BBHH NTXGD Match Confirmed"
-              date="Aug 18, 2024"
-              status="progress"
-            />
-            <MilestoneItem
-              title="CASA Campaign Launch"
-              date="Sept 1, 2024"
-              status="upcoming"
-            />
-            <MilestoneItem
-              title="Q3 Reporting Complete"
-              date="July 30, 2024"
-              status="completed"
-            />
           </div>
-
-          <div className="mt-6 pt-4 border-t border-slate-700/50">
-            <button className="text-blue-400 hover:text-blue-300 text-sm font-medium flex items-center gap-2 transition-colors">
-              <Calendar className="w-4 h-4" />
-              View all milestones
-            </button>
+          <div className="flex items-center space-x-3 p-4 bg-blue-600/10 border border-blue-600/20 rounded-lg">
+            <Target className="w-5 h-5 text-blue-400" />
+            <div>
+              <p className="text-blue-400 font-medium">End of Year Campaign</p>
+              <p className="text-slate-400 text-sm">Progress: 75% ($37,500)</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3 p-4 bg-yellow-600/10 border border-yellow-600/20 rounded-lg">
+            <Clock className="w-5 h-5 text-yellow-400" />
+            <div>
+              <p className="text-yellow-400 font-medium">Holiday Giving</p>
+              <p className="text-slate-400 text-sm">Ending in 12 days</p>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Campaign Modal */}
-      <CampaignModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSave={handleSaveCampaign}
-        mode="create"
-      />
     </div>
   );
 };

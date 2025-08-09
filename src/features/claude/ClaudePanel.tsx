@@ -1,82 +1,199 @@
 /* eslint-disable */
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+import React, { useState, useCallback, useEffect } from "react";
 import {
   X,
-  ArrowRight,
+  Send,
+  Bot,
   Copy,
   RotateCcw,
+  Sparkles,
+  MessageSquare,
+  Target,
+  TrendingUp,
+  Users,
   Zap,
-  User as CampaignIcon,
+  CheckCircle,
 } from "lucide-react";
-import React, { useState, useCallback, useEffect } from "react";
 
-// Fixed import paths based on file structure:
-// From src/features/claude/ClaudePanel.tsx, the paths should be:
-
-// Same directory (no ../ needed)
-import { ClaudeMessage } from "./claudeService";
-
-// Go up two levels to reach src/models/ and src/components/
-import LoadingSpinner from "../../components/LoadingSpinner";
-
-// Rest of your ClaudePanel code...
+interface ClaudePanelProps {
+  isOpen: boolean;
+  onClose: () => void;
+  currentCampaign?: any;
+  onCampaignSelect?: (campaign: any) => void;
+}
 
 interface ClaudeAction {
   id: string;
   label: string;
-  icon: string;
   description: string;
-  estimatedTime: string;
-  priority: "high" | "medium" | "low";
+  icon: React.ComponentType<{ className?: string }>;
+  prompt: string;
 }
+
 const ClaudePanel: React.FC<ClaudePanelProps> = ({
   isOpen,
-  _onClose,
-  _currentCampaign,
-  onCampaignSelect: _onCampaignSelect,
+  onClose,
+  currentCampaign,
 }) => {
-  // If useClaude hook doesn't work, create local state for testing
-  const [_isLoading, setIsLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
-  const [_response, setResponse] = useState<string | null>(null);
-  const [_conversationHistory, _setConversationHistory] = useState<
-    ClaudeMessage[]
-  >([]);
-  const [_sessions, _setSessions] = useState<ConversationSession[]>([]);
-  const [_currentSession, _setCurrentSession] =
-    useState<ConversationSession | null>(null);
+  const [selectedAction, setSelectedAction] = useState<string>("");
+  const [customPrompt, setCustomPrompt] = useState("");
+  const [response, setResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
 
-  const [_selectedAction, setSelectedAction] = useState<string | null>(null);
-  const [_showHistory, _setShowHistory] = useState(false);
-  const [_showSessions, _setShowSessions] = useState(false);
-  const [_copySuccess, setCopySuccess] = useState(false);
-  const [_customPrompt, _setCustomPrompt] = useState("");
-  const [_showCustomInput, setShowCustomInput] = useState(false);
+  const claudeActions: ClaudeAction[] = [
+    {
+      id: "email",
+      label: "Email Campaign",
+      description: "Generate compelling donation request emails",
+      icon: MessageSquare,
+      prompt: "Create a persuasive donation email for our campaign",
+    },
+    {
+      id: "social",
+      label: "Social Media",
+      description: "Create engaging social media posts",
+      icon: Sparkles,
+      prompt: "Write social media posts to promote our fundraising campaign",
+    },
+    {
+      id: "strategy",
+      label: "Campaign Strategy",
+      description: "Get strategic advice for campaign optimization",
+      icon: Target,
+      prompt:
+        "Provide strategic recommendations to improve our campaign performance",
+    },
+    {
+      id: "analytics",
+      label: "Performance Analysis",
+      description: "Analyze campaign metrics and suggest improvements",
+      icon: TrendingUp,
+      prompt:
+        "Analyze our campaign performance and suggest actionable improvements",
+    },
+  ];
 
-  const handleClaudeRequest = useCallback(
-    async (type: string) => {
-      if (!currentCampaign) {
-        setError("Please select a campaign first");
-        return;
-      }
+  const handleGenerate = useCallback(
+    async (actionType: string) => {
+      if (!currentCampaign) return;
 
-      setSelectedAction(type);
       setIsLoading(true);
-      setError(null);
+      setSelectedAction(actionType);
 
       try {
-        // Mock response for testing - replace with real API call
-        await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
-        const mockResponse = `Mock ${type} response for campaign: ${currentCampaign.name}\n\nThis is a test response. Replace with real Claude API integration.`;
-        setResponse(mockResponse);
-      } catch (err: any) {
-        setError(err.message || "Failed to generate content");
+        // Simulate AI response
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const mockResponses = {
+          email: `Subject: Join Us in Making a Difference - ${currentCampaign.name}
+
+Dear [Donor Name],
+
+I hope this message finds you well. As we approach the final weeks of our ${currentCampaign.name}, I wanted to reach out personally to share the incredible impact we've made together.
+
+So far, we've raised $${currentCampaign.raised?.toLocaleString()} toward our goal of $${currentCampaign.goal?.toLocaleString()}, and with ${currentCampaign.daysLeft} days remaining, every contribution brings us closer to creating lasting change in our community.
+
+Your support has already helped us:
+• Reach ${currentCampaign.donorCount} dedicated supporters
+• Achieve ${Math.round((currentCampaign.raised / currentCampaign.goal) * 100)}% of our fundraising goal
+• Create meaningful impact for those we serve
+
+With your continued partnership, we can reach our full potential and make an even greater difference. Would you consider making a contribution today?
+
+[DONATE NOW BUTTON]
+
+Thank you for believing in our mission.
+
+Warm regards,
+Dave Hail`,
+
+          social: `🌟 Amazing news! Our ${currentCampaign.name} is ${Math.round((currentCampaign.raised / currentCampaign.goal) * 100)}% funded!
+
+💝 Thanks to ${currentCampaign.donorCount} incredible supporters, we've raised $${currentCampaign.raised?.toLocaleString()} toward our $${currentCampaign.goal?.toLocaleString()} goal.
+
+⏰ Only ${currentCampaign.daysLeft} days left to make a difference!
+
+Every dollar counts. Join our mission: [LINK]
+
+#Nonprofit #Fundraising #CommunityImpact #MakeADifference`,
+
+          strategy: `Campaign Optimization Recommendations for ${currentCampaign.name}:
+
+🎯 PRIORITY ACTIONS:
+1. Increase donation frequency with ${currentCampaign.donorCount} existing donors
+2. Launch peer-to-peer fundraising campaign
+3. Create urgency messaging with ${currentCampaign.daysLeft} days remaining
+
+📊 PERFORMANCE INSIGHTS:
+• Current conversion rate: ${currentCampaign.conversionRate}%
+• Average gift size: $${currentCampaign.averageGift}
+• Email engagement: ${currentCampaign.clickThroughRate}% CTR
+
+🚀 GROWTH OPPORTUNITIES:
+• Target lapsed donors with reactivation campaign
+• Implement matching gift challenge
+• Leverage social media influencers
+• Create compelling impact stories
+
+💡 NEXT STEPS:
+Focus on the final push with urgent, impact-focused messaging that highlights the ${Math.round((currentCampaign.raised / currentCampaign.goal) * 100)}% progress made.`,
+
+          analytics: `Performance Analysis for ${currentCampaign.name}:
+
+📈 STRONG METRICS:
+✅ Donor engagement: ${currentCampaign.donorCount} supporters (Above average)
+✅ Conversion rate: ${currentCampaign.conversionRate}% (Industry benchmark: 2-5%)
+✅ Email performance: ${currentCampaign.clickThroughRate}% CTR (Good engagement)
+
+⚠️ AREAS FOR IMPROVEMENT:
+• Average gift size: $${currentCampaign.averageGift} (Could increase by 15-20%)
+• Time remaining: ${currentCampaign.daysLeft} days (Need acceleration)
+• Progress: ${Math.round((currentCampaign.raised / currentCampaign.goal) * 100)}% (Needs final push)
+
+🎯 RECOMMENDED ACTIONS:
+1. Launch a matching gift campaign to double impact
+2. Create urgency with countdown messaging
+3. Segment donors for personalized asks
+4. Share impact stories to increase emotional connection
+
+Expected outcome: 25-30% increase in final weeks with focused effort.`,
+        };
+
+        setResponse(
+          mockResponses[actionType as keyof typeof mockResponses] ||
+            "Response generated successfully!",
+        );
+      } catch (error) {
+        setResponse("Sorry, I encountered an error. Please try again.");
       } finally {
         setIsLoading(false);
       }
     },
     [currentCampaign],
   );
+
+  const handleCustomGenerate = useCallback(async () => {
+    if (!customPrompt.trim()) return;
+
+    setIsLoading(true);
+    setSelectedAction("custom");
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setResponse(`Based on your request: "${customPrompt}"
+
+I'd be happy to help with that! For your ${currentCampaign?.name || "campaign"}, here's what I recommend:
+
+This is a custom response based on your specific request. The AI assistant would provide tailored advice, content, or analysis based on your exact needs and current campaign data.
+
+Would you like me to elaborate on any specific aspect or generate additional content?`);
+    } catch (error) {
+      setResponse("Sorry, I encountered an error. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [customPrompt, currentCampaign]);
 
   const handleCopy = useCallback(async () => {
     if (!response) return;
@@ -85,71 +202,22 @@ const ClaudePanel: React.FC<ClaudePanelProps> = ({
       await navigator.clipboard.writeText(response);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
+    } catch (error) {
+      console.error("Failed to copy:", error);
     }
   }, [response]);
 
   const handleNewRequest = useCallback(() => {
-    setResponse(null);
-    setError(null);
-    setSelectedAction(null);
-    setShowCustomInput(false);
+    setResponse("");
+    setSelectedAction("");
+    setCustomPrompt("");
   }, []);
 
-  // Enhanced Claude actions with better descriptions
-  const claudeActions: ClaudeAction[] = [
-    {
-      id: "subject",
-      label: "Generate Subject Lines",
-      icon: "📧",
-      description:
-        "Create 5 compelling email subject lines with A/B testing recommendations",
-      estimatedTime: "~30 seconds",
-      priority: "high",
-    },
-    {
-      id: "email",
-      label: "Draft Donor Email",
-      icon: "✉️",
-      description:
-        "Write a complete fundraising email with proven structure and personalization",
-      estimatedTime: "~45 seconds",
-      priority: "high",
-    },
-    {
-      id: "strategy",
-      label: "Campaign Strategy",
-      icon: "🎯",
-      description:
-        "Develop a comprehensive week-by-week action plan with specific tactics",
-      estimatedTime: "~60 seconds",
-      priority: "medium",
-    },
-    {
-      id: "feedback",
-      label: "Improve Campaign",
-      icon: "📈",
-      description:
-        "Get actionable suggestions to optimize performance and engagement",
-      estimatedTime: "~45 seconds",
-      priority: "medium",
-    },
-    {
-      id: "cta",
-      label: "CTA Buttons",
-      icon: "🔘",
-      description: "Generate compelling call-to-action button text variations",
-      estimatedTime: "~20 seconds",
-      priority: "low",
-    },
-  ];
-
-  // Close panel on Escape key
+  // Handle escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
-        void onClose();
+        onClose();
       }
     };
 
@@ -162,208 +230,209 @@ const ClaudePanel: React.FC<ClaudePanelProps> = ({
   if (!isOpen) return null;
 
   return (
-    <aside className="fixed right-0 top-0 h-full w-[500px] bg-slate-900/95 backdrop-blur-md shadow-xl z-50 border-l border-slate-800 flex flex-col animate-in slide-in-from-right duration-300">
-      {/* Header */}
-      <div className="p-6 border-b border-slate-800">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">
-                Claude AI Assistant
-              </h2>
-              <p className="text-slate-400 text-sm">
-                Campaign-powered content generation
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-slate-800 rounded-xl transition-colors"
-          >
-            <X className="w-5 h-5 text-slate-400" />
-          </button>
-        </div>
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
+        onClick={onClose}
+      />
 
-        {/* Campaign Context */}
-        {currentCampaign ? (
-          <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-xl p-4 border border-blue-800/30">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white truncate">
-                {currentCampaign.name}
-              </h3>
-              <div
-                className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                  currentCampaign.progress || 0 || 0 >= 75
-                    ? "bg-green-500/20 text-green-400"
-                    : currentCampaign.progress || 0 || 0 >= 50
-                      ? "bg-blue-500/20 text-blue-400"
-                      : currentCampaign.progress || 0 || 0 >= 25
-                        ? "bg-yellow-500/20 text-yellow-400"
-                        : "bg-red-500/20 text-red-400"
-                }`}
-              >
-                {currentCampaign.progress || 0 || 0}% Complete
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <span className="text-slate-400">Goal:</span>
-                <span className="text-white ml-2 font-medium">
-                  ${currentCampaign.goal?.toLocaleString()}
-                </span>
+      {/* Panel */}
+      <div className="fixed right-0 top-0 h-full w-full max-w-2xl bg-slate-900/95 backdrop-blur-xl border-l border-slate-700/50 shadow-2xl z-50 overflow-hidden">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-slate-700/50 bg-slate-800/50">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-purple-600/20 rounded-xl">
+                <Bot className="w-6 h-6 text-purple-400" />
               </div>
               <div>
-                <span className="text-slate-400">Days Left:</span>
-                <span
-                  className={`ml-2 font-medium ${
-                    currentCampaign.daysLeft || 0 || 0 <= 7
-                      ? "text-red-400"
-                      : currentCampaign.daysLeft || 0 || 0 <= 30
-                        ? "text-yellow-400"
-                        : "text-white"
-                  }`}
-                >
-                  {currentCampaign.daysLeft || 0 || 0}
-                </span>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700">
-            <CampaignIcon className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-            <p className="text-slate-400 text-sm mb-3">
-              Select a campaign to get AI assistance tailored to your specific
-              goals and context.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Action Buttons */}
-        {!response && !isLoading && (
-          <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-white font-semibold">Choose an AI Action</h3>
-              {currentCampaign && (
-                <span className="text-xs text-green-400 font-medium px-2 py-1 bg-green-500/20 rounded-lg">
-                  ✨ Campaign-Optimized
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              {claudeActions.map((action: ClaudeAction) => (
-                <button
-                  key={action.id}
-                  onClick={() => handleClaudeRequest(action.id)}
-                  disabled={isLoading || !currentCampaign}
-                  className="w-full group disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <div className="flex items-start space-x-4 p-4 text-left hover:bg-slate-800/50 rounded-xl transition-all duration-200 border border-transparent hover:border-slate-700">
-                    <span className="text-2xl mt-1 group-hover:scale-110 transition-transform duration-200">
-                      {action.icon}
-                    </span>
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-white group-hover:text-blue-400 transition-colors">
-                          {action.label}
-                        </span>
-                        <span className="text-xs text-slate-500">
-                          {action.estimatedTime}
-                        </span>
-                      </div>
-                      <p className="text-sm text-slate-400 leading-relaxed">
-                        {action.description}
-                      </p>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-slate-500 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-1" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Loading State */}
-        {isLoading && (
-          <div className="p-6">
-            <div className="text-center py-12 space-y-4">
-              <LoadingSpinner size="lg" />
-              <div className="space-y-2">
-                <h3 className="font-medium text-white">
-                  Claude is analyzing your campaign...
-                </h3>
+                <h2 className="text-xl font-semibold text-white">
+                  AI Assistant
+                </h2>
                 <p className="text-sm text-slate-400">
-                  {selectedAction &&
-                    `Working on ${claudeActions.find((a) => a.id === selectedAction)?.label}`}
+                  Powered by Claude • Campaign optimization & content generation
                 </p>
               </div>
             </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-        )}
 
-        {/* Error State */}
-        {error && (
-          <div className="p-6">
-            <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-6 space-y-3">
-              <h3 className="font-medium text-red-300">Request Failed</h3>
-              <p className="text-sm text-red-400">{error}</p>
-              <button
-                onClick={handleNewRequest}
-                className="text-sm text-red-400 hover:text-red-300 font-medium transition-colors"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Response */}
-        {response && (
-          <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-white" />
+          {/* Campaign Info */}
+          {currentCampaign && (
+            <div className="p-6 bg-slate-800/30 border-b border-slate-700/30">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-white text-lg">
+                    {currentCampaign.name}
+                  </h3>
+                  <div className="flex items-center space-x-4 mt-2 text-sm">
+                    <span className="text-slate-300">
+                      <strong>
+                        ${currentCampaign.raised?.toLocaleString()}
+                      </strong>{" "}
+                      raised
+                    </span>
+                    <span className="text-slate-400">•</span>
+                    <span className="text-slate-300">
+                      <strong>
+                        {Math.round(
+                          (currentCampaign.raised / currentCampaign.goal) * 100,
+                        )}
+                        %
+                      </strong>{" "}
+                      complete
+                    </span>
+                    <span className="text-slate-400">•</span>
+                    <span className="text-slate-300">
+                      <strong>{currentCampaign.daysLeft}</strong> days left
+                    </span>
+                  </div>
                 </div>
-                <h3 className="font-semibold text-white">Claude's Response</h3>
-              </div>
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={handleCopy}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    copySuccess
-                      ? "bg-green-500/20 text-green-400"
-                      : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
-                  }`}
-                >
-                  <Copy className="w-4 h-4" />
-                  <span>{copySuccess ? "Copied!" : "Copy"}</span>
-                </button>
-                <button
-                  onClick={handleNewRequest}
-                  className="flex items-center space-x-2 px-3 py-2 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg text-sm font-medium transition-all duration-200"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  <span>New Request</span>
-                </button>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-green-400">
+                    ${currentCampaign.goal?.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-slate-400">Goal</div>
+                </div>
               </div>
             </div>
+          )}
 
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-              <pre className="text-sm whitespace-pre-wrap font-sans leading-relaxed text-slate-200">
-                {response}
-              </pre>
-            </div>
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            {!response && !isLoading && (
+              <div className="p-6 space-y-6">
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
+                    Quick Actions
+                  </h3>
+                  {currentCampaign && (
+                    <div className="grid grid-cols-1 gap-3">
+                      {claudeActions.map((action) => {
+                        const Icon = action.icon;
+                        return (
+                          <button
+                            key={action.id}
+                            onClick={() => handleGenerate(action.id)}
+                            disabled={isLoading}
+                            className="p-4 text-left border border-slate-700/50 rounded-xl hover:border-purple-500/50 hover:bg-slate-800/50 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="p-2 bg-slate-800/50 rounded-lg group-hover:bg-purple-600/20 transition-colors">
+                                <Icon className="w-5 h-5 text-slate-400 group-hover:text-purple-400" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="font-medium text-white group-hover:text-purple-300 transition-colors">
+                                  {action.label}
+                                </div>
+                                <div className="text-sm text-slate-400 mt-1">
+                                  {action.description}
+                                </div>
+                              </div>
+                              <Zap className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Custom Prompt */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
+                    <MessageSquare className="w-5 h-5 mr-2 text-blue-400" />
+                    Custom Request
+                  </h3>
+                  <div className="space-y-3">
+                    <textarea
+                      value={customPrompt}
+                      onChange={(e) => setCustomPrompt(e.target.value)}
+                      placeholder="Ask Claude anything about your campaign, request content creation, or get strategic advice..."
+                      className="w-full h-24 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none transition-all"
+                    />
+                    <button
+                      onClick={handleCustomGenerate}
+                      disabled={isLoading || !customPrompt.trim()}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <Send className="w-4 h-4" />
+                      <span>
+                        {isLoading ? "Generating..." : "Send to Claude"}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {isLoading && (
+              <div className="p-6 flex flex-col items-center justify-center space-y-4">
+                <div className="relative">
+                  <div className="w-12 h-12 border-4 border-slate-700 border-t-purple-500 rounded-full animate-spin"></div>
+                  <Bot className="w-6 h-6 text-purple-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+                </div>
+                <div className="text-center">
+                  <p className="text-white font-medium">
+                    Claude is thinking...
+                  </p>
+                  <p className="text-slate-400 text-sm mt-1">
+                    {selectedAction &&
+                      `Generating ${claudeActions.find((a) => a.id === selectedAction)?.label.toLowerCase()}`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Response */}
+            {response && (
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
+                    <CheckCircle className="w-5 h-5 mr-2 text-green-400" />
+                    Claude's Response
+                  </h3>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleCopy}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
+                        copySuccess
+                          ? "bg-green-600/20 text-green-400 border border-green-500/30"
+                          : "bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-700/50 border border-slate-700/50"
+                      }`}
+                    >
+                      <Copy className="w-4 h-4" />
+                      <span>{copySuccess ? "Copied!" : "Copy"}</span>
+                    </button>
+                    <button
+                      onClick={handleNewRequest}
+                      className="px-3 py-2 bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 border border-slate-700/50"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>New Request</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-slate-800/30 border border-slate-700/30 rounded-xl p-4">
+                  <pre className="whitespace-pre-wrap text-slate-200 text-sm leading-relaxed font-mono">
+                    {response}
+                  </pre>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </aside>
+    </>
   );
 };
 
