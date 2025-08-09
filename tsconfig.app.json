@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": false
+  },
+  "include": ["src"],
+  "exclude": ["src/deprecated/**/*", "dist", "node_modules"]
+}

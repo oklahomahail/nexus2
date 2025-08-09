@@ -1,11 +1,8 @@
-import React from 'react';
-import { Campaign } from '../models/campaign';
+import React from "react";
 
-interface CampaignPerformanceTableProps {
-  campaigns: Campaign[];
-}
-
-const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({ campaigns }) => {
+const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({
+  campaigns,
+}) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full table-auto border border-gray-200 rounded-lg">
@@ -22,7 +19,9 @@ const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({ cam
             <tr key={c.id} className="border-t border-gray-200">
               <td className="px-4 py-2">{c.name}</td>
               <td className="px-4 py-2">{c.totalDonors}</td>
-              <td className="px-4 py-2">${(c.totalRevenue || 0).toLocaleString()}</td>
+              <td className="px-4 py-2">
+                ${(c.totalRevenue || 0).toLocaleString()}
+              </td>
               <td className="px-4 py-2">{c.roi}%</td>
             </tr>
           ))}

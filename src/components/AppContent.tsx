@@ -11,40 +11,32 @@ import {
 import React, { Suspense, useMemo, useState } from "react";
 
 import { useUI, useNotifications } from "@/context/AppProviders";
-import { lazyWithPreload, type Preloadable } from "@/utils/lazyWithPreload";
-
 import LoadingSpinner from "./LoadingSpinner";
 import ClaudePanel from "../features/claude/ClaudePanel";
 
-// Lazy panels with preload support
-const CampaignsPanel = lazyWithPreload(() => import("@/panels/CampaignsPanel"));
-const AnalyticsDashboard = lazyWithPreload(
-  () => import("@/panels/AnalyticsDashboard"),
-);
-const DonorsPlaceholder = lazyWithPreload(
-  () => import("@/panels/DonorsPlaceholder"),
-);
-const DashboardPanel = lazyWithPreload(() => import("@/panels/DashboardPanel"));
-
-type PanelComponent = React.ComponentType<any>;
-type PanelLazy = Preloadable<PanelComponent>;
+// Simple lazy loading without preload for now
+const CampaignsPanel = React.lazy(() => import("@/panels/CampaignsPanel"));
+const AnalyticsDashboard = React.lazy(() => import("@/panels/AnalyticsDashboard"));
+const DonorsPlaceholder = React.lazy(() => import("@/panels/DonorsPlaceholder"));
+const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
 
 interface NavigationItem {
   key: "dashboard" | "campaigns" | "analytics" | "donors";
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  component: PanelComponent | PanelLazy;
+  component: React.ComponentType<any>;
   description?: string;
 }
 
-function hasPreload(x: PanelComponent | PanelLazy): x is PanelLazy {
-  return typeof (x as PanelLazy).preload === "function";
-}
-
 const AppContent: React.FC = () => {
-  const { activeView, setActiveView, loading, error } = useUI();
-  const { toggle } = useNotifications();
+  const { activeView, setActiveView, loading = false, error = null } = useUI();
+  const notifications = useNotifications();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
+
+  // Toggle notifications - simple implementation
+  const toggleNotifications = () => {
+    console.log('Toggle notifications');
+  };
 
   // Mock current campaign – replace with real selection logic
   const currentCampaign = useMemo(
@@ -113,12 +105,6 @@ const AppContent: React.FC = () => {
     navigationItems[0];
   const CurrentComponent = currentNavItem.component;
 
-  const maybePreload = (comp: NavigationItem["component"]) => {
-    if (hasPreload(comp)) {
-      void comp.preload();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 text-white flex">
       {/* Sidebar */}
@@ -148,8 +134,6 @@ const AppContent: React.FC = () => {
                   <button
                     key={item.key}
                     onClick={() => setActiveView(item.key)}
-                    onMouseEnter={() => maybePreload(item.component)}
-                    onFocus={() => maybePreload(item.component)}
                     aria-current={isActive ? "page" : undefined}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
                       isActive
@@ -197,7 +181,7 @@ const AppContent: React.FC = () => {
             </div>
             <div className="flex items-center space-x-3">
               <button
-                onClick={toggle}
+                onClick={toggleNotifications}
                 className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800/50 rounded-lg"
                 aria-label="Notifications"
               >

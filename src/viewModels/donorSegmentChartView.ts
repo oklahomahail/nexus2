@@ -1,6 +1,6 @@
 // src/viewModels/donorSegmentChartView.ts
 
-import { DonorSegmentInsight, AnalyticsTrend } from '../models/analytics';
+import { DonorSegmentInsight, AnalyticsTrend } from "../models/analytics";
 
 export interface SegmentBarChartDataPoint {
   segment: string;
@@ -9,8 +9,10 @@ export interface SegmentBarChartDataPoint {
   averageGift: number;
 }
 
-export function getSegmentBarChartData(insights: DonorSegmentInsight[]): SegmentBarChartDataPoint[] {
-  return insights.map(segment => ({
+export function getSegmentBarChartData(
+  _insights: DonorSegmentInsight[],
+): SegmentBarChartDataPoint[] {
+  return insights.map((segment) => ({
     segment: segment.name,
     totalRevenue: segment.metrics.totalRevenue,
     donorCount: segment.metrics.totalDonors,
@@ -26,8 +28,10 @@ export interface TrendChartDataPoint {
   donorCount: number;
 }
 
-export function getTrendChartData(trends: AnalyticsTrend[]): TrendChartDataPoint[] {
-  return trends.map(t => ({
+export function getTrendChartData(
+  _trends: AnalyticsTrend[],
+): TrendChartDataPoint[] {
+  return trends.map((t) => ({
     label: t.label,
     totalRevenue: t.totalRevenue,
     donorCount: t.donorCount,

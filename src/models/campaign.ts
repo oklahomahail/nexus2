@@ -10,8 +10,15 @@ export interface Campaign {
   startDate: string;
   endDate: string;
   deadline?: string;
-  status: 'Planned' | 'Active' | 'Completed' | 'Cancelled';
-  category: 'General' | 'Emergency' | 'Education' | 'Healthcare' | 'Environment' | 'Community' | 'Other';
+  status: "Planned" | "Active" | "Completed" | "Cancelled";
+  category:
+    | "General"
+    | "Emergency"
+    | "Education"
+    | "Healthcare"
+    | "Environment"
+    | "Community"
+    | "Other";
   targetAudience: string;
   donorCount: number;
   averageGift: number;
@@ -38,8 +45,8 @@ export interface CampaignCreateRequest {
   goal: number;
   startDate: string;
   endDate: string;
-  status?: Campaign['status'];
-  category: Campaign['category'];
+  status?: Campaign["status"];
+  category: Campaign["category"];
   targetAudience: string;
   tags?: string[];
   notes?: string;
@@ -50,26 +57,11 @@ export interface CampaignUpdateRequest extends CampaignCreateRequest {
 }
 
 export interface CampaignFilters {
-  status?: Campaign['status'][];
-  category?: Campaign['category'][];
+  status?: Campaign["status"][];
+  category?: Campaign["category"][];
   dateRange?: DateRange;
   search?: string;
   tags?: string[];
 }
 
-export interface CampaignStats {
-  totalCampaigns: number;
-  activeCampaigns: number;
-  totalRaised: number;
-  averageGoal: number;
-  successRate: number;
-  totalDonors: number;
-  completedCampaigns: number;
-}
-
-export const calculateCampaignMetrics = (campaign: Campaign) => {
-  return {
-    progress: campaign.goal > 0 ? (campaign.raised / campaign.goal) * 100 : 0,
-    daysLeft: campaign.endDate ? Math.max(0, Math.ceil((new Date(campaign.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))) : 0
-  };
-};
+export {};

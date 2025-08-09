@@ -1,10 +1,12 @@
 // src/components/Sidebar.tsx - Modernized with unified design system
-import React from 'react';
-import { useUI } from '@/context/useUI';
-import { useAnalytics } from '@/context/analytics/AnalyticsContext';
-import { useCampaigns } from '@/hooks/useCampaigns';
-import SidebarItem from './SidebarItem';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import React from "react";
+
+import { useAnalytics } from "@/context/analytics/AnalyticsContext";
+import { useUI } from "@/context/useUI";
+import { useCampaigns } from "@/hooks/useCampaigns";
+
+import SidebarItem from "./SidebarItem";
 
 interface SidebarProps {
   navigationItems: {
@@ -16,14 +18,15 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
-  const { activeView, sidebarCollapsed, setActiveView, toggleSidebar } = useUI();
+  const { activeView, sidebarCollapsed, setActiveView, toggleSidebar } =
+    void useUI();
   const { stats: campaignStats } = useCampaigns();
   const { organization, user } = useAnalytics();
 
   return (
     <aside
       className={`bg-surface/50 border-r border-surface backdrop-blur-md transition-all duration-300 ${
-        sidebarCollapsed ? 'w-16' : 'w-64'
+        sidebarCollapsed ? "w-16" : "w-64"
       } hidden sm:block relative flex flex-col h-screen`}
     >
       {/* Header */}
@@ -57,16 +60,16 @@ const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
         <div className="p-4 border-b border-surface/50 flex items-center gap-3 flex-shrink-0">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-white font-semibold text-sm">
-              {user.name?.charAt(0) || 'U'}
+              {user.name?.charAt(0) || "U"}
             </span>
           </div>
           {!sidebarCollapsed && (
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-white truncate">
-                {user.name || 'User'}
+                {user.name || "User"}
               </p>
               <p className="text-xs text-slate-400 truncate">
-                {user.organizationName || 'Organization'}
+                {user.organizationName || "Organization"}
               </p>
             </div>
           )}

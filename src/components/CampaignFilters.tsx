@@ -1,8 +1,15 @@
 // src/models/campaign.ts - Updated CampaignFilters interface
 
 // Campaign status and category types
-export type CampaignStatus = 'Planned' | 'Active' | 'Completed' | 'Cancelled';
-export type CampaignCategory = 'General' | 'Emergency' | 'Education' | 'Healthcare' | 'Environment' | 'Community' | 'Other';
+export type CampaignStatus = "Planned" | "Active" | "Completed" | "Cancelled";
+export type CampaignCategory =
+  | "General"
+  | "Emergency"
+  | "Education"
+  | "Healthcare"
+  | "Environment"
+  | "Community"
+  | "Other";
 
 // Updated CampaignFilters interface
 export interface CampaignFilters {
@@ -22,8 +29,8 @@ export interface Campaign {
   raised: number;
   startDate: string;
   endDate: string;
-  status: CampaignStatus;  // Use the strict type here
-  category: CampaignCategory;  // Use the strict type here
+  status: CampaignStatus; // Use the strict type here
+  category: CampaignCategory; // Use the strict type here
   targetAudience?: string;
   tags?: string[];
   notes?: string;
@@ -44,7 +51,7 @@ export interface CampaignCreateRequest {
   goal: number;
   startDate: string;
   endDate: string;
-  status: 'Planned' | 'Active';  // Only allow these for new campaigns
+  status: "Planned" | "Active"; // Only allow these for new campaigns
   category: CampaignCategory;
   targetAudience?: string;
   tags?: string[];
@@ -58,7 +65,7 @@ export interface CampaignUpdateRequest {
   goal: number;
   startDate: string;
   endDate: string;
-  status: CampaignStatus;  // Allow all statuses for updates
+  status: CampaignStatus; // Allow all statuses for updates
   category: CampaignCategory;
   targetAudience?: string;
   tags?: string[];

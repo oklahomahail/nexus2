@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 // src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
-import React, { useState } from 'react';
-import { generateClaudeResponse } from '../features/claude/claudeService';
-import { Bot, Copy, RotateCcw, Zap, ArrowRight } from 'lucide-react';
-import LoadingSpinner from '../components/LoadingSpinner';
+import { Bot, Copy, RotateCcw, Zap, ArrowRight } from "lucide-react";
+import React, { useState } from "react";
 
-type MessageType = 'Email' | 'Subject Line' | 'Social Post' | 'CTA Button';
+import LoadingSpinner from "../components/LoadingSpinner";
+import { generateClaudeResponse } from "../features/claude/claudeService";
+
+type MessageType = "Email" | "Subject Line" | "Social Post" | "CTA Button";
 
 interface QuickActionProps {
   icon: React.ReactNode;
@@ -15,85 +17,103 @@ interface QuickActionProps {
   onClick: () => void;
 }
 
-const QuickAction: React.FC<QuickActionProps> = ({ icon, title, description, type, isActive, onClick }) => (
+const QuickAction: React.FC<QuickActionProps> = ({
+  icon,
+  title,
+  description,
+  type: _type,
+  isActive,
+  onClick,
+}) => (
   <button
     onClick={onClick}
     className={`w-full group text-left transition-all duration-200 ${
-      isActive 
-        ? 'bg-blue-600/20 border-blue-500/50' 
-        : 'bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40'
+      isActive
+        ? "bg-blue-600/20 border-blue-500/50"
+        : "bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40"
     } border rounded-xl p-4`}
   >
     <div className="flex items-start space-x-4">
-      <div className={`p-2 rounded-lg transition-colors ${
-        isActive 
-          ? 'bg-blue-500/30 text-blue-400' 
-          : 'bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/30'
-      }`}>
+      <div
+        className={`p-2 rounded-lg transition-colors ${
+          isActive
+            ? "bg-blue-500/30 text-blue-400"
+            : "bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/30"
+        }`}
+      >
         {icon}
       </div>
       <div className="flex-1">
-        <h3 className={`font-semibold mb-1 transition-colors ${
-          isActive ? 'text-blue-300' : 'text-white group-hover:text-blue-400'
-        }`}>
+        <h3
+          className={`font-semibold mb-1 transition-colors ${
+            isActive ? "text-blue-300" : "text-white group-hover:text-blue-400"
+          }`}
+        >
           {title}
         </h3>
         <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
       </div>
-      <ArrowRight className={`w-5 h-5 text-slate-400 transition-all duration-200 ${
-        isActive ? 'opacity-100 translate-x-1' : 'opacity-0 group-hover:opacity-100 group-hover:translate-x-1'
-      }`} />
+      <ArrowRight
+        className={`w-5 h-5 text-slate-400 transition-all duration-200 ${
+          isActive
+            ? "opacity-100 translate-x-1"
+            : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+        }`}
+      />
     </div>
   </button>
 );
 
 export default function MessagingAssistantPanel() {
-  const [messageType, setMessageType] = useState<MessageType>('Email');
-  const [context, setContext] = useState('');
-  const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [_messageType, setMessageType] = useState<MessageType>("Email");
+  const [_context, setContext] = useState("");
+  const [_result, setResult] = useState("");
+  const [_loading, setLoading] = useState(false);
+  const [_error, setError] = useState<string | null>(null);
+  const [_copySuccess, setCopySuccess] = useState(false);
 
   const promptTemplate = {
     Email: `Write a compelling fundraising email for the following campaign:\n\n`,
-    'Subject Line': `Write 5 attention-grabbing subject lines for a fundraising email based on this campaign:\n\n`,
-    'Social Post': `Write an engaging social media post to support this fundraising campaign:\n\n`,
-    'CTA Button': `Write 5 compelling call-to-action button texts for this fundraising ask:\n\n`,
+    "Subject Line": `Write 5 attention-grabbing subject lines for a fundraising email based on this campaign:\n\n`,
+    "Social Post": `Write an engaging social media post to support this fundraising campaign:\n\n`,
+    "CTA Button": `Write 5 compelling call-to-action button texts for this fundraising ask:\n\n`,
   };
 
   const messageTypes = [
     {
-      type: 'Email' as MessageType,
+      type: "Email" as MessageType,
       icon: <span className="text-lg">✉️</span>,
-      title: 'Draft Donor Email',
-      description: 'Create a complete fundraising email with compelling storytelling and clear call-to-action'
+      title: "Draft Donor Email",
+      description:
+        "Create a complete fundraising email with compelling storytelling and clear call-to-action",
     },
     {
-      type: 'Subject Line' as MessageType,
+      type: "Subject Line" as MessageType,
       icon: <span className="text-lg">📧</span>,
-      title: 'Generate Subject Lines',
-      description: 'Get multiple attention-grabbing subject lines optimized for open rates'
+      title: "Generate Subject Lines",
+      description:
+        "Get multiple attention-grabbing subject lines optimized for open rates",
     },
     {
-      type: 'Social Post' as MessageType,
+      type: "Social Post" as MessageType,
       icon: <span className="text-lg">📱</span>,
-      title: 'Social Media Post',
-      description: 'Craft engaging social content to amplify your campaign reach'
+      title: "Social Media Post",
+      description:
+        "Craft engaging social content to amplify your campaign reach",
     },
     {
-      type: 'CTA Button' as MessageType,
+      type: "CTA Button" as MessageType,
       icon: <span className="text-lg">🔘</span>,
-      title: 'Call-to-Action Text',
-      description: 'Generate compelling button text that drives donations'
+      title: "Call-to-Action Text",
+      description: "Generate compelling button text that drives donations",
     },
   ];
 
   const handleGenerate = async () => {
     if (!context.trim()) return;
-    
+
     setLoading(true);
-    setResult('');
+    setResult("");
     setError(null);
 
     try {
@@ -101,7 +121,7 @@ export default function MessagingAssistantPanel() {
       const response = await generateClaudeResponse(prompt);
       setResult(response.content);
     } catch (err: any) {
-      setError(err.message || 'Failed to generate content');
+      setError(err.message || "Failed to generate content");
     } finally {
       setLoading(false);
     }
@@ -113,14 +133,14 @@ export default function MessagingAssistantPanel() {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error("Failed to copy:", err);
     }
   };
 
   const handleReset = () => {
-    setResult('');
+    setResult("");
     setError(null);
-    setContext('');
+    setContext("");
     setCopySuccess(false);
   };
 
@@ -132,14 +152,20 @@ export default function MessagingAssistantPanel() {
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
             <Bot className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white">AI Messaging Assistant</h1>
+          <h1 className="text-3xl font-bold text-white">
+            AI Messaging Assistant
+          </h1>
         </div>
-        <p className="text-slate-400 text-lg">Generate compelling fundraising content powered by Claude AI</p>
+        <p className="text-slate-400 text-lg">
+          Generate compelling fundraising content powered by Claude AI
+        </p>
       </div>
 
       {/* Content Type Selection */}
       <div>
-        <h2 className="text-white text-xl font-semibold mb-6">Choose Content Type</h2>
+        <h2 className="text-white text-xl font-semibold mb-6">
+          Choose Content Type
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {messageTypes.map(({ type, icon, title, description }) => (
             <QuickAction
@@ -170,10 +196,11 @@ export default function MessagingAssistantPanel() {
               placeholder={`Describe your campaign details:\n\n• Campaign name and goal\n• Target audience\n• Key message or story\n• Deadline or urgency\n• Any specific requirements...`}
             />
           </div>
-          
+
           <div className="flex justify-between items-center">
             <div className="text-sm text-slate-400">
-              Selected: <span className="text-blue-400 font-medium">{messageType}</span>
+              Selected:{" "}
+              <span className="text-blue-400 font-medium">{messageType}</span>
             </div>
             <button
               onClick={handleGenerate}
@@ -181,7 +208,9 @@ export default function MessagingAssistantPanel() {
               className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center space-x-2"
             >
               <Zap className="w-4 h-4" />
-              <span>{loading ? 'Generating...' : `Generate ${messageType}`}</span>
+              <span>
+                {loading ? "Generating..." : `Generate ${messageType}`}
+              </span>
             </button>
           </div>
         </div>
@@ -193,8 +222,12 @@ export default function MessagingAssistantPanel() {
           <div className="text-center space-y-4">
             <LoadingSpinner size="lg" />
             <div>
-              <h3 className="text-white font-medium mb-2">Claude is crafting your {messageType.toLowerCase()}...</h3>
-              <p className="text-slate-400 text-sm">This may take up to 30 seconds</p>
+              <h3 className="text-white font-medium mb-2">
+                Claude is crafting your {messageType.toLowerCase()}...
+              </h3>
+              <p className="text-slate-400 text-sm">
+                This may take up to 30 seconds
+              </p>
             </div>
           </div>
         </div>
@@ -206,7 +239,9 @@ export default function MessagingAssistantPanel() {
           <div className="flex items-start space-x-3">
             <div className="text-red-400 text-xl">⚠️</div>
             <div>
-              <h3 className="text-red-300 font-medium mb-1">Generation Failed</h3>
+              <h3 className="text-red-300 font-medium mb-1">
+                Generation Failed
+              </h3>
               <p className="text-red-400 text-sm">{error}</p>
               <button
                 onClick={handleGenerate}
@@ -228,19 +263,21 @@ export default function MessagingAssistantPanel() {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <Bot className="w-4 h-4 text-white" />
               </div>
-              <h3 className="text-white font-semibold">AI-Generated {messageType}</h3>
+              <h3 className="text-white font-semibold">
+                AI-Generated {messageType}
+              </h3>
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleCopy}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  copySuccess 
-                    ? 'bg-green-500/20 text-green-300' 
-                    : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white'
+                  copySuccess
+                    ? "bg-green-500/20 text-green-300"
+                    : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white"
                 }`}
               >
                 <Copy className="w-4 h-4" />
-                <span>{copySuccess ? 'Copied!' : 'Copy'}</span>
+                <span>{copySuccess ? "Copied!" : "Copy"}</span>
               </button>
               <button
                 onClick={handleReset}

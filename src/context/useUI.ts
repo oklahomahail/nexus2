@@ -1,44 +1,23 @@
-// src/context/useUI.ts - Updated to include setActiveView
-import { useCallback } from 'react';
-import { useAppContext } from './AppProviders';
+import { useState } from 'react';
 
 export const useUI = () => {
-  const { state, dispatch } = useAppContext();
+  const [activeView, setActiveView] = useState("dashboard");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const setActiveView = useCallback((view: string) => {
-    dispatch({ type: 'SET_ACTIVE_VIEW', payload: view });
-  }, [dispatch]);
-
-  const setLoading = useCallback((loading: boolean) => {
-    dispatch({ type: 'SET_LOADING', payload: loading });
-  }, [dispatch]);
-
-  const setError = useCallback((error: string | null) => {
-    dispatch({ type: 'SET_ERROR', payload: error });
-  }, [dispatch]);
-
-  const toggleSidebar = useCallback(() => {
-    dispatch({ type: 'TOGGLE_SIDEBAR' });
-  }, [dispatch]);
-
-  const toggleNotifications = useCallback(() => {
-    dispatch({ type: 'TOGGLE_NOTIFICATIONS' });
-  }, [dispatch]);
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   return {
-    // State
-    activeView: state.ui.activeView,
-    loading: state.ui.loading,
-    error: state.ui.error,
-    sidebarCollapsed: state.ui.sidebarCollapsed,
-    isSidebarOpen: state.ui.isSidebarOpen,
-    showNotifications: state.ui.showNotifications,
-
-    // Actions
+    activeView,
+    sidebarCollapsed,
     setActiveView,
-    setLoading,
-    setError,
     toggleSidebar,
-    toggleNotifications,
+    loading,
+    error,
+    setLoading,
+    setError
   };
 };

@@ -1,6 +1,6 @@
 // src/components/SidebarItem.tsx - Unified with design system
-import React from 'react';
-import clsx from 'clsx';
+import clsx from "clsx";
+import React from "react";
 
 interface SidebarItemProps {
   icon: string;
@@ -11,22 +11,22 @@ interface SidebarItemProps {
   collapsed: boolean;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ 
-  icon, 
-  label, 
-  description, 
-  isActive, 
-  onClick, 
-  collapsed 
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  icon,
+  _label,
+  _description,
+  _isActive,
+  _onClick,
+  _collapsed,
 }) => {
   return (
     <button
       onClick={onClick}
       className={clsx(
-        'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group relative',
-        isActive 
-          ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/25' 
-          : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+        "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 group relative",
+        isActive
+          ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/25"
+          : "text-slate-400 hover:text-white hover:bg-slate-800/50",
       )}
       title={collapsed ? label : undefined}
     >
@@ -34,7 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       <span className="text-lg flex-shrink-0 w-5 h-5 flex items-center justify-center">
         {icon}
       </span>
-      
+
       {/* Label and Description */}
       {!collapsed && (
         <div className="min-w-0 flex-1">

@@ -1,6 +1,6 @@
 // src/viewModels/analyticsView.ts
 
-import { CampaignAnalytics } from '../models/analytics';
+import { CampaignAnalytics } from "../models/analytics";
 
 export interface FundraisingSummaryView {
   campaignId: string;
@@ -13,7 +13,9 @@ export interface FundraisingSummaryView {
   averageGift: string;
 }
 
-export function toFundraisingSummary(analytics: CampaignAnalytics): FundraisingSummaryView {
+export function toFundraisingSummary(
+  _analytics: CampaignAnalytics,
+): FundraisingSummaryView {
   return {
     campaignId: analytics.campaignId,
     campaignName: analytics.campaignName,

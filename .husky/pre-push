@@ -1,0 +1,3 @@
+set -e
+echo "🔎 Typechecking (app strict)…"
+pnpm typecheck:app

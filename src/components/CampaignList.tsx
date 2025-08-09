@@ -1,28 +1,29 @@
 // src/components/CampaignList.tsx - Complete campaign list component
-import React, { useState, useEffect } from 'react';
-import { Campaign, CampaignFilters } from '../models/campaign';
-import { campaignService } from '../services/campaignService';
-import CampaignQuickCard from './CampaignQuickCard';
-import LoadingSpinner from './LoadingSpinner';
+import React, { useState, useEffect } from "react";
+
+import CampaignQuickCard from "./CampaignQuickCard";
+import LoadingSpinner from "./LoadingSpinner";
+import { Campaign } from "../models/campaign";
+import { campaignService } from "../services/campaignService";
 
 interface CampaignListProps {
-  onEditCampaign: (campaign: Campaign) => void;
-  onViewCampaign: (campaign: Campaign) => void;
+  onEditCampaign: (_campaign: Campaign) => void;
+  onViewCampaign: (_campaign: Campaign) => void;
   onCreateCampaign: () => void;
 }
 
 const CampaignList: React.FC<CampaignListProps> = ({
-  onEditCampaign,
-  onViewCampaign,
-  onCreateCampaign
+  onEditCampaign: _onEditCampaign,
+  _onViewCampaign,
+  _onCreateCampaign,
 }) => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<CampaignFilters>({});
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [_campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [_loading, setLoading] = useState(true);
+  const [_filters, _setFilters] = useState<any>({});
+  const [_viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   useEffect(() => {
-    loadCampaigns();
+    void loadCampaigns();
   }, [filters]);
 
   const loadCampaigns = async () => {
@@ -31,7 +32,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
       const data = await campaignService.getAllCampaigns(filters);
       setCampaigns(data);
     } catch (error) {
-      console.error('Failed to load campaigns:', error);
+      console.error("Failed to load campaigns:", error);
     } finally {
       setLoading(false);
     }
@@ -50,27 +51,33 @@ const CampaignList: React.FC<CampaignListProps> = ({
       {/* Header with create button and view toggle */}
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <h3 className="text-lg font-semibold">Campaigns ({campaigns.length})</h3>
+          <h3 className="text-lg font-semibold">
+            Campaigns ({campaigns.length})
+          </h3>
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setViewMode('grid')}
+              onClick={() => setViewMode("grid")}
               className={`px-3 py-1 rounded ${
-                viewMode === 'grid' ? 'bg-blue-100 text-blue-700' : 'text-gray-600'
+                viewMode === "grid"
+                  ? "bg-blue-100 text-blue-700"
+                  : "text-gray-600"
               }`}
             >
               Grid
             </button>
             <button
-              onClick={() => setViewMode('list')}
+              onClick={() => setViewMode("list")}
               className={`px-3 py-1 rounded ${
-                viewMode === 'list' ? 'bg-blue-100 text-blue-700' : 'text-gray-600'
+                viewMode === "list"
+                  ? "bg-blue-100 text-blue-700"
+                  : "text-gray-600"
               }`}
             >
               List
             </button>
           </div>
         </div>
-        
+
         <button
           onClick={onCreateCampaign}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -91,11 +98,13 @@ const CampaignList: React.FC<CampaignListProps> = ({
           </button>
         </div>
       ) : (
-        <div className={
-          viewMode === 'grid'
-            ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'
-            : 'space-y-4'
-        }>
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
+        >
           {campaigns.map((campaign) => (
             <CampaignQuickCard
               key={campaign.id}

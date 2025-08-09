@@ -1,6 +1,4 @@
-// src/App.tsx
-import React from 'react';
-import AppContent from './components/AppContent';
+import AppContent from "./components/AppContent";
 
 function App() {
   return <AppContent />;

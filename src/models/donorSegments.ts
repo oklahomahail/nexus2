@@ -1,4 +1,4 @@
-export interface DonorSegment {
+export interface _DonorSegment {
   id: string;
   name: string;
   description?: string;
@@ -12,14 +12,14 @@ export interface DonorSegment {
   criteria?: {
     minGiftAmount?: number;
     maxGiftAmount?: number;
-    giftFrequency?: 'one-time' | 'monthly' | 'quarterly' | 'annually';
+    giftFrequency?: "one-time" | "monthly" | "quarterly" | "annually";
     totalLifetimeGiving?: number;
     monthsSinceLastGift?: number;
-    engagementLevel?: 'high' | 'medium' | 'low';
+    engagementLevel?: "high" | "medium" | "low";
   };
 }
 
-export interface DonorSegmentData {
+export interface _DonorSegmentData {
   segmentId: string;
   segmentName: string;
   donorCount: number;
@@ -32,14 +32,20 @@ export interface DonorSegmentData {
   engagementScore: number; // 0-100
   // Gift patterns
   giftPatterns: {
-    frequency: 'one-time' | 'monthly' | 'quarterly' | 'annually' | 'irregular';
+    frequency: "one-time" | "monthly" | "quarterly" | "annually" | "irregular";
     seasonalTrends: {
-      season: 'Spring' | 'Summer' | 'Fall' | 'Winter';
+      season: "Spring" | "Summer" | "Fall" | "Winter";
       donorCount: number;
       totalGifts: number;
     }[];
     channelPreferences: {
-      channel: 'Online' | 'Direct Mail' | 'Events' | 'Phone' | 'Email' | 'Mobile';
+      channel:
+        | "Online"
+        | "Direct Mail"
+        | "Events"
+        | "Phone"
+        | "Email"
+        | "Mobile";
       percentage: number;
       averageGift: number;
     }[];
@@ -55,7 +61,7 @@ export interface DonorSegmentData {
   }[];
 }
 
-export interface DonorSegmentAnalytics {
+export interface _DonorSegmentAnalytics {
   segmentData: DonorSegmentData[];
   totalDonors: number;
   totalContributed: number;
@@ -63,7 +69,11 @@ export interface DonorSegmentAnalytics {
     topPerformingSegments: {
       segmentId: string;
       segmentName: string;
-      metric: 'total_revenue' | 'donor_count' | 'retention_rate' | 'growth_rate';
+      metric:
+        | "total_revenue"
+        | "donor_count"
+        | "retention_rate"
+        | "growth_rate";
       value: number;
       rank: number;
     }[];
@@ -75,7 +85,10 @@ export interface DonorSegmentAnalytics {
     }[];
     opportunityAnalysis: {
       segmentId: string;
-      opportunity: 'upgrade_potential' | 'retention_risk' | 'engagement_opportunity';
+      opportunity:
+        | "upgrade_potential"
+        | "retention_risk"
+        | "engagement_opportunity";
       description: string;
       estimatedImpact: number;
       actionRecommendation: string;
@@ -99,8 +112,8 @@ export interface SegmentFilter {
   };
   minGiftAmount?: number;
   maxGiftAmount?: number;
-  giftFrequency?: ('one-time' | 'monthly' | 'quarterly' | 'annually')[];
-  engagementLevel?: ('high' | 'medium' | 'low')[];
+  giftFrequency?: ("one-time" | "monthly" | "quarterly" | "annually")[];
+  engagementLevel?: ("high" | "medium" | "low")[];
   campaignIds?: string[];
 }
 
@@ -138,119 +151,7 @@ export interface SegmentComparison {
 }
 
 // Predefined segment templates that users can customize
-export const DEFAULT_SEGMENT_TEMPLATES: Omit<DonorSegment, 'id' | 'createdAt' | 'updatedAt'>[] = [
-  {
-    name: 'Board Members',
-    description: 'Organizational board members and leadership',
-    color: 'bg-purple-100 text-purple-800 border-purple-200',
-    icon: '👑',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      minGiftAmount: 1000,
-      engagementLevel: 'high'
-    }
-  },
-  {
-    name: 'Major Gift Prospects',
-    description: 'High-capacity donors and potential major gift supporters',
-    color: 'bg-green-100 text-green-800 border-green-200',
-    icon: '💎',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      minGiftAmount: 1000,
-      totalLifetimeGiving: 5000
-    }
-  },
-  {
-    name: 'Monthly Donors',
-    description: 'Recurring monthly supporters',
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
-    icon: '🔄',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      giftFrequency: 'monthly'
-    }
-  },
-  {
-    name: 'Annual Donors',
-    description: 'Regular annual contributors',
-    color: 'bg-orange-100 text-orange-800 border-orange-200',
-    icon: '📅',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      giftFrequency: 'annually',
-      minGiftAmount: 50
-    }
-  },
-  {
-    name: 'Volunteers',
-    description: 'Active volunteers and community supporters',
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-    icon: '🤝',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      engagementLevel: 'high'
-    }
-  },
-  {
-    name: 'Event Participants',
-    description: 'Supporters who engage through events',
-    color: 'bg-pink-100 text-pink-800 border-pink-200',
-    icon: '🎪',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      engagementLevel: 'medium'
-    }
-  },
-  {
-    name: 'Corporate Partners',
-    description: 'Business and corporate supporters',
-    color: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-    icon: '🏢',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      minGiftAmount: 500
-    }
-  },
-  {
-    name: 'Lapsed Donors',
-    description: 'Previous donors who haven\'t given recently',
-    color: 'bg-gray-100 text-gray-800 border-gray-200',
-    icon: '⏰',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      monthsSinceLastGift: 12
-    }
-  },
-  {
-    name: 'First-Time Donors',
-    description: 'New supporters in their first year',
-    color: 'bg-teal-100 text-teal-800 border-teal-200',
-    icon: '✨',
-    isDefault: true,
-    isActive: true,
-    criteria: {
-      totalLifetimeGiving: 1000,
-      engagementLevel: 'medium'
-    }
-  },
-  {
-    name: 'Alumni',
-    description: 'Program alumni and former beneficiaries',
-    color: 'bg-red-100 text-red-800 border-red-200',
-    icon: '🎓',
-    isDefault: false,
-    isActive: true
-  }
-];
+export {};
 
 export interface SegmentMetricsTrend {
   segmentId: string;
@@ -268,7 +169,12 @@ export interface SegmentMetricsTrend {
 export interface SegmentGoal {
   id: string;
   segmentId: string;
-  goalType: 'donor_count' | 'total_revenue' | 'retention_rate' | 'average_gift' | 'engagement_score';
+  goalType:
+    | "donor_count"
+    | "total_revenue"
+    | "retention_rate"
+    | "average_gift"
+    | "engagement_score";
   currentValue: number;
   targetValue: number;
   targetDate: string;

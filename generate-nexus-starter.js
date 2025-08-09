@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const files = {
-  'package.json': `{
+  "package.json": `{
   "name": "nexus",
   "version": "0.1.0",
   "private": true,
@@ -26,14 +26,14 @@ const files = {
   }
 }
 `,
-  'vite.config.ts': `import { defineConfig } from 'vite';
+  "vite.config.ts": `import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
 });
 `,
-  'tailwind.config.js': `/** @type {import('tailwindcss').Config} */
+  "tailwind.config.js": `/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./index.html', './src/**/*.{ts,tsx,js,jsx}'],
   theme: {
@@ -42,7 +42,7 @@ module.exports = {
   plugins: [],
 };
 `,
-  'tsconfig.json': `{
+  "tsconfig.json": `{
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
@@ -63,7 +63,7 @@ module.exports = {
   "include": ["src"]
 }
 `,
-  'README.md': `# Nexus
+  "README.md": `# Nexus
 
 Nexus is an internal nonprofit consulting platform for donor management, campaigns, events, and analytics.
 
@@ -90,7 +90,7 @@ Open http://localhost:5173 to view in the browser.
 - Integrate AI content & analytics
 - Add authentication and permissions
 `,
-  'index.html': `<!DOCTYPE html>
+  "index.html": `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -103,7 +103,7 @@ Open http://localhost:5173 to view in the browser.
 </body>
 </html>
 `,
-  'src/index.css': `@tailwind base;
+  "src/index.css": `@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -111,7 +111,7 @@ body {
   @apply bg-gray-50 text-gray-900 font-sans;
 }
 `,
-  'src/main.tsx': `import React from 'react';
+  "src/main.tsx": `import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
@@ -122,7 +122,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   </React.StrictMode>,
 );
 `,
-  'src/App.tsx': `import React, { useEffect, useState } from 'react';
+  "src/App.tsx": `import React, { useEffect, useState } from 'react';
 import { DashboardPanel } from './components/DashboardPanel';
 import { Donor } from './models/donor';
 import { fetchDonors } from './services/donorService';
@@ -150,7 +150,7 @@ function App() {
 
 export default App;
 `,
-  'src/components/DashboardPanel.tsx': `import React from 'react';
+  "src/components/DashboardPanel.tsx": `import React from 'react';
 
 interface DashboardPanelProps {
   totalDonors: number;
@@ -184,7 +184,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   );
 };
 `,
-  'src/models/donor.ts': `export interface Donor {
+  "src/models/donor.ts": `export interface Donor {
   id: string;
   name: string;
   email: string;
@@ -194,7 +194,7 @@ export const DashboardPanel: React.FC<DashboardPanelProps> = ({
   notes?: string;
 }
 `,
-  'src/services/apiClient.ts': `const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+  "src/services/apiClient.ts": `const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
 
 interface ApiResponse<T> {
   data: T;
@@ -212,7 +212,7 @@ export async function apiGet<T>(endpoint: string): Promise<ApiResponse<T>> {
   }
 }
 `,
-  'src/services/donorService.ts': `import { Donor } from '../models/donor';
+  "src/services/donorService.ts": `import { Donor } from '../models/donor';
 import { apiGet } from './apiClient';
 
 export async function fetchDonors(): Promise<Donor[]> {
@@ -222,7 +222,7 @@ export async function fetchDonors(): Promise<Donor[]> {
   }
   return response.data;
 }
-`
+`,
 };
 
 function writeFiles(basePath, files) {
@@ -238,4 +238,4 @@ function writeFiles(basePath, files) {
 }
 
 writeFiles(process.cwd(), files);
-console.log('Nexus starter scaffold created!');
+console.log("Nexus starter scaffold created!");

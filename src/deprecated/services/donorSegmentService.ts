@@ -1,12 +1,11 @@
-import { 
-  DonorSegment, 
-  DonorSegmentData, 
-  DonorSegmentAnalytics, 
-  SegmentFilter, 
+import {
+  DonorSegment,
+  DonorSegmentData,
+  DonorSegmentAnalytics,
+  SegmentFilter,
   SegmentComparison,
   SegmentMetricsTrend,
-  SegmentGoal,
-  DEFAULT_SEGMENT_TEMPLATES 
+  DEFAULT_SEGMENT_TEMPLATES,
 } from '../models/donorSegments';
 
 // Mock data for development - replace with actual API calls
@@ -25,12 +24,12 @@ class DonorSegmentService {
       id: `segment-${index + 1}`,
       createdAt: new Date(),
       updatedAt: new Date()
-    }));
+   }));
   }
 
   private generateMockData() {
     // Generate realistic mock data for each segment
-    this.segmentData = this.segments.map((segment, index) => {
+    this.segmentData = this.segments.map((segment, _index) => {
       const baseMetrics = this.generateSegmentMetrics(segment);
       return {
         segmentId: segment.id,
@@ -39,7 +38,7 @@ class DonorSegmentService {
         giftPatterns: this.generateGiftPatterns(segment),
         campaignPerformance: this.generateCampaignPerformance(segment)
       };
-    });
+   });
   }
 
   private generateSegmentMetrics(segment: DonorSegment): Omit<DonorSegmentData, 'segmentId' | 'segmentName' | 'giftPatterns' | 'campaignPerformance'> {
@@ -89,7 +88,7 @@ class DonorSegmentService {
         ...channel, 
         percentage: Number(channel.percentage.toFixed(1)),
         averageGift: Number(channel.averageGift.toFixed(0))
-      }))
+     }))
     };
 
     // Normalize percentages to sum to 100
@@ -97,7 +96,7 @@ class DonorSegmentService {
     patterns.channelPreferences = patterns.channelPreferences.map(ch => ({
       ...ch,
       percentage: Number((ch.percentage / totalPercentage * 100).toFixed(1))
-    }));
+   }));
 
     return patterns;
   }
@@ -123,13 +122,13 @@ class DonorSegmentService {
       totalRaised: Math.random() * 10000 + 5000,
       averageGift: Math.random() * 300 + 100,
       responseRate: Math.random() * 25 + 5
-    })).map(perf => ({
+   })).map(perf => ({
       ...perf,
       participationRate: Number(perf.participationRate.toFixed(1)),
       totalRaised: Number(perf.totalRaised.toFixed(0)),
       averageGift: Number(perf.averageGift.toFixed(0)),
       responseRate: Number(perf.responseRate.toFixed(1))
-    }));
+   }));
   }
 
   // Public API methods
@@ -174,7 +173,7 @@ class DonorSegmentService {
       { metric: 'growth_rate', getValue: (d) => d.growthRate }
     ];
 
-    return metrics.flatMap(({ metric, getValue }) => 
+    return metrics.flatMap(({ metric, getValue}) => 
       [...data]
         .sort((a, b) => getValue(b) - getValue(a))
         .slice(0, 3)
@@ -184,7 +183,7 @@ class DonorSegmentService {
           metric,
           value: getValue(d),
           rank: index + 1
-        }))
+       }))
     );
   }
 
@@ -208,8 +207,8 @@ class DonorSegmentService {
         description: `High engagement (${segment.engagementScore}%) with low average gift suggests upgrade potential`,
         estimatedImpact: segment.donorCount * 50,
         actionRecommendation: 'Target with mid-level gift asks and stewardship program'
-      });
-    });
+     });
+   });
 
     // Find retention risks
     const lowRetention = data.filter(d => d.retentionRate < 60 && d.retentionRate > 0);
@@ -220,8 +219,8 @@ class DonorSegmentService {
         description: `Low retention rate (${segment.retentionRate}%) indicates need for better stewardship`,
         estimatedImpact: segment.donorCount * 0.3 * segment.averageGiftSize,
         actionRecommendation: 'Implement retention-focused communication strategy'
-      });
-    });
+     });
+   });
 
     return opportunities.slice(0, 5);
   }
@@ -306,7 +305,7 @@ class DonorSegmentService {
       compare,
       difference: compare - base,
       percentageDifference: base > 0 ? ((compare - base) / base) * 100 : 0
-    });
+   });
 
     return {
       baseSegmentId: segmentId1,
@@ -372,7 +371,7 @@ class DonorSegmentService {
         retentionRate: Math.random() * 20 + 70,
         newDonors: Math.floor(Math.random() * 20) + 5,
         lapsedDonors: Math.floor(Math.random() * 15) + 2
-      });
+     });
     }
 
     return {

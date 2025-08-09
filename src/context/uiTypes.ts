@@ -6,7 +6,7 @@
 
 export interface AppNotification {
   id: string;
-  type: 'success' | 'error' | 'warning' | 'info';
+  type: "success" | "error" | "warning" | "info";
   title: string;
   message: string;
   timestamp: Date;
@@ -57,7 +57,7 @@ export interface UIState {
 export interface AppState {
   user: { id: string; name: string } | null;
   campaigns: any[]; // Replace with your actual Campaign type
-  donors: any[];    // Replace with your actual Donor type
+  donors: any[]; // Replace with your actual Donor type
   analytics: Record<string, any>; // Or your specific Analytics type
   ui: UIState;
   notifications: NotificationsState;
@@ -72,11 +72,11 @@ export interface AppState {
 // ----------------------------------------
 
 export type AppAction =
-  | { type: 'SET_ACTIVE_VIEW'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'TOGGLE_SIDEBAR' }
-  | { type: 'TOGGLE_NOTIFICATIONS' }
-  | { type: 'ADD_NOTIFICATION'; payload: AppNotification }
-  | { type: 'MARK_NOTIFICATION_READ'; payload: string }
-  | { type: 'CLEAR_NOTIFICATIONS' };
+  | { type: "SET_ACTIVE_VIEW"; payload: string }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "TOGGLE_SIDEBAR" }
+  | { type: "TOGGLE_NOTIFICATIONS" }
+  | { type: "ADD_NOTIFICATION"; payload: AppNotification }
+  | { type: "MARK_NOTIFICATION_READ"; payload: string }
+  | { type: "CLEAR_NOTIFICATIONS" };

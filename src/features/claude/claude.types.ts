@@ -1,14 +1,14 @@
 // src/features/claude/claude.types.ts
 
 export type ClaudeActionType =
-  | 'subject'
-  | 'email'
-  | 'strategy'
-  | 'feedback'
-  | 'cta';
+  | "subject"
+  | "email"
+  | "strategy"
+  | "feedback"
+  | "cta";
 
 export interface ClaudeMessage {
-  role: 'user' | 'claude';
+  role: "user" | "claude";
   content: string;
 }
 

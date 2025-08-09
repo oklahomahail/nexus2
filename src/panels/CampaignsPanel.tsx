@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { KPIWidget } from '../components/AnalyticsWidgets';
+import React, { useState, useEffect } from "react";
+
+import { KPIWidget } from "../components/AnalyticsWidgets";
+import { CampaignDetail } from "../components/CampaignDetail";
+import CampaignList from "../components/CampaignList";
+import { CampaignModal } from "../components/CampaignModal";
+import LoadingSpinner from "../components/LoadingSpinner";
 import {
   Campaign,
   CampaignCreateRequest,
   CampaignUpdateRequest,
-  CampaignStats
-} from '../models/campaign';
-import { campaignService } from '../services/campaignService';
-import CampaignList from '../components/CampaignList';
-import { CampaignModal } from '../components/CampaignModal';
-import { CampaignDetail } from '../components/CampaignDetail';
-import LoadingSpinner from '../components/LoadingSpinner';
+} from "../models/campaign";
+import { campaignService } from "../services/campaignService";
 
-type ViewMode = 'list' | 'detail';
+type ViewMode = "list" | "detail";
 
 const CampaignsPanel: React.FC = () => {
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
-  const [stats, setStats] = useState<CampaignStats | null>(null);
-  const [loadingStats, setLoadingStats] = useState(true);
+  const [_viewMode, setViewMode] = useState<ViewMode>("list");
+  const [_selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
+    null,
+  );
+  const [_showModal, setShowModal] = useState(false);
+  const [_modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [_stats, setStats] = useState<CampaignStats | null>(null);
+  const [_loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    loadStats();
+    void loadStats();
   }, []);
 
   const loadStats = async () => {
@@ -32,7 +34,7 @@ const CampaignsPanel: React.FC = () => {
       const data = await campaignService.getCampaignStats();
       setStats(data);
     } catch (error) {
-      console.error('Failed to load campaign stats:', error);
+      console.error("Failed to load campaign stats:", error);
     } finally {
       setLoadingStats(false);
     }
@@ -40,42 +42,45 @@ const CampaignsPanel: React.FC = () => {
 
   const handleCreateCampaign = () => {
     setSelectedCampaign(null);
-    setModalMode('create');
+    setModalMode("create");
     setShowModal(true);
   };
 
   const handleEditCampaign = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
-    setModalMode('edit');
+    setModalMode("edit");
     setShowModal(true);
   };
 
   const handleViewCampaign = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
-    setViewMode('detail');
+    setViewMode("detail");
   };
 
   const handleBackToList = () => {
-    setViewMode('list');
+    setViewMode("list");
     setSelectedCampaign(null);
   };
 
-  const handleSaveCampaign = async (data: CampaignCreateRequest | CampaignUpdateRequest) => {
-    if (modalMode === 'create') {
+  const handleSaveCampaign = async (
+    data: CampaignCreateRequest | CampaignUpdateRequest,
+  ) => {
+    if (modalMode === "create") {
       await campaignService.createCampaign(data as CampaignCreateRequest);
     } else {
       await campaignService.updateCampaign(data as CampaignUpdateRequest);
     }
+    void loadStats();
 
-    loadStats();
-
-    if (modalMode === 'edit' && selectedCampaign && viewMode === 'detail') {
-      const updated = await campaignService.getCampaignById(selectedCampaign.id);
+    if (modalMode === "edit" && selectedCampaign && viewMode === "detail") {
+      const updated = await campaignService.getCampaignById(
+        selectedCampaign.id,
+      );
       if (updated) setSelectedCampaign(updated);
     }
   };
 
-  if (viewMode === 'detail' && selectedCampaign) {
+  if (viewMode === "detail" && selectedCampaign) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -83,8 +88,18 @@ const CampaignsPanel: React.FC = () => {
             onClick={handleBackToList}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             Back to Campaigns
           </button>
@@ -110,11 +125,16 @@ const CampaignsPanel: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">Campaign Overview</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          Campaign Overview
+        </h2>
         {loadingStats ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-lg border border-gray-200 p-4">
+              <div
+                key={i}
+                className="bg-white rounded-lg border border-gray-200 p-4"
+              >
                 <LoadingSpinner size="sm" />
               </div>
             ))}
@@ -148,7 +168,9 @@ const CampaignsPanel: React.FC = () => {
           </div>
         ) : (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <p className="text-yellow-800">Unable to load campaign statistics.</p>
+            <p className="text-yellow-800">
+              Unable to load campaign statistics.
+            </p>
           </div>
         )}
       </div>

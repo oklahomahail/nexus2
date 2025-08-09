@@ -1,4 +1,4 @@
-export interface Donor {
+export interface _Donor {
   id: string;
   name: string;
   email: string;

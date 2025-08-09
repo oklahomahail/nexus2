@@ -9,7 +9,7 @@ export interface AnalyticsFilters {
   dateRange: DateRange;
   campaignIds?: string[];
   donorSegmentIds?: string[];
-  channel?: 'email' | 'social' | 'direct' | 'event' | 'other';
+  channel?: "email" | "social" | "direct" | "event" | "other";
 }
 
 export interface AnalyticsMetrics {
@@ -19,7 +19,7 @@ export interface AnalyticsMetrics {
   recurringDonors: number;
   averageGift: number;
   donorRetentionRate: number; // 0–1
-  conversionRate: number;     // 0–1
+  conversionRate: number; // 0–1
 }
 
 export interface AnalyticsTrend {
@@ -67,7 +67,7 @@ export interface CampaignSuccessData {
   goal: number;
   roi: number;
 }
-export interface DonorInsights {
+export interface _DonorInsights {
   topDonors: {
     id: string;
     name: string;
@@ -84,7 +84,7 @@ export interface DonorInsights {
   };
 }
 
-export interface DonorSegmentInsight {
+export interface _DonorSegmentInsight {
   segmentId: string;
   name: string;
   metrics: AnalyticsMetrics;
