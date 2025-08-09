@@ -1,32 +1,44 @@
-// src/components/AppContent.tsx - Quick update to use ClaudePanel
-import React, { Suspense, lazy, useState } from 'react';
-import { useUI, useNotifications } from '@/context/AppProviders';
-import { BarChart3, Target, TrendingUp, Users, Bot, Settings, Plus } from 'lucide-react';
-import LoadingSpinner from './LoadingSpinner';
+// src/components/AppContent.tsx
+import {
+  BarChart3,
+  Target,
+  TrendingUp,
+  Users,
+  Bot,
+  Plus,
+  Bell,
+} from "lucide-react";
+import React, { Suspense, useMemo, useState } from "react";
 
-// Import ClaudePanel directly from features/claude instead of lazy loading
-import ClaudePanel from '../features/claude/ClaudePanel';
+import { useUI, useNotifications } from "@/context/AppProviders";
+import { lazyWithPreload, type Preloadable } from "@/utils/lazyWithPreload";
 
-// Lazy-load other panel components
-const CampaignsPanel = lazy(() =>
-  import('@/panels/CampaignsPanel').then((mod) => ({ default: mod.default }))
+import LoadingSpinner from "./LoadingSpinner";
+import ClaudePanel from "../features/claude/ClaudePanel";
+
+// Lazy panels with preload support
+const CampaignsPanel = lazyWithPreload(() => import("@/panels/CampaignsPanel"));
+const AnalyticsDashboard = lazyWithPreload(
+  () => import("@/panels/AnalyticsDashboard"),
 );
-const AnalyticsDashboard = lazy(() =>
-  import('@/panels/AnalyticsDashboard').then((mod) => ({ default: mod.default }))
+const DonorsPlaceholder = lazyWithPreload(
+  () => import("@/panels/DonorsPlaceholder"),
 );
-const DonorsPlaceholder = lazy(() =>
-  import('@/panels/DonorsPlaceholder').then((mod) => ({ default: mod.default }))
-);
-const DashboardPanel = lazy(() =>
-  import('@/panels/DashboardPanel').then((mod) => ({ default: mod.default }))
-);
+const DashboardPanel = lazyWithPreload(() => import("@/panels/DashboardPanel"));
+
+type PanelComponent = React.ComponentType<any>;
+type PanelLazy = Preloadable<PanelComponent>;
 
 interface NavigationItem {
-  key: string;
+  key: "dashboard" | "campaigns" | "analytics" | "donors";
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  component: React.ComponentType;
+  component: PanelComponent | PanelLazy;
   description?: string;
+}
+
+function hasPreload(x: PanelComponent | PanelLazy): x is PanelLazy {
+  return typeof (x as PanelLazy).preload === "function";
 }
 
 const AppContent: React.FC = () => {
@@ -34,72 +46,78 @@ const AppContent: React.FC = () => {
   const { toggle } = useNotifications();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
 
-  // Mock current campaign - replace with real campaign selection logic
-  const getCurrentCampaign = () => {
-    // This should come from your campaign context/state
-    // Using the utility function to create a proper Campaign object
-    return {
-      id: 'campaign_1',
-      name: 'End of Year Giving Campaign',
-      description: 'Annual fundraising campaign to support our programs',
+  // Mock current campaign – replace with real selection logic
+  const currentCampaign = useMemo(
+    () => ({
+      id: "campaign_1",
+      name: "End of Year Giving Campaign",
+      description: "Annual fundraising campaign to support our programs",
       goal: 50000,
       raised: 15000,
-      progress: 30, // Now properly typed as number
-      daysLeft: 45, // Now properly typed as number
-      startDate: '2024-11-01',
-      endDate: '2024-12-31',
-      status: 'Active' as const,
-      category: 'General' as const,
-      targetAudience: 'Individual donors and families',
+      progress: 30,
+      daysLeft: 45,
+      startDate: "2024-11-01",
+      endDate: "2024-12-31",
+      status: "Active" as const,
+      category: "General" as const,
+      targetAudience: "Individual donors and families",
       donorCount: 125,
       averageGift: 120,
-      totalRevenue: 15000, // Now properly typed as number
-      totalDonors: 125, // Now properly typed as number
-      roi: 30, // Now properly typed as number
+      totalRevenue: 15000,
+      totalDonors: 125,
+      roi: 30,
       lastUpdated: new Date(),
-      createdAt: new Date('2024-10-15'),
-      createdBy: 'Dave Hail',
-      tags: ['year-end', 'annual'],
+      createdAt: new Date("2024-10-15"),
+      createdBy: "Dave Hail",
+      tags: ["year-end", "annual"],
       emailsSent: 450,
       clickThroughRate: 12.5,
       conversionRate: 8.2,
-    };
-  };
+    }),
+    [],
+  );
 
   const navigationItems: NavigationItem[] = [
     {
-      key: 'dashboard',
-      label: 'Dashboard',
+      key: "dashboard",
+      label: "Dashboard",
       icon: BarChart3,
       component: DashboardPanel,
-      description: 'Overview of key metrics and recent activity',
+      description: "Overview of key metrics and recent activity",
     },
     {
-      key: 'campaigns',
-      label: 'Campaigns',
+      key: "campaigns",
+      label: "Campaigns",
       icon: Target,
       component: CampaignsPanel,
-      description: 'Manage fundraising campaigns',
+      description: "Manage fundraising campaigns",
     },
     {
-      key: 'analytics',
-      label: 'Analytics',
+      key: "analytics",
+      label: "Analytics",
       icon: TrendingUp,
       component: AnalyticsDashboard,
-      description: 'Performance insights and reports',
+      description: "Performance insights and reports",
     },
     {
-      key: 'donors',
-      label: 'Donors',
+      key: "donors",
+      label: "Donors",
       icon: Users,
       component: DonorsPlaceholder,
-      description: 'Donor management and insights',
+      description: "Donor management and insights",
     },
   ];
 
   const currentNavItem =
-    navigationItems.find((item) => item.key === activeView) || navigationItems[0];
+    navigationItems.find((item) => item.key === activeView) ||
+    navigationItems[0];
   const CurrentComponent = currentNavItem.component;
+
+  const maybePreload = (comp: NavigationItem["component"]) => {
+    if (hasPreload(comp)) {
+      void comp.preload();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex">
@@ -130,10 +148,13 @@ const AppContent: React.FC = () => {
                   <button
                     key={item.key}
                     onClick={() => setActiveView(item.key)}
+                    onMouseEnter={() => maybePreload(item.component)}
+                    onFocus={() => maybePreload(item.component)}
+                    aria-current={isActive ? "page" : undefined}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
-                      isActive 
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25' 
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                      isActive
+                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -141,7 +162,7 @@ const AppContent: React.FC = () => {
                   </button>
                 );
               })}
-              
+
               {/* AI Assistant Button */}
               <button
                 onClick={() => setShowClaudePanel(true)}
@@ -169,17 +190,20 @@ const AppContent: React.FC = () => {
         <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md">
           <div className="px-8 py-6 flex justify-between items-center">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-1">{currentNavItem.label}</h1>
+              <h1 className="text-2xl font-bold text-white mb-1">
+                {currentNavItem.label}
+              </h1>
               <p className="text-slate-400">{currentNavItem.description}</p>
             </div>
             <div className="flex items-center space-x-3">
-              <button 
+              <button
                 onClick={toggle}
                 className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800/50 rounded-lg"
+                aria-label="Notifications"
               >
-                🔔
+                <Bell className="w-5 h-5" />
               </button>
-              <button 
+              <button
                 onClick={() => setShowClaudePanel(true)}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
               >
@@ -228,10 +252,10 @@ const AppContent: React.FC = () => {
       </main>
 
       {/* Claude AI Panel */}
-      <ClaudePanel 
+      <ClaudePanel
         isOpen={showClaudePanel}
         onClose={() => setShowClaudePanel(false)}
-        currentCampaign={getCurrentCampaign()}
+        currentCampaign={currentCampaign}
       />
     </div>
   );
