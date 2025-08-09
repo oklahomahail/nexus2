@@ -1,5 +1,5 @@
 import React from 'react';
-import classNames from 'classnames';
+import cn from 'classnames';
 
 const NotificationsPanel = ({ notifications = [], onClose }: { notifications?: any[], onClose?: any }) => {
   if (!notifications.length) return null;
