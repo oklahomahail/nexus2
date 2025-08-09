@@ -1,8 +1,8 @@
 // tailwind.config.js - Updated for Nexus Platform unified design system
-import { fontFamily } from "tailwindcss/defaultTheme";
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: ["class"],
   content: [
     "./src/**/*.{ts,tsx}",
@@ -51,11 +51,11 @@ export default {
       },
       fontFamily: {
         sans: [
-          'Inter', 
-          '-apple-system', 
-          'BlinkMacSystemFont', 
-          'Segoe UI', 
-          'Roboto', 
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
           ...fontFamily.sans
         ],
         mono: ['JetBrains Mono', 'Fira Code', ...fontFamily.mono]
@@ -99,21 +99,21 @@ export default {
           to: { opacity: '1' }
         },
         slideUp: {
-          from: { 
+          from: {
             opacity: '0',
             transform: 'translateY(10px)'
           },
-          to: { 
+          to: {
             opacity: '1',
             transform: 'translateY(0)'
           }
         },
         scaleIn: {
-          from: { 
+          from: {
             opacity: '0',
             transform: 'scale(0.95)'
           },
-          to: { 
+          to: {
             opacity: '1',
             transform: 'scale(1)'
           }
@@ -134,7 +134,6 @@ export default {
     }
   },
   plugins: [
-    // Add any additional plugins here
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography')
   ]

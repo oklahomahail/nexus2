@@ -98,3 +98,8 @@ src/__generated__/
 *.ipr
 *.iws
 .DS_Store
++node_modules
++dist
++.DS_Store
++.pnpm-store
+
