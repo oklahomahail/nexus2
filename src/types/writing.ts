@@ -3,14 +3,14 @@ export type ExportFormat = "pdf" | "docx" | "txt" | "markdown" | "html";
 
 // Writing editor related types
 export interface WritingToolbarProps {
-  onExport?: (format: ExportFormat) => void;
-  onFormat?: (type: "bold" | "italic" | "underline") => void;
+  onExport?: (_format: ExportFormat) => void;
+  onFormat?: (_type: "bold" | "italic" | "underline") => void;
   disabled?: boolean;
 }
 
 export interface WritingEditorProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (_value: string) => void;
   onTextSelect: () => void;
   placeholder?: string;
   disabled?: boolean;

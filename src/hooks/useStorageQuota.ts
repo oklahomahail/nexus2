@@ -41,7 +41,7 @@ export function useStorageQuota() {
         try {
           let totalSize = 0;
           for (let key in localStorage) {
-            if (localStorage.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
               totalSize += localStorage[key].length + key.length;
             }
           }
@@ -62,7 +62,7 @@ export function useStorageQuota() {
       }
     };
 
-    checkStorage();
+    void checkStorage();
     const interval = setInterval(checkStorage, 60000); // Re-check every minute
 
     return () => clearInterval(interval);

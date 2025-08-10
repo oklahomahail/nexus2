@@ -1,22 +1,22 @@
 #!/usr/bin/env node
-const fs = require("fs");
-const path = require("path");
+const _fs = require("fs");
+const _path = require("path");
 
 function log(message, level = "info") {
   const colors = {
-    info: "[36m",
-    success: "[32m",
-    warning: "[33m",
-    error: "[31m",
+    info: "[36m",
+    success: "[32m",
+    warning: "[33m",
+    error: "[31m",
   };
-  console.log(`${colors[level]}[${level.toUpperCase()}][0m ${message}`);
+  console.log(`${colors[level]}[${level.toUpperCase()}][0m ${message}`);
 }
 
 function quickValidation() {
   log("🔍 Running migration validation...", "info");
 
   let errorCount = 0;
-  let warningCount = 0;
+  let _warningCount = 0;
 
   // Check for StatCard issues
   try {
@@ -28,7 +28,7 @@ function quickValidation() {
       log("ERROR: Found StatCard usage", "error");
       errorCount++;
     }
-  } catch (e) {
+  } catch {
     // No matches found, which is good
   }
 
@@ -42,7 +42,7 @@ function quickValidation() {
       log("ERROR: Found MetricCard usage", "error");
       errorCount++;
     }
-  } catch (e) {
+  } catch {
     // No matches found, which is good
   }
 

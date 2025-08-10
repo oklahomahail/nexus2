@@ -3,7 +3,7 @@ import React, { forwardRef } from "react";
 
 export interface WritingEditorProps {
   value: string;
-  onChange: (val: string) => void;
+  onChange: (_val: string) => void;
   onTextSelect: () => void;
   placeholder?: string;
   disabled?: boolean;

@@ -43,12 +43,6 @@ const CampaignsPanel: React.FC = () => {
     setShowModal(true);
   };
 
-  const handleEditCampaign = (campaign: Campaign) => {
-    setSelectedCampaign(campaign);
-    setModalMode("edit");
-    setShowModal(true);
-  };
-
   const handleViewCampaign = (campaign: Campaign) => {
     setSelectedCampaign(campaign);
     setViewMode("detail");

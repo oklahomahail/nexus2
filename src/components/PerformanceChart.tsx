@@ -19,7 +19,7 @@ interface PerformanceChartProps {
 }
 
 // Mock data builder to avoid buildChartData dependency
-function buildChartData(chartType: string, rawData: any) {
+function buildChartData(chartType: string, _rawData: any) {
   // Simple mock data structure
   const mockData = [
     { name: "Jan", value: 400, growth: 12 },
@@ -39,12 +39,12 @@ function buildChartData(chartType: string, rawData: any) {
 }
 
 // Mock data types to avoid import issues
-interface _ComparisonData {
+interface __ComparisonData {
   current: number;
   previous: number;
 }
 
-interface _CampaignSuccessData {
+interface __CampaignSuccessData {
   successful: number;
   total: number;
   rate: number;
@@ -89,7 +89,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   height = 300,
 }) => {
   // Build chart data from props
-  const { data: rows, xKey, yKeys, kind } = buildChartData(type, data);
+  const { data: rows, xKey } = buildChartData(type, data);
 
   const chartTitle =
     type === "comparison"

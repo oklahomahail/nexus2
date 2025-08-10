@@ -21,7 +21,10 @@ export interface Backup {
 }
 
 /** Notify function type for sending user messages */
-type NotifyFn = (message: string, type?: "info" | "success" | "error") => void;
+type NotifyFn = (
+  _message: string,
+  _type?: "info" | "success" | "error",
+) => void;
 
 /** BackupManager class with retry and exponential backoff logic */
 export class BackupManager {
@@ -37,8 +40,8 @@ export class BackupManager {
   private maxRetries = 5;
 
   constructor(
-    private backupFn: () => Promise<void>,
-    private notify: NotifyFn,
+    private _backupFn: () => Promise<void>,
+    private _notify: NotifyFn,
   ) {}
 
   /** Get current backup state snapshot */
@@ -49,26 +52,26 @@ export class BackupManager {
   /** Trigger a backup */
   public async backup() {
     if (this.isSaving) {
-      this.notify("Backup already in progress. Please wait.", "info");
+      this._notify("Backup already in progress. Please wait.", "info");
       return;
     }
 
     this.isSaving = true;
     this.updateStatus("saving");
-    this.notify("Starting backup...", "info");
+    this._notify("Starting backup...", "info");
 
     try {
-      await this.backupFn();
+      await this._backupFn();
       this.updateStatus("success");
       this.state.lastSuccess = Date.now();
       this.state.error = null;
       this.state.retryCount = 0;
       this.state.retryDelayMs = 1000;
-      this.notify("Backup successful!", "success");
+      this._notify("Backup successful!", "success");
     } catch (error: any) {
       this.state.error = error?.message || "Unknown error";
       this.updateStatus("error");
-      this.notify(`Backup failed: ${this.state.error}`, "error");
+      this._notify(`Backup failed: ${this.state.error}`, "error");
       await this.retryBackup();
     } finally {
       this.isSaving = false;
@@ -78,7 +81,7 @@ export class BackupManager {
   /** Retry backup with exponential backoff */
   private async retryBackup() {
     if (this.state.retryCount >= this.maxRetries) {
-      this.notify(
+      this._notify(
         "Maximum backup retry attempts reached. Please try again later.",
         "error",
       );
@@ -86,7 +89,7 @@ export class BackupManager {
     }
     this.state.retryCount++;
     this.updateStatus("retrying");
-    this.notify(
+    this._notify(
       `Retrying backup (#${this.state.retryCount}) in ${this.state.retryDelayMs / 1000} seconds...`,
       "info",
     );

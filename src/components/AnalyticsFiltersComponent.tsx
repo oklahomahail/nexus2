@@ -4,7 +4,7 @@ import { AnalyticsFilters } from "../models/analytics";
 
 interface AnalyticsFiltersComponentProps {
   filters: AnalyticsFilters;
-  onFiltersChange: (filters: AnalyticsFilters) => void;
+  onFiltersChange: (_filters: AnalyticsFilters) => void;
 }
 
 const AnalyticsFiltersComponent: React.FC<AnalyticsFiltersComponentProps> = ({

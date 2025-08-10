@@ -19,7 +19,7 @@ export function useBackup() {
   useEffect(() => {
     let mounted = true;
 
-    (async () => {
+    void (async () => {
       try {
         await ensureBackupDb();
         const s = await getBackupStatus();
@@ -31,7 +31,7 @@ export function useBackup() {
           });
           setLoading(false);
         }
-      } catch (e) {
+      } catch {
         if (mounted) {
           setError("Failed to read backup status");
           setLoading(false);

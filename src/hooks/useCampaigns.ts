@@ -32,7 +32,7 @@ export function useCampaigns(): UseCampaignsResult {
   };
 
   useEffect(() => {
-    fetchCampaigns();
+    void fetchCampaigns();
   }, []);
 
   return {

@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 // src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
-import { Bot, Copy, RotateCcw, Zap, ArrowRight, Mail, Hash, Share2, MousePointer } from "lucide-react";
+import {
+  Bot,
+  Copy,
+  RotateCcw,
+  Zap,
+  ArrowRight,
+  Mail,
+  Hash,
+  Share2,
+  MousePointer,
+} from "lucide-react";
 import React, { useState } from "react";
 
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -69,26 +79,30 @@ const messageTypes = [
     type: "Email" as MessageType,
     icon: <Mail className="w-5 h-5" />,
     title: "Fundraising Email",
-    description: "Complete email campaigns with compelling storytelling and clear calls-to-action"
+    description:
+      "Complete email campaigns with compelling storytelling and clear calls-to-action",
   },
   {
     type: "Subject Line" as MessageType,
     icon: <Hash className="w-5 h-5" />,
     title: "Email Subject Lines",
-    description: "Attention-grabbing subject lines that improve open rates and engagement"
+    description:
+      "Attention-grabbing subject lines that improve open rates and engagement",
   },
   {
     type: "Social Post" as MessageType,
     icon: <Share2 className="w-5 h-5" />,
     title: "Social Media Post",
-    description: "Engaging social content optimized for Facebook, Instagram, and Twitter"
+    description:
+      "Engaging social content optimized for Facebook, Instagram, and Twitter",
   },
   {
     type: "CTA Button" as MessageType,
     icon: <MousePointer className="w-5 h-5" />,
     title: "Call-to-Action",
-    description: "Powerful button text and CTAs that drive donations and engagement"
-  }
+    description:
+      "Powerful button text and CTAs that drive donations and engagement",
+  },
 ];
 
 export default function MessagingAssistantPanel(): React.ReactElement {
@@ -110,7 +124,9 @@ export default function MessagingAssistantPanel(): React.ReactElement {
       const response = await generateClaudeResponse(messageType, context);
       setResult(response.content);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate content");
+      setError(
+        err instanceof Error ? err.message : "Failed to generate content",
+      );
     } finally {
       setLoading(false);
     }

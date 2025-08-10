@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 interface UseAutoSaveOptions {
   key: string;
   data: string;
-  onSave: (data: string) => Promise<void>;
+  onSave: (_data: string) => Promise<void>;
   delay?: number; // milliseconds to wait before saving
 }
 

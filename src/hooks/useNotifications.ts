@@ -16,13 +16,13 @@ export interface UseNotificationsApi {
   toggle: () => void;
   notifications: NotificationItem[];
   add: (
-    n: Omit<NotificationItem, "id" | "timestamp" | "read"> & {
+    _n: Omit<NotificationItem, "id" | "timestamp" | "read"> & {
       id?: string;
       timestamp?: Date;
       read?: boolean;
     },
   ) => string;
-  markAsRead: (id: string) => void;
+  markAsRead: (_id: string) => void;
   markAllAsRead: () => void;
   clear: () => void;
 }

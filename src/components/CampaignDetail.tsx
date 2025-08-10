@@ -11,7 +11,7 @@ interface CampaignDetailProps {
   campaign: Campaign;
 }
 
-interface _BackupPayload {
+interface __BackupPayload {
   type: "campaignNotes";
   id: string;
   payload: string;

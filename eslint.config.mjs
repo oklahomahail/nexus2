@@ -4,10 +4,8 @@ import tseslint from "typescript-eslint";
 import configPrettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
 
-// If you use top-level await (Node 18+), this file is fine as .mjs
-
 export default [
-  // Global ignores
+  // ---------- Global ignores ----------
   {
     ignores: [
       "dist",
@@ -29,12 +27,11 @@ export default [
       "fix_remaining_errors.js",
       "fix_syntax_errors.js",
       "precise_fix.js",
-      // stray scratch files
       "MessagingAssistPanel_clean.tsx",
     ],
   },
 
-  // Base JS (applies to any .js not ignored)
+  // ---------- Base JS config ----------
   js.configs.recommended,
 
   // ---------- App (TypeScript, browser) ----------
@@ -43,7 +40,7 @@ export default [
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: ["./tsconfig.json"], // enable type-aware rules
+        project: ["./tsconfig.json"],
         tsconfigRootDir: process.cwd(),
         ecmaVersion: "latest",
         sourceType: "module",
@@ -66,7 +63,6 @@ export default [
       prettier: (await import("eslint-plugin-prettier")).default,
     },
     settings: {
-      // Fix "Resolve error: typescript with invalid interface loaded as resolver"
       "import/resolver": {
         typescript: {
           project: "./tsconfig.json",
@@ -79,7 +75,7 @@ export default [
       },
     },
     rules: {
-      // React/Vite niceties
+      // React/Vite rules
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react-refresh/only-export-components": [
@@ -107,23 +103,24 @@ export default [
           pathGroupsExcludedImportTypes: ["builtin"],
         },
       ],
-      "import/no-unresolved": "off", // handled by TS + resolver above
+      "import/no-unresolved": ["error", { caseSensitive: true }],
 
-      // Unused cleanups
-      "unused-imports/no-unused-imports": "error",
+      // Unused cleanups (TS is the authority)
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
+      "unused-imports/no-unused-imports": "error",
 
       // Async safety
       "@typescript-eslint/no-floating-promises": "warn",
       "@typescript-eslint/await-thenable": "warn",
 
-      // TS already handles undefined vars in TS files
+      // Redundant in TS
       "no-undef": "off",
 
-      // Prettier via ESLint
+      // Prettier formatting
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
@@ -152,6 +149,13 @@ export default [
       prettier: (await import("eslint-plugin-prettier")).default,
     },
     rules: {
+      // Unused cleanups (TS is the authority here too)
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+
       "no-undef": "off",
       "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
@@ -168,7 +172,7 @@ export default [
     ],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "script", // many use require()
+      sourceType: "script",
       globals: {
         require: "readonly",
         module: "readonly",
@@ -184,10 +188,13 @@ export default [
     },
     rules: {
       "prettier/prettier": ["error", { endOfLine: "auto" }],
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+      "no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
     },
   },
 
-  // Last: disable rules that conflict with Prettier
+  // ---------- Disable rules that conflict with Prettier ----------
   configPrettier,
 ];

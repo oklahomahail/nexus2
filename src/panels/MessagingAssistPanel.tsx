@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 // src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
 import {
   Bot,
@@ -31,7 +30,6 @@ const QuickAction: React.FC<QuickActionProps> = ({
   icon,
   title,
   description,
-  type,
   isActive,
   onClick,
 }) => (

@@ -12,8 +12,8 @@ export interface ComposerProps {
   initialTitle?: string;
   purpose?: "donor_email" | "campaign_update" | "note" | "custom";
   context?: Record<string, unknown>;
-  onChange?: (value: string) => void;
-  onSubmit?: (value: string) => void;
+  onChange?: (_value: string) => void;
+  onSubmit?: (_value: string) => void;
   className?: string;
 }
 

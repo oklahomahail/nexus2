@@ -35,7 +35,7 @@ const mockCampaigns: any[] = [
   },
 ];
 
-export async function getAllCampaigns(filters?: any): Promise<Campaign[]> {
+export async function getAllCampaigns(_filters?: any): Promise<Campaign[]> {
   try {
     // Simulate API call delay
     await new Promise((resolve) => setTimeout(resolve, 500));

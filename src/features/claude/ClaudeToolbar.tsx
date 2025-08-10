@@ -7,7 +7,7 @@ type ClaudeContext = { purpose?: string } & Record<string, unknown>;
 
 export interface ClaudeToolbarProps {
   context?: ClaudeContext;
-  onInsert: (text: string) => void;
+  onInsert: (_text: string) => void;
   className?: string;
 }
 

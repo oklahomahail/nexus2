@@ -6,7 +6,7 @@ import { Campaign } from "../models/campaign";
 import * as campaignService from "../services/campaignService";
 
 interface CampaignListProps {
-  onViewCampaign: (campaign: Campaign) => void;
+  onViewCampaign: (_campaign: Campaign) => void;
   onCreateCampaign: () => void;
   filters?: any;
   viewMode?: "grid" | "list";
@@ -38,7 +38,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
       }
     };
 
-    loadCampaigns();
+    void loadCampaigns();
   }, [filters]);
 
   if (loading) {

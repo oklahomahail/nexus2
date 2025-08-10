@@ -5,7 +5,7 @@ import { useClaude } from "@/context/ClaudeProvider";
 
 interface ClaudeToolbarProps {
   selectedText?: string;
-  onInsertText?: (text: string) => void;
+  onInsertText?: (_text: string) => void;
 }
 
 const ClaudeToolbar: React.FC<ClaudeToolbarProps> = ({

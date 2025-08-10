@@ -12,9 +12,9 @@ export interface Notification {
 interface NotificationsPanelProps {
   notifications?: Notification[];
   onClose?: () => void;
-  onMarkAsRead?: (id: string) => void;
+  onMarkAsRead?: (_id: string) => void;
   onMarkAllAsRead?: () => void;
-  onNotificationClick?: (notification: Notification) => void;
+  onNotificationClick?: (_notification: Notification) => void;
 }
 
 const NotificationsPanel: React.FC<NotificationsPanelProps> = ({

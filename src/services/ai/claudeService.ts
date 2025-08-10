@@ -200,9 +200,9 @@ export async function callClaude(
 export async function streamClaude(
   prompt: string,
   opts: ClaudeCallOptions & {
-    onToken: (t: string) => void;
-    onDone?: (full: string) => void;
-    onError?: (err: unknown) => void;
+    onToken: (_t: string) => void;
+    onDone?: (_full: string) => void;
+    onError?: (_err: unknown) => void;
   },
 ) {
   const apiKey = getApiKeyOrThrow();

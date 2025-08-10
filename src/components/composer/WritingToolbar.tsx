@@ -4,11 +4,11 @@ import type { ExportFormat } from "@/types/writing";
 
 export interface WritingToolbarProps {
   title: string;
-  onTitleChange: (value: string) => void;
+  onTitleChange: (_value: string) => void;
   onManualSave: () => void;
   onExport: () => void;
   exportFormat: ExportFormat;
-  setExportFormat: (format: ExportFormat) => void;
+  setExportFormat: (_format: ExportFormat) => void;
   onClaudeAssist: () => void;
   isSaving?: boolean;
   isExporting?: boolean;

@@ -38,18 +38,18 @@ interface UseClaudeResult {
 
   // Actions
   askClaude: (
-    prompt: string,
-    currentCampaign?: Campaign,
-    actionType?: string,
+    _prompt: string,
+    _currentCampaign?: Campaign,
+    _actionType?: string,
   ) => Promise<void>;
   askClaudeWithContext: (
-    actionType: string,
-    currentCampaign: Campaign,
+    _actionType: string,
+    _currentCampaign: Campaign,
   ) => Promise<void>;
   clearConversation: () => void;
-  loadSession: (sessionId: string) => void;
-  deleteSession: (sessionId: string) => void;
-  createNewSession: (campaign?: Campaign) => void;
+  loadSession: (_sessionId: string) => void;
+  deleteSession: (_sessionId: string) => void;
+  createNewSession: (_campaign?: Campaign) => void;
   cancelRequest?: () => void;
 }
 
@@ -62,18 +62,6 @@ export function useClaude(): UseClaudeResult {
   const [sessions, setSessions] = useState<ConversationSession[]>([]);
   const [abortController, setAbortController] =
     useState<AbortController | null>(null);
-
-  // Load saved conversations on mount
-  useEffect(() => {
-    void loadSavedSessions();
-  }, []);
-
-  // Auto-save current session
-  useEffect(() => {
-    if (currentSession) {
-      saveSession(currentSession);
-    }
-  }, [currentSession]);
 
   const loadSavedSessions = useCallback(() => {
     try {
@@ -123,6 +111,18 @@ export function useClaude(): UseClaudeResult {
     },
     [sessions],
   );
+
+  // Load saved conversations on mount
+  useEffect(() => {
+    void loadSavedSessions();
+  }, [loadSavedSessions]);
+
+  // Auto-save current session
+  useEffect(() => {
+    if (currentSession) {
+      void saveSession(currentSession);
+    }
+  }, [currentSession, saveSession]);
 
   const createNewSession = useCallback((campaign?: Campaign) => {
     const newSession: ConversationSession = {

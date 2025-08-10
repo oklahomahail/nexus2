@@ -14,7 +14,7 @@ interface CampaignFormData {
 interface CampaignModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: any) => void;
+  onSave: (_data: any) => void;
   initialData?: Partial<CampaignFormData> | Campaign; // Accept either type
   mode: "create" | "edit";
 }

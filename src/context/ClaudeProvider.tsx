@@ -10,7 +10,7 @@ interface ClaudeContextType {
   isLoading: boolean;
   lastResponse: ClaudeResponse | null;
   error: string | null;
-  generateResponse: (request: ClaudeRequest) => Promise<ClaudeResponse>;
+  generateResponse: (_request: ClaudeRequest) => Promise<ClaudeResponse>;
   clearError: () => void;
 }
 
