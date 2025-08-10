@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   X,
   Send,
@@ -10,7 +10,7 @@ import {
   MessageSquare,
   Target,
   TrendingUp,
-  Users,
+  // Users,
   Zap,
   CheckCircle,
 } from "lucide-react";

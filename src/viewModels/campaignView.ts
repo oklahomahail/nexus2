@@ -13,7 +13,6 @@ export interface CampaignView {
 // Convert Campaign data to view format
 export function toCampaignView(campaign: Campaign): CampaignView {
   const end = new Date(campaign.endDate);
-  const _start = new Date(campaign.startDate);
   const now = new Date();
   const daysRemaining = Math.max(
     0,

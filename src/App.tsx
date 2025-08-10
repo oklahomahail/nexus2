@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 import AppContent from "./components/AppContent";
 import LoadingSpinner from "./components/LoadingSpinner";

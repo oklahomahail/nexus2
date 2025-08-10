@@ -1,5 +1,5 @@
 // src/components/Writing/WritingEditor.tsx
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 export interface WritingEditorProps {
   value: string;

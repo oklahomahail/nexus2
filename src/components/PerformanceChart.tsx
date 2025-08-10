@@ -39,16 +39,6 @@ function buildChartData(chartType: string, _rawData: any) {
 }
 
 // Mock data types to avoid import issues
-interface __ComparisonData {
-  current: number;
-  previous: number;
-}
-
-interface __CampaignSuccessData {
-  successful: number;
-  total: number;
-  rate: number;
-}
 
 // Custom tooltip component
 interface CustomTooltipProps {

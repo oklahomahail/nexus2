@@ -11,12 +11,6 @@ interface CampaignDetailProps {
   campaign: Campaign;
 }
 
-interface __BackupPayload {
-  type: "campaignNotes";
-  id: string;
-  payload: string;
-}
-
 export default function CampaignDetail({ campaign }: CampaignDetailProps) {
   const [name, setName] = useState(campaign.name ?? "");
   const [notes, setNotes] = useState<string>(campaign.notes ?? "");

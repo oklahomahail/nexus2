@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Target,
   TrendingUp,
@@ -10,7 +10,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Plus,
+  // Plus,
   BarChart3,
 } from "lucide-react";
 
