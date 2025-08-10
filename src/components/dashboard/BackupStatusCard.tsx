@@ -1,20 +1,20 @@
-import { useBackup } from '@/hooks/useBackup';
-import Card from '@/components/ui-kit/Card';
+import Card from "@/components/ui-kit/Card";
+import { useBackup } from "@/hooks/useBackup";
 
 export default function BackupStatusCard() {
   const { stats, loading, error } = useBackup();
 
   const label = loading
-    ? 'Checking…'
+    ? "Checking…"
     : error
-    ? 'Unavailable'
-    : stats.ok
-    ? 'Healthy'
-    : 'Initializing';
+      ? "Unavailable"
+      : stats.ok
+        ? "Healthy"
+        : "Initializing";
 
   const last =
-    stats.lastRun != null ? new Date(stats.lastRun).toLocaleString() : '—';
-  const queued = typeof stats.queued === 'number' ? stats.queued : 0;
+    stats.lastRun != null ? new Date(stats.lastRun).toLocaleString() : "—";
+  const queued = typeof stats.queued === "number" ? stats.queued : 0;
 
   return (
     <Card className="p-4">

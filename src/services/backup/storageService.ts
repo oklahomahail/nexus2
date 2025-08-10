@@ -8,7 +8,7 @@ export interface WritingData {
 
 export interface ProjectSettings {
   targetWordCount: number;
-  theme: 'light' | 'dark';
+  theme: "light" | "dark";
   autoSaveInterval: number;
 }
 
@@ -20,11 +20,11 @@ export interface WritingSession {
 
 class StorageService {
   private readonly KEYS = {
-    WRITING_CONTENT: 'writing_content',
-    TIMELINE_SCENES: 'timeline_scenes',
-    WRITING_SESSIONS: 'writing_sessions',
-    PROJECT_SETTINGS: 'project_settings',
-    RECENT_ACTIVITIES: 'recent_activities',
+    WRITING_CONTENT: "writing_content",
+    TIMELINE_SCENES: "timeline_scenes",
+    WRITING_SESSIONS: "writing_sessions",
+    PROJECT_SETTINGS: "project_settings",
+    RECENT_ACTIVITIES: "recent_activities",
   } as const;
 
   // Generic storage methods with error handling
@@ -69,7 +69,7 @@ class StorageService {
   // Writing sessions with automatic cleanup
   saveWritingSession(session: WritingSession): boolean {
     const sessions = this.getWritingSessions();
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     // Update or add today's session
     const existingIndex = sessions.findIndex((s) => s.date === today);
@@ -102,7 +102,7 @@ class StorageService {
   getProjectSettings(): ProjectSettings {
     return this.getItem<ProjectSettings>(this.KEYS.PROJECT_SETTINGS, {
       targetWordCount: 80000,
-      theme: 'dark',
+      theme: "dark",
       autoSaveInterval: 30000,
     });
   }
@@ -120,7 +120,7 @@ class StorageService {
       });
       return true;
     } catch (error) {
-      console.error('Failed to clear data:', error);
+      console.error("Failed to clear data:", error);
       return false;
     }
   }

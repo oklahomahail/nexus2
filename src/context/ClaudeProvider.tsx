@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { generateClaudeResponse, ClaudeResponse, ClaudeRequest } from '@/features/claude/claudeService';
+import React, { createContext, useContext, useState, ReactNode } from "react";
+
+import {
+  generateClaudeResponse,
+  ClaudeResponse,
+  ClaudeRequest,
+} from "@/features/claude/claudeService";
 
 interface ClaudeContextType {
   isLoading: boolean;
@@ -20,33 +25,36 @@ export function ClaudeProvider({ children }: ClaudeProviderProps) {
   const [lastResponse, setLastResponse] = useState<ClaudeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const generateResponse = async (request: ClaudeRequest): Promise<ClaudeResponse> => {
+  const generateResponse = async (
+    request: ClaudeRequest,
+  ): Promise<ClaudeResponse> => {
     setIsLoading(true);
     setError(null);
 
     try {
       const response = await generateClaudeResponse(
-        request.context?.action || 'general',
+        request.context?.action || "general",
         JSON.stringify(request.context || {}),
-        request
+        request,
       );
       setLastResponse(response);
-      
+
       if (!response.success && response.error) {
         setError(response.error);
       }
-      
+
       return response;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
-      
+
       const failureResponse: ClaudeResponse = {
-        content: '',
+        content: "",
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
-      
+
       setLastResponse(failureResponse);
       return failureResponse;
     } finally {
@@ -63,20 +71,18 @@ export function ClaudeProvider({ children }: ClaudeProviderProps) {
     lastResponse,
     error,
     generateResponse,
-    clearError
+    clearError,
   };
 
   return (
-    <ClaudeContext.Provider value={value}>
-      {children}
-    </ClaudeContext.Provider>
+    <ClaudeContext.Provider value={value}>{children}</ClaudeContext.Provider>
   );
 }
 
 export function useClaude(): ClaudeContextType {
   const context = useContext(ClaudeContext);
   if (context === undefined) {
-    throw new Error('useClaude must be used within a ClaudeProvider');
+    throw new Error("useClaude must be used within a ClaudeProvider");
   }
   return context;
 }

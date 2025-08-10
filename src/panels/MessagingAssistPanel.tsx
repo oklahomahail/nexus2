@@ -129,14 +129,10 @@ export default function MessagingAssistantPanel(): React.ReactElement {
         "CTA Button": `Create powerful call-to-action button text and CTAs for this campaign: ${context}`,
       };
 
-      const response = await generateClaudeResponse(
-        messageType,
-        context,
-        {
-          prompt: prompts[messageType],
-          context: { type: messageType, details: context }
-        }
-      );
+      const response = await generateClaudeResponse(messageType, context, {
+        prompt: prompts[messageType],
+        context: { type: messageType, details: context },
+      });
 
       if (response.success) {
         setResult(response.content);

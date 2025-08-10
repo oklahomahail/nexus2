@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
-import WritingEditor from "./WritingEditor";
-import { ClaudeToolbar } from "@features/claude"; // via features barrel
+
 import WritingToolbar from "@/components/composer/WritingToolbar";
 import type { ExportFormat } from "@/types/writing";
+
+import { ClaudeToolbar } from "@features/claude"; // via features barrel
+
+import WritingEditor from "./WritingEditor";
 
 export interface ComposerProps {
   initial?: string;
@@ -32,7 +35,7 @@ export default function Composer({
 
   const mergedContext = useMemo(
     () => ({ purpose, title, ...(context ?? {}) }),
-    [purpose, title, context]
+    [purpose, title, context],
   );
 
   const handleInsert = (text: string) => {
@@ -86,7 +89,7 @@ export default function Composer({
           doDownload(
             `${safeTitle}.docx`,
             value,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
           );
           break;
         default:
@@ -99,7 +102,7 @@ export default function Composer({
 
   const handleClaudeAssist = () => {
     handleInsert(
-      "[[Prompt Claude: draft a donor email aligned to Track15 style]]"
+      "[[Prompt Claude: draft a donor email aligned to Track15 style]]",
     );
   };
 
@@ -121,9 +124,13 @@ export default function Composer({
 
         <ClaudeToolbar context={mergedContext} onInsert={handleInsert} />
 
-        <WritingEditor value={value} onChange={handleChange} onTextSelect={function (): void {
-          throw new Error("Function not implemented.");
-        } } />
+        <WritingEditor
+          value={value}
+          onChange={handleChange}
+          onTextSelect={function (): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
       </div>
     </div>
   );

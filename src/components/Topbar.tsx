@@ -10,6 +10,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
+
 import StorageQuotaChip from "@/components/dashboard/StorageQuotaChip";
 
 interface UserInfo {
@@ -83,7 +84,7 @@ const Topbar: React.FC<TopbarProps> = ({
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => n.unread).length,
-    [notifications]
+    [notifications],
   );
 
   return (
@@ -156,7 +157,9 @@ const Topbar: React.FC<TopbarProps> = ({
                 >
                   <div className="p-4 border-b border-slate-700/50">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold">Notifications</h3>
+                      <h3 className="text-white font-semibold">
+                        Notifications
+                      </h3>
                       <span className="text-xs text-slate-400">
                         {unreadCount} unread
                       </span>
@@ -169,7 +172,7 @@ const Topbar: React.FC<TopbarProps> = ({
                         key={n.id}
                         className={clsx(
                           "p-4 border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors cursor-pointer",
-                          n.unread && "bg-blue-500/5"
+                          n.unread && "bg-blue-500/5",
                         )}
                         role="menuitem"
                       >
@@ -180,8 +183,8 @@ const Topbar: React.FC<TopbarProps> = ({
                               n.type === "success"
                                 ? "bg-green-400"
                                 : n.type === "info"
-                                ? "bg-blue-400"
-                                : "bg-slate-400"
+                                  ? "bg-blue-400"
+                                  : "bg-slate-400",
                             )}
                           />
                           <div className="flex-1 min-w-0">

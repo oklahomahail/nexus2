@@ -5,7 +5,7 @@ import DonorInsightsPanel from "../components/DonorInsightsPanel";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MetricsOverview from "../components/MetricsOverview";
 import { analyticsService } from "../services/analyticsService";
-import BackupStatusCard from '@/components/dashboard/BackupStatusCard';
+import BackupStatusCard from "@/components/dashboard/BackupStatusCard";
 
 // Minimal local types to avoid coupling; adjust freely if you prefer shared models
 type AnalyticsView = "overview" | "campaigns" | "donors" | "export";
@@ -15,12 +15,18 @@ type AnalyticsFilters = { dateRange: DateRange };
 type OrganizationAnalytics = {
   currentPeriod: { totalRaised: number };
   previousPeriod: { totalRaised: number };
-  topPerformingCampaigns: { id: string; name: string; raised: number; goal: number }[];
+  topPerformingCampaigns: {
+    id: string;
+    name: string;
+    raised: number;
+    goal: number;
+  }[];
 };
 
 const AnalyticsDashboard: React.FC = () => {
   const [activeView, setActiveView] = useState<AnalyticsView>("overview");
-  const [orgAnalytics, setOrgAnalytics] = useState<OrganizationAnalytics | null>(null);
+  const [orgAnalytics, setOrgAnalytics] =
+    useState<OrganizationAnalytics | null>(null);
   const [donorInsights, setDonorInsights] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +39,6 @@ const AnalyticsDashboard: React.FC = () => {
 
   useEffect(() => {
     void loadAnalyticsData();
-     
   }, [filters]);
 
   const loadAnalyticsData = async () => {
@@ -49,7 +54,9 @@ const AnalyticsDashboard: React.FC = () => {
       setOrgAnalytics(orgData);
       setDonorInsights(donorData);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load analytics data");
+      setError(
+        err instanceof Error ? err.message : "Failed to load analytics data",
+      );
     } finally {
       setLoading(false);
     }
@@ -57,7 +64,10 @@ const AnalyticsDashboard: React.FC = () => {
 
   const handleExportData = async () => {
     try {
-      const csvUrl = await analyticsService.exportAnalyticsData("organization", filters);
+      const csvUrl = await analyticsService.exportAnalyticsData(
+        "organization",
+        filters,
+      );
       const link = document.createElement("a");
       link.href = csvUrl;
       link.download = `analytics-export-${new Date().toISOString().split("T")[0]}.csv`;
@@ -88,7 +98,9 @@ const AnalyticsDashboard: React.FC = () => {
         <div className="flex">
           <div className="mt-0.5">⚠️</div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-300">Analytics Error</h3>
+            <h3 className="text-sm font-medium text-red-300">
+              Analytics Error
+            </h3>
             <p className="text-sm text-red-200 mt-1">{error}</p>
             <button
               onClick={loadAnalyticsData}
@@ -108,7 +120,8 @@ const AnalyticsDashboard: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-white">Analytics Dashboard</h1>
           <p className="text-slate-400">
-            Comprehensive insights into your fundraising performance and donor engagement
+            Comprehensive insights into your fundraising performance and donor
+            engagement
           </p>
         </div>
 
@@ -128,7 +141,10 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      <AnalyticsFiltersComponent filters={filters} onFiltersChange={setFilters} />
+      <AnalyticsFiltersComponent
+        filters={filters}
+        onFiltersChange={setFilters}
+      />
 
       <div className="border-b border-slate-800/50">
         <nav className="-mb-px flex space-x-8">
@@ -154,7 +170,9 @@ const AnalyticsDashboard: React.FC = () => {
           <>
             <MetricsOverview />
             <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 text-white">Performance Overview</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Performance Overview
+              </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-blue-400">
@@ -176,14 +194,18 @@ const AnalyticsDashboard: React.FC = () => {
         {activeView === "campaigns" && orgAnalytics && (
           <div className="space-y-6">
             <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 text-white">Top Performing Campaigns</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">
+                Top Performing Campaigns
+              </h3>
               <div className="space-y-3">
                 {orgAnalytics.topPerformingCampaigns.map((campaign) => (
                   <div
                     key={campaign.id}
                     className="flex justify-between items-center p-3 bg-slate-900/50 border border-slate-800 rounded"
                   >
-                    <span className="font-medium text-white">{campaign.name}</span>
+                    <span className="font-medium text-white">
+                      {campaign.name}
+                    </span>
                     <div className="text-right">
                       <p className="font-semibold text-blue-300">
                         ${campaign.raised.toLocaleString()}
@@ -205,10 +227,12 @@ const AnalyticsDashboard: React.FC = () => {
 
         {activeView === "export" && (
           <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Export Analytics Data</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Export Analytics Data
+            </h3>
             <p className="text-slate-300 mb-4">
-              Download fundraising and donor performance data filtered by the current date
-              range and selected criteria.
+              Download fundraising and donor performance data filtered by the
+              current date range and selected criteria.
             </p>
             <button
               onClick={handleExportData}
@@ -224,4 +248,4 @@ const AnalyticsDashboard: React.FC = () => {
 };
 
 export default AnalyticsDashboard;
-<BackupStatusCard />
+<BackupStatusCard />;

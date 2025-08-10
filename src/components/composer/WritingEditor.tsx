@@ -1,5 +1,5 @@
 // src/components/Writing/WritingEditor.tsx
-import React, { forwardRef } from 'react';
+import React, { forwardRef } from "react";
 
 export interface WritingEditorProps {
   value: string;
@@ -16,7 +16,7 @@ const WritingEditor = forwardRef<HTMLTextAreaElement, WritingEditorProps>(
       value,
       onChange,
       onTextSelect,
-      placeholder = 'Start writing...',
+      placeholder = "Start writing...",
       disabled = false,
       className,
     },
@@ -34,12 +34,12 @@ const WritingEditor = forwardRef<HTMLTextAreaElement, WritingEditorProps>(
           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
           disabled:opacity-50 disabled:cursor-not-allowed
-          transition-colors duration-200 ${className || ''}`}
-        style={{ minHeight: '400px' }}
+          transition-colors duration-200 ${className || ""}`}
+        style={{ minHeight: "400px" }}
       />
     );
   },
 );
 
-WritingEditor.displayName = 'WritingEditor';
+WritingEditor.displayName = "WritingEditor";
 export default WritingEditor;

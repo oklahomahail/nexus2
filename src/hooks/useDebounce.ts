@@ -1,5 +1,5 @@
 // src/hooks/useDebounce.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 /**
  * Debounces a changing value so it only updates after the delay.

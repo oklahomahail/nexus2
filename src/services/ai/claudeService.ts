@@ -49,9 +49,12 @@ const RATE_LIMIT_KEY = "claude_rate_limit";
 export function createError(
   message: string,
   code: string = "unknown",
-  retriable = false
+  retriable = false,
 ) {
-  const err = new Error(message) as Error & { code?: string; retriable?: boolean };
+  const err = new Error(message) as Error & {
+    code?: string;
+    retriable?: boolean;
+  };
   err.code = code;
   err.retriable = retriable;
   return err;
@@ -62,7 +65,7 @@ async function handleApiError(res: Response): Promise<never> {
   throw createError(
     `Claude error ${res.status}: ${text || res.statusText}`,
     "api_error",
-    res.status >= 500
+    res.status >= 500,
   );
 }
 
@@ -136,7 +139,12 @@ export function generateMessageId(): string {
 // Optional in-memory transcript (handy for a panel)
 const session: ClaudeMessage[] = [];
 export function pushMessage(role: "user" | "assistant", content: string) {
-  session.push({ id: generateMessageId(), role, content, timestamp: new Date() });
+  session.push({
+    id: generateMessageId(),
+    role,
+    content,
+    timestamp: new Date(),
+  });
   if (session.length > MESSAGE_LIMIT) session.shift();
 }
 export function getSession(): readonly ClaudeMessage[] {
@@ -147,7 +155,7 @@ export function getSession(): readonly ClaudeMessage[] {
 
 export async function callClaude(
   prompt: string,
-  opts: ClaudeCallOptions = {}
+  opts: ClaudeCallOptions = {},
 ): Promise<ClaudeToolResponse> {
   const apiKey = getApiKeyOrThrow();
 
@@ -175,9 +183,7 @@ export async function callClaude(
   updateRateLimit();
 
   const text =
-    json?.content?.[0]?.text ??
-    json?.content?.[0]?.content?.[0]?.text ??
-    "";
+    json?.content?.[0]?.text ?? json?.content?.[0]?.content?.[0]?.text ?? "";
 
   return {
     text,
@@ -197,7 +203,7 @@ export async function streamClaude(
     onToken: (t: string) => void;
     onDone?: (full: string) => void;
     onError?: (err: unknown) => void;
-  }
+  },
 ) {
   const apiKey = getApiKeyOrThrow();
 
@@ -223,7 +229,8 @@ export async function streamClaude(
     });
 
     if (!res.ok) await handleApiError(res);
-    if (!res.body) throw createError("Claude stream returned no body", "empty_body");
+    if (!res.body)
+      throw createError("Claude stream returned no body", "empty_body");
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder("utf-8");

@@ -1,2 +1,2 @@
 // src/services/ai/index.ts
-export * from './claudeService';
+export * from "./claudeService";

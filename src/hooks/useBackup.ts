@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react';
-import { getBackupStatus, ensureBackupDb } from '@/services/backup/backupService';
+import { useEffect, useState } from "react";
+
+import {
+  getBackupStatus,
+  ensureBackupDb,
+} from "@/services/backup/backupService";
 
 export interface BackupStats {
   ok: boolean;
@@ -29,7 +33,7 @@ export function useBackup() {
         }
       } catch (e) {
         if (mounted) {
-          setError('Failed to read backup status');
+          setError("Failed to read backup status");
           setLoading(false);
         }
       }

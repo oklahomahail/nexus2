@@ -1,10 +1,10 @@
 // Export formats for writing/document tools
-export type ExportFormat = 'pdf' | 'docx' | 'txt' | 'markdown' | 'html';
+export type ExportFormat = "pdf" | "docx" | "txt" | "markdown" | "html";
 
 // Writing editor related types
 export interface WritingToolbarProps {
   onExport?: (format: ExportFormat) => void;
-  onFormat?: (type: 'bold' | 'italic' | 'underline') => void;
+  onFormat?: (type: "bold" | "italic" | "underline") => void;
   disabled?: boolean;
 }
 

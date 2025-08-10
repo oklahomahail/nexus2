@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface UseAutoSaveOptions {
   key: string;
@@ -7,11 +7,11 @@ interface UseAutoSaveOptions {
   delay?: number; // milliseconds to wait before saving
 }
 
-export default function useAutoSave({ 
-  key, 
-  data, 
-  onSave, 
-  delay = 1000 
+export default function useAutoSave({
+  key,
+  data,
+  onSave,
+  delay = 1000,
 }: UseAutoSaveOptions) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const previousDataRef = useRef<string>(data);
@@ -31,7 +31,7 @@ export default function useAutoSave({
     try {
       localStorage.setItem(key, data);
     } catch (error) {
-      console.warn('Failed to save to localStorage:', error);
+      console.warn("Failed to save to localStorage:", error);
     }
 
     // Debounce the onSave callback (for backup/API calls)
@@ -40,7 +40,7 @@ export default function useAutoSave({
         await onSave(data);
         previousDataRef.current = data;
       } catch (error) {
-        console.warn('Auto-save failed:', error);
+        console.warn("Auto-save failed:", error);
       }
     }, delay);
 

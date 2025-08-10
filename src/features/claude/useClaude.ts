@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
-import { Campaign } from "../../models/campaign";
-import { 
-  generateClaudeResponse, 
-  getClaudePrompt, 
-  ClaudeResponse, 
-  ClaudeRequest 
+
+import {
+  generateClaudeResponse,
+  getClaudePrompt,
+  ClaudeResponse,
+  ClaudeRequest,
 } from "./claudeService";
+import { Campaign } from "../../models/campaign";
 
 // Message structure for conversations
 export interface ClaudeMessage {
@@ -56,9 +57,11 @@ export function useClaude(): UseClaudeResult {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<ClaudeResponse | null>(null);
-  const [currentSession, setCurrentSession] = useState<ConversationSession | null>(null);
+  const [currentSession, setCurrentSession] =
+    useState<ConversationSession | null>(null);
   const [sessions, setSessions] = useState<ConversationSession[]>([]);
-  const [abortController, setAbortController] = useState<AbortController | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   // Load saved conversations on mount
   useEffect(() => {
@@ -155,8 +158,9 @@ export function useClaude(): UseClaudeResult {
         setResponse(
           session.messages.length > 0
             ? {
-                content: session.messages[session.messages.length - 1]?.content || "",
-                success: true
+                content:
+                  session.messages[session.messages.length - 1]?.content || "",
+                success: true,
               }
             : null,
         );
@@ -188,11 +192,7 @@ export function useClaude(): UseClaudeResult {
   );
 
   const askClaude = useCallback(
-    async (
-      prompt: string,
-      currentCampaign?: Campaign,
-      actionType?: string,
-    ) => {
+    async (prompt: string, currentCampaign?: Campaign, actionType?: string) => {
       // Cancel any existing request
       if (abortController) {
         abortController.abort();
@@ -221,17 +221,25 @@ export function useClaude(): UseClaudeResult {
       const buildCampaignContext = (campaign: Campaign) => {
         const parts = [];
         if (campaign.name) parts.push(`- Name: ${campaign.name}`);
-        if (campaign.description) parts.push(`- Description: ${campaign.description}`);
-        if (campaign.goal) parts.push(`- Goal: $${campaign.goal.toLocaleString()}`);
-        if (campaign.raised !== undefined) parts.push(`- Raised: $${campaign.raised.toLocaleString()}`);
-        
+        if (campaign.description)
+          parts.push(`- Description: ${campaign.description}`);
+        if (campaign.goal)
+          parts.push(`- Goal: $${campaign.goal.toLocaleString()}`);
+        if (campaign.raised !== undefined)
+          parts.push(`- Raised: $${campaign.raised.toLocaleString()}`);
+
         // Handle optional properties safely
         const campaignAny = campaign as any;
-        if (campaignAny.progress !== undefined) parts.push(`- Progress: ${campaignAny.progress}%`);
-        if (campaignAny.daysLeft !== undefined) parts.push(`- Days Left: ${campaignAny.daysLeft}`);
-        if (campaignAny.deadline) parts.push(`- Deadline: ${campaignAny.deadline}`);
+        if (campaignAny.progress !== undefined)
+          parts.push(`- Progress: ${campaignAny.progress}%`);
+        if (campaignAny.daysLeft !== undefined)
+          parts.push(`- Days Left: ${campaignAny.daysLeft}`);
+        if (campaignAny.deadline)
+          parts.push(`- Deadline: ${campaignAny.deadline}`);
 
-        return parts.length > 0 ? `\n\nCampaign Context:\n${parts.join("\n")}` : "";
+        return parts.length > 0
+          ? `\n\nCampaign Context:\n${parts.join("\n")}`
+          : "";
       };
 
       const contextualPrompt = currentCampaign
@@ -260,9 +268,9 @@ export function useClaude(): UseClaudeResult {
         };
 
         const aiResponse = await generateClaudeResponse(
-          actionType || 'chat',
+          actionType || "chat",
           JSON.stringify(currentCampaign || {}),
-          claudeRequest
+          claudeRequest,
         );
 
         // Check again if request was cancelled
