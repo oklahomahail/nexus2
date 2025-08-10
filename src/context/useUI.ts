@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export const useUI = () => {
   const [activeView, setActiveView] = useState("dashboard");
@@ -18,6 +18,6 @@ export const useUI = () => {
     loading,
     error,
     setLoading,
-    setError
+    setError,
   };
 };

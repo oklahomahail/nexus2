@@ -10,18 +10,24 @@ import {
 } from "lucide-react";
 import React, { Suspense, useMemo, useState } from "react";
 
-import { useUI, useNotifications } from "@/context/AppProviders";
-import LoadingSpinner from "./LoadingSpinner";
-import ClaudePanel from "../features/claude/ClaudePanel";
+import { useUI } from "@/context/useUI";
+import CampaignsPanel from "@/panels/CampaignsPanel";
 
-// Simple lazy loading without preload for now
-const CampaignsPanel = React.lazy(() => import("@/panels/CampaignsPanel"));
-const AnalyticsDashboard = React.lazy(() => import("@/panels/AnalyticsDashboard"));
-const DonorsPlaceholder = React.lazy(() => import("@/panels/DonorsPlaceholder"));
+import LoadingSpinner from "./LoadingSpinner";
+
+const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
+const AnalyticsDashboard = React.lazy(
+  () => import("@/panels/AnalyticsDashboard"),
+);
+const DonorsPlaceholder = React.lazy(
+  () => import("@/panels/DonorsPlaceholder"),
+);
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
 
+type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors";
+
 interface NavigationItem {
-  key: "dashboard" | "campaigns" | "analytics" | "donors";
+  key: ViewKey;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   component: React.ComponentType<any>;
@@ -30,15 +36,14 @@ interface NavigationItem {
 
 const AppContent: React.FC = () => {
   const { activeView, setActiveView, loading = false, error = null } = useUI();
-  const notifications = useNotifications();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
 
-  // Toggle notifications - simple implementation
   const toggleNotifications = () => {
-    console.log('Toggle notifications');
+    // wire up to your notifications drawer when ready
+    // keeping to avoid UI regressions
+    /* no-op */
   };
 
-  // Mock current campaign – replace with real selection logic
   const currentCampaign = useMemo(
     () => ({
       id: "campaign_1",
@@ -147,7 +152,6 @@ const AppContent: React.FC = () => {
                 );
               })}
 
-              {/* AI Assistant Button */}
               <button
                 onClick={() => setShowClaudePanel(true)}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/50"
@@ -215,7 +219,7 @@ const AppContent: React.FC = () => {
                 <h3 className="text-sm font-medium text-red-400 mb-2">
                   Application Error
                 </h3>
-                <p className="text-sm text-red-300">{error}</p>
+                <p className="text-sm text-red-300">{String(error)}</p>
               </div>
             </div>
           ) : (
@@ -236,11 +240,13 @@ const AppContent: React.FC = () => {
       </main>
 
       {/* Claude AI Panel */}
-      <ClaudePanel
-        isOpen={showClaudePanel}
-        onClose={() => setShowClaudePanel(false)}
-        currentCampaign={currentCampaign}
-      />
+      <Suspense fallback={null}>
+        <ClaudePanel
+          isOpen={showClaudePanel}
+          onClose={() => setShowClaudePanel(false)}
+          currentCampaign={currentCampaign}
+        />
+      </Suspense>
     </div>
   );
 };

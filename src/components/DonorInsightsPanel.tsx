@@ -1,8 +1,8 @@
 import React from "react";
 
-import { DonorInsights } from "../models/analytics";
+import { _DonorInsights as DonorInsights } from "../models/analytics";
 
-interface _DonorInsightsPanelProps {
+interface DonorInsightsPanelProps {
   insights: DonorInsights | null;
 }
 

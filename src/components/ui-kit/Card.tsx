@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import clsx from "clsx";
 import React from "react";
 
 interface CardProps {
@@ -14,13 +12,19 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({
   children,
-  _className,
-  _padding = "md",
-  _shadow = "md",
-  _rounded = "md",
-  _border = true,
-  _variant = "default",
+  className,
+  padding = "md",
+  shadow = "md",
+  rounded = "md",
+  border = true,
+  variant = "default",
 }) => {
+  const variantClasses = {
+    default: "bg-white",
+    outlined: "bg-white border-2",
+    elevated: "bg-white shadow-lg",
+  };
+
   const paddingClasses = {
     none: "",
     sm: "p-3",
@@ -31,7 +35,7 @@ const Card: React.FC<CardProps> = ({
   const shadowClasses = {
     none: "",
     sm: "shadow-sm",
-    md: "shadow-md",
+    md: "shadow",
     lg: "shadow-lg",
   };
 
@@ -42,23 +46,19 @@ const Card: React.FC<CardProps> = ({
     lg: "rounded-xl",
   };
 
-  const variantClasses = {
-    default: "bg-white",
-    outlined: "bg-white border-2",
-    elevated: "bg-white shadow-xl",
-  };
-
   return (
     <div
-      className={clsx(
-        variantClasses[variant],
-        paddingClasses[padding],
-        shadowClasses[shadow],
-        roundedClasses[rounded],
-        border && variant === "default" && "border border-gray-200",
-        "transition-shadow duration-200",
-        className,
-      )}
+      className={`
+        ${variantClasses[variant]},
+        ${paddingClasses[padding]},
+        ${shadowClasses[shadow]},
+        ${roundedClasses[rounded]},
+        ${border && variant === "default" && "border border-gray-200"},
+        transition-shadow duration-200
+        ${className}
+      `
+        .trim()
+        .replace(/,\s*/g, " ")}
     >
       {children}
     </div>

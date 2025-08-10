@@ -1,16 +1,18 @@
-/* eslint-disable */
-// src/features/claude/useClaude.ts - Fixed to work with your Campaign type
 import { useState, useCallback, useEffect } from "react";
-
-import { Campaign } from "@/models/campaign";
-
-import {
-  generateClaudeConversation,
-  ClaudeServiceError,
-  ClaudeMessage,
-  ClaudeResponse,
+import { Campaign } from "../../models/campaign";
+import { 
+  generateClaudeResponse, 
+  getClaudePrompt, 
+  ClaudeResponse, 
+  ClaudeRequest 
 } from "./claudeService";
-import { getClaudePrompt } from "./getClaudePrompt";
+
+// Message structure for conversations
+export interface ClaudeMessage {
+  role: "user" | "assistant";
+  content: string;
+  timestamp?: string;
+}
 
 // Local storage keys
 const CONVERSATION_STORAGE_KEY = "nexus_claude_conversations";
@@ -35,30 +37,28 @@ interface UseClaudeResult {
 
   // Actions
   askClaude: (
-    _prompt: string,
-    _currentCampaign?: Campaign,
-    _actionType?: string,
+    prompt: string,
+    currentCampaign?: Campaign,
+    actionType?: string,
   ) => Promise<void>;
   askClaudeWithContext: (
-    _actionType: string,
-    _currentCampaign: Campaign,
+    actionType: string,
+    currentCampaign: Campaign,
   ) => Promise<void>;
   clearConversation: () => void;
-  loadSession: (_sessionId: string) => void;
-  deleteSession: (_sessionId: string) => void;
-  createNewSession: (_campaign?: Campaign) => void;
+  loadSession: (sessionId: string) => void;
+  deleteSession: (sessionId: string) => void;
+  createNewSession: (campaign?: Campaign) => void;
   cancelRequest?: () => void;
 }
 
 export function useClaude(): UseClaudeResult {
-  const [_isLoading, setIsLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
-  const [_response, setResponse] = useState<ClaudeResponse | null>(null);
-  const [_currentSession, _setCurrentSession] =
-    useState<ConversationSession | null>(null);
-  const [_sessions, _setSessions] = useState<ConversationSession[]>([]);
-  const [_abortController, setAbortController] =
-    useState<AbortController | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [response, setResponse] = useState<ClaudeResponse | null>(null);
+  const [currentSession, setCurrentSession] = useState<ConversationSession | null>(null);
+  const [sessions, setSessions] = useState<ConversationSession[]>([]);
+  const [abortController, setAbortController] = useState<AbortController | null>(null);
 
   // Load saved conversations on mount
   useEffect(() => {
@@ -155,8 +155,8 @@ export function useClaude(): UseClaudeResult {
         setResponse(
           session.messages.length > 0
             ? {
-                content:
-                  session.messages[session.messages.length - 1]?.content || "",
+                content: session.messages[session.messages.length - 1]?.content || "",
+                success: true
               }
             : null,
         );
@@ -191,7 +191,7 @@ export function useClaude(): UseClaudeResult {
     async (
       prompt: string,
       currentCampaign?: Campaign,
-      _actionType?: string,
+      actionType?: string,
     ) => {
       // Cancel any existing request
       if (abortController) {
@@ -217,25 +217,21 @@ export function useClaude(): UseClaudeResult {
         setCurrentSession(session);
       }
 
-      // Build context-aware prompt - safer property access
+      // Build context-aware prompt
       const buildCampaignContext = (campaign: Campaign) => {
         const parts = [];
         if (campaign.name) parts.push(`- Name: ${campaign.name}`);
-        if (campaign.description)
-          parts.push(`- Description: ${campaign.description}`);
-        if (campaign.goal)
-          parts.push(`- Goal: $${campaign.goal.toLocaleString()}`);
-        if (campaign.raised !== undefined)
-          parts.push(`- Raised: $${campaign.raised.toLocaleString()}`);
-        if (campaign.progress !== undefined)
-          parts.push(`- Progress: ${campaign.progress}%`);
-        if (campaign.daysLeft !== undefined)
-          parts.push(`- Days Left: ${campaign.daysLeft}`);
-        if (campaign.deadline) parts.push(`- Deadline: ${campaign.deadline}`);
+        if (campaign.description) parts.push(`- Description: ${campaign.description}`);
+        if (campaign.goal) parts.push(`- Goal: $${campaign.goal.toLocaleString()}`);
+        if (campaign.raised !== undefined) parts.push(`- Raised: $${campaign.raised.toLocaleString()}`);
+        
+        // Handle optional properties safely
+        const campaignAny = campaign as any;
+        if (campaignAny.progress !== undefined) parts.push(`- Progress: ${campaignAny.progress}%`);
+        if (campaignAny.daysLeft !== undefined) parts.push(`- Days Left: ${campaignAny.daysLeft}`);
+        if (campaignAny.deadline) parts.push(`- Deadline: ${campaignAny.deadline}`);
 
-        return parts.length > 0
-          ? `\n\nCampaign Context:\n${parts.join("\n")}`
-          : "";
+        return parts.length > 0 ? `\n\nCampaign Context:\n${parts.join("\n")}` : "";
       };
 
       const contextualPrompt = currentCampaign
@@ -245,6 +241,7 @@ export function useClaude(): UseClaudeResult {
       const userMessage: ClaudeMessage = {
         role: "user",
         content: contextualPrompt,
+        timestamp: new Date().toISOString(),
       };
 
       const updatedMessages = [...session.messages, userMessage];
@@ -255,16 +252,32 @@ export function useClaude(): UseClaudeResult {
           return;
         }
 
-        const aiResponse = await generateClaudeConversation(updatedMessages);
+        // Create the request for Claude
+        const claudeRequest: ClaudeRequest = {
+          prompt: contextualPrompt,
+          context: currentCampaign ? { campaign: currentCampaign } : {},
+          maxTokens: 1000,
+        };
+
+        const aiResponse = await generateClaudeResponse(
+          actionType || 'chat',
+          JSON.stringify(currentCampaign || {}),
+          claudeRequest
+        );
 
         // Check again if request was cancelled
         if (newAbortController.signal.aborted) {
           return;
         }
 
+        if (!aiResponse.success) {
+          throw new Error(aiResponse.error || "Claude request failed");
+        }
+
         const assistantMessage: ClaudeMessage = {
           role: "assistant",
           content: aiResponse.content,
+          timestamp: new Date().toISOString(),
         };
 
         const finalMessages = [...updatedMessages, assistantMessage];
@@ -282,7 +295,7 @@ export function useClaude(): UseClaudeResult {
           return; // Request was cancelled, don't show error
         }
 
-        if (err instanceof ClaudeServiceError) {
+        if (err instanceof Error) {
           setError(`${err.name}: ${err.message}`);
         } else {
           setError("An unexpected error occurred while generating content.");
@@ -298,15 +311,15 @@ export function useClaude(): UseClaudeResult {
   );
 
   const askClaudeWithContext = useCallback(
-    async (_actionType: string, currentCampaign: Campaign) => {
+    async (actionType: string, currentCampaign: Campaign) => {
       if (!currentCampaign) {
         setError("Please select a campaign first to get specific assistance.");
         return;
       }
 
       try {
-        const prompt = getClaudePrompt(_actionType, currentCampaign);
-        await askClaude(prompt, currentCampaign, _actionType);
+        const prompt = getClaudePrompt(actionType, currentCampaign);
+        await askClaude(prompt, currentCampaign, actionType);
       } catch (err) {
         console.error("Error generating Claude prompt:", err);
         setError("Failed to generate prompt for campaign context.");

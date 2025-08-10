@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-// src/components/ui/Panel.tsx
-import clsx from "clsx";
 import React from "react";
 
 interface PanelProps {
@@ -17,23 +14,38 @@ interface PanelProps {
   variant?: "default" | "brand" | "muted";
 }
 
-export const Panel: React.FC<PanelProps> = ({
+const Panel: React.FC<PanelProps> = ({
   title,
-  _subtitle,
-  _children,
-  _className = "",
-  _titleSize = "md",
-  _padding = "md",
-  _shadow = "soft",
-  _rounded = "2xl",
-  _headerActions,
-  _fullHeight = false,
-  _variant = "default",
+  subtitle,
+  children,
+  className = "",
+  titleSize = "md",
+  padding = "md",
+  shadow = "soft",
+  rounded = "2xl",
+  headerActions,
+  fullHeight = false,
+  variant = "default",
 }) => {
-  const titleSizeClasses = {
-    sm: "text-lg font-medium",
-    md: "text-xl font-semibold",
-    lg: "text-2xl font-bold",
+  const variantClasses = {
+    default: "bg-white border-gray-200",
+    brand: "bg-blue-50 border-blue-200",
+    muted: "bg-gray-50 border-gray-300",
+  };
+
+  const shadowClasses = {
+    none: "",
+    soft: "shadow-sm",
+    medium: "shadow-md",
+    strong: "shadow-lg",
+  };
+
+  const roundedClasses = {
+    sm: "rounded-sm",
+    md: "rounded-md",
+    lg: "rounded-lg",
+    xl: "rounded-xl",
+    "2xl": "rounded-2xl",
   };
 
   const paddingClasses = {
@@ -42,116 +54,99 @@ export const Panel: React.FC<PanelProps> = ({
     lg: "p-8",
   };
 
-  const shadowClasses = {
-    none: "shadow-none",
-    soft: "shadow-soft border border-gray-200",
-    medium: "shadow-md",
-    strong: "shadow-lg",
-  };
-
-  const roundedClasses = {
-    sm: "rounded",
-    md: "rounded-lg",
-    lg: "rounded-xl",
-    xl: "rounded-xl",
-    "2xl": "rounded-2xl",
-  };
-
-  const variantClasses = {
-    default: "bg-white",
-    brand: "bg-gradient-to-br from-brand-primary to-brand-secondary text-white",
-    muted: "bg-brand-muted border border-brand-secondary/20",
+  const titleSizeClasses = {
+    sm: "text-lg",
+    md: "text-xl",
+    lg: "text-2xl",
   };
 
   const textColorClasses = {
     default: "text-gray-900",
-    brand: "text-white",
-    muted: "text-brand-dark",
+    brand: "text-blue-900",
+    muted: "text-gray-700",
   };
 
   const subtitleColorClasses = {
     default: "text-gray-600",
-    brand: "text-white/80",
-    muted: "text-brand-primary/70",
+    brand: "text-blue-700",
+    muted: "text-gray-500",
   };
 
   const borderColorClasses = {
     default: "border-gray-200",
-    brand: "border-white/20",
-    muted: "border-brand-secondary/20",
+    brand: "border-blue-200",
+    muted: "border-gray-300",
   };
 
   return (
     <div
-      className={clsx(
-        variantClasses[variant],
-        shadowClasses[shadow],
-        roundedClasses[rounded],
-        fullHeight && "h-full flex flex-col",
-        className,
-      )}
+      className={`
+        ${variantClasses[variant]}
+        ${shadowClasses[shadow]}
+        ${roundedClasses[rounded]}
+        ${fullHeight && "h-full flex flex-col"}
+        border transition-all duration-200
+        ${className}
+      `
+        .trim()
+        .replace(/\s+/g, " ")}
     >
       {(title || subtitle || headerActions) && (
         <div
-          className={clsx(
-            "border-b",
-            borderColorClasses[variant],
-            paddingClasses[padding],
-            "pb-4",
-          )}
+          className={`
+            border-b
+            ${borderColorClasses[variant]}
+            ${paddingClasses[padding]}
+            flex items-center justify-between
+          `
+            .trim()
+            .replace(/\s+/g, " ")}
         >
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              {title && (
-                <h2
-                  className={clsx(
-                    titleSizeClasses[titleSize],
-                    textColorClasses[variant],
-                  )}
-                >
-                  {title}
-                </h2>
-              )}
-              {subtitle && (
-                <p
-                  className={clsx(
-                    "text-sm mt-1",
-                    subtitleColorClasses[variant],
-                  )}
-                >
-                  {subtitle}
-                </p>
-              )}
-            </div>
-            {headerActions && (
-              <div className="flex items-center gap-2 ml-4">
-                {headerActions}
-              </div>
+          <div className="flex-1">
+            {title && (
+              <h3
+                className={`
+                  font-semibold mb-1
+                  ${titleSizeClasses[titleSize]}
+                  ${textColorClasses[variant]}
+                `
+                  .trim()
+                  .replace(/\s+/g, " ")}
+              >
+                {title}
+              </h3>
+            )}
+            {subtitle && (
+              <p
+                className={`
+                  text-sm
+                  ${subtitleColorClasses[variant]}
+                `
+                  .trim()
+                  .replace(/\s+/g, " ")}
+              >
+                {subtitle}
+              </p>
             )}
           </div>
+          {headerActions && (
+            <div className="flex items-center space-x-2">{headerActions}</div>
+          )}
         </div>
       )}
-
       <div
-        className={clsx(
-          paddingClasses[padding],
-          (title || subtitle || headerActions) && "pt-4",
-          fullHeight && "flex-1",
-        )}
+        className={`
+          ${paddingClasses[padding]}
+          ${(title || subtitle || headerActions) && "pt-4"}
+          ${fullHeight && "flex-1"}
+        `
+          .trim()
+          .replace(/\s+/g, " ")}
       >
         {children}
       </div>
     </div>
   );
 };
-
-// Specialized Panel variants for Nexus fundraising platform
-export {};
-
-export {};
-
-export {};
-
-export {};
 
 export default Panel;

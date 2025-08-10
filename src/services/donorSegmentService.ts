@@ -1,23 +1,24 @@
-// src/services/donorSegmentService.ts
 import {
-  DonorSegmentData,
-  SegmentMetricsTrend,
-  SegmentGoal,
+  DonorSegment,
+  _DonorSegmentData as DonorSegmentData, // Use the correct export name
 } from "../models/donorSegments";
 
-async function fetchDonorSegments(): Promise<DonorSegmentData[]> {
+// Get all donor segments
+export async function getDonorSegments(): Promise<DonorSegment[]> {
   const response = await fetch("/api/donor-segments");
   return response.json();
 }
 
-async function fetchDonorSegmentById(_id: string): Promise<DonorSegmentData> {
+// Get a specific donor segment by ID
+export async function getDonorSegmentById(id: string): Promise<DonorSegment> {
   const response = await fetch(`/api/donor-segments/${id}`);
   return response.json();
 }
 
-async function createDonorSegment(
-  _data: Partial<DonorSegmentData>,
-): Promise<DonorSegmentData> {
+// Create a new donor segment
+export async function createDonorSegment(
+  data: Partial<DonorSegment>,
+): Promise<DonorSegment> {
   const response = await fetch("/api/donor-segments", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -26,10 +27,11 @@ async function createDonorSegment(
   return response.json();
 }
 
-async function updateDonorSegment(
-  _id: string,
-  _data: Partial<DonorSegmentData>,
-): Promise<DonorSegmentData> {
+// Update an existing donor segment
+export async function updateDonorSegment(
+  id: string,
+  data: Partial<DonorSegment>,
+): Promise<DonorSegment> {
   const response = await fetch(`/api/donor-segments/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -38,36 +40,32 @@ async function updateDonorSegment(
   return response.json();
 }
 
-async function deleteDonorSegment(_id: string): Promise<void> {
+// Delete a donor segment
+export async function deleteDonorSegment(id: string): Promise<void> {
   await fetch(`/api/donor-segments/${id}`, { method: "DELETE" });
 }
 
-async function fetchSegmentMetrics(_id: string): Promise<SegmentMetricsTrend> {
+// Get metrics for a specific donor segment
+export async function getDonorSegmentMetrics(
+  id: string,
+): Promise<DonorSegmentData> {
   const response = await fetch(`/api/donor-segments/${id}/metrics`);
   return response.json();
 }
 
-async function fetchSegmentGoals(_id: string): Promise<SegmentGoal[]> {
+// Get goals for a specific donor segment
+export async function getDonorSegmentGoals(id: string): Promise<any> {
   const response = await fetch(`/api/donor-segments/${id}/goals`);
   return response.json();
 }
 
-async function compareSegments(_id1: string, _id2: string): Promise<any> {
+// Compare two donor segments
+export async function compareDonorSegments(
+  id1: string,
+  id2: string,
+): Promise<any> {
   const response = await fetch(
     `/api/donor-segments/compare?id1=${id1}&id2=${id2}`,
   );
   return response.json();
 }
-
-const donorSegmentService = {
-  fetchDonorSegments,
-  fetchDonorSegmentById,
-  createDonorSegment,
-  updateDonorSegment,
-  deleteDonorSegment,
-  fetchSegmentMetrics,
-  fetchSegmentGoals,
-  compareSegments, // ✅ Include the new method here
-};
-
-export default donorSegmentService;

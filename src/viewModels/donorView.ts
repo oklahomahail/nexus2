@@ -1,11 +1,10 @@
-// src/viewModels/donorView.ts
+import { _DonorInsights as DonorInsights } from "../models/analytics"; // Use correct export name
 
-import { DonorInsights } from "../models/analytics";
-
-export interface TopDonorView {
-  id: string;
+export interface DonorView {
   name: string;
-  totalGiven: string;
+  totalDonated: number;
+  donationsCount: number;
+  lastDonationDate: string;
 }
 
 export interface RetentionView {
@@ -19,18 +18,20 @@ export interface AcquisitionView {
   returningDonors: number;
 }
 
-export interface _DonorInsightsView {
-  topDonors: TopDonorView[];
+export interface DonorInsightsView {
+  topDonors: DonorView[];
   retention: RetentionView;
   acquisition: AcquisitionView;
 }
 
-export function toDonorInsightsView(_data: DonorInsights): DonorInsightsView {
+// Convert donor insights data to view format
+export function toDonorInsightsView(data: DonorInsights): DonorInsightsView {
   return {
-    topDonors: data.topDonors.map((d) => ({
-      id: d.id,
+    topDonors: data.topDonors.map((d: any) => ({
       name: d.name,
-      totalGiven: `$${d.totalGiven.toLocaleString()}`,
+      totalDonated: d.totalDonated,
+      donationsCount: d.donationsCount,
+      lastDonationDate: d.lastDonationDate,
     })),
     retention: {
       current: `${data.donorRetention.current}%`,

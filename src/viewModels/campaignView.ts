@@ -1,37 +1,36 @@
 import { Campaign } from "../models/campaign";
 
-export interface CampaignCardProps {
+export interface CampaignView {
   id: string;
   title: string;
   subtitle: string;
-  progressPercent: number;
-  daysLeft: number;
-  status: Campaign["status"];
-  category: Campaign["category"];
-  highlight?: boolean;
+  progressPercentage: number;
+  daysRemaining: number;
+  status: string;
+  category: string;
 }
 
-export function toCampaignCard(_campaign: Campaign): CampaignCardProps {
-  const now = new Date();
+// Convert Campaign data to view format
+export function toCampaignView(campaign: Campaign): CampaignView {
   const end = new Date(campaign.endDate);
   const _start = new Date(campaign.startDate);
-  const progressPercent = Math.min(
-    100,
-    Math.round((campaign.raised / campaign.goal) * 100),
-  );
-  const daysLeft = Math.max(
+  const now = new Date();
+  const daysRemaining = Math.max(
     0,
     Math.ceil((end.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)),
+  );
+  const progressPercentage = Math.min(
+    100,
+    Math.round((campaign.raised / campaign.goal) * 100),
   );
 
   return {
     id: campaign.id,
     title: campaign.name,
     subtitle: campaign.description ?? "",
-    progressPercent,
-    daysLeft,
+    progressPercentage,
+    daysRemaining,
     status: campaign.status,
     category: campaign.category,
-    highlight: progressPercent >= 90,
   };
 }

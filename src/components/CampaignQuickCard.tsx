@@ -11,8 +11,8 @@ interface CampaignQuickCardProps {
 
 const CampaignQuickCard: React.FC<CampaignQuickCardProps> = ({
   campaign,
-  _onClick,
-  _className,
+  onClick,
+  className,
 }) => {
   const progress =
     campaign.goal > 0 ? (campaign.raised / campaign.goal) * 100 : 0;

@@ -1,445 +1,182 @@
-/* eslint-disable */
 import React, { useState, useEffect } from "react";
-import {
-  X,
-  Target,
-  Calendar,
-  DollarSign,
-  Users,
-  FileText,
-  Tag,
-  Save,
-  Loader2,
-} from "lucide-react";
 
+import { Campaign } from "../models/campaign";
+
+// Define the form data interface
 interface CampaignFormData {
+  id?: string;
   name: string;
   description: string;
-  goal: string;
-  startDate: string;
-  endDate: string;
-  category: string;
-  targetAudience: string;
+  goal: string; // Form fields are typically strings
+  // Add other form fields as needed
 }
 
 interface CampaignModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: (data: CampaignFormData) => Promise<void>;
-  initialData?: Partial<CampaignFormData>;
-  mode?: "create" | "edit";
+  onSave: (data: any) => void;
+  initialData?: Partial<CampaignFormData> | Campaign; // Accept either type
+  mode: "create" | "edit";
 }
+
+// Helper function to convert Campaign to CampaignFormData
+const campaignToFormData = (campaign: Campaign): CampaignFormData => {
+  return {
+    id: campaign.id,
+    name: campaign.name || "",
+    description: campaign.description || "",
+    goal: campaign.goal?.toString() || "", // Handle potential undefined values
+    // Add other field conversions as needed
+  };
+};
+
+// Helper function to check if data is a Campaign object
+const isCampaign = (data: any): data is Campaign => {
+  return data && typeof data.goal === "number";
+};
 
 const CampaignModal: React.FC<CampaignModalProps> = ({
   isOpen,
   onClose,
   onSave,
   initialData,
-  mode = "create",
+  mode,
 }) => {
   const [formData, setFormData] = useState<CampaignFormData>({
     name: "",
     description: "",
     goal: "",
-    startDate: "",
-    endDate: "",
-    category: "General",
-    targetAudience: "",
   });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Partial<CampaignFormData>>({});
-
-  // Reset form when modal opens/closes or initial data changes
   useEffect(() => {
-    if (isOpen) {
+    if (initialData) {
+      // Convert Campaign to form data if needed
+      const convertedData = isCampaign(initialData)
+        ? campaignToFormData(initialData)
+        : (initialData as Partial<CampaignFormData>);
+
       setFormData({
-        name: initialData?.name || "",
-        description: initialData?.description || "",
-        goal: initialData?.goal || "",
-        startDate: initialData?.startDate || "",
-        endDate: initialData?.endDate || "",
-        category: initialData?.category || "General",
-        targetAudience: initialData?.targetAudience || "",
+        name: convertedData.name || "",
+        description: convertedData.description || "",
+        goal: convertedData.goal || "",
+        id: convertedData.id,
       });
-      setErrors({});
-    }
-  }, [isOpen, initialData]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      return () => document.removeEventListener("keydown", handleEscape);
-    }
-  }, [isOpen, onClose]);
-
-  const handleChange = (field: keyof CampaignFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Partial<CampaignFormData> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Campaign name is required";
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required";
-    }
-
-    if (!formData.goal.trim()) {
-      newErrors.goal = "Goal amount is required";
     } else {
-      const goalNum = parseFloat(formData.goal.replace(/[^0-9.]/g, ""));
-      if (isNaN(goalNum) || goalNum <= 0) {
-        newErrors.goal = "Please enter a valid goal amount";
-      }
-    }
-
-    if (!formData.startDate) {
-      newErrors.startDate = "Start date is required";
-    }
-
-    if (!formData.endDate) {
-      newErrors.endDate = "End date is required";
-    }
-
-    if (formData.startDate && formData.endDate) {
-      if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-        newErrors.endDate = "End date must be after start date";
-      }
-    }
-
-    if (!formData.targetAudience.trim()) {
-      newErrors.targetAudience = "Target audience is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      if (onSave) {
-        await onSave(formData);
-      }
-
-      // Close modal on success
-      onClose();
-
-      // Reset form
+      // Reset form for create mode
       setFormData({
         name: "",
         description: "",
         goal: "",
-        startDate: "",
-        endDate: "",
-        category: "General",
-        targetAudience: "",
       });
-    } catch (error) {
-      console.error("Failed to save campaign:", error);
-      // Error handling could be improved here
-    } finally {
-      setIsLoading(false);
     }
+  }, [initialData, mode]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Convert form data back to the expected format for the API
+    const submitData = {
+      ...formData,
+      goal: parseFloat(formData.goal), // Convert string back to number
+    };
+
+    onSave(submitData);
   };
 
-  const formatGoalInput = (value: string) => {
-    // Remove non-numeric characters except decimal point
-    const numericValue = value.replace(/[^0-9.]/g, "");
-    const number = parseFloat(numericValue);
-
-    if (isNaN(number)) return "";
-
-    // Format as currency without symbol for input
-    return number.toLocaleString("en-US");
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
-
-  const categories = [
-    "General",
-    "Education",
-    "Healthcare",
-    "Environment",
-    "Community",
-    "Emergency Relief",
-    "Arts & Culture",
-    "Animal Welfare",
-    "Religious",
-    "Other",
-  ];
 
   if (!isOpen) return null;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 className="text-xl font-semibold mb-4">
+          {mode === "create" ? "Create Campaign" : "Edit Campaign"}
+        </h2>
 
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div
-          className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-700/50 bg-slate-800/50">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-600/20 rounded-xl">
-                <Target className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-white">
-                  {mode === "create" ? "Create New Campaign" : "Edit Campaign"}
-                </h2>
-                <p className="text-sm text-slate-400">
-                  Set up your fundraising campaign details
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200"
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
-              <X className="w-5 h-5" />
-            </button>
+              Campaign Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
           </div>
 
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="overflow-y-auto max-h-[calc(90vh-120px)]"
-          >
-            <div className="p-6 space-y-6">
-              {/* Campaign Name */}
-              <div className="space-y-2">
-                <label className="flex items-center text-sm font-medium text-slate-300">
-                  <Target className="w-4 h-4 mr-2 text-green-400" />
-                  Campaign Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  placeholder="e.g., End of Year Giving Campaign"
-                  className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-green-500/20 focus:outline-none transition-all ${
-                    errors.name
-                      ? "border-red-500/50"
-                      : "border-slate-700/50 focus:border-green-500/50"
-                  }`}
-                />
-                {errors.name && (
-                  <p className="text-red-400 text-sm">{errors.name}</p>
-                )}
-              </div>
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-              {/* Description */}
-              <div className="space-y-2">
-                <label className="flex items-center text-sm font-medium text-slate-300">
-                  <FileText className="w-4 h-4 mr-2 text-blue-400" />
-                  Description *
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Describe your campaign goals, impact, and why people should support it..."
-                  rows={4}
-                  className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none transition-all ${
-                    errors.description
-                      ? "border-red-500/50"
-                      : "border-slate-700/50 focus:border-blue-500/50"
-                  }`}
-                />
-                {errors.description && (
-                  <p className="text-red-400 text-sm">{errors.description}</p>
-                )}
-              </div>
+          <div>
+            <label
+              htmlFor="goal"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Goal Amount
+            </label>
+            <input
+              type="number"
+              id="goal"
+              name="goal"
+              value={formData.goal}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
 
-              {/* Goal and Category */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-slate-300">
-                    <DollarSign className="w-4 h-4 mr-2 text-yellow-400" />
-                    Fundraising Goal *
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">
-                      $
-                    </span>
-                    <input
-                      type="text"
-                      value={formData.goal}
-                      onChange={(e) => handleChange("goal", e.target.value)}
-                      placeholder="50,000"
-                      className={`w-full bg-slate-800/50 border rounded-xl pl-8 pr-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-yellow-500/20 focus:outline-none transition-all ${
-                        errors.goal
-                          ? "border-red-500/50"
-                          : "border-slate-700/50 focus:border-yellow-500/50"
-                      }`}
-                    />
-                  </div>
-                  {errors.goal && (
-                    <p className="text-red-400 text-sm">{errors.goal}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-slate-300">
-                    <Tag className="w-4 h-4 mr-2 text-purple-400" />
-                    Category
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => handleChange("category", e.target.value)}
-                    className="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
-                  >
-                    {categories.map((category) => (
-                      <option
-                        key={category}
-                        value={category}
-                        className="bg-slate-800"
-                      >
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Start and End Dates */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-slate-300">
-                    <Calendar className="w-4 h-4 mr-2 text-indigo-400" />
-                    Start Date *
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => handleChange("startDate", e.target.value)}
-                    min={new Date().toISOString().split("T")[0]}
-                    className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all ${
-                      errors.startDate
-                        ? "border-red-500/50"
-                        : "border-slate-700/50 focus:border-indigo-500/50"
-                    }`}
-                  />
-                  {errors.startDate && (
-                    <p className="text-red-400 text-sm">{errors.startDate}</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="flex items-center text-sm font-medium text-slate-300">
-                    <Calendar className="w-4 h-4 mr-2 text-indigo-400" />
-                    End Date *
-                  </label>
-                  <input
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => handleChange("endDate", e.target.value)}
-                    min={
-                      formData.startDate ||
-                      new Date().toISOString().split("T")[0]
-                    }
-                    className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500/20 focus:outline-none transition-all ${
-                      errors.endDate
-                        ? "border-red-500/50"
-                        : "border-slate-700/50 focus:border-indigo-500/50"
-                    }`}
-                  />
-                  {errors.endDate && (
-                    <p className="text-red-400 text-sm">{errors.endDate}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Target Audience */}
-              <div className="space-y-2">
-                <label className="flex items-center text-sm font-medium text-slate-300">
-                  <Users className="w-4 h-4 mr-2 text-cyan-400" />
-                  Target Audience *
-                </label>
-                <input
-                  type="text"
-                  value={formData.targetAudience}
-                  onChange={(e) =>
-                    handleChange("targetAudience", e.target.value)
-                  }
-                  placeholder="e.g., Individual donors, corporate sponsors, community members"
-                  className={`w-full bg-slate-800/50 border rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all ${
-                    errors.targetAudience
-                      ? "border-red-500/50"
-                      : "border-slate-700/50 focus:border-cyan-500/50"
-                  }`}
-                />
-                {errors.targetAudience && (
-                  <p className="text-red-400 text-sm">
-                    {errors.targetAudience}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between p-6 border-t border-slate-700/50 bg-slate-800/30">
-              <p className="text-sm text-slate-400">* Required fields</p>
-              <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-6 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 border border-slate-700/50 rounded-xl transition-all duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all duration-200 flex items-center space-x-2 min-w-[120px]"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      <span>
-                        {mode === "create" ? "Create Campaign" : "Save Changes"}
-                      </span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-wite rounded-md hover:bg-blue-700 transition-colors"
+            >
+              {mode === "create" ? "Create" : "Update"}
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 

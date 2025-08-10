@@ -1,45 +1,57 @@
 // src/viewModels/donorChartView.ts
+import { _DonorInsights as DonorInsights } from "../models/analytics";
 
-import { DonorInsights } from "../models/analytics";
-
-export interface RetentionChartDataPoint {
+export interface RetentionItem {
   label: string;
   value: number;
 }
 
-export interface AcquisitionChartDataPoint {
+export function createRetentionComparison(
+  insights: DonorInsights,
+): RetentionItem[] {
+  return [
+    {
+      label: "Previous Period",
+      value: Number(insights.donorRetention?.previous ?? 0),
+    },
+    {
+      label: "Current Period",
+      value: Number(insights.donorRetention?.current ?? 0),
+    },
+  ];
+}
+
+export interface AcquisitionItem {
   type: "New" | "Returning";
   count: number;
 }
 
-export interface TopDonorsChartDataPoint {
+export function buildAcquisitionBreakdown(
+  insights: DonorInsights,
+): AcquisitionItem[] {
+  return [
+    { type: "New", count: Number(insights.acquisition?.newDonors ?? 0) },
+    {
+      type: "Returning",
+      count: Number(insights.acquisition?.returningDonors ?? 0),
+    },
+  ];
+}
+
+export interface TopDonorPoint {
   name: string;
-  totalGiven: number;
+  amount: number;
 }
 
-export function getRetentionChartData(
-  _insights: DonorInsights,
-): RetentionChartDataPoint[] {
-  return [
-    { label: "Previous Period", value: insights.donorRetention.previous },
-    { label: "Current Period", value: insights.donorRetention.current },
-  ];
-}
-
-export function getAcquisitionChartData(
-  _insights: DonorInsights,
-): AcquisitionChartDataPoint[] {
-  return [
-    { type: "New", count: insights.acquisition.newDonors },
-    { type: "Returning", count: insights.acquisition.returningDonors },
-  ];
-}
-
-export function getTopDonorsChartData(
-  _insights: DonorInsights,
-): TopDonorsChartDataPoint[] {
-  return insights.topDonors.map((d) => ({
+export function mapTopDonorsChart(insights: DonorInsights): TopDonorPoint[] {
+  const list =
+    (insights.topDonors as Array<{
+      id: string;
+      name: string;
+      totalGiven: number;
+    }>) ?? [];
+  return list.map((d) => ({
     name: d.name,
-    totalGiven: d.totalGiven,
+    amount: Number(d.totalGiven ?? 0),
   }));
 }

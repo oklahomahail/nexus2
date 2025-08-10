@@ -7,10 +7,8 @@ export type ClaudeActionType =
   | "feedback"
   | "cta";
 
-export interface ClaudeMessage {
-  role: "user" | "claude";
-  content: string;
-}
+// Removed ClaudeMessage - it's defined in useClaude.ts
+// If you need it here, import it: import { ClaudeMessage } from './useClaude';
 
 export interface ClaudeResponse {
   content: string;

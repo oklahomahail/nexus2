@@ -1,39 +1,36 @@
-// src/viewModels/donorSegmentChartView.ts
+import {
+  _DonorSegmentInsight as DonorSegmentInsight,
+  AnalyticsTrend,
+} from "../models/analytics"; // Use correct export name
 
-import { DonorSegmentInsight, AnalyticsTrend } from "../models/analytics";
-
-export interface SegmentBarChartDataPoint {
-  segment: string;
-  totalRevenue: number;
-  donorCount: number;
-  averageGift: number;
+export interface SegmentChartData {
+  name: string;
+  value: number;
+  percentage: number;
 }
 
-export function getSegmentBarChartData(
-  _insights: DonorSegmentInsight[],
-): SegmentBarChartDataPoint[] {
-  return insights.map((segment) => ({
-    segment: segment.name,
-    totalRevenue: segment.metrics.totalRevenue,
-    donorCount: segment.metrics.totalDonors,
-    averageGift: segment.metrics.averageGift,
+export interface TrendChartData {
+  period: string;
+  value: number;
+  change: number;
+}
+
+// Convert donor segment insights to chart data
+export function toSegmentChartData(
+  insights: DonorSegmentInsight[],
+): SegmentChartData[] {
+  return insights.map((segment: any) => ({
+    name: segment.name,
+    value: segment.value,
+    percentage: segment.percentage,
   }));
 }
 
-// ---------- TREND CHARTS ----------
-
-export interface TrendChartDataPoint {
-  label: string;
-  totalRevenue: number;
-  donorCount: number;
-}
-
-export function getTrendChartData(
-  _trends: AnalyticsTrend[],
-): TrendChartDataPoint[] {
-  return trends.map((t) => ({
-    label: t.label,
-    totalRevenue: t.totalRevenue,
-    donorCount: t.donorCount,
+// Convert analytics trends to chart data
+export function toTrendChartData(trends: AnalyticsTrend[]): TrendChartData[] {
+  return trends.map((t: any) => ({
+    period: t.period,
+    value: t.value,
+    change: t.change,
   }));
 }

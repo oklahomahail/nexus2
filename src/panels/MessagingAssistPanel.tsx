@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 // src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
-import { Bot, Copy, RotateCcw, Zap, ArrowRight } from "lucide-react";
+import {
+  Bot,
+  Copy,
+  RotateCcw,
+  Zap,
+  ArrowRight,
+  Mail,
+  Hash,
+  Share2,
+  MousePointer,
+} from "lucide-react";
 import React, { useState } from "react";
 
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -21,7 +31,7 @@ const QuickAction: React.FC<QuickActionProps> = ({
   icon,
   title,
   description,
-  type: _type,
+  type,
   isActive,
   onClick,
 }) => (
@@ -64,64 +74,79 @@ const QuickAction: React.FC<QuickActionProps> = ({
   </button>
 );
 
-export default function MessagingAssistantPanel() {
-  const [_messageType, setMessageType] = useState<MessageType>("Email");
-  const [_context, setContext] = useState("");
-  const [_result, setResult] = useState("");
-  const [_loading, setLoading] = useState(false);
-  const [_error, setError] = useState<string | null>(null);
-  const [_copySuccess, setCopySuccess] = useState(false);
+const messageTypes = [
+  {
+    type: "Email" as MessageType,
+    icon: <Mail className="w-5 h-5" />,
+    title: "Fundraising Email",
+    description:
+      "Complete email campaigns with compelling storytelling and clear calls-to-action",
+  },
+  {
+    type: "Subject Line" as MessageType,
+    icon: <Hash className="w-5 h-5" />,
+    title: "Email Subject Lines",
+    description:
+      "Attention-grabbing subject lines that improve open rates and engagement",
+  },
+  {
+    type: "Social Post" as MessageType,
+    icon: <Share2 className="w-5 h-5" />,
+    title: "Social Media Post",
+    description:
+      "Engaging social content optimized for Facebook, Instagram, and Twitter",
+  },
+  {
+    type: "CTA Button" as MessageType,
+    icon: <MousePointer className="w-5 h-5" />,
+    title: "Call-to-Action",
+    description:
+      "Powerful button text and CTAs that drive donations and engagement",
+  },
+];
 
-  const promptTemplate = {
-    Email: `Write a compelling fundraising email for the following campaign:\n\n`,
-    "Subject Line": `Write 5 attention-grabbing subject lines for a fundraising email based on this campaign:\n\n`,
-    "Social Post": `Write an engaging social media post to support this fundraising campaign:\n\n`,
-    "CTA Button": `Write 5 compelling call-to-action button texts for this fundraising ask:\n\n`,
-  };
-
-  const messageTypes = [
-    {
-      type: "Email" as MessageType,
-      icon: <span className="text-lg">✉️</span>,
-      title: "Draft Donor Email",
-      description:
-        "Create a complete fundraising email with compelling storytelling and clear call-to-action",
-    },
-    {
-      type: "Subject Line" as MessageType,
-      icon: <span className="text-lg">📧</span>,
-      title: "Generate Subject Lines",
-      description:
-        "Get multiple attention-grabbing subject lines optimized for open rates",
-    },
-    {
-      type: "Social Post" as MessageType,
-      icon: <span className="text-lg">📱</span>,
-      title: "Social Media Post",
-      description:
-        "Craft engaging social content to amplify your campaign reach",
-    },
-    {
-      type: "CTA Button" as MessageType,
-      icon: <span className="text-lg">🔘</span>,
-      title: "Call-to-Action Text",
-      description: "Generate compelling button text that drives donations",
-    },
-  ];
+export default function MessagingAssistantPanel(): React.ReactElement {
+  const [messageType, setMessageType] = useState<MessageType>("Email");
+  const [context, setContext] = useState("");
+  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [copySuccess, setCopySuccess] = useState(false);
 
   const handleGenerate = async () => {
     if (!context.trim()) return;
 
     setLoading(true);
+    setError("");
     setResult("");
-    setError(null);
 
     try {
-      const prompt = `${promptTemplate[messageType]}${context}`;
-      const response = await generateClaudeResponse(prompt);
-      setResult(response.content);
-    } catch (err: any) {
-      setError(err.message || "Failed to generate content");
+      // Create a proper prompt based on the message type and context
+      const prompts: Record<MessageType, string> = {
+        Email: `Write a compelling fundraising email with the following context: ${context}`,
+        "Subject Line": `Create attention-grabbing email subject lines for this campaign: ${context}`,
+        "Social Post": `Write engaging social media posts for this fundraising campaign: ${context}`,
+        "CTA Button": `Create powerful call-to-action button text and CTAs for this campaign: ${context}`,
+      };
+
+      const response = await generateClaudeResponse(
+        messageType,
+        context,
+        {
+          prompt: prompts[messageType],
+          context: { type: messageType, details: context }
+        }
+      );
+
+      if (response.success) {
+        setResult(response.content);
+      } else {
+        setError(response.error || "Failed to generate content");
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to generate content",
+      );
     } finally {
       setLoading(false);
     }
@@ -133,13 +158,13 @@ export default function MessagingAssistantPanel() {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err);
+      console.error("Failed to copy text:", err);
     }
   };
 
   const handleReset = () => {
     setResult("");
-    setError(null);
+    setError("");
     setContext("");
     setCopySuccess(false);
   };

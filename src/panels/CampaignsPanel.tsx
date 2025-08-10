@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from "react";
 
 import { KPIWidget } from "../components/AnalyticsWidgets";
-import { CampaignDetail } from "../components/CampaignDetail";
+import CampaignDetail from "../components/CampaignDetail";
 import CampaignList from "../components/CampaignList";
-import { CampaignModal } from "../components/CampaignModal";
+import CampaignModal from "../components/CampaignModal"; // Default import
 import LoadingSpinner from "../components/LoadingSpinner";
-import {
-  Campaign,
-  CampaignCreateRequest,
-  CampaignUpdateRequest,
-} from "../models/campaign";
-import { campaignService } from "../services/campaignService";
+import { Campaign } from "../models/campaign";
+import * as campaignService from "../services/campaignService";
+import { CampaignStats } from "../services/campaignService"; // Import CampaignStats
 
 type ViewMode = "list" | "detail";
 
 const CampaignsPanel: React.FC = () => {
-  const [_viewMode, setViewMode] = useState<ViewMode>("list");
-  const [_selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null,
   );
-  const [_showModal, setShowModal] = useState(false);
-  const [_modalMode, setModalMode] = useState<"create" | "edit">("create");
-  const [_stats, setStats] = useState<CampaignStats | null>(null);
-  const [_loadingStats, setLoadingStats] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [stats, setStats] = useState<CampaignStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
     void loadStats();
@@ -62,21 +59,31 @@ const CampaignsPanel: React.FC = () => {
     setSelectedCampaign(null);
   };
 
-  const handleSaveCampaign = async (
-    data: CampaignCreateRequest | CampaignUpdateRequest,
-  ) => {
-    if (modalMode === "create") {
-      await campaignService.createCampaign(data as CampaignCreateRequest);
-    } else {
-      await campaignService.updateCampaign(data as CampaignUpdateRequest);
-    }
-    void loadStats();
+  const handleSaveCampaign = async (data: any) => {
+    try {
+      if (modalMode === "create") {
+        await campaignService.createCampaign(data);
+      } else {
+        // For updates, we need the campaign ID
+        if (selectedCampaign?.id) {
+          await campaignService.updateCampaign(selectedCampaign.id, {
+            ...data,
+            id: selectedCampaign.id,
+          });
+        }
+      }
 
-    if (modalMode === "edit" && selectedCampaign && viewMode === "detail") {
-      const updated = await campaignService.getCampaignById(
-        selectedCampaign.id,
-      );
-      if (updated) setSelectedCampaign(updated);
+      setShowModal(false);
+      void loadStats();
+
+      if (modalMode === "edit" && selectedCampaign && viewMode === "detail") {
+        const updated = await campaignService.getCampaignById(
+          selectedCampaign.id,
+        );
+        if (updated) setSelectedCampaign(updated);
+      }
+    } catch (error) {
+      console.error("Failed to save campaign:", error);
     }
   };
 
@@ -105,19 +112,17 @@ const CampaignsPanel: React.FC = () => {
           </button>
         </div>
 
-        <CampaignDetail
-          campaign={selectedCampaign}
-          onEdit={handleEditCampaign}
-          onBack={handleBackToList}
-        />
+        <CampaignDetail campaign={selectedCampaign} />
 
-        <CampaignModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveCampaign}
-          initialData={selectedCampaign}
-          mode={modalMode}
-        />
+        {showModal && (
+          <CampaignModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSave={handleSaveCampaign}
+            initialData={selectedCampaign || undefined}
+            mode={modalMode}
+          />
+        )}
       </div>
     );
   }
@@ -177,17 +182,18 @@ const CampaignsPanel: React.FC = () => {
 
       <CampaignList
         onCreateCampaign={handleCreateCampaign}
-        onEditCampaign={handleEditCampaign}
         onViewCampaign={handleViewCampaign}
       />
 
-      <CampaignModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onSave={handleSaveCampaign}
-        initialData={selectedCampaign}
-        mode={modalMode}
-      />
+      {showModal && (
+        <CampaignModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          onSave={handleSaveCampaign}
+          initialData={selectedCampaign || undefined}
+          mode={modalMode}
+        />
+      )}
     </div>
   );
 };

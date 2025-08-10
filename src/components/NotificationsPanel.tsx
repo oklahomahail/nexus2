@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
-import React, { useState } from "react";
+import React from "react";
 
-interface Notification {
+export interface Notification {
   id: string;
   title: string;
   message: string;
@@ -25,25 +24,21 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
   onMarkAllAsRead,
   onNotificationClick,
 }) => {
-  const [_filter, _setFilter] = useState<"all" | "unread">("all");
-  const [_loading, _setLoading] = useState(false);
-
-  // Sample notifications for demo
   const sampleNotifications: Notification[] = [
     {
       id: "1",
       title: "New Donation Received",
       message: "John Smith donated $500 to the Annual Fund campaign",
       type: "success",
-      timestamp: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
+      timestamp: new Date(Date.now() - 2 * 60 * 1000),
       read: false,
     },
     {
       id: "2",
       title: "Campaign Goal Achieved",
-      message: "Spring Fundraiser has reached 100% of its goal!",
+      message: "Spring Fundraiser has reached 100% of its goal",
       type: "success",
-      timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+      timestamp: new Date(Date.now() - 60 * 60 * 1000),
       read: false,
     },
     {
@@ -51,101 +46,120 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
       title: "Monthly Report Available",
       message: "Your monthly analytics report is ready for download",
       type: "info",
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000), // 3 hours ago
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
       read: true,
     },
   ];
 
-  const allNotifications = notifications.length > 0 ? notifications : sampleNotifications;
-  const unreadCount = allNotifications.filter(n => !n.read).length;
+  const items = notifications.length ? notifications : sampleNotifications;
+  const unread = items.filter((n) => !n.read).length;
 
-  const getNotificationIcon = (type: Notification["type"]) => {
-    switch (type) {
+  const dot = (color: string) => (
+    <span
+      className={`inline-block w-2 h-2 rounded-full ${color}`}
+      aria-hidden
+    />
+  );
+
+  const colorFor = (t: Notification["type"]) => {
+    switch (t) {
       case "success":
-        return <div className="w-2 h-2 bg-green-400 rounded-full"></div>;
+        return "bg-green-400";
       case "warning":
-        return <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>;
+        return "bg-yellow-400";
       case "error":
-        return <div className="w-2 h-2 bg-red-400 rounded-full"></div>;
+        return "bg-red-400";
       default:
-        return <div className="w-2 h-2 bg-blue-400 rounded-full"></div>;
+        return "bg-blue-400";
     }
   };
 
-  const getNotificationBgColor = (type: Notification["type"], read: boolean) => {
-    if (read) return "bg-gray-50 border-gray-200";
-    
-    switch (type) {
+  const rowBg = (t: Notification["type"], read: boolean) => {
+    if (read) return "bg-slate-900/30 border-slate-800";
+    switch (t) {
       case "success":
-        return "bg-green-50 border-green-200";
+        return "bg-green-900/15 border-green-800/50";
       case "warning":
-        return "bg-yellow-50 border-yellow-200";
+        return "bg-yellow-900/15 border-yellow-800/50";
       case "error":
-        return "bg-red-50 border-red-200";
+        return "bg-red-900/15 border-red-800/50";
       default:
-        return "bg-blue-50 border-blue-200";
+        return "bg-blue-900/15 border-blue-800/50";
     }
   };
 
-  const formatTimestamp = (timestamp: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - timestamp.getTime();
-    const diffMins = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? "s" : ""} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
-    return "Earlier";
+  const formatAgo = (d: Date) => {
+    const mins = Math.floor((Date.now() - d.getTime()) / 60000);
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins} min${mins !== 1 ? "s" : ""} ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hour${hrs !== 1 ? "s" : ""} ago`;
+    return d.toLocaleDateString();
   };
 
   return (
-    <div className="notifications-panel bg-white shadow-lg rounded-lg p-6 max-w-md">
+    <div className="bg-slate-900/70 backdrop-blur-md border border-slate-800 rounded-xl p-6 max-w-md text-white">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
-          {unreadCount > 0 && (
-            <span className="bg-blue-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-              {unreadCount}
+          <h3 className="text-lg font-semibold">Notifications</h3>
+          {unread > 0 && (
+            <span className="bg-blue-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+              {unread}
             </span>
           )}
         </div>
-        <button
-          onClick={() => onClose && onClose()}
-          className="text-gray-400 hover:text-gray-600"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onMarkAllAsRead?.()}
+            className="text-slate-300 hover:text-white text-xs"
+          >
+            Mark all read
+          </button>
+          <button
+            onClick={() => onClose?.()}
+            className="text-slate-400 hover:text-white"
+            aria-label="Close"
+            title="Close"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="space-y-3">
-        {allNotifications.map((notification) => (
-          <div
-            key={notification.id}
-            className={`p-3 border rounded-lg ${getNotificationBgColor(notification.type, notification.read)}`}
+        {items.map((n) => (
+          <button
+            key={n.id}
+            onClick={() => onNotificationClick?.(n)}
+            className={`w-full text-left p-3 border rounded-lg ${rowBg(n.type, n.read)}`}
           >
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-2">
-                {getNotificationIcon(notification.type)}
-              </div>
+              <div className="mt-2">{dot(colorFor(n.type))}</div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">{notification.title}</p>
-                <p className="text-sm text-gray-700 mt-1">{notification.message}</p>
-                <p className="text-xs text-gray-500 mt-2">{formatTimestamp(notification.timestamp)}</p>
+                <p className="text-sm font-medium">{n.title}</p>
+                <p className="text-sm text-slate-300 mt-1">{n.message}</p>
+                <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+                  <span>{formatAgo(n.timestamp)}</span>
+                  {!n.read && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onMarkAsRead?.(n.id);
+                      }}
+                      className="text-blue-400 hover:text-blue-300"
+                    >
+                      Mark read
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <button className="w-full text-sm text-blue-600 hover:text-blue-800 font-medium">
+      <div className="mt-4 pt-4 border-t border-slate-800">
+        <button className="w-full text-sm text-blue-400 hover:text-blue-300 font-medium">
           View all notifications
         </button>
       </div>

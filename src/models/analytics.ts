@@ -97,7 +97,7 @@ export interface AnalyticsData {
   filtersApplied: AnalyticsFilters;
   metrics: AnalyticsMetrics;
   trendData?: AnalyticsTrend[];
-  donorInsights?: DonorSegmentInsight[];
+  donorInsights?: _DonorSegmentInsight[];
   lastUpdated: string;
 }
 

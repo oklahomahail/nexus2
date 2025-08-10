@@ -1,4 +1,4 @@
-// src/components/Topbar.tsx - Modernized with unified design system
+// src/components/Topbar.tsx
 import clsx from "clsx";
 import {
   Bell,
@@ -9,71 +9,88 @@ import {
   LogOut,
   HelpCircle,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import StorageQuotaChip from "@/components/dashboard/StorageQuotaChip";
+
+interface UserInfo {
+  name: string;
+  email: string;
+  avatar?: string;
+  organization?: string;
+}
+
+interface NotificationItem {
+  id: number | string;
+  title: string;
+  message: string;
+  time: string;
+  type: "success" | "info" | "neutral";
+  unread?: boolean;
+}
 
 interface TopbarProps {
   title: string;
   description?: string;
   showSearch?: boolean;
   actions?: React.ReactNode;
-  user?: {
-    name: string;
-    email: string;
-    avatar?: string;
-    organization?: string;
-  };
+  user?: UserInfo;
+  notifications?: NotificationItem[];
 }
+
+const defaultUser: UserInfo = {
+  name: "Dave Hail",
+  email: "dave@nexusconsulting.com",
+  organization: "Nexus Consulting",
+};
+
+const defaultNotifications: NotificationItem[] = [
+  {
+    id: 1,
+    title: "Campaign milestone reached",
+    message: "End of Year Campaign has reached 75% of its goal",
+    time: "2 minutes ago",
+    type: "success",
+    unread: true,
+  },
+  {
+    id: 2,
+    title: "New donor registered",
+    message: "Sarah Johnson just made their first donation",
+    time: "1 hour ago",
+    type: "info",
+    unread: true,
+  },
+  {
+    id: 3,
+    title: "Monthly report ready",
+    message: "Your October fundraising report is ready for review",
+    time: "3 hours ago",
+    type: "info",
+  },
+];
 
 const Topbar: React.FC<TopbarProps> = ({
   title,
-  _description,
-  _showSearch = true,
-  _actions,
-  user = {
-    name: "Dave Hail",
-    email: "dave@nexusconsulting.com",
-    organization: "Nexus Consulting",
-    _,
-  },
+  description,
+  showSearch = true,
+  actions,
+  user = defaultUser,
+  notifications = defaultNotifications,
 }) => {
-  const [_showUserMenu, setShowUserMenu] = useState(false);
-  const [_showNotifications, setShowNotifications] = useState(false);
-  const [_searchQuery, setSearchQuery] = useState("");
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const notifications = [
-    {
-      id: 1,
-      title: "Campaign milestone reached",
-      message: "End of Year Campaign has reached 75% of its goal",
-      time: "2 minutes ago",
-      type: "success",
-      unread: true,
-    },
-    {
-      id: 2,
-      title: "New donor registered",
-      message: "Sarah Johnson just made their first donation",
-      time: "1 hour ago",
-      type: "info",
-      unread: true,
-    },
-    {
-      id: 3,
-      title: "Monthly report ready",
-      message: "Your October fundraising report is ready for review",
-      time: "3 hours ago",
-      type: "info",
-      unread: false,
-    },
-  ];
-
-  const unreadCount = notifications.filter((n) => n.unread).length;
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => n.unread).length,
+    [notifications]
+  );
 
   return (
     <header className="border-b border-surface/50 bg-surface/30 backdrop-blur-md sticky top-0 z-40">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left Section - Title & Description */}
+          {/* Left: Title */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-4">
               <div>
@@ -89,7 +106,7 @@ const Topbar: React.FC<TopbarProps> = ({
             </div>
           </div>
 
-          {/* Center Section - Search */}
+          {/* Center: Search */}
           {showSearch && (
             <div className="flex-1 max-w-xl mx-8">
               <div className="relative">
@@ -105,16 +122,24 @@ const Topbar: React.FC<TopbarProps> = ({
             </div>
           )}
 
-          {/* Right Section - Actions & User */}
+          {/* Right: Actions, Quota, Notifications, Settings, User */}
           <div className="flex items-center space-x-4">
-            {/* Custom Actions */}
+            {/* Custom actions slot */}
             {actions}
+
+            {/* Storage quota is always visible */}
+            <div className="hidden sm:block">
+              <StorageQuotaChip />
+            </div>
 
             {/* Notifications */}
             <div className="relative">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => setShowNotifications((s) => !s)}
                 className="p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-200 relative"
+                aria-haspopup="menu"
+                aria-expanded={showNotifications}
+                aria-label="Notifications"
               >
                 <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
@@ -124,14 +149,14 @@ const Topbar: React.FC<TopbarProps> = ({
                 )}
               </button>
 
-              {/* Notifications Dropdown */}
               {showNotifications && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg animate-fade-in z-50">
+                <div
+                  className="absolute right-0 top-full mt-2 w-80 bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg animate-fade-in z-50"
+                  role="menu"
+                >
                   <div className="p-4 border-b border-slate-700/50">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold">
-                        Notifications
-                      </h3>
+                      <h3 className="text-white font-semibold">Notifications</h3>
                       <span className="text-xs text-slate-400">
                         {unreadCount} unread
                       </span>
@@ -139,34 +164,35 @@ const Topbar: React.FC<TopbarProps> = ({
                   </div>
 
                   <div className="max-h-96 overflow-y-auto custom-scrollbar">
-                    {notifications.map((notification) => (
+                    {notifications.map((n) => (
                       <div
-                        key={notification.id}
+                        key={n.id}
                         className={clsx(
                           "p-4 border-b border-slate-700/30 hover:bg-slate-700/30 transition-colors cursor-pointer",
-                          notification.unread && "bg-blue-500/5",
+                          n.unread && "bg-blue-500/5"
                         )}
+                        role="menuitem"
                       >
                         <div className="flex items-start space-x-3">
                           <div
                             className={clsx(
                               "w-2 h-2 rounded-full mt-2 flex-shrink-0",
-                              notification.type === "success"
+                              n.type === "success"
                                 ? "bg-green-400"
-                                : notification.type === "info"
-                                  ? "bg-blue-400"
-                                  : "bg-slate-400",
+                                : n.type === "info"
+                                ? "bg-blue-400"
+                                : "bg-slate-400"
                             )}
                           />
                           <div className="flex-1 min-w-0">
                             <p className="text-white text-sm font-medium">
-                              {notification.title}
+                              {n.title}
                             </p>
                             <p className="text-slate-400 text-sm mt-1">
-                              {notification.message}
+                              {n.message}
                             </p>
                             <p className="text-slate-500 text-xs mt-2">
-                              {notification.time}
+                              {n.time}
                             </p>
                           </div>
                         </div>
@@ -184,15 +210,21 @@ const Topbar: React.FC<TopbarProps> = ({
             </div>
 
             {/* Settings */}
-            <button className="p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-200">
+            <button
+              className="p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-200"
+              aria-label="Settings"
+            >
               <Settings className="w-5 h-5" />
             </button>
 
-            {/* User Menu */}
+            {/* User menu */}
             <div className="relative">
               <button
-                onClick={() => setShowUserMenu(!showUserMenu)}
+                onClick={() => setShowUserMenu((s) => !s)}
                 className="flex items-center space-x-3 p-2 hover:bg-slate-800/50 rounded-xl transition-all duration-200 group"
+                aria-haspopup="menu"
+                aria-expanded={showUserMenu}
+                aria-label="User menu"
               >
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                   {user.avatar ? (
@@ -219,9 +251,11 @@ const Topbar: React.FC<TopbarProps> = ({
                 <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
               </button>
 
-              {/* User Dropdown */}
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg animate-fade-in z-50">
+                <div
+                  className="absolute right-0 top-full mt-2 w-64 bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg animate-fade-in z-50"
+                  role="menu"
+                >
                   <div className="p-4 border-b border-slate-700/50">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">

@@ -1,5 +1,9 @@
 import React from "react";
 
+interface CampaignPerformanceTableProps {
+  campaigns: any[];
+}
+
 const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({
   campaigns,
 }) => {
@@ -15,7 +19,7 @@ const CampaignPerformanceTable: React.FC<CampaignPerformanceTableProps> = ({
           </tr>
         </thead>
         <tbody className="text-sm text-gray-800">
-          {campaigns.map((c) => (
+          {campaigns.map((c: any) => (
             <tr key={c.id} className="border-t border-gray-200">
               <td className="px-4 py-2">{c.name}</td>
               <td className="px-4 py-2">{c.totalDonors}</td>
