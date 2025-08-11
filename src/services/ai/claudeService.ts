@@ -32,6 +32,25 @@ export interface ClaudeMessage {
   timestamp: Date;
 }
 
+// High-level request/response shapes used by feature modules
+export interface ClaudeRequest {
+  prompt: string;
+  context?: Record<string, unknown>;
+  maxTokens?: number;
+  temperature?: number;
+  // When provided, enables streaming
+  stream?: boolean;
+  onToken?: (_token: string) => void;
+}
+
+export interface ClaudeResponse {
+  content: string;
+  success: boolean;
+  error?: string;
+  usage?: { inputTokens?: number; outputTokens?: number };
+  raw?: unknown;
+}
+
 // -------- Constants
 
 const API_URL = "https://api.anthropic.com/v1/messages"; // change if you proxy
@@ -272,5 +291,50 @@ export async function streamClaude(
   } catch (err) {
     opts.onError?.(err);
     throw err;
+  }
+}
+
+// -------- Convenience helper
+
+export async function generateResponse(
+  _messageType: string,
+  _context: string,
+  request: ClaudeRequest,
+): Promise<ClaudeResponse> {
+  try {
+    // If streaming requested, use streamClaude under the hood
+    if (request.stream && request.onToken) {
+      let full = "";
+      await streamClaude(request.prompt, {
+        maxTokens: request.maxTokens,
+        temperature: request.temperature,
+        context: request.context,
+        onToken(token) {
+          full += token;
+          request.onToken?.(token);
+        },
+      });
+
+      return { content: full, success: true };
+    }
+
+    const res = await callClaude(request.prompt, {
+      maxTokens: request.maxTokens,
+      temperature: request.temperature,
+      context: request.context,
+    });
+
+    return {
+      content: res.text,
+      success: true,
+      usage: res.usage,
+      raw: res.raw,
+    };
+  } catch (err) {
+    return {
+      content: "",
+      success: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }

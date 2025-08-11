@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 import {
-  generateClaudeResponse,
+  generateResponse as generateClaudeResponse,
   ClaudeResponse,
   ClaudeRequest,
-} from "@/features/claude/claudeService";
+} from "@/services/ai";
 
 interface ClaudeContextType {
   isLoading: boolean;
@@ -33,7 +33,7 @@ export function ClaudeProvider({ children }: ClaudeProviderProps) {
 
     try {
       const response = await generateClaudeResponse(
-        request.context?.action || "general",
+        String(request.context?.action ?? "general"),
         JSON.stringify(request.context || {}),
         request,
       );

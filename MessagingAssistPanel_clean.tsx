@@ -14,7 +14,7 @@ import {
 import React, { useState } from "react";
 
 import LoadingSpinner from "../components/LoadingSpinner";
-import { generateClaudeResponse } from "../features/claude/claudeService";
+import { generateResponse } from "@/services/ai";
 
 type MessageType = "Email" | "Subject Line" | "Social Post" | "CTA Button";
 
@@ -121,7 +121,10 @@ export default function MessagingAssistantPanel(): React.ReactElement {
     setResult("");
 
     try {
-      const response = await generateClaudeResponse(messageType, context);
+      const response = await generateResponse(messageType, context, {
+        prompt: context,
+        context: { type: messageType, details: context },
+      });
       setResult(response.content);
     } catch (err) {
       setError(

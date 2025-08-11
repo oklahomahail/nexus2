@@ -1,11 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 
-import {
-  generateClaudeResponse,
-  getClaudePrompt,
-  ClaudeResponse,
-  ClaudeRequest,
-} from "./claudeService";
+import { generateResponse, ClaudeResponse, ClaudeRequest } from "@/services/ai";
+
+import { getClaudePrompt } from "./getClaudePrompts";
 import { Campaign } from "../../models/campaign";
 
 // Message structure for conversations
@@ -267,7 +264,7 @@ export function useClaude(): UseClaudeResult {
           maxTokens: 1000,
         };
 
-        const aiResponse = await generateClaudeResponse(
+        const aiResponse = await generateResponse(
           actionType || "chat",
           JSON.stringify(currentCampaign || {}),
           claudeRequest,

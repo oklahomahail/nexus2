@@ -18,8 +18,6 @@ const errorFiles = [
   "src/components/ui-kit/Panel.tsx",
   "src/context/analytics/AnalyticsContext.tsx",
   "src/context/AppProviders.tsx",
-  "src/features/claude/claudeService.ts",
-  "src/features/claude/getClaudePrompt.ts",
   "src/features/claude/useClaude.ts",
   "src/models/analytics.ts",
   "src/models/donorSegments.ts",
