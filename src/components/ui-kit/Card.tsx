@@ -15,27 +15,27 @@ type Padding = NonNullable<CardProps["padding"]>;
 type Shadow = NonNullable<CardProps["shadow"]>;
 type Rounded = NonNullable<CardProps["rounded"]>;
 
-const _variantClasses = {
+const variantClasses = {
   default: "card-base",
   outlined: "card-base border-surface",
   elevated: "card-base shadow-soft",
 } satisfies Record<Variant, string>;
 
-const _paddingClasses = {
+const paddingClasses = {
   none: "p-0",
   sm: "p-3",
   md: "p-4",
   lg: "p-6",
 } satisfies Record<Padding, string>;
 
-const _shadowClasses = {
+const shadowClasses = {
   none: "",
   sm: "shadow-soft",
   md: "shadow-medium",
   lg: "shadow-strong",
 } satisfies Record<Shadow, string>;
 
-const _roundedClasses = {
+const roundedClasses = {
   none: "rounded-none",
   sm: "rounded-md",
   md: "rounded-xl",
@@ -51,33 +51,6 @@ const Card: React.FC<CardProps> = ({
   border = true,
   variant = "default",
 }) => {
-  const _variantClasses = {
-    default: "bg-white",
-    outlined: "bg-white border-2",
-    elevated: "bg-white shadow-lg",
-  };
-
-  const _paddingClasses = {
-    none: "",
-    sm: "p-3",
-    md: "p-4",
-    lg: "p-6",
-  };
-
-  const _shadowClasses = {
-    none: "",
-    sm: "shadow-sm",
-    md: "shadow",
-    lg: "shadow-lg",
-  };
-
-  const _roundedClasses = {
-    none: "",
-    sm: "rounded-sm",
-    md: "rounded-lg",
-    lg: "rounded-xl",
-  };
-
   return (
     <div
       className={`

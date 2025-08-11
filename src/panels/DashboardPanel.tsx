@@ -110,7 +110,7 @@ const ActivityItem: React.FC<{
     donation: <DollarSign className="w-4 h-4 text-green-400" />,
     campaign: <Target className="w-4 h-4 text-blue-400" />,
     alert: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-  } satisfies Record<ActivityType, JSX.Element>;
+  } satisfies Record<ActivityType, React.ReactElement>;
 
   const typeBg = {
     donation: "bg-green-400/10",
