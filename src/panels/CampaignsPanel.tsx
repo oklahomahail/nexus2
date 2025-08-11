@@ -23,6 +23,7 @@ const CampaignsPanel: React.FC = () => {
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -39,10 +40,13 @@ const CampaignsPanel: React.FC = () => {
   const loadStats = async () => {
     try {
       setLoadingStats(true);
+      setError(null);
       const data = await campaignService.getCampaignStats();
       setStats(data);
-    } catch (error) {
-      console.error("Failed to load campaign stats:", error);
+    } catch (err: any) {
+      console.error("Failed to load campaign stats:", err);
+      setStats(null);
+      setError(err.message || "Failed to load campaign stats");
     } finally {
       setLoadingStats(false);
     }
@@ -87,14 +91,23 @@ const CampaignsPanel: React.FC = () => {
         );
         if (updated) setSelectedCampaign(updated);
       }
-    } catch (error) {
-      console.error("Failed to save campaign:", error);
+      setError(null);
+    } catch (err: any) {
+      console.error("Failed to save campaign:", err);
+      setError(err.message || "Failed to save campaign");
     }
   };
+
+  const errorMessage = error && (
+    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+      <p className="text-red-800">{error}</p>
+    </div>
+  );
 
   if (viewMode === "detail" && selectedCampaign) {
     return (
       <div className="space-y-6">
+        {errorMessage}
         <div className="flex items-center gap-4">
           <button
             onClick={handleBackToList}
@@ -134,6 +147,7 @@ const CampaignsPanel: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {errorMessage}
       <div>
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Campaign Overview
