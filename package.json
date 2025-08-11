@@ -25,7 +25,8 @@
     "fix:unused": "pnpm lint:json && node scripts/fix-unused-from-eslint.mjs .eslint-unused.json && rm -f .eslint-unused.json",
     "fix:unused:node": "node scripts/fix-unused-from-eslint.mjs .eslint-unused.json",
     "verify:barrels": "node scripts/verify-barrels.mjs",
-    "check:paths": "pnpm lint && pnpm verify:barrels"
+    "check:paths": "pnpm lint && pnpm verify:barrels",
+    "test": "vitest"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -42,6 +43,8 @@
     "@eslint/js": "^9.33.0",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^20.19.10",
     "@types/react": "^19.1.9",
@@ -57,12 +60,14 @@
     "eslint-plugin-unused-imports": "^4.1.4",
     "fast-glob": "^3.3.2",
     "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
     "lint-staged": "^15.5.2",
     "prettier": "^3.6.2",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
-    "vite": "^7.1.1"
+    "vite": "^7.1.1",
+    "vitest": "^3.2.4"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
