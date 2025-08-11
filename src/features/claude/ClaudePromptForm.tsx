@@ -1,47 +1,55 @@
-import { MessageSquare, Send } from "lucide-react";
-import { ChangeEvent } from "react";
+// src/features/claude/ClaudePromptForm.tsx
+import { useState } from "react";
 
-export interface ClaudePromptFormProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-  isLoading: boolean;
-}
+type Props = {
+  // Controlled props (optional)
+  value?: string;
+  onChange?: (value: string) => void;
 
-const ClaudePromptForm: React.FC<ClaudePromptFormProps> = ({
+  // Common props
+  onSubmit?: (value: string) => void;
+  defaultValue?: string; // used when uncontrolled
+  disabled?: boolean;
+  isLoading?: boolean; // alias for disabled
+};
+
+export default function ClaudePromptForm({
   value,
   onChange,
   onSubmit,
+  defaultValue = "",
+  disabled,
   isLoading,
-}) => {
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
+}: Props) {
+  // Uncontrolled internal state
+  const [inner, setInner] = useState<string>(defaultValue ?? "");
+  const current = value ?? inner ?? "";
+
+  const handleChange = (v: string) => {
+    if (onChange) onChange(v);
+    else setInner(v);
   };
 
-  return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-white flex items-center">
-        <MessageSquare className="w-5 h-5 mr-2 text-blue-400" />
-        Custom Request
-      </h3>
-      <div className="space-y-3">
-        <textarea
-          value={value}
-          onChange={handleChange}
-          placeholder="Ask Claude anything about your campaign, request content creation, or get strategic advice..."
-          className="w-full h-24 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none transition-all"
-        />
-        <button
-          onClick={onSubmit}
-          disabled={isLoading || !value.trim()}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2"
-        >
-          <Send className="w-4 h-4" />
-          <span>{isLoading ? "Generating..." : "Send to Claude"}</span>
-        </button>
-      </div>
-    </div>
-  );
-};
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = (current ?? "").trim();
+    if (!v) return;
+    onSubmit?.(v);
+    if (!onChange) setInner(""); // clear only in uncontrolled mode
+  };
 
-export default ClaudePromptForm;
+  const isDisabled = Boolean(disabled ?? isLoading) || !current.trim();
+
+  return (
+    <form onSubmit={handleSubmit} aria-label="Claude prompt form">
+      <input
+        aria-label="Prompt"
+        value={current}
+        onChange={(e) => handleChange(e.target.value)}
+      />
+      <button type="submit" disabled={isDisabled}>
+        Send to Claude
+      </button>
+    </form>
+  );
+}
