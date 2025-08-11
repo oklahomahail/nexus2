@@ -1,33 +1,24 @@
-/* eslint-disable */
-import { useState, useCallback, useEffect } from "react";
 import {
   X,
-  Send,
   Bot,
-  Copy,
-  RotateCcw,
-  Sparkles,
   MessageSquare,
+  Sparkles,
   Target,
   TrendingUp,
-  // Users,
-  Zap,
-  CheckCircle,
 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+
+import IconBadge from "@/components/IconBadge";
+
+import ClaudeActionList, { ClaudeAction } from "./ClaudeActionList";
+import ClaudePromptForm from "./ClaudePromptForm";
+import ClaudeResponseView from "./ClaudeResponseView";
 
 interface ClaudePanelProps {
   isOpen: boolean;
   onClose: () => void;
   currentCampaign?: any;
   onCampaignSelect?: (campaign: any) => void;
-}
-
-interface ClaudeAction {
-  id: string;
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-  prompt: string;
 }
 
 const ClaudePanel: React.FC<ClaudePanelProps> = ({
@@ -82,7 +73,6 @@ const ClaudePanel: React.FC<ClaudePanelProps> = ({
       setSelectedAction(actionType);
 
       try {
-        // Simulate AI response
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const mockResponses = {
@@ -161,10 +151,10 @@ Expected outcome: 25-30% increase in final weeks with focused effort.`,
         };
 
         setResponse(
-          mockResponses[actionType as keyof typeof mockResponses] ||
+          (mockResponses as Record<string, string>)[actionType] ||
             "Response generated successfully!",
         );
-      } catch (error) {
+      } catch {
         setResponse("Sorry, I encountered an error. Please try again.");
       } finally {
         setIsLoading(false);
@@ -188,7 +178,7 @@ I'd be happy to help with that! For your ${currentCampaign?.name || "campaign"},
 This is a custom response based on your specific request. The AI assistant would provide tailored advice, content, or analysis based on your exact needs and current campaign data.
 
 Would you like me to elaborate on any specific aspect or generate additional content?`);
-    } catch (error) {
+    } catch {
       setResponse("Sorry, I encountered an error. Please try again.");
     } finally {
       setIsLoading(false);
@@ -213,7 +203,6 @@ Would you like me to elaborate on any specific aspect or generate additional con
     setCustomPrompt("");
   }, []);
 
-  // Handle escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -231,21 +220,20 @@ Would you like me to elaborate on any specific aspect or generate additional con
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300"
         onClick={onClose}
       />
 
-      {/* Panel */}
       <div className="fixed right-0 top-0 h-full w-full max-w-2xl bg-slate-900/95 backdrop-blur-xl border-l border-slate-700/50 shadow-2xl z-50 overflow-hidden">
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-slate-700/50 bg-slate-800/50">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-600/20 rounded-xl">
-                <Bot className="w-6 h-6 text-purple-400" />
-              </div>
+              <IconBadge
+                icon={Bot}
+                className="bg-purple-600/20 rounded-xl"
+                iconClassName="w-6 h-6 text-purple-400"
+              />
               <div>
                 <h2 className="text-xl font-semibold text-white">
                   AI Assistant
@@ -263,7 +251,6 @@ Would you like me to elaborate on any specific aspect or generate additional con
             </button>
           </div>
 
-          {/* Campaign Info */}
           {currentCampaign && (
             <div className="p-6 bg-slate-800/30 border-b border-slate-700/30">
               <div className="flex items-center justify-between">
@@ -304,76 +291,23 @@ Would you like me to elaborate on any specific aspect or generate additional con
             </div>
           )}
 
-          {/* Content */}
           <div className="flex-1 overflow-y-auto">
             {!response && !isLoading && (
               <div className="p-6 space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2 text-purple-400" />
-                    Quick Actions
-                  </h3>
-                  {currentCampaign && (
-                    <div className="grid grid-cols-1 gap-3">
-                      {claudeActions.map((action) => {
-                        const Icon = action.icon;
-                        return (
-                          <button
-                            key={action.id}
-                            onClick={() => handleGenerate(action.id)}
-                            disabled={isLoading}
-                            className="p-4 text-left border border-slate-700/50 rounded-xl hover:border-purple-500/50 hover:bg-slate-800/50 transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <div className="flex items-start space-x-3">
-                              <div className="p-2 bg-slate-800/50 rounded-lg group-hover:bg-purple-600/20 transition-colors">
-                                <Icon className="w-5 h-5 text-slate-400 group-hover:text-purple-400" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="font-medium text-white group-hover:text-purple-300 transition-colors">
-                                  {action.label}
-                                </div>
-                                <div className="text-sm text-slate-400 mt-1">
-                                  {action.description}
-                                </div>
-                              </div>
-                              <Zap className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Custom Prompt */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-white flex items-center">
-                    <MessageSquare className="w-5 h-5 mr-2 text-blue-400" />
-                    Custom Request
-                  </h3>
-                  <div className="space-y-3">
-                    <textarea
-                      value={customPrompt}
-                      onChange={(e) => setCustomPrompt(e.target.value)}
-                      placeholder="Ask Claude anything about your campaign, request content creation, or get strategic advice..."
-                      className="w-full h-24 bg-slate-800/50 border border-slate-700/50 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none transition-all"
-                    />
-                    <button
-                      onClick={handleCustomGenerate}
-                      disabled={isLoading || !customPrompt.trim()}
-                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2"
-                    >
-                      <Send className="w-4 h-4" />
-                      <span>
-                        {isLoading ? "Generating..." : "Send to Claude"}
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                <ClaudeActionList
+                  actions={claudeActions}
+                  onSelect={handleGenerate}
+                  isLoading={isLoading}
+                />
+                <ClaudePromptForm
+                  value={customPrompt}
+                  onChange={setCustomPrompt}
+                  onSubmit={handleCustomGenerate}
+                  isLoading={isLoading}
+                />
               </div>
             )}
 
-            {/* Loading State */}
             {isLoading && (
               <div className="p-6 flex flex-col items-center justify-center space-y-4">
                 <div className="relative">
@@ -386,48 +320,21 @@ Would you like me to elaborate on any specific aspect or generate additional con
                   </p>
                   <p className="text-slate-400 text-sm mt-1">
                     {selectedAction &&
-                      `Generating ${claudeActions.find((a) => a.id === selectedAction)?.label.toLowerCase()}`}
+                      `Generating ${claudeActions
+                        .find((a) => a.id === selectedAction)
+                        ?.label.toLowerCase()}`}
                   </p>
                 </div>
               </div>
             )}
 
-            {/* Response */}
             {response && (
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white flex items-center">
-                    <CheckCircle className="w-5 h-5 mr-2 text-green-400" />
-                    Claude's Response
-                  </h3>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={handleCopy}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                        copySuccess
-                          ? "bg-green-600/20 text-green-400 border border-green-500/30"
-                          : "bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-700/50 border border-slate-700/50"
-                      }`}
-                    >
-                      <Copy className="w-4 h-4" />
-                      <span>{copySuccess ? "Copied!" : "Copy"}</span>
-                    </button>
-                    <button
-                      onClick={handleNewRequest}
-                      className="px-3 py-2 bg-slate-800/50 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-2 border border-slate-700/50"
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                      <span>New Request</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-slate-800/30 border border-slate-700/30 rounded-xl p-4">
-                  <pre className="whitespace-pre-wrap text-slate-200 text-sm leading-relaxed font-mono">
-                    {response}
-                  </pre>
-                </div>
-              </div>
+              <ClaudeResponseView
+                response={response}
+                copySuccess={copySuccess}
+                onCopy={handleCopy}
+                onNewRequest={handleNewRequest}
+              />
             )}
           </div>
         </div>

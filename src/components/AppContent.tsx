@@ -19,9 +19,7 @@ const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
 const AnalyticsDashboard = React.lazy(
   () => import("@/panels/AnalyticsDashboard"),
 );
-const DonorsPlaceholder = React.lazy(
-  () => import("@/panels/DonorsPlaceholder"),
-);
+const DonorsPanel = React.lazy(() => import("@/panels/DonorsPanel"));
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
 
 type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors";
@@ -100,7 +98,7 @@ const AppContent: React.FC = () => {
       key: "donors",
       label: "Donors",
       icon: Users,
-      component: DonorsPlaceholder,
+      component: DonorsPanel,
       description: "Donor management and insights",
     },
   ];
