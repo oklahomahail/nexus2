@@ -2,10 +2,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import App from "./App";
-import { AppProviders } from "./context/AppProviders"; // ✅ use the combined provider
+// Load global styles (Tailwind v4)
+import "./index.css";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+import App from "./App";
+import { AppProviders } from "./context/AppProviders";
+
+const rootEl = document.getElementById("root");
+if (!rootEl) {
+  throw new Error('Root element "#root" not found');
+}
+
+ReactDOM.createRoot(rootEl).render(
   <React.StrictMode>
     <AppProviders>
       <App />
