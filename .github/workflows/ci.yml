@@ -33,6 +33,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Check dynamic Tailwind classes
+        run: pnpm run check:tailwind:dynamic
+
       - name: Build
         run: pnpm build
 

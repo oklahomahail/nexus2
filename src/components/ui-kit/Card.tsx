@@ -10,6 +10,38 @@ interface CardProps {
   variant?: "default" | "outlined" | "elevated";
 }
 
+type Variant = NonNullable<CardProps["variant"]>;
+type Padding = NonNullable<CardProps["padding"]>;
+type Shadow = NonNullable<CardProps["shadow"]>;
+type Rounded = NonNullable<CardProps["rounded"]>;
+
+const variantClasses = {
+  default: "card-base",
+  outlined: "card-base border-surface",
+  elevated: "card-base shadow-soft",
+} satisfies Record<Variant, string>;
+
+const paddingClasses = {
+  none: "p-0",
+  sm: "p-3",
+  md: "p-4",
+  lg: "p-6",
+} satisfies Record<Padding, string>;
+
+const shadowClasses = {
+  none: "",
+  sm: "shadow-soft",
+  md: "shadow-medium",
+  lg: "shadow-strong",
+} satisfies Record<Shadow, string>;
+
+const roundedClasses = {
+  none: "rounded-none",
+  sm: "rounded-md",
+  md: "rounded-xl",
+  lg: "rounded-2xl",
+} satisfies Record<Rounded, string>;
+
 const Card: React.FC<CardProps> = ({
   children,
   className,
@@ -19,33 +51,6 @@ const Card: React.FC<CardProps> = ({
   border = true,
   variant = "default",
 }) => {
-  const variantClasses = {
-    default: "bg-white",
-    outlined: "bg-white border-2",
-    elevated: "bg-white shadow-lg",
-  };
-
-  const paddingClasses = {
-    none: "",
-    sm: "p-3",
-    md: "p-4",
-    lg: "p-6",
-  };
-
-  const shadowClasses = {
-    none: "",
-    sm: "shadow-sm",
-    md: "shadow",
-    lg: "shadow-lg",
-  };
-
-  const roundedClasses = {
-    none: "",
-    sm: "rounded-sm",
-    md: "rounded-lg",
-    lg: "rounded-xl",
-  };
-
   return (
     <div
       className={`

@@ -17,14 +17,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   onClick,
   collapsed,
 }) => {
+  const base =
+    "w-full text-left transition-all duration-200 border border-transparent rounded-lg p-3 group relative";
+  const active = "bg-blue-600/20 text-blue-300 border-blue-500/50";
+  const inactive = "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30";
+
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left transition-all duration-200 ${
-        isActive
-          ? "bg-blue-600/20 text-blue-300 border-blue-500/50"
-          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/30"
-      } border border-transparent rounded-lg p-3 group relative`}
+      className={[base, isActive ? active : inactive].join(" ")}
       title={collapsed ? label : undefined}
     >
       <div className="flex items-center space-x-3">

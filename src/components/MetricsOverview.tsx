@@ -7,8 +7,10 @@ interface MetricsOverviewProps {
 }
 
 const MetricsOverview: React.FC<MetricsOverviewProps> = ({ className }) => {
+  const root = ["space-y-6", className].filter(Boolean).join(" ");
+
   return (
-    <div className={`space-y-6 ${className || ""}`}>
+    <div className={root}>
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Metrics Overview

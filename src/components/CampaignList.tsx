@@ -28,11 +28,10 @@ const CampaignList: React.FC<CampaignListProps> = ({
       try {
         setLoading(true);
         const data = await campaignService.getAllCampaigns(filters);
-        // Handle the case where the service might return void or undefined
         setCampaigns(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to load campaigns:", error);
-        setCampaigns([]); // Set empty array on error
+        setCampaigns([]);
       } finally {
         setLoading(false);
       }
@@ -49,8 +48,25 @@ const CampaignList: React.FC<CampaignListProps> = ({
     );
   }
 
+  const headerWrap = ["space-y-6", className].filter(Boolean).join(" ");
+
+  const gridClass =
+    viewMode === "grid"
+      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      : "space-y-4";
+
+  const gridBtnClass =
+    viewMode === "grid"
+      ? "px-3 py-1 rounded text-sm font-medium transition-colors bg-white text-gray-900 shadow-sm"
+      : "px-3 py-1 rounded text-sm font-medium transition-colors text-gray-500 hover:text-gray-700";
+
+  const listBtnClass =
+    viewMode === "list"
+      ? "px-3 py-1 rounded text-sm font-medium transition-colors bg-white text-gray-900 shadow-sm"
+      : "px-3 py-1 rounded text-sm font-medium transition-colors text-gray-500 hover:text-gray-700";
+
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={headerWrap}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -66,11 +82,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
               onClick={() => {
                 /* setViewMode("grid") */
               }}
-              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                viewMode === "grid"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={gridBtnClass}
             >
               Grid
             </button>
@@ -78,11 +90,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
               onClick={() => {
                 /* setViewMode("list") */
               }}
-              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-                viewMode === "list"
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={listBtnClass}
             >
               List
             </button>
@@ -113,13 +121,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
           )}
         </div>
       ) : (
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              : "space-y-4"
-          }
-        >
+        <div className={gridClass}>
           {campaigns.map((campaign: Campaign) => (
             <CampaignQuickCard
               key={campaign.id}

@@ -1,4 +1,4 @@
-// src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme
+// src/panels/MessagingAssistPanel.tsx - Enhanced version with dark theme (no template literals)
 import {
   Bot,
   Copy,
@@ -33,45 +33,47 @@ const QuickAction: React.FC<QuickActionProps> = ({
   description,
   isActive,
   onClick,
-}) => (
-  <button
-    onClick={onClick}
-    className={`w-full group text-left transition-all duration-200 ${
-      isActive
-        ? "bg-blue-600/20 border-blue-500/50"
-        : "bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40"
-    } border rounded-xl p-4`}
-  >
-    <div className="flex items-start space-x-4">
-      <div
-        className={`p-2 rounded-lg transition-colors ${
-          isActive
-            ? "bg-blue-500/30 text-blue-400"
-            : "bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/30"
-        }`}
-      >
-        {icon}
+}) => {
+  const cardBase =
+    "w-full group text-left transition-all duration-200 border rounded-xl p-4";
+  const cardState = isActive
+    ? "bg-blue-600/20 border-blue-500/50"
+    : "bg-slate-800/30 border-slate-700/30 hover:bg-slate-700/40";
+
+  const iconWrap = [
+    "p-2 rounded-lg transition-colors",
+    isActive
+      ? "bg-blue-500/30 text-blue-400"
+      : "bg-blue-500/20 text-blue-400 group-hover:bg-blue-500/30",
+  ].join(" ");
+
+  const titleClass = [
+    "font-semibold mb-1 transition-colors",
+    isActive ? "text-blue-300" : "text-white group-hover:text-blue-400",
+  ].join(" ");
+
+  const arrowClass = [
+    "w-5 h-5 text-slate-400 transition-all duration-200",
+    isActive
+      ? "opacity-100 translate-x-1"
+      : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1",
+  ].join(" ");
+
+  return (
+    <button onClick={onClick} className={[cardBase, cardState].join(" ")}>
+      <div className="flex items-start space-x-4">
+        <div className={iconWrap}>{icon}</div>
+        <div className="flex-1">
+          <h3 className={titleClass}>{title}</h3>
+          <p className="text-slate-400 text-sm leading-relaxed">
+            {description}
+          </p>
+        </div>
+        <ArrowRight className={arrowClass} />
       </div>
-      <div className="flex-1">
-        <h3
-          className={`font-semibold mb-1 transition-colors ${
-            isActive ? "text-blue-300" : "text-white group-hover:text-blue-400"
-          }`}
-        >
-          {title}
-        </h3>
-        <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
-      </div>
-      <ArrowRight
-        className={`w-5 h-5 text-slate-400 transition-all duration-200 ${
-          isActive
-            ? "opacity-100 translate-x-1"
-            : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
-        }`}
-      />
-    </div>
-  </button>
-);
+    </button>
+  );
+};
 
 const messageTypes = [
   {
@@ -120,7 +122,6 @@ export default function MessagingAssistantPanel(): React.ReactElement {
     setResult("");
 
     try {
-      // Create a proper prompt based on the message type and context
       const prompts: Record<MessageType, string> = {
         Email: `Write a compelling fundraising email with the following context: ${context}`,
         "Subject Line": `Create attention-grabbing email subject lines for this campaign: ${context}`,
@@ -163,6 +164,13 @@ export default function MessagingAssistantPanel(): React.ReactElement {
     setContext("");
     setCopySuccess(false);
   };
+
+  const copyBtnClass = [
+    "flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+    copySuccess
+      ? "bg-green-500/20 text-green-300"
+      : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white",
+  ].join(" ");
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -288,14 +296,7 @@ export default function MessagingAssistantPanel(): React.ReactElement {
               </h3>
             </div>
             <div className="flex items-center space-x-2">
-              <button
-                onClick={handleCopy}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  copySuccess
-                    ? "bg-green-500/20 text-green-300"
-                    : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white"
-                }`}
-              >
+              <button onClick={handleCopy} className={copyBtnClass}>
                 <Copy className="w-4 h-4" />
                 <span>{copySuccess ? "Copied!" : "Copy"}</span>
               </button>

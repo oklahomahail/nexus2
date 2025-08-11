@@ -18,9 +18,7 @@ interface PerformanceChartProps {
   height?: number;
 }
 
-// Mock data builder to avoid buildChartData dependency
 function buildChartData(chartType: string, _rawData: any) {
-  // Simple mock data structure
   const mockData = [
     { name: "Jan", value: 400, growth: 12 },
     { name: "Feb", value: 300, growth: 8 },
@@ -38,9 +36,6 @@ function buildChartData(chartType: string, _rawData: any) {
   };
 }
 
-// Mock data types to avoid import issues
-
-// Custom tooltip component
 interface CustomTooltipProps {
   active?: boolean;
   payload?: any[];
@@ -78,7 +73,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   className = "",
   height = 300,
 }) => {
-  // Build chart data from props
   const { data: rows, xKey } = buildChartData(type, data);
 
   const chartTitle =
@@ -95,8 +89,10 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   const isAreaChart =
     type === "comparison" || type === "success-rate" || type === "roi";
 
+  const wrapClass = ["card-base p-6", className].filter(Boolean).join(" ");
+
   return (
-    <div className={`card-base p-6 ${className}`}>
+    <div className={wrapClass}>
       {/* Chart Header */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold text-slate-200 mb-2">
@@ -159,14 +155,18 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         </div>
       </div>
 
-      {/* Additional metrics for comparison charts */}
       {type === "comparison" && (
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="bg-slate-800/50 rounded-lg p-3">
             <div className="text-xs text-slate-400 mb-1">Average Growth</div>
             <div className="text-lg font-semibold text-slate-200">
               {rows.length > 0
-                ? `${(rows.reduce((sum: number, item: any) => sum + (item.growth || 0), 0) / rows.length).toFixed(1)}%`
+                ? `${(
+                    rows.reduce(
+                      (sum: number, item: any) => sum + (item.growth || 0),
+                      0,
+                    ) / rows.length
+                  ).toFixed(1)}%`
                 : "0%"}
             </div>
           </div>
