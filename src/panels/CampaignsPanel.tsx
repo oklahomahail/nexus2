@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+import { useAuth } from "@/context/AuthContext";
+
 import { KPIWidget } from "../components/AnalyticsWidgets";
 import CampaignDetail from "../components/CampaignDetail";
 import CampaignList from "../components/CampaignList";
@@ -12,6 +14,7 @@ import { CampaignStats } from "../services/campaignService"; // Import CampaignS
 type ViewMode = "list" | "detail";
 
 const CampaignsPanel: React.FC = () => {
+  const { user, hasRole } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null,
@@ -22,8 +25,16 @@ const CampaignsPanel: React.FC = () => {
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
+    if (!user) return;
     void loadStats();
-  }, []);
+  }, [user]);
+
+  if (!user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+    return null;
+  }
 
   const loadStats = async () => {
     try {
@@ -175,7 +186,7 @@ const CampaignsPanel: React.FC = () => {
       </div>
 
       <CampaignList
-        onCreateCampaign={handleCreateCampaign}
+        onCreateCampaign={hasRole("admin") ? handleCreateCampaign : undefined}
         onViewCampaign={handleViewCampaign}
       />
 

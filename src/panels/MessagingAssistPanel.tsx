@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 
+import { useAuth } from "@/context/AuthContext";
+
 import LoadingSpinner from "../components/LoadingSpinner";
 import { generateClaudeResponse } from "../features/claude/claudeService";
 
@@ -104,12 +106,20 @@ const messageTypes = [
 ];
 
 export default function MessagingAssistantPanel(): React.ReactElement {
+  const { user } = useAuth();
   const [messageType, setMessageType] = useState<MessageType>("Email");
   const [context, setContext] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
+
+  if (!user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+    return <></>;
+  }
 
   const handleGenerate = async () => {
     if (!context.trim()) return;

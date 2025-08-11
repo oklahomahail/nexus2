@@ -7,7 +7,7 @@ import * as campaignService from "../services/campaignService";
 
 interface CampaignListProps {
   onViewCampaign: (_campaign: Campaign) => void;
-  onCreateCampaign: () => void;
+  onCreateCampaign?: () => void;
   filters?: any;
   viewMode?: "grid" | "list";
   className?: string;
@@ -88,13 +88,14 @@ const CampaignList: React.FC<CampaignListProps> = ({
             </button>
           </div>
 
-          {/* Create Campaign Button */}
-          <button
-            onClick={onCreateCampaign}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            Create Campaign
-          </button>
+          {onCreateCampaign && (
+            <button
+              onClick={onCreateCampaign}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Create Campaign
+            </button>
+          )}
         </div>
       </div>
 
@@ -102,12 +103,14 @@ const CampaignList: React.FC<CampaignListProps> = ({
       {campaigns.length === 0 ? (
         <div className="text-center py-12">
           <div className="text-gray-500 mb-4">No campaigns found</div>
-          <button
-            onClick={onCreateCampaign}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            Create Your First Campaign
-          </button>
+          {onCreateCampaign && (
+            <button
+              onClick={onCreateCampaign}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              Create Your First Campaign
+            </button>
+          )}
         </div>
       ) : (
         <div

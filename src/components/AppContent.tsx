@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import React, { Suspense, useMemo, useState } from "react";
 
+import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/useUI";
 import CampaignsPanel from "@/panels/CampaignsPanel";
 
@@ -36,6 +37,7 @@ interface NavigationItem {
 
 const AppContent: React.FC = () => {
   const { activeView, setActiveView, loading = false, error = null } = useUI();
+  const { hasRole } = useAuth();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
 
   const toggleNotifications = () => {
@@ -198,10 +200,12 @@ const AppContent: React.FC = () => {
                 <Bot className="w-4 h-4" />
                 <span>AI Assistant</span>
               </button>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>New Campaign</span>
-              </button>
+              {hasRole("admin") && (
+                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                  <Plus className="w-4 h-4" />
+                  <span>New Campaign</span>
+                </button>
+              )}
             </div>
           </div>
         </header>
