@@ -7,6 +7,7 @@ import {
   AppUIState,
   AppUIAction,
 } from "./appReducer"; // Changed AppAction to AppUIAction
+import { AuthProvider } from "./AuthContext";
 
 // Define the app context type
 interface AppContextType {
@@ -38,8 +39,10 @@ export const AppProviders: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AppContext.Provider value={value}>
-      <AnalyticsProvider>{children}</AnalyticsProvider>
-    </AppContext.Provider>
+    <AuthProvider>
+      <AppContext.Provider value={value}>
+        <AnalyticsProvider>{children}</AnalyticsProvider>
+      </AppContext.Provider>
+    </AuthProvider>
   );
 };

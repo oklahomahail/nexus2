@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import {
   Target,
   TrendingUp,
@@ -129,6 +130,14 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
   totalRevenue = 127500,
   activeCampaigns = 4,
 }) => {
+  const { user } = useAuth();
+  if (!user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+    return null;
+  }
+
   const [_showModal, setShowModal] = useState(false);
 
   // Mock data for recent activity

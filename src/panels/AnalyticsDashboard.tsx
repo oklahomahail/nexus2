@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 import AnalyticsFiltersComponent from "../components/AnalyticsFiltersComponent";
 import DonorInsightsPanel from "../components/DonorInsightsPanel";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -24,6 +25,14 @@ type OrganizationAnalytics = {
 };
 
 const AnalyticsDashboard: React.FC = () => {
+  const { user } = useAuth();
+  if (!user) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+    return null;
+  }
+
   const [activeView, setActiveView] = useState<AnalyticsView>("overview");
   const [orgAnalytics, setOrgAnalytics] =
     useState<OrganizationAnalytics | null>(null);
