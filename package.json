@@ -26,7 +26,8 @@
     "fix:unused:node": "node scripts/fix-unused-from-eslint.mjs .eslint-unused.json",
     "verify:barrels": "node scripts/verify-barrels.mjs",
     "check:paths": "pnpm lint && pnpm verify:barrels",
-    "test": "vitest"
+    "test": "vitest",
+    "check:tailwind:dynamic": "node scripts/check-dynamic-classes.js"
   },
   "dependencies": {
     "clsx": "^2.1.1",

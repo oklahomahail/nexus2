@@ -14,6 +14,7 @@ import {
   // Plus,
   BarChart3,
 } from "lucide-react";
+import clsx from "clsx";
 
 interface QuickActionCardProps {
   title: string;
@@ -30,29 +31,31 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   onClick,
   color = "blue",
 }) => {
+  type StatColor = "blue" | "green" | "purple" | "indigo";
   const colorClasses = {
     blue: "bg-blue-600 hover:bg-blue-700",
     green: "bg-green-600 hover:bg-green-700",
     purple: "bg-purple-600 hover:bg-purple-700",
     indigo: "bg-indigo-600 hover:bg-indigo-700",
-  };
+  } satisfies Record<StatColor, string>;
 
   const iconColors = {
     blue: "text-blue-100",
     green: "text-green-100",
     purple: "text-purple-100",
     indigo: "text-indigo-100",
-  };
+  } satisfies Record<StatColor, string>;
 
   return (
     <button
       onClick={onClick}
-      className={`p-6 rounded-xl text-left transition-all duration-200 hover:scale-105 hover:shadow-lg ${
-        colorClasses[color]
-      }`}
+      className={clsx(
+        "p-6 rounded-xl text-left transition-all duration-200 hover:scale-105 hover:shadow-lg",
+        colorClasses[color || "blue"],
+      )}
     >
       <div className="flex items-center justify-between mb-4">
-        <Icon className={`w-6 h-6 ${iconColors[color]}`} />
+        <Icon className={clsx("w-6 h-6", iconColors[color || "blue"])} />
       </div>
       <h3 className="text-white font-semibold text-lg mb-2">{title}</h3>
       <p className="text-white/80 text-sm">{description}</p>
@@ -67,11 +70,12 @@ const MetricCard: React.FC<{
   trend?: "up" | "down" | "neutral";
   icon: React.ComponentType<{ className?: string }>;
 }> = ({ title, value, change, trend = "neutral", icon: Icon }) => {
+  type Trend = "up" | "down" | "neutral";
   const trendColors = {
     up: "text-green-400",
     down: "text-red-400",
     neutral: "text-slate-400",
-  };
+  } satisfies Record<Trend, string>;
 
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
@@ -80,7 +84,12 @@ const MetricCard: React.FC<{
           <Icon className="w-5 h-5 text-blue-400" />
         </div>
         {change && (
-          <span className={`text-sm font-medium ${trendColors[trend]}`}>
+          <span
+            className={clsx(
+              "text-sm font-medium",
+              trendColors[trend || "neutral"],
+            )}
+          >
             {change}
           </span>
         )}
@@ -96,21 +105,24 @@ const ActivityItem: React.FC<{
   time: string;
   type: "donation" | "campaign" | "alert";
 }> = ({ title, time, type }) => {
+  type ActivityType = "donation" | "campaign" | "alert";
   const typeIcons = {
     donation: <DollarSign className="w-4 h-4 text-green-400" />,
     campaign: <Target className="w-4 h-4 text-blue-400" />,
     alert: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-  };
+  } satisfies Record<ActivityType, JSX.Element>;
 
   const typeBg = {
     donation: "bg-green-400/10",
     campaign: "bg-blue-400/10",
     alert: "bg-yellow-400/10",
-  };
+  } satisfies Record<ActivityType, string>;
 
   return (
     <div className="flex items-center space-x-3 p-3 hover:bg-slate-800/30 rounded-lg transition-colors">
-      <div className={`p-2 rounded-lg ${typeBg[type]}`}>{typeIcons[type]}</div>
+      <div className={clsx("p-2 rounded-lg", typeBg[type])}>
+        {typeIcons[type]}
+      </div>
       <div className="flex-1 min-w-0">
         <p className="text-white text-sm font-medium truncate">{title}</p>
         <p className="text-slate-400 text-xs">{time}</p>
