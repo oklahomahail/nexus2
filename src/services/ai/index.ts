@@ -1,2 +1,13 @@
 // src/services/ai/index.ts
-export * from "./claudeService";
+// Aggregate exports for AI services
+export {
+  generateResponse,
+  callClaude,
+  streamClaude,
+  setApiKey,
+  getApiKey,
+  clearApiKey,
+  type ClaudeRequest,
+  type ClaudeResponse,
+  type ClaudeCallOptions,
+} from "./claudeService";

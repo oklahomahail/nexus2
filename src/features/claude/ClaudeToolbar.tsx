@@ -1,7 +1,7 @@
 // src/features/claude/ClaudeToolbar.tsx
 import { useState } from "react";
 
-import { generateClaudeResponse } from "./claudeService";
+import { generateResponse } from "@/services/ai";
 
 type ClaudeContext = { purpose?: string } & Record<string, unknown>;
 
@@ -26,7 +26,7 @@ export default function ClaudeToolbar({
       // Create a simple prompt based on the purpose and context
       const prompt = createPromptFromContext(purpose, context ?? {});
 
-      const res = await generateClaudeResponse(
+      const res = await generateResponse(
         purpose,
         JSON.stringify(context ?? {}),
         {

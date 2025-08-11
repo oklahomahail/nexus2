@@ -1,7 +1,8 @@
 import { Zap, Sparkles } from "lucide-react";
-import type { ComponentType } from "react";
 
 import IconBadge from "@/components/IconBadge";
+
+import type { ComponentType } from "react";
 
 export interface ClaudeAction {
   id: string;

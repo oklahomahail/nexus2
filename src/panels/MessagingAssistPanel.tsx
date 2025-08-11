@@ -12,8 +12,9 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 
+import { generateResponse } from "@/services/ai";
+
 import LoadingSpinner from "../components/LoadingSpinner";
-import { generateClaudeResponse } from "../features/claude/claudeService";
 
 type MessageType = "Email" | "Subject Line" | "Social Post" | "CTA Button";
 
@@ -127,7 +128,7 @@ export default function MessagingAssistantPanel(): React.ReactElement {
         "CTA Button": `Create powerful call-to-action button text and CTAs for this campaign: ${context}`,
       };
 
-      const response = await generateClaudeResponse(messageType, context, {
+      const response = await generateResponse(messageType, context, {
         prompt: prompts[messageType],
         context: { type: messageType, details: context },
       });

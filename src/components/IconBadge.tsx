@@ -1,4 +1,5 @@
 import clsx from "clsx";
+
 import type { ComponentType } from "react";
 
 export interface IconBadgeProps {
