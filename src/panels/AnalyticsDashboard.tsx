@@ -6,7 +6,6 @@ import DonorInsightsPanel from "../components/DonorInsightsPanel";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MetricsOverview from "../components/MetricsOverview";
 import { analyticsService } from "../services/analyticsService";
-import BackupStatusCard from "@/components/dashboard/BackupStatusCard";
 
 type AnalyticsView = "overview" | "campaigns" | "donors" | "export";
 type DateRange = { startDate: string; endDate: string };
