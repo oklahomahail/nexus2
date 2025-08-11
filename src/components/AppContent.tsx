@@ -39,9 +39,7 @@ const AppContent: React.FC = () => {
   const [showClaudePanel, setShowClaudePanel] = useState(false);
 
   const toggleNotifications = () => {
-    // wire up to your notifications drawer when ready
-    // keeping to avoid UI regressions
-    /* no-op */
+    /* no-op for now */
   };
 
   const currentCampaign = useMemo(
@@ -135,16 +133,23 @@ const AppContent: React.FC = () => {
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.key === activeView;
+                const base =
+                  "w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200";
+                const activeClasses =
+                  "bg-blue-600 text-white shadow-lg shadow-blue-600/25";
+                const inactiveClasses =
+                  "text-slate-400 hover:text-white hover:bg-slate-800/50";
                 return (
                   <button
                     key={item.key}
                     onClick={() => setActiveView(item.key)}
                     aria-current={isActive ? "page" : undefined}
-                    className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
-                      isActive
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/50"
-                    }`}
+                    className={[
+                      base,
+                      isActive ? activeClasses : inactiveClasses,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                   >
                     <Icon className="w-5 h-5" />
                     <span className="font-medium">{item.label}</span>

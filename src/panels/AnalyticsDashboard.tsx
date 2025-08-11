@@ -8,7 +8,6 @@ import MetricsOverview from "../components/MetricsOverview";
 import { analyticsService } from "../services/analyticsService";
 import BackupStatusCard from "@/components/dashboard/BackupStatusCard";
 
-// Minimal local types to avoid coupling; adjust freely if you prefer shared models
 type AnalyticsView = "overview" | "campaigns" | "donors" | "export";
 type DateRange = { startDate: string; endDate: string };
 type AnalyticsFilters = { dateRange: DateRange };
@@ -123,6 +122,9 @@ const AnalyticsDashboard: React.FC = () => {
     );
   }
 
+  const tabBase =
+    "py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center gap-2 transition-colors";
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -157,20 +159,22 @@ const AnalyticsDashboard: React.FC = () => {
 
       <div className="border-b border-slate-800/50">
         <nav className="-mb-px flex space-x-8">
-          {navigationItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActiveView(item.key as AnalyticsView)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center gap-2 ${
-                activeView === item.key
-                  ? "border-blue-500 text-blue-400"
-                  : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700"
-              } transition-colors`}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </button>
-          ))}
+          {navigationItems.map((item) => {
+            const active =
+              activeView === (item.key as AnalyticsView)
+                ? "border-blue-500 text-blue-400"
+                : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700";
+            return (
+              <button
+                key={item.key}
+                onClick={() => setActiveView(item.key as AnalyticsView)}
+                className={[tabBase, active].join(" ")}
+              >
+                <span>{item.icon}</span>
+                {item.label}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
@@ -257,4 +261,3 @@ const AnalyticsDashboard: React.FC = () => {
 };
 
 export default AnalyticsDashboard;
-<BackupStatusCard />;
