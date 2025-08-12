@@ -25,10 +25,10 @@ import { useParams, useLocation } from "react-router-dom";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useClient } from "@/context/ClientContext";
 import { useNotifications } from "@/hooks/useNotifications";
+import type { DonorInsights } from "@/models/analytics";
 import type {
   CampaignAnalytics,
   OrganizationAnalytics,
-  _DonorInsights,
   AnalyticsFilters,
   GoalAlert,
 } from "@/models/analytics";
@@ -62,9 +62,10 @@ const AnalyticsDashboard: React.FC = () => {
     useState<CampaignAnalytics | null>(null);
   const [orgAnalytics, setOrgAnalytics] =
     useState<OrganizationAnalytics | null>(null);
-  const [_donorInsights, setDonorInsights] = useState<_DonorInsights | null>(
+  const [donorInsights, setDonorInsights] = useState<DonorInsights | null>(
     null,
   );
+  void donorInsights;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] =
@@ -743,7 +744,21 @@ const AnalyticsDashboard: React.FC = () => {
     </div>
   );
 };
-
+// {donorInsights && (
+//   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+//     <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+//       <h3 className="text-lg font-semibold text-white mb-4">Top Donors</h3>
+//       <div className="space-y-3">
+//         {donorInsights.topDonors.map((donor: { id: React.Key | null | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; totalGiven: { toLocaleString: () => string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }; }, index: any) => (
+//           <div key={donor.id} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+//             <span className="text-white font-medium">{donor.name}</span>
+//             <span className="text-white font-semibold">${donor.totalGiven.toLocaleString()}</span>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   </div>
+// )}
 // Enhanced Goal Modal with Templates and Editing
 const GoalModal: React.FC<{
   scope: "org" | "client";
