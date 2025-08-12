@@ -177,7 +177,7 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
 
   // Auto-seed with a small delay to ensure it works
   setTimeout(() => {
-    clientService.seed(legacyClients);
+    void clientService.seed(legacyClients).catch(console.error);
   }, 100);
 }
 

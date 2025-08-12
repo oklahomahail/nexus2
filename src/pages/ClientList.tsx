@@ -38,13 +38,14 @@ export default function ClientList() {
             brand: { primary: "#7c3aed", secondary: "#6d28d9" },
           },
         ])
-        .then(reload);
+        .then(() => reload())
+        .catch(console.error);
     }
   }, [clients.length, reload]);
 
   const handleClientSelect = (client: Client) => {
     setCurrentClient(client.id);
-    navigate(`/client/${client.id}`);
+    void navigate(`/client/${client.id}`);
   };
 
   const handleNewClient = () => {

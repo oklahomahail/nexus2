@@ -50,7 +50,7 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    reload();
+    void reload().catch(console.error);
   }, []);
 
   const value = useMemo(
