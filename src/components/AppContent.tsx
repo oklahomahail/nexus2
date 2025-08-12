@@ -7,36 +7,53 @@ import {
   Bot,
   Plus,
   Bell,
+  Building,
 } from "lucide-react";
 import React, { Suspense, useMemo, useState } from "react";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
+import Breadcrumb from "@/components/Breadcrumb";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/useUI";
 import CampaignsPanel from "@/panels/CampaignsPanel";
+// import Topbar from "@/components/Topbar"; // keep only if you render it
 
 import LoadingSpinner from "./LoadingSpinner";
 
+// Lazy loaded components
 const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
 const AnalyticsDashboard = React.lazy(
   () => import("@/panels/AnalyticsDashboard"),
 );
-const DonorsPanel = React.lazy(() => import("@/panels/DonorsPanel"));
+// removed: DonorsPanel (unused)
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
-
-type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors";
+const ClientList = React.lazy(() => import("@/pages/ClientList"));
+const ClientDashboard = React.lazy(() => import("@/pages/ClientDashboard"));
+const DonorsPlaceholder = React.lazy(
+  () => import("@/components/DonorsPlaceholder"),
+);
 
 interface NavigationItem {
-  key: ViewKey;
+  key: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  component: React.ComponentType<any>;
+  path: string;
   description?: string;
+  isClientScope?: boolean;
 }
 
 const AppContent: React.FC = () => {
-  const { activeView, setActiveView, loading = false, error = null } = useUI();
+  const { loading = false, error = null } = useUI();
   const { hasRole } = useAuth();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleNotifications = () => {
     // wire up to your notifications drawer when ready
@@ -76,39 +93,75 @@ const AppContent: React.FC = () => {
 
   const navigationItems: NavigationItem[] = [
     {
+      key: "clients",
+      label: "Clients",
+      icon: Building,
+      path: "/clients",
+      description: "Manage client organizations",
+    },
+    {
       key: "dashboard",
       label: "Dashboard",
       icon: BarChart3,
-      component: DashboardPanel,
+      path: "/dashboard",
       description: "Overview of key metrics and recent activity",
     },
     {
       key: "campaigns",
       label: "Campaigns",
       icon: Target,
-      component: CampaignsPanel,
+      path: "/campaigns",
       description: "Manage fundraising campaigns",
     },
     {
       key: "analytics",
       label: "Analytics",
       icon: TrendingUp,
-      component: AnalyticsDashboard,
+      path: "/analytics",
       description: "Performance insights and reports",
     },
     {
       key: "donors",
       label: "Donors",
       icon: Users,
-      component: DonorsPanel,
+      path: "/donors",
       description: "Donor management and insights",
     },
   ];
 
-  const currentNavItem =
-    navigationItems.find((item) => item.key === activeView) ||
-    navigationItems[0];
-  const CurrentComponent = currentNavItem.component;
+  // Determine current page info based on route
+  const getCurrentPageInfo = () => {
+    const path = location.pathname;
+
+    if (path.startsWith("/client/")) {
+      if (path.includes("/campaigns")) {
+        return {
+          label: "Client Campaigns",
+          description: "Manage client fundraising campaigns",
+        };
+      } else if (path.includes("/analytics")) {
+        return {
+          label: "Client Analytics",
+          description: "Client performance insights and reports",
+        };
+      } else {
+        return {
+          label: "Client Dashboard",
+          description: "Client overview and metrics",
+        };
+      }
+    }
+
+    const navItem = navigationItems.find((item) => item.path === path);
+    return (
+      navItem || {
+        label: "Dashboard",
+        description: "Overview of key metrics and recent activity",
+      }
+    );
+  };
+
+  const currentPageInfo = getCurrentPageInfo();
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex">
@@ -134,11 +187,15 @@ const AppContent: React.FC = () => {
             <nav className="space-y-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = item.key === activeView;
+                const isActive =
+                  location.pathname === item.path ||
+                  (item.key === "clients" &&
+                    location.pathname.startsWith("/client"));
+
                 return (
                   <button
                     key={item.key}
-                    onClick={() => setActiveView(item.key)}
+                    onClick={() => navigate(item.path)}
                     aria-current={isActive ? "page" : undefined}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
                       isActive
@@ -177,11 +234,16 @@ const AppContent: React.FC = () => {
         {/* Header */}
         <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md">
           <div className="px-8 py-6 flex justify-between items-center">
-            <div>
+            <div className="flex-1">
+              {/* Breadcrumb */}
+              <div className="mb-3">
+                <Breadcrumb />
+              </div>
+
               <h1 className="text-2xl font-bold text-white mb-1">
-                {currentNavItem.label}
+                {currentPageInfo.label}
               </h1>
-              <p className="text-slate-400">{currentNavItem.description}</p>
+              <p className="text-slate-400">{currentPageInfo.description}</p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -208,7 +270,7 @@ const AppContent: React.FC = () => {
           </div>
         </header>
 
-        {/* Page Content */}
+        {/* Page Content with Routing */}
         <div className="flex-1 overflow-auto">
           {loading ? (
             <div className="flex justify-center items-center py-12">
@@ -234,7 +296,33 @@ const AppContent: React.FC = () => {
               }
             >
               <div className="p-8">
-                <CurrentComponent />
+                <Routes>
+                  {/* Client-first navigation */}
+                  <Route path="/clients" element={<ClientList />} />
+                  <Route path="/client/:id" element={<ClientDashboard />} />
+
+                  {/* Client-scoped sections */}
+                  <Route
+                    path="/client/:id/campaigns"
+                    element={<CampaignsPanel />}
+                  />
+                  <Route
+                    path="/client/:id/analytics"
+                    element={<AnalyticsDashboard />}
+                  />
+
+                  {/* Existing (org-wide) routes remain accessible */}
+                  <Route path="/dashboard" element={<DashboardPanel />} />
+                  <Route path="/campaigns" element={<CampaignsPanel />} />
+                  <Route path="/analytics" element={<AnalyticsDashboard />} />
+                  <Route path="/donors" element={<DonorsPlaceholder />} />
+
+                  {/* Default */}
+                  <Route
+                    path="*"
+                    element={<Navigate to="/clients" replace />}
+                  />
+                </Routes>
               </div>
             </Suspense>
           )}

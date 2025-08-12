@@ -1,67 +1,64 @@
-// src/models/campaign.ts - Clean Campaign interface
-import { DateRange } from "./analytics";
-
+// src/models/campaign.ts
 export interface Campaign {
   id: string;
   name: string;
+  clientId: string;
   description?: string;
   goal: number;
   raised: number;
+  progress: number;
+  daysLeft: number;
   startDate: string;
   endDate: string;
-  deadline?: string;
-  status: "Planned" | "Active" | "Completed" | "Cancelled";
+  status: "Active" | "Draft" | "Completed" | "Paused";
   category:
     | "General"
-    | "Emergency"
     | "Education"
     | "Healthcare"
     | "Environment"
-    | "Community"
-    | "Other";
-  targetAudience: string;
+    | "Emergency";
+  targetAudience?: string;
   donorCount: number;
   averageGift: number;
+  totalRevenue: number;
+  totalDonors: number;
+  roi: number;
   lastUpdated: Date;
   createdAt: Date;
-  emailsSent: number;
-  clickThroughRate: number;
-  conversionRate: number;
-  // Additional properties used in components
-  createdBy?: string;
-  tags?: string[];
+  createdBy: string;
+  tags: string[];
+  emailsSent?: number;
+  clickThroughRate?: number;
+  conversionRate?: number;
+
+  // Optional client-specific fields
+  clientBrnoyeanding?: {
+    primaryColor?: string;
+    secondaryColor?: string;
+    logoUrl?: string;
+  };
   notes?: string;
-  // Computed/optional properties
-  progress?: number;
-  daysLeft?: number;
-  totalRevenue?: number;
-  totalDonors?: number;
-  roi?: number;
 }
 
-export interface CampaignCreateRequest {
+export interface CreateCampaignData {
   name: string;
+  clientId: string; // NEW: Required for campaign creation
   description?: string;
   goal: number;
   startDate: string;
   endDate: string;
-  status?: Campaign["status"];
   category: Campaign["category"];
-  targetAudience: string;
+  targetAudience?: string;
   tags?: string[];
-  notes?: string;
+  notes?: string; //
 }
 
-export interface CampaignUpdateRequest extends CampaignCreateRequest {
-  id: string;
+export interface UpdateCampaignData extends Partial<CreateCampaignData> {
+  status?: Campaign["status"];
+  raised?: number;
+  donorCount?: number;
+  averageGift?: number;
+  emailsSent?: number;
+  clickThroughRate?: number;
+  conversionRate?: number;
 }
-
-export interface CampaignFilters {
-  status?: Campaign["status"][];
-  category?: Campaign["category"][];
-  dateRange?: DateRange;
-  search?: string;
-  tags?: string[];
-}
-
-export {};
