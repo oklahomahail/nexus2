@@ -27,7 +27,14 @@ export interface AnalyticsTrend {
   totalRevenue: number;
   donorCount: number;
 }
-
+export interface GoalAlert {
+  goalId: string;
+  met: boolean;
+  actual: number;
+  target: number;
+  metric: string;
+  goalName?: string;
+}
 // ---------- ORGANIZATION DASHBOARD ----------
 
 export interface OrganizationAnalytics {

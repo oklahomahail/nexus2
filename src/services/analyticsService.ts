@@ -36,13 +36,30 @@ function slug(s: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-/** Local type for convenience if other code wants it */
-export type AnalyticsTimeRange = { start: Date; end: Date; label: string };
-
 /** Helpers */
 function randInt(rng: () => number, min: number, max: number) {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
+
+// --------------------------
+// TYPES
+// --------------------------
+
+/** Local type for convenience if other code wants it */
+export type AnalyticsTimeRange = { start: Date; end: Date; label: string };
+
+export interface GoalAlert {
+  goalId: string;
+  met: boolean;
+  actual: number;
+  target: number;
+  metric: string;
+  goalName?: string;
+}
+
+// --------------------------
+// ANALYTICS SERVICE CLASS
+// --------------------------
 
 class AnalyticsService {
   // --------------------------
@@ -73,6 +90,10 @@ class AnalyticsService {
       },
     ];
   }
+
+  // --------------------------
+  // CLIENT ANALYTICS
+  // --------------------------
 
   /**
    * Optional client rollup (kept for compatibility).
@@ -106,7 +127,7 @@ class AnalyticsService {
       retentionRate: number;
     }>;
   }> {
-    // Normalize to filters (so it’s deterministic with the rest of the service)
+    // Normalize to filters (so it's deterministic with the rest of the service)
     const filters: AnalyticsFilters | undefined = isTimeRange(arg)
       ? {
           dateRange: {
@@ -219,8 +240,59 @@ class AnalyticsService {
   }
 
   // --------------------------
-  // Campaign Analytics
+  // GOALS & ALERTS
   // --------------------------
+
+  async evaluateGoals(
+    scope: "org" | "client",
+    scopeId?: string,
+    filters?: AnalyticsFilters,
+  ): Promise<GoalAlert[]> {
+    await delay(150);
+
+    // Get current metrics based on scope
+    let metrics: Record<string, number> = {};
+
+    if (scope === "org") {
+      const orgData = await this.getOrganizationAnalytics(filters);
+      metrics = {
+        totalRaised: orgData.currentPeriod.totalRaised,
+        donorCount: orgData.currentPeriod.donorCount,
+        campaignCount: orgData.currentPeriod.campaignCount,
+        growthRate: orgData.growthMetrics.raisedChange,
+      };
+    } else if (scope === "client" && scopeId) {
+      const clientData = await this.getClientAnalytics(scopeId, filters);
+      metrics = {
+        totalRaised: clientData.metrics.totalRaised,
+        donorCount: clientData.metrics.donors,
+        campaignCount: clientData.metrics.campaigns,
+      };
+    }
+
+    // Import and use the goals service
+    const { goalsService } = await import("@/services/goalsService");
+    const evaluations = goalsService.evaluate(metrics, { scope, scopeId });
+
+    // Convert to GoalAlert format
+    const goals = goalsService.list();
+    return evaluations.map((evaluation) => {
+      const goal = goals.find((g) => g.id === evaluation.goalId);
+      return {
+        goalId: evaluation.goalId,
+        met: evaluation.met,
+        actual: evaluation.actual,
+        target: goal?.target ?? 0,
+        metric: goal?.metric ?? "unknown",
+        goalName: goal?.metric ?? "Unknown Goal",
+      };
+    });
+  }
+
+  // --------------------------
+  // CAMPAIGN ANALYTICS
+  // --------------------------
+
   async getCampaignAnalytics(
     campaignId: string,
     filters?: AnalyticsFilters,
@@ -420,8 +492,9 @@ class AnalyticsService {
   }
 
   // --------------------------
-  // Donor Insights
+  // DONOR INSIGHTS
   // --------------------------
+
   async getDonorInsights(filters?: AnalyticsFilters): Promise<_DonorInsights> {
     await delay(250);
 
@@ -457,8 +530,9 @@ class AnalyticsService {
   }
 
   // --------------------------
-  // Organization Analytics
+  // ORGANIZATION ANALYTICS
   // --------------------------
+
   async getOrganizationAnalytics(
     filters?: AnalyticsFilters,
   ): Promise<OrganizationAnalytics> {
@@ -578,13 +652,14 @@ class AnalyticsService {
         label: "Fundraising Performance",
       },
       topPerformingCampaigns,
-      clientPerformance, // <-- required by your interface
+      clientPerformance,
     };
   }
 
   // --------------------------
-  // CSV Export
+  // CSV EXPORT
   // --------------------------
+
   async exportAnalyticsData(
     type: "campaign" | "donor" | "organization",
     filters?: AnalyticsFilters,
@@ -629,8 +704,9 @@ class AnalyticsService {
   }
 
   // --------------------------
-  // Internal helpers
+  // INTERNAL HELPERS
   // --------------------------
+
   private makeSeed(filters?: AnalyticsFilters) {
     const dr = filters?.dateRange;
     return `seed|${dr?.startDate ?? "start"}|${dr?.endDate ?? "end"}`;
@@ -725,6 +801,10 @@ class AnalyticsService {
   }
 }
 
+// --------------------------
+// UTILITIES
+// --------------------------
+
 // Small util
 function isTimeRange(x: any): x is AnalyticsTimeRange {
   return (
@@ -734,6 +814,7 @@ function isTimeRange(x: any): x is AnalyticsTimeRange {
     typeof x.label === "string"
   );
 }
+
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const analyticsService = new AnalyticsService();
