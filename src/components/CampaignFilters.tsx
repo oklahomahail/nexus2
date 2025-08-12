@@ -21,7 +21,7 @@ export interface CampaignFilters {
 }
 
 // Make sure your Campaign interface also uses these types
-export interface Campaign {
+export interface CampaignTableRow {
   id: string;
   name: string;
   description?: string;

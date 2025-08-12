@@ -103,3 +103,5 @@ src/__generated__/
 +.DS_Store
 +.pnpm-store
 
+dist
+node_modules
