@@ -31,6 +31,7 @@ export interface AnalyticsTrend {
 // ---------- ORGANIZATION DASHBOARD ----------
 
 export interface OrganizationAnalytics {
+  clientPerformance: any;
   performanceComparisons: ComparisonData | CampaignSuccessData;
   topPerformingCampaigns: any;
   currentPeriod: {
