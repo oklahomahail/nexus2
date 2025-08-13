@@ -1,5 +1,3 @@
-import React from "react";
-
 import Modal from "@/components/ui-kit/Modal";
 
 interface ConfirmModalProps {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import ClientModal from "@/components/ClientModal";
 import ConfirmModal from "@/components/ui-kit/ConfirmModal";
