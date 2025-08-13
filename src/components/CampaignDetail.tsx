@@ -5,7 +5,7 @@ import { Input } from "@/components/ui-kit/Input";
 import ClaudeToolbar from "@/features/claude/ClaudeToolbar";
 import useAutoSave from "@/hooks/useAutoSave";
 import type { Campaign } from "@/models/campaign";
-import { createManualBackup } from "@/services/backup/backupService";
+import { createManualBackup } from "@/services/backup";
 
 interface CampaignDetailProps {
   campaign: Campaign;

@@ -9,7 +9,8 @@ describe("ClaudePromptForm", () => {
   it("submits custom prompt", () => {
     const handleSubmit = vi.fn();
     const handleChange = vi.fn();
-    render(
+
+    const { rerender } = render(
       <ClaudePromptForm
         value=""
         onChange={handleChange}
@@ -17,11 +18,25 @@ describe("ClaudePromptForm", () => {
         isLoading={false}
       />,
     );
-    const textarea = screen.getByPlaceholderText(/ask claude/i);
-    fireEvent.change(textarea, { target: { value: "hello" } });
+
+    // Find the input and change it
+    const input = screen.getByRole("textbox", { name: /prompt/i });
+    fireEvent.change(input, { target: { value: "hello" } });
     expect(handleChange).toHaveBeenCalledWith("hello");
-    const button = screen.getByRole("button", { name: /send to claude/i });
-    fireEvent.click(button);
-    expect(handleSubmit).toHaveBeenCalled();
+
+    // Re-render with the updated value to simulate controlled component behavior
+    rerender(
+      <ClaudePromptForm
+        value="hello"
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        isLoading={false}
+      />,
+    );
+
+    // Now submit the form (button should be enabled)
+    const form = screen.getByRole("form", { name: /claude prompt form/i });
+    fireEvent.submit(form);
+    expect(handleSubmit).toHaveBeenCalledWith("hello");
   });
 });

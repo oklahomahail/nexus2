@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  getBackupStatus,
-  ensureBackupDb,
-} from "@/services/backup/backupService";
+import { getBackupStatus, ensureBackupDb } from "@/services/backup";
 
 export interface BackupStats {
   ok: boolean;
