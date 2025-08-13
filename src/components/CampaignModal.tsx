@@ -14,7 +14,7 @@ interface CampaignModalProps {
   open: boolean;
   mode: CampaignModalMode;
   campaign?: Campaign | null; // only for edit mode
-  clientId: string; // Required for creating campaigns
+  clientId?: string; // Optional - will show error if not provided for create mode
   onClose: () => void;
   onSaved?: (campaign: Campaign) => void; // notify parent to refresh, navigate, etc.
 }
@@ -88,6 +88,9 @@ export default function CampaignModal({
     if (new Date(values.endDate) <= new Date(values.startDate)) {
       return "End date must be after start date.";
     }
+    if (mode === "create" && !clientId) {
+      return "Please select a client to create a campaign.";
+    }
     return null;
   };
 
@@ -135,6 +138,9 @@ export default function CampaignModal({
         if (!updated) throw new Error("Failed to update campaign.");
         saved = updated;
       } else {
+        if (!clientId) {
+          throw new Error("Client ID is required for creating campaigns.");
+        }
         const campaignData: CreateCampaignData = { ...values, clientId };
         const created = await createCampaign(campaignData);
         saved = created;
