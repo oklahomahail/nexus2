@@ -125,15 +125,18 @@ export default function ClientModal({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
-          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div className="status-error rounded-lg border px-3 py-2 text-sm">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="client-name" className="text-sm font-medium">
-              Client Name <span className="text-red-500">*</span>
+            <label
+              htmlFor="client-name"
+              className="text-sm font-medium text-text-primary"
+            >
+              Client Name <span className="text-brand-accent">*</span>
             </label>
             <input
               id="client-name"
@@ -142,13 +145,16 @@ export default function ClientModal({
               value={values.name}
               onChange={handleChange("name")}
               placeholder="Acme Nonprofit"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="input-base"
               required
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="client-shortName" className="text-sm font-medium">
+            <label
+              htmlFor="client-shortName"
+              className="text-sm font-medium text-text-primary"
+            >
               Short Name
             </label>
             <input
@@ -157,12 +163,15 @@ export default function ClientModal({
               value={values.shortName || ""}
               onChange={handleChange("shortName")}
               placeholder="Acme"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="input-base"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="client-website" className="text-sm font-medium">
+            <label
+              htmlFor="client-website"
+              className="text-sm font-medium text-text-primary"
+            >
               Website
             </label>
             <input
@@ -171,14 +180,14 @@ export default function ClientModal({
               value={values.website || ""}
               onChange={handleChange("website")}
               placeholder="https://example.org"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="input-base"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="client-contact-name"
-              className="text-sm font-medium"
+              className="text-sm font-medium text-text-primary"
             >
               Primary Contact
             </label>
@@ -188,14 +197,14 @@ export default function ClientModal({
               value={values.primaryContactName || ""}
               onChange={handleChange("primaryContactName")}
               placeholder="Jane Doe"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="input-base"
             />
           </div>
 
           <div className="flex flex-col gap-1.5 md:col-span-2">
             <label
               htmlFor="client-contact-email"
-              className="text-sm font-medium"
+              className="text-sm font-medium text-text-primary"
             >
               Primary Contact Email
             </label>
@@ -205,13 +214,16 @@ export default function ClientModal({
               value={values.primaryContactEmail || ""}
               onChange={handleChange("primaryContactEmail")}
               placeholder="jane@example.org"
-              className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+              className="input-base"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="client-notes" className="text-sm font-medium">
+          <label
+            htmlFor="client-notes"
+            className="text-sm font-medium text-text-primary"
+          >
             Notes
           </label>
           <textarea
@@ -219,7 +231,7 @@ export default function ClientModal({
             value={values.notes || ""}
             onChange={handleChange("notes")}
             placeholder="Internal notes about this client..."
-            className="min-h-[90px] w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200"
+            className="input-base min-h-[90px] resize-none"
           />
         </div>
 
@@ -228,15 +240,11 @@ export default function ClientModal({
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="button-secondary"
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={saving}
-            className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <button type="submit" disabled={saving} className="button-primary">
             {saving
               ? isEdit
                 ? "Saving..."

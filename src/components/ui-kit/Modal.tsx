@@ -12,26 +12,30 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
+      onClick={(e) => {
+        // Close modal when clicking backdrop
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
-      <div className="w-full max-w-lg rounded-lg bg-white p-6 shadow-lg">
+      {/* Modal container using your design system */}
+      <div
+        className="w-full max-w-lg rounded-2xl bg-surface border border-surface shadow-strong p-6 animate-scale-in"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+      >
         {title && (
-          <h2 className="mb-4 text-lg font-semibold" id="modal-title">
+          <h2
+            className="mb-4 text-xl font-semibold text-text-primary"
+            id="modal-title"
+          >
             {title}
           </h2>
         )}
-        <div>{children}</div>
-        <div className="mt-4 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-md bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300"
-          >
-            Close
-          </button>
-        </div>
+        <div className="text-text-primary">{children}</div>
       </div>
     </div>
   );
