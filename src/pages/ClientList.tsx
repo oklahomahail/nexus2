@@ -1,191 +1,145 @@
-// src/pages/ClientList.tsx
-import {
-  Building,
-  ArrowRight,
-  Plus,
-  Users,
-  Target,
-  Calendar,
-} from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
-import { useClient } from "@/context/ClientContext";
-import { clientService, type Client } from "@/services/clientService";
+import ClientModal from "@/components/ClientModal";
+import ConfirmModal from "@/components/ui-kit/ConfirmModal";
+import { listClients, deleteClient, Client } from "@/services/clientService";
 
 export default function ClientList() {
-  const { clients, setCurrentClient, reload } = useClient();
-  const navigate = useNavigate();
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (clients.length === 0) {
-      // Seed with examples for first run only
-      clientService
-        .seed([
-          {
-            id: "bbhh",
-            name: "Brother Bill's Helping Hand",
-            brand: { primary: "#2563eb", secondary: "#1e40af" },
-          },
-          {
-            id: "darcc",
-            name: "Dallas Area Rape Crisis Center",
-            brand: { primary: "#dc2626", secondary: "#b91c1c" },
-          },
-          {
-            id: "nexus",
-            name: "Nexus Consulting",
-            brand: { primary: "#7c3aed", secondary: "#6d28d9" },
-          },
-        ])
-        .then(() => reload())
-        .catch(console.error);
+  // Client modal state
+  const [showClientModal, setShowClientModal] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+
+  // Confirm modal state
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null);
+
+  const loadClients = async () => {
+    setLoading(true);
+    try {
+      const data = await listClients();
+      setClients(data);
+    } finally {
+      setLoading(false);
     }
-  }, [clients.length, reload]);
-
-  const handleClientSelect = (client: Client) => {
-    setCurrentClient(client.id);
-    void navigate(`/client/${client.id}`);
   };
 
+  useEffect(() => {
+    void loadClients();
+  }, []);
+
   const handleNewClient = () => {
-    // TODO: Open new client modal
-    console.log("New client modal");
+    setModalMode("create");
+    setSelectedClient(null);
+    setShowClientModal(true);
+  };
+
+  const handleEditClient = (client: Client) => {
+    setModalMode("edit");
+    setSelectedClient(client);
+    setShowClientModal(true);
+  };
+
+  const handleDeleteClientClick = (client: Client) => {
+    setClientToDelete(client);
+    setShowConfirmModal(true);
+  };
+
+  const confirmDeleteClient = async () => {
+    if (clientToDelete) {
+      const success = await deleteClient(clientToDelete.id);
+      if (success) {
+        await loadClients();
+      } else {
+        alert("Failed to delete client.");
+      }
+    }
+    setShowConfirmModal(false);
+    setClientToDelete(null);
+  };
+
+  const cancelDeleteClient = () => {
+    setShowConfirmModal(false);
+    setClientToDelete(null);
+  };
+
+  const handleClientSaved = async () => {
+    setShowClientModal(false);
+    setSelectedClient(null);
+    await loadClients();
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-white">Clients</h2>
-          <p className="text-slate-400 mt-1">
-            Manage your nonprofit organizations and their campaigns
-          </p>
-        </div>
+    <div className="p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-xl font-semibold">Clients</h1>
         <button
+          type="button"
           onClick={handleNewClient}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2"
+          className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-zinc-200"
         >
-          <Plus className="w-5 h-5" />
-          <span>Add Client</span>
+          New Client
         </button>
       </div>
 
-      {/* Stats overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-          <div className="flex items-center">
-            <Building className="w-8 h-8 text-blue-400" />
-            <div className="ml-4">
-              <p className="text-slate-400 text-sm">Total Clients</p>
-              <p className="text-3xl font-bold text-white">{clients.length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-          <div className="flex items-center">
-            <Target className="w-8 h-8 text-green-400" />
-            <div className="ml-4">
-              <p className="text-slate-400 text-sm">Active Campaigns</p>
-              <p className="text-3xl font-bold text-white">—</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-          <div className="flex items-center">
-            <Users className="w-8 h-8 text-purple-400" />
-            <div className="ml-4">
-              <p className="text-slate-400 text-sm">Total Donors</p>
-              <p className="text-3xl font-bold text-white">—</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Client grid */}
-      {clients.length === 0 ? (
-        <div className="text-center py-12">
-          <Building className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">
-            No clients yet
-          </h3>
-          <p className="text-slate-400 mb-6">
-            Add your first nonprofit client to get started
-          </p>
-          <button
-            onClick={handleNewClient}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            Add Your First Client
-          </button>
-        </div>
+      {loading ? (
+        <p className="text-sm text-zinc-500">Loading...</p>
+      ) : clients.length === 0 ? (
+        <p className="text-sm text-zinc-500">No clients found.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clients.map((client: Client) => (
-            <div
-              key={client.id}
-              className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 hover:bg-slate-700/50 transition-all duration-200 group cursor-pointer"
-              onClick={() => handleClientSelect(client)}
-            >
-              {/* Client header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  {client.brand?.logoUrl ? (
-                    <img
-                      src={client.brand.logoUrl}
-                      alt={client.name}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg"
-                      style={{
-                        background: client.brand?.primary
-                          ? `linear-gradient(135deg, ${client.brand.primary}, ${client.brand.secondary || client.brand.primary})`
-                          : "linear-gradient(135deg, #3b82f6, #1d4ed8)",
-                      }}
-                    >
-                      {client.name.charAt(0)}
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
-                      {client.name}
-                    </h3>
-                    <p className="text-slate-400 text-sm">ID: {client.id}</p>
-                  </div>
-                </div>
-                <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors" />
+        <ul className="divide-y divide-zinc-200">
+          {clients.map((c) => (
+            <li key={c.id} className="flex items-center justify-between py-3">
+              <div>
+                <div className="font-medium">{c.name}</div>
+                {c.shortName && (
+                  <div className="text-sm text-zinc-500">{c.shortName}</div>
+                )}
               </div>
-
-              {/* Client stats */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center">
-                  <div className="text-slate-400 text-xs">Campaigns</div>
-                  <div className="text-lg font-semibold text-white">—</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-slate-400 text-xs">Donors</div>
-                  <div className="text-lg font-semibold text-white">—</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-slate-400 text-xs">Revenue</div>
-                  <div className="text-lg font-semibold text-white">—</div>
-                </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleEditClient(c)}
+                  className="rounded-md border border-zinc-300 bg-white px-3 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteClientClick(c)}
+                  className="rounded-md border border-red-300 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                >
+                  Delete
+                </button>
               </div>
-
-              {/* Last activity */}
-              <div className="flex items-center text-slate-400 text-sm">
-                <Calendar className="w-4 h-4 mr-2" />
-                <span>
-                  Updated {new Date(client.updatedAt).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
+
+      <ClientModal
+        open={showClientModal}
+        mode={modalMode}
+        client={selectedClient}
+        onClose={() => {
+          setShowClientModal(false);
+          setSelectedClient(null);
+        }}
+        onSaved={handleClientSaved}
+      />
+
+      <ConfirmModal
+        open={showConfirmModal}
+        title="Delete Client"
+        message={`Are you sure you want to delete "${clientToDelete?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDeleteClient}
+        onCancel={cancelDeleteClient}
+      />
     </div>
   );
 }

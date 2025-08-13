@@ -1,184 +1,125 @@
 // src/services/clientService.ts
+
+import { v4 as uuidv4 } from "uuid";
+
+import { storageService } from "@/services/storageService";
+
+// --------------------
+// Client Type
+// --------------------
 export interface Client {
   id: string;
   name: string;
-  brand?: { primary?: string; secondary?: string; logoUrl?: string };
-  contacts?: Array<{ id: string; name: string; email?: string; role?: string }>;
-  settings?: Record<string, unknown>;
+  shortName?: string;
+  website?: string;
+  primaryContactName?: string;
+  primaryContactEmail?: string;
+  notes?: string;
+  brand?: {
+    logoUrl?: string;
+  };
   createdAt: number;
   updatedAt: number;
-  // Legacy fields for compatibility
-  email?: string;
-  phone?: string;
-  website?: string;
-  address?: string;
-  industry?: string;
-  status?: "active" | "inactive" | "pending";
-  description?: string;
-  logo?: string;
-  contactPerson?: string;
 }
 
-export interface CreateClientData {
-  name: string;
-  email?: string;
-  phone?: string;
-  website?: string;
-  address?: string;
-  industry?: string;
-  description?: string;
-  contactPerson?: string;
-  brand?: { primary?: string; secondary?: string; logoUrl?: string };
-}
+// --------------------
+// Type Aliases for Form Data
+// --------------------
+export type CreateClientData = Omit<Client, "id" | "createdAt" | "updatedAt">;
+export type UpdateClientData = Partial<CreateClientData>;
 
-export interface UpdateClientData extends Partial<CreateClientData> {
-  status?: "active" | "inactive" | "pending";
-}
+// --------------------
+// Storage Keys
+// --------------------
+const CLIENTS_KEY = "nexus_clients";
 
-// Simple in-memory store for now. Replace with IndexedDB adapter.
-const store = new Map<string, Client>();
-
-function now() {
-  return Date.now();
-}
-
+// --------------------
+// Service Implementation
+// --------------------
 export const clientService = {
-  async list(): Promise<Client[]> {
-    return Array.from(store.values()).sort((a, b) =>
-      a.name.localeCompare(b.name),
-    );
+  // Get all clients
+  getAll(): Client[] {
+    return storageService.getItem<Client[]>(CLIENTS_KEY) || [];
   },
 
-  async get(id: string): Promise<Client | null> {
-    return store.get(id) ?? null;
+  // Get a single client by ID
+  getById(id: string): Client | undefined {
+    return this.getAll().find((c) => c.id === id);
   },
 
-  async upsert(
-    input: Omit<Client, "createdAt" | "updatedAt"> &
-      Partial<Pick<Client, "createdAt">>,
-  ): Promise<Client> {
-    const existing = input.id ? store.get(input.id) : undefined;
-    const createdAt = existing?.createdAt ?? input.createdAt ?? now();
-    const client: Client = {
-      ...existing,
-      ...input,
-      createdAt,
-      updatedAt: now(),
-    } as Client;
-    store.set(client.id, client);
-    return client;
-  },
-
-  async remove(id: string): Promise<void> {
-    store.delete(id);
-  },
-
-  async seed(samples: Array<Omit<Client, "createdAt" | "updatedAt">>) {
-    for (const s of samples) {
-      await this.upsert({ ...s, createdAt: now() });
-    }
-  },
-
-  // Legacy methods for backward compatibility
-  async getAllClients(): Promise<Client[]> {
-    return this.list();
-  },
-
-  async getClientById(id: string): Promise<Client | null> {
-    return this.get(id);
-  },
-
-  async createClient(data: CreateClientData): Promise<Client> {
-    const newClient = {
-      id: Date.now().toString(),
+  // Create a new client
+  create(data: Omit<Client, "id" | "createdAt" | "updatedAt">): Client {
+    const clients = this.getAll();
+    const newClient: Client = {
+      id: uuidv4(),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
       ...data,
-      status: "pending" as const,
     };
-    return this.upsert(newClient);
+    clients.push(newClient);
+    storageService.setItem(CLIENTS_KEY, clients);
+    return newClient;
   },
 
-  async updateClient(
-    id: string,
-    data: UpdateClientData,
-  ): Promise<Client | null> {
-    const existing = await this.get(id);
-    if (!existing) return null;
+  // Update an existing client
+  update(id: string, updates: Partial<Client>): Client | undefined {
+    const clients = this.getAll();
+    const idx = clients.findIndex((c) => c.id === id);
+    if (idx === -1) return undefined;
 
-    const updated = { ...existing, ...data };
-    return this.upsert(updated);
+    const updatedClient: Client = {
+      ...clients[idx],
+      ...updates,
+      updatedAt: Date.now(),
+    };
+    clients[idx] = updatedClient;
+    storageService.setItem(CLIENTS_KEY, clients);
+    return updatedClient;
   },
 
-  async deleteClient(id: string): Promise<boolean> {
-    const exists = store.has(id);
-    if (exists) {
-      await this.remove(id);
-    }
-    return exists;
+  // Delete a client
+  delete(id: string): boolean {
+    const clients = this.getAll();
+    const filtered = clients.filter((c) => c.id !== id);
+    if (filtered.length === clients.length) return false;
+    storageService.setItem(CLIENTS_KEY, filtered);
+    return true;
   },
 
-  async searchClients(query: string): Promise<Client[]> {
-    const clients = await this.list();
-    const lowercaseQuery = query.toLowerCase();
-    return clients.filter(
-      (client) =>
-        client.name.toLowerCase().includes(lowercaseQuery) ||
-        client.email?.toLowerCase().includes(lowercaseQuery) ||
-        client.contactPerson?.toLowerCase().includes(lowercaseQuery),
-    );
+  // Clear all clients (use with caution)
+  clear(): void {
+    storageService.removeItem(CLIENTS_KEY);
   },
 
-  async getClientsByStatus(status: Client["status"]): Promise<Client[]> {
-    const clients = await this.list();
-    return clients.filter((client) => client.status === status);
+  // Add async list method for consistency with component expectations
+  async list(): Promise<Client[]> {
+    return this.getAll();
   },
 };
 
-// Development seed data
-if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-  // Convert your existing mock data to the new format
-  const legacyClients = [
-    {
-      id: "acme",
-      name: "Acme Nonprofit",
-      email: "contact@acmenonprofit.org",
-      phone: "(555) 123-4567",
-      website: "https://acmenonprofit.org",
-      industry: "Education",
-      status: "active" as const,
-      contactPerson: "Jane Smith",
-      description:
-        "Supporting education initiatives in underserved communities.",
-      brand: { primary: "#2563eb", secondary: "#1e40af" },
-    },
-    {
-      id: "green-future",
-      name: "Green Future Foundation",
-      email: "info@greenfuture.org",
-      phone: "(555) 987-6543",
-      website: "https://greenfuture.org",
-      industry: "Environment",
-      status: "active" as const,
-      contactPerson: "Mike Johnson",
-      description: "Environmental conservation and sustainability programs.",
-      brand: { primary: "#059669", secondary: "#047857" },
-    },
-    {
-      id: "health-first",
-      name: "Health First Initiative",
-      email: "contact@healthfirst.org",
-      phone: "(555) 456-7890",
-      industry: "Healthcare",
-      status: "pending" as const,
-      contactPerson: "Sarah Davis",
-      description: "Providing healthcare access to underserved populations.",
-      brand: { primary: "#dc2626", secondary: "#b91c1c" },
-    },
-  ];
+// --------------------
+// Wrapper Functions (for compatibility with existing components)
+// --------------------
 
-  // Auto-seed with a small delay to ensure it works
-  setTimeout(() => {
-    void clientService.seed(legacyClients).catch(console.error);
-  }, 100);
-}
+// Async wrapper functions that components expect
+export const listClients = async (): Promise<Client[]> => {
+  return clientService.getAll();
+};
 
-export default clientService;
+export const createClient = async (data: CreateClientData): Promise<Client> => {
+  return clientService.create(data);
+};
+
+export const updateClient = async (
+  id: string,
+  updates: UpdateClientData,
+): Promise<Client | undefined> => {
+  return clientService.update(id, updates);
+};
+
+export const deleteClient = async (id: string): Promise<boolean> => {
+  return clientService.delete(id);
+};
+
+// Keep the existing type export for backward compatibility
+export type { Client as ClientType };
