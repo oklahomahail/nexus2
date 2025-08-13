@@ -123,43 +123,16 @@ const CampaignsPanel: React.FC = () => {
     setSelectedCampaign(null);
   };
 
-  const handleSaveCampaign = async (data: any) => {
-    try {
-      if (modalMode === "create") {
-        // Ensure clientId is included for new campaigns
-        const campaignData = {
-          ...data,
-          clientId: effectiveClientId || data.clientId,
-        };
+  const handleCampaignSaved = (campaign: Campaign) => {
+    // Refresh data after successful save
+    void loadStats();
+    void loadCampaigns();
+    setShowModal(false);
+    setError(null);
 
-        if (!campaignData.clientId) {
-          throw new Error("Client ID is required for campaign creation");
-        }
-
-        await campaignService.createCampaign(campaignData);
-      } else {
-        // For updates, we need the campaign ID
-        if (selectedCampaign?.id) {
-          await campaignService.updateCampaign(selectedCampaign.id, {
-            ...data,
-            id: selectedCampaign.id,
-          });
-        }
-      }
-
-      setShowModal(false);
-      void loadStats();
-
-      if (modalMode === "edit" && selectedCampaign && viewMode === "detail") {
-        const updated = await campaignService.getCampaignById(
-          selectedCampaign.id,
-        );
-        if (updated) setSelectedCampaign(updated);
-      }
-      setError(null);
-    } catch (err: any) {
-      console.error("Failed to save campaign:", err);
-      setError(err.message || "Failed to save campaign");
+    // If we're editing and in detail view, update the selected campaign
+    if (modalMode === "edit" && viewMode === "detail") {
+      setSelectedCampaign(campaign);
     }
   };
 
@@ -227,12 +200,12 @@ const CampaignsPanel: React.FC = () => {
 
         {showModal && (
           <CampaignModal
-            isOpen={showModal}
-            onClose={() => setShowModal(false)}
-            onSave={handleSaveCampaign}
-            initialData={selectedCampaign || undefined}
+            open={showModal}
             mode={modalMode}
+            campaign={selectedCampaign}
             clientId={effectiveClientId}
+            onClose={() => setShowModal(false)}
+            onSaved={handleCampaignSaved}
           />
         )}
       </div>
@@ -352,12 +325,12 @@ const CampaignsPanel: React.FC = () => {
 
       {showModal && (
         <CampaignModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveCampaign}
-          initialData={selectedCampaign || undefined}
+          open={showModal}
           mode={modalMode}
-          clientId={effectiveClientId} // Pass clientId for new campaigns
+          campaign={selectedCampaign}
+          clientId={effectiveClientId}
+          onClose={() => setShowModal(false)}
+          onSaved={handleCampaignSaved}
         />
       )}
     </div>
