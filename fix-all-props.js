@@ -190,7 +190,7 @@ function fixImportExportIssues(content) {
   // Specific fix for DonorInsights
   content = content.replace(
     /import\s*{\s*DonorInsights\s*}\s*from\s*(['"][^'"]*analytics['"])/,
-    "import { _DonorInsights as DonorInsights } from $1",
+    "import { DonorInsights as DonorInsights } from $1",
   );
 
   return content;

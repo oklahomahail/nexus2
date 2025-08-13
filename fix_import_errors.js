@@ -16,11 +16,11 @@ function fixImportErrors(filePath) {
 
     // Fix the malformed DonorInsights import
     // FROM: import { *DonorInsights as *DonorInsights as DonorInsights  } from "../models/analytics";
-    // TO:   import { _DonorInsights as DonorInsights } from "../models/analytics";
+    // TO:   import { DonorInsights as DonorInsights } from "../models/analytics";
 
     content = content.replace(
       /import\s*{\s*\*DonorInsights\s+as\s+\*DonorInsights\s+as\s+DonorInsights\s*}\s*from\s*["']([^"']*analytics)["']/g,
-      'import { _DonorInsights as DonorInsights } from "$1"',
+      'import { DonorInsights as DonorInsights } from "$1"',
     );
 
     // Also handle any other similar malformed imports

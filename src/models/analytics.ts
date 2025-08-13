@@ -75,7 +75,7 @@ export interface CampaignSuccessData {
   goal: number;
   roi: number;
 }
-export interface _DonorInsights {
+export interface DonorInsights {
   topDonors: {
     id: string;
     name: string;

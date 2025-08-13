@@ -72,7 +72,7 @@ function fixDonorInsightsImport(content) {
   // Fix the DonorInsights import issue
   return content.replace(
     /import\s*{\s*DonorInsights\s*}\s*from\s*['"](.*analytics)['"]/,
-    "import { _DonorInsights as DonorInsights } from '$1'",
+    "import { DonorInsights as DonorInsights } from '$1'",
   );
 }
 

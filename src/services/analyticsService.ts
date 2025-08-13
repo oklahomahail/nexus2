@@ -2,7 +2,7 @@
 import {
   AnalyticsFilters,
   CampaignAnalytics,
-  _DonorInsights,
+  DonorInsights,
   OrganizationAnalytics,
 } from "../models/analytics";
 
@@ -495,7 +495,7 @@ class AnalyticsService {
   // DONOR INSIGHTS
   // --------------------------
 
-  async getDonorInsights(filters?: AnalyticsFilters): Promise<_DonorInsights> {
+  async getDonorInsights(filters?: AnalyticsFilters): Promise<DonorInsights> {
     await delay(250);
 
     const seed = `${this.makeSeed(filters)}|donors`;
