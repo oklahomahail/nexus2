@@ -19,7 +19,7 @@ import {
   X,
   Bookmark,
 } from "lucide-react";
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
