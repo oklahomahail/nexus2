@@ -52,11 +52,6 @@ const CampaignsPanel: React.FC = () => {
   useEffect(() => {
   
 
-// Add hint in your header:
-<div className="text-xs text-slate-500 mt-1">
-  Press Cmd+N (Mac) or Ctrl+N (PC) to create a new campaign
-</div>
-  };
   
 
   // NEW: Load campaigns function
