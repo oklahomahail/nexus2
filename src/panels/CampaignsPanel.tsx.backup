@@ -342,6 +342,4 @@ const CampaignsPanel: React.FC = () => {
     </div>
   );
 
-};
-
 export default CampaignsPanel;
