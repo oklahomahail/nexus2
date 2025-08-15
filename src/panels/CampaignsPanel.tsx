@@ -15,6 +15,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { Campaign } from "../models/campaign";
 import * as campaignService from "../services/campaignService";
 import { CampaignStats } from "../services/campaignService";
+import { Target } from "lucide-react";
 
 type ViewMode = "list" | "detail";
 
@@ -48,6 +49,17 @@ const CampaignsPanel: React.FC = () => {
     void loadCampaigns(); // NEW: Load campaigns for table view
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, effectiveClientId]);
+  useEffect(() => {
+  
+}, []);
+
+// Add hint in your header:
+<div className="text-xs text-slate-500 mt-1">
+  Press Cmd+N (Mac) or Ctrl+N (PC) to create a new campaign
+</div>
+  };
+  
+}, []);
 
   // NEW: Load campaigns function
   const loadCampaigns = async () => {
@@ -75,7 +87,7 @@ const CampaignsPanel: React.FC = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-slate-400 text-2xl">📊</span>
+            <Target className="w-8 h-8 text-slate-400" />
           </div>
           <h3 className="text-xl font-semibold text-white mb-2">
             Select a Client

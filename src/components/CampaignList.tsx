@@ -9,6 +9,10 @@ import {
   Calendar,
   Users,
   Target,
+  Building,
+  Gift,
+  Heart,
+  Star,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 
@@ -23,6 +27,8 @@ interface CampaignListProps {
   onDeleteCampaign?: (campaign: Campaign) => void;
   clientId?: string; // NEW: Add clientId prop for filtering
 }
+
+type CampaignType = 'annual' | 'capital' | 'emergency' | 'program' | 'event' | 'endowment';
 
 const CampaignList: React.FC<CampaignListProps> = ({
   onCreateCampaign,
@@ -104,6 +110,32 @@ const CampaignList: React.FC<CampaignListProps> = ({
     }).format(amount);
   };
 
+  const getTypeIcon = (type: string) => {
+    const icons: Record<CampaignType, React.ComponentType<any>> = {
+      annual: Calendar,
+      capital: Building,
+      emergency: Heart,
+      program: Users,
+      event: Star,
+      endowment: Gift
+    };
+    return icons[type as CampaignType] || Target;
+  };
+
+  const getDaysLeftColor = (daysLeft: number) => {
+    if (daysLeft <= 7) return "text-red-400";
+    if (daysLeft <= 30) return "text-yellow-400";
+    return "text-green-400";
+  };
+
+  // Helper function to check if campaign is newly created (within last 7 days)
+  const isNewCampaign = (campaign: Campaign) => {
+    if (!campaign.createdAt) return false;
+    const createdDate = new Date(campaign.createdAt);
+    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    return createdDate.getTime() > sevenDaysAgo;
+  };
+
   if (loading) {
     return (
       <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-8">
@@ -172,7 +204,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
           {onCreateCampaign && (
             <button
               onClick={onCreateCampaign}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2 hover:scale-105 transform duration-200"
             >
               <Plus className="w-4 h-4" />
               <span>New Campaign</span>
@@ -180,6 +212,22 @@ const CampaignList: React.FC<CampaignListProps> = ({
           )}
         </div>
       </div>
+
+      {/* Results Count */}
+      {campaigns.length > 0 && (
+        <div className="text-sm text-slate-400">
+          {searchQuery || statusFilter !== "all" ? (
+            <>
+              Showing {filteredCampaigns.length} of {campaigns.length} campaigns
+              {searchQuery && (
+                <span> matching "{searchQuery}"</span>
+              )}
+            </>
+          ) : (
+            `${campaigns.length} total campaigns`
+          )}
+        </div>
+      )}
 
       {/* Campaign Grid */}
       {filteredCampaigns.length === 0 ? (
@@ -200,7 +248,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
           {onCreateCampaign && campaigns.length === 0 && (
             <button
               onClick={onCreateCampaign}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors hover:scale-105 transform duration-200"
             >
               Create First Campaign
             </button>
@@ -208,123 +256,165 @@ const CampaignList: React.FC<CampaignListProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredCampaigns.map((campaign) => (
-            <div
-              key={campaign.id}
-              className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 hover:bg-slate-700/50 transition-all duration-200 group"
-            >
-              {/* Campaign Header */}
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors">
-                    {campaign.name}
-                  </h3>
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(campaign.status)}`}
-                    >
-                      {campaign.status}
-                    </span>
-                    <span className="text-slate-400 text-xs">
-                      {campaign.category}
-                    </span>
+          {filteredCampaigns.map((campaign) => {
+            const TypeIcon = getTypeIcon(campaign.type || 'annual');
+            const isNew = isNewCampaign(campaign);
+            
+            return (
+              <div
+                key={campaign.id}
+                className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 hover:bg-slate-700/50 transition-all duration-200 group hover:scale-105 transform hover:shadow-lg"
+              >
+                {/* Campaign Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start space-x-3 flex-1">
+                    <div className="p-2 bg-blue-600/20 rounded-lg">
+                      <TypeIcon className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-blue-400 transition-colors truncate">
+                        {campaign.name}
+                      </h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(campaign.status)}`}
+                        >
+                          {campaign.status}
+                        </span>
+                        
+                        {/* NEW BADGE for recently created campaigns */}
+                        {isNew && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30 animate-pulse">
+                            ✨ New
+                          </span>
+                        )}
+                        
+                        <span className="text-slate-400 text-xs">
+                          {campaign.category}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Progress Bar */}
-              <div className="mb-4">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-slate-400">Progress</span>
-                  <span className="text-sm font-medium text-white">
-                    {campaign.progress}%
-                  </span>
-                </div>
-                <div className="w-full bg-slate-700 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${Math.min(campaign.progress, 100)}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-slate-400 text-xs">Raised</p>
-                  <p className="text-white font-semibold">
-                    {formatCurrency(campaign.raised)}
+                {/* Description */}
+                {campaign.description && (
+                  <p className="text-slate-400 text-sm mb-4 line-clamp-2">
+                    {campaign.description}
                   </p>
-                </div>
-                <div>
-                  <p className="text-slate-400 text-xs">Goal</p>
-                  <p className="text-white font-semibold">
-                    {formatCurrency(campaign.goal)}
-                  </p>
-                </div>
-              </div>
+                )}
 
-              {/* Meta Info */}
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-4">
-                <div className="flex items-center space-x-1">
-                  <Users className="w-3 h-3" />
-                  <span>{campaign.donorCount} donors</span>
+                {/* Progress Bar */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-slate-400">Progress</span>
+                    <span className="text-sm font-medium text-white">
+                      {campaign.progress}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${Math.min(campaign.progress, 100)}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <Calendar className="w-3 h-3" />
-                  <span>{campaign.daysLeft} days left</span>
-                </div>
-              </div>
 
-              {/* Tags */}
-              {campaign.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {campaign.tags.slice(0, 3).map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 bg-slate-700/50 text-slate-400 text-xs rounded"
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-slate-400 text-xs">Raised</p>
+                    <p className="text-white font-semibold">
+                      {formatCurrency(campaign.raised)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-slate-400 text-xs">Goal</p>
+                    <p className="text-white font-semibold">
+                      {formatCurrency(campaign.goal)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Meta Info */}
+                <div className="flex items-center justify-between text-xs mb-4">
+                  <div className="flex items-center space-x-1 text-slate-400">
+                    <Users className="w-3 h-3" />
+                    <span>{campaign.donorCount} donors</span>
+                  </div>
+                  <div className={`flex items-center space-x-1 ${getDaysLeftColor(campaign.daysLeft)}`}>
+                    <Calendar className="w-3 h-3" />
+                    <span>{campaign.daysLeft} days left</span>
+                  </div>
+                </div>
+
+                {/* Tags */}
+                {campaign.tags && campaign.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {campaign.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center px-2 py-1 bg-slate-700/50 text-slate-400 text-xs rounded hover:bg-slate-600/50 transition-colors"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {campaign.tags.length > 3 && (
+                      <span className="text-xs text-slate-500">
+                        +{campaign.tags.length - 3} more
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => onViewCampaign(campaign)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center space-x-1 hover:scale-105 transform"
+                  >
+                    <Eye className="w-4 h-4" />
+                    <span>View</span>
+                  </button>
+
+                  {onEditCampaign && (
+                    <button
+                      onClick={() => onEditCampaign(campaign)}
+                      className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-200 hover:scale-105 transform"
+                      title="Edit Campaign"
                     >
-                      {tag}
-                    </span>
-                  ))}
-                  {campaign.tags.length > 3 && (
-                    <span className="text-xs text-slate-500">
-                      +{campaign.tags.length - 3} more
-                    </span>
+                      <Edit className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  {onDeleteCampaign && (
+                    <button
+                      onClick={() => onDeleteCampaign(campaign)}
+                      className="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-all duration-200 hover:scale-105 transform"
+                      title="Delete Campaign"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
-              )}
 
-              {/* Actions */}
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => onViewCampaign(campaign)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center space-x-1"
-                >
-                  <Eye className="w-4 h-4" />
-                  <span>View</span>
-                </button>
-
-                {onEditCampaign && (
-                  <button
-                    onClick={() => onEditCampaign(campaign)}
-                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                {/* Copy Campaign Link Button */}
+                {isNew && (
+                  <button 
+                    onClick={() => {
+                      const campaignUrl = `https://nexus.app/campaign/${campaign.name.toLowerCase().replace(/\s+/g, '-')}`;
+                      void navigator.clipboard.writeText(campaignUrl);
+                      // You could add a toast notification here
+                      alert('📋 Campaign link copied to clipboard!');
+                    }}
+                    className="w-full mt-2 text-blue-400 hover:text-blue-300 text-sm py-1 transition-colors"
                   >
-                    <Edit className="w-4 h-4" />
-                  </button>
-                )}
-
-                {onDeleteCampaign && (
-                  <button
-                    onClick={() => onDeleteCampaign(campaign)}
-                    className="px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
+                    📋 Copy Campaign Link
                   </button>
                 )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

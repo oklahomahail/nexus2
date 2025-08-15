@@ -149,6 +149,34 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     return () => clearTimeout(timer);
   }, [open]);
 
+  // Add keyboard shortcut for the wizard
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Allow Escape to close
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      
+      // Arrow keys for navigation (when not in input fields)
+      if (e.target instanceof HTMLElement && 
+          !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
+        if (e.key === 'ArrowRight' && currentStep < totalSteps && getStepValidation(currentStep)) {
+          e.preventDefault();
+          nextStep();
+        } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+          e.preventDefault();
+          prevStep();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [open, currentStep]);
+
   const updateFormData = (field: keyof WizardFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
@@ -230,6 +258,9 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
 
       const newCampaign = await createCampaign(campaignData);
       onSaved?.(newCampaign);
+      
+      // Success feedback
+      alert(`🎉 Campaign "${formData.name}" created successfully!`);
       onClose();
     } catch (err: any) {
       console.error("Campaign creation error:", err);
@@ -274,6 +305,9 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
           className="bg-blue-600 h-2 rounded-full transition-all duration-300"
           style={{ width: `${(currentStep / totalSteps) * 100}%` }}
         />
+      </div>
+      <div className="text-xs text-slate-500 mt-2 text-center">
+        Use ← → arrow keys to navigate steps, or Esc to close
       </div>
     </div>
   );
@@ -374,6 +408,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                       <button
                         key={type.id}
                         type="button"
+                        title={type.description} // 👈 TOOLTIP ADDED HERE!
                         onClick={() => updateFormData("type", type.id)}
                         className={`p-4 border rounded-lg text-left transition-colors ${
                           formData.type === type.id
@@ -481,7 +516,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                   </div>
                   <div className="w-full bg-slate-700 rounded-full h-3">
                     <div
-                      className="bg-blue-600 h-3 rounded-full relative"
+                      className="bg-blue-600 h-3 rounded-full relative transition-all duration-1000 ease-out"
                       style={{ width: "23%" }}
                     >
                       <span className="absolute right-2 top-0 text-xs text-white leading-3">
@@ -708,6 +743,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                     <button
                       key={theme.id}
                       type="button"
+                      title={`${theme.name} theme - Primary: ${theme.primary}`} // 👈 TOOLTIP FOR THEMES!
                       onClick={() => updateFormData("theme", theme.id)}
                       className={`p-3 border rounded-lg transition-colors ${
                         formData.theme === theme.id
@@ -749,6 +785,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                     <button
                       key={tag}
                       type="button"
+                      title={`Add "${tag}" tag to help categorize your campaign`} // 👈 TOOLTIPS FOR TAGS!
                       onClick={() => toggleTag(tag)}
                       className={`px-3 py-1 rounded-full text-sm transition-colors ${
                         formData.tags.includes(tag)
@@ -789,7 +826,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                   </p>
                   <div className="mt-3 bg-white bg-opacity-20 rounded-full h-2">
                     <div
-                      className="bg-white h-2 rounded-full"
+                      className="bg-white h-2 rounded-full transition-all duration-1000 ease-out"
                       style={{ width: "30%" }}
                     />
                   </div>
@@ -857,7 +894,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
 
                   <div className="w-full bg-slate-700 rounded-full h-2">
                     <div
-                      className="h-2 rounded-full"
+                      className="h-2 rounded-full transition-all duration-1000 ease-out"
                       style={{
                         backgroundColor: currentTheme.primary,
                         width: "27%",

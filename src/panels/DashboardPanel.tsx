@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
   Target,
@@ -11,9 +10,9 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  // Plus,
   BarChart3,
 } from "lucide-react";
+import * as campaignService from "../services/campaignService";
 
 interface QuickActionCardProps {
   title: string;
@@ -66,7 +65,8 @@ const MetricCard: React.FC<{
   change?: string;
   trend?: "up" | "down" | "neutral";
   icon: React.ComponentType<{ className?: string }>;
-}> = ({ title, value, change, trend = "neutral", icon: Icon }) => {
+  loading?: boolean;
+}> = ({ title, value, change, trend = "neutral", icon: Icon, loading = false }) => {
   const trendColors = {
     up: "text-green-400",
     down: "text-red-400",
@@ -74,19 +74,25 @@ const MetricCard: React.FC<{
   };
 
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6">
+  <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 hover:scale-105 transition-transform duration-200">
       <div className="flex items-center justify-between mb-4">
         <div className="p-2 bg-blue-600/20 rounded-lg">
           <Icon className="w-5 h-5 text-blue-400" />
         </div>
-        {change && (
+        {change && !loading && (
           <span className={`text-sm font-medium ${trendColors[trend]}`}>
             {change}
           </span>
         )}
       </div>
       <h3 className="text-slate-400 text-sm font-medium mb-1">{title}</h3>
-      <p className="text-white text-2xl font-bold">{value}</p>
+      <p className="text-white text-2xl font-bold">
+        {loading ? (
+          <div className="animate-pulse bg-slate-600 h-8 w-20 rounded"></div>
+        ) : (
+          value
+        )}
+      </p>
     </div>
   );
 };
@@ -122,23 +128,46 @@ const ActivityItem: React.FC<{
 interface DashboardPanelProps {
   totalDonors?: number;
   totalRevenue?: number;
-  activeCampaigns?: number;
 }
 
 const DashboardPanel: React.FC<DashboardPanelProps> = ({
   totalDonors = 1247,
   totalRevenue = 127500,
-  activeCampaigns = 4,
 }) => {
   const { user } = useAuth();
+  const [campaignStats, setCampaignStats] = useState<any>(null);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load real campaign data
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [stats, campaignList] = await Promise.all([
+          campaignService.getCampaignStats(),
+          campaignService.getAllCampaigns(),
+        ]);
+        setCampaignStats(stats);
+        setCampaigns(campaignList.slice(0, 3)); // Get top 3 campaigns for status
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (user) {
+      void loadData();
+    }
+  }, [user]);
+
   if (!user) {
     if (typeof window !== "undefined") {
       window.location.href = "/";
     }
     return null;
   }
-
-  const [_showModal, setShowModal] = useState(false);
 
   // Mock data for recent activity
   const recentActivity = [
@@ -175,7 +204,7 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
       description: "Launch a new fundraising campaign",
       icon: Target,
       color: "green" as const,
-      onClick: () => setShowModal(true),
+      onClick: () => console.log("Navigate to campaign creation"),
     },
     {
       title: "View Analytics",
@@ -200,6 +229,24 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
     },
   ];
 
+  const getCampaignStatusIcon = (campaign: any) => {
+    if (campaign.progress >= 100) return CheckCircle;
+    if (campaign.daysLeft <= 7) return Clock;
+    return Target;
+  };
+
+  const getCampaignStatusColor = (campaign: any) => {
+    if (campaign.progress >= 100) return "text-green-400";
+    if (campaign.daysLeft <= 7) return "text-yellow-400";
+    return "text-blue-400";
+  };
+
+  const getCampaignStatusBg = (campaign: any) => {
+    if (campaign.progress >= 100) return "bg-green-600/10 border-green-600/20";
+    if (campaign.daysLeft <= 7) return "bg-yellow-600/10 border-yellow-600/20";
+    return "bg-blue-600/10 border-blue-600/20";
+  };
+
   return (
     <div className="space-y-8">
       {/* Welcome Section */}
@@ -213,36 +260,40 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <MetricCard
-          title="Total Donors"
-          value={totalDonors.toLocaleString()}
-          change="+12% this month"
-          trend="up"
-          icon={Users}
-        />
-        <MetricCard
-          title="Total Revenue"
-          value={`$${totalRevenue.toLocaleString()}`}
-          change="+8% this month"
-          trend="up"
-          icon={DollarSign}
-        />
-        <MetricCard
-          title="Active Campaigns"
-          value={activeCampaigns}
-          change="2 ending soon"
-          trend="neutral"
-          icon={Target}
-        />
-        <MetricCard
-          title="Monthly Goal"
-          value="78%"
-          change="+5% this week"
-          trend="up"
-          icon={TrendingUp}
-        />
-      </div>
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <MetricCard
+    title="Total Donors"
+    value={totalDonors.toLocaleString()}
+    change="+12% this month"
+    trend="up"
+    icon={Users}
+    loading={loading}
+  />
+  <MetricCard
+    title="Total Revenue"
+    value={`$${totalRevenue.toLocaleString()}`}
+    change="+8% this month"
+    trend="up"
+    icon={DollarSign}
+    loading={loading}
+  />
+  <MetricCard
+    title="Active Campaigns"
+    value={campaignStats?.activeCampaigns || 0}
+    change={campaignStats?.activeCampaigns > 0 ? "2 ending soon" : "No active campaigns"}
+    trend="neutral"
+    icon={Target}
+    loading={loading}
+  />
+  <MetricCard
+    title="Total Raised"
+    value={campaignStats?.totalRaised ? `$${campaignStats.totalRaised.toLocaleString()}` : "$0"}
+    change={campaignStats?.successRate ? `${campaignStats.successRate}% success rate` : "No data"}
+    trend="up"
+    icon={TrendingUp}
+    loading={loading}
+  />
+</div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -282,29 +333,42 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
         <h2 className="text-lg font-semibold text-white mb-4">
           Campaign Status
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center space-x-3 p-4 bg-green-600/10 border border-green-600/20 rounded-lg">
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            <div>
-              <p className="text-green-400 font-medium">Spring Fundraiser</p>
-              <p className="text-slate-400 text-sm">Goal achieved: $25,000</p>
-            </div>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse bg-slate-700/50 rounded-lg h-20"></div>
+            ))}
           </div>
-          <div className="flex items-center space-x-3 p-4 bg-blue-600/10 border border-blue-600/20 rounded-lg">
-            <Target className="w-5 h-5 text-blue-400" />
-            <div>
-              <p className="text-blue-400 font-medium">End of Year Campaign</p>
-              <p className="text-slate-400 text-sm">Progress: 75% ($37,500)</p>
-            </div>
+        ) : campaigns.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {campaigns.map((campaign) => {
+              const StatusIcon = getCampaignStatusIcon(campaign);
+              return (
+                <div
+                  key={campaign.id}
+                  className={`flex items-center space-x-3 p-4 rounded-lg border ${getCampaignStatusBg(campaign)}`}
+                >
+                  <StatusIcon className={`w-5 h-5 ${getCampaignStatusColor(campaign)}`} />
+                  <div>
+                    <p className={`font-medium ${getCampaignStatusColor(campaign)}`}>
+                      {campaign.name}
+                    </p>
+                    <p className="text-slate-400 text-sm">
+                      {campaign.progress >= 100
+                        ? `Goal achieved: $${campaign.raised.toLocaleString()}`
+                        : `Progress: ${campaign.progress}% ($${campaign.raised.toLocaleString()})`}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div className="flex items-center space-x-3 p-4 bg-yellow-600/10 border border-yellow-600/20 rounded-lg">
-            <Clock className="w-5 h-5 text-yellow-400" />
-            <div>
-              <p className="text-yellow-400 font-medium">Holiday Giving</p>
-              <p className="text-slate-400 text-sm">Ending in 12 days</p>
-            </div>
+        ) : (
+          <div className="text-center py-8">
+            <Target className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-400">No campaigns found. Create your first campaign to get started!</p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
