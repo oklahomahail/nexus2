@@ -147,7 +147,7 @@ export const createCampaign = async (
   await delay(500);
 
   const newCampaign: Campaign = {
-    type: data.type || "annual",
+    type: "annual",
     id: `campaign_${Date.now()}`,
     ...data,
     raised: 0,
