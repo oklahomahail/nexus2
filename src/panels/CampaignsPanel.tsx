@@ -29,6 +29,7 @@ const CampaignsPanel: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null,
   );
+};
   const [showModal, setShowModal] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
   const [stats, setStats] = useState<CampaignStats | null>(null);
@@ -153,6 +154,7 @@ const CampaignsPanel: React.FC = () => {
       <p className="text-red-400">{error}</p>
     </div>
   );
+};
 
   if (viewMode === "detail" && selectedCampaign) {
     return (
@@ -341,5 +343,6 @@ const CampaignsPanel: React.FC = () => {
       )}
     </div>
   );
+};
 
 export default CampaignsPanel;
