@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
+import CampaignCreationWizard from "@/components/CampaignCreationWizard";
 import { useAuth } from "@/context/AuthContext";
 import { useClient } from "@/context/ClientContext";
 
@@ -323,7 +324,15 @@ const CampaignsPanel: React.FC = () => {
         />
       )}
 
-      {showModal && (
+      {showModal && modalMode === "create" && (
+        <CampaignCreationWizard
+          open={showModal}
+          clientId={effectiveClientId}
+          onClose={() => setShowModal(false)}
+          onSaved={handleCampaignSaved}
+        />
+      )}
+      {showModal && modalMode === "edit" && (
         <CampaignModal
           open={showModal}
           mode={modalMode}
