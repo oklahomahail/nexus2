@@ -51,7 +51,6 @@ const CampaignsPanel: React.FC = () => {
   }, [user, effectiveClientId]);
   useEffect(() => {
   
-}, []);
 
 // Add hint in your header:
 <div className="text-xs text-slate-500 mt-1">
@@ -59,7 +58,6 @@ const CampaignsPanel: React.FC = () => {
 </div>
   };
   
-}, []);
 
   // NEW: Load campaigns function
   const loadCampaigns = async () => {
@@ -356,6 +354,5 @@ const CampaignsPanel: React.FC = () => {
       )}
     </div>
   );
-};
 
 export default CampaignsPanel;
