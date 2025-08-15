@@ -43,8 +43,12 @@ const CampaignsPanel: React.FC = () => {
     ? clientId || currentClient?.id
     : undefined;
 
-
-  
+  useEffect(() => {
+    if (!user) return;
+    void loadStats();
+    void loadCampaigns();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, effectiveClientId]);
 
   // NEW: Load campaigns function
   const loadCampaigns = async () => {
@@ -341,7 +345,6 @@ const CampaignsPanel: React.FC = () => {
       )}
     </div>
   );
-
 };
 
 export default CampaignsPanel;
