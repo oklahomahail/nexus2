@@ -43,14 +43,6 @@ const CampaignsPanel: React.FC = () => {
     ? clientId || currentClient?.id
     : undefined;
 
-  useEffect(() => {
-    if (!user) return;
-    void loadStats();
-    void loadCampaigns(); // NEW: Load campaigns for table view
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, effectiveClientId]);
-  useEffect(() => {
-  
 
   
 
