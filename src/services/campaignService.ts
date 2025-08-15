@@ -20,6 +20,7 @@ export interface CampaignStats {
 const mockCampaigns: Campaign[] = [
   {
     id: "campaign_1",
+    type: "annual",
     clientId: "acme", // Associated with Acme Nonprofit
     name: "End of Year Giving Campaign",
     description: "Annual fundraising campaign to support our programs",
@@ -47,6 +48,7 @@ const mockCampaigns: Campaign[] = [
   },
   {
     id: "campaign_2",
+    type: "program",
     clientId: "acme",
     name: "Spring Education Fund",
     description: "Supporting educational initiatives this spring",
@@ -74,6 +76,7 @@ const mockCampaigns: Campaign[] = [
   },
   {
     id: "campaign_3",
+    type: "emergency",
     clientId: "green-future", // Associated with Green Future Foundation
     name: "Clean Water Initiative",
     description: "Providing clean water access to rural communities",
@@ -144,6 +147,7 @@ export const createCampaign = async (
   await delay(500);
 
   const newCampaign: Campaign = {
+    type: data.type || "annual",
     id: `campaign_${Date.now()}`,
     ...data,
     raised: 0,
