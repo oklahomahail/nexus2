@@ -22,7 +22,6 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/useUI";
 import CampaignsPanel from "@/panels/CampaignsPanel";
-// import Topbar from "@/components/Topbar"; // keep only if you render it
 
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -31,7 +30,6 @@ const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
 const AnalyticsDashboard = React.lazy(
   () => import("@/panels/AnalyticsDashboard"),
 );
-// removed: DonorsPanel (unused)
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
 const ClientList = React.lazy(() => import("@/pages/ClientList"));
 const ClientDashboard = React.lazy(() => import("@/pages/ClientDashboard"));
@@ -54,12 +52,6 @@ const AppContent: React.FC = () => {
   const [showClaudePanel, setShowClaudePanel] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  const toggleNotifications = () => {
-    // wire up to your notifications drawer when ready
-    // keeping to avoid UI regressions
-    /* no-op */
-  };
 
   const currentCampaign = useMemo(
     () => ({
@@ -92,71 +84,35 @@ const AppContent: React.FC = () => {
   );
 
   const navigationItems: NavigationItem[] = [
-    {
-      key: "clients",
-      label: "Clients",
-      icon: Building,
-      path: "/clients",
-      description: "Manage client organizations",
-    },
+    { key: "clients", label: "Clients", icon: Building, path: "/clients" },
     {
       key: "dashboard",
       label: "Dashboard",
       icon: BarChart3,
       path: "/dashboard",
-      description: "Overview of key metrics and recent activity",
     },
-    {
-      key: "campaigns",
-      label: "Campaigns",
-      icon: Target,
-      path: "/campaigns",
-      description: "Manage fundraising campaigns",
-    },
+    { key: "campaigns", label: "Campaigns", icon: Target, path: "/campaigns" },
     {
       key: "analytics",
       label: "Analytics",
       icon: TrendingUp,
       path: "/analytics",
-      description: "Performance insights and reports",
     },
-    {
-      key: "donors",
-      label: "Donors",
-      icon: Users,
-      path: "/donors",
-      description: "Donor management and insights",
-    },
+    { key: "donors", label: "Donors", icon: Users, path: "/donors" },
   ];
 
-  // Determine current page info based on route
+  // Determine current page info
   const getCurrentPageInfo = () => {
     const path = location.pathname;
-
     if (path.startsWith("/client/")) {
-      if (path.includes("/campaigns")) {
-        return {
-          label: "Client Campaigns",
-          description: "Manage client fundraising campaigns",
-        };
-      } else if (path.includes("/analytics")) {
-        return {
-          label: "Client Analytics",
-          description: "Client performance insights and reports",
-        };
-      } else {
-        return {
-          label: "Client Dashboard",
-          description: "Client overview and metrics",
-        };
-      }
+      if (path.includes("/campaigns")) return { label: "Client Campaigns" };
+      if (path.includes("/analytics")) return { label: "Client Analytics" };
+      return { label: "Client Dashboard" };
     }
-
-    const navItem = navigationItems.find((item) => item.path === path);
     return (
-      navItem || {
+      navigationItems.find((item) => item.path === path) || {
         label: "Dashboard",
-        description: "Overview of key metrics and recent activity",
+        description: "Overview of key metrics",
       }
     );
   };
@@ -164,24 +120,24 @@ const AppContent: React.FC = () => {
   const currentPageInfo = getCurrentPageInfo();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex">
+    <div className="min-h-screen bg-bg-primary text-text-primary flex">
       {/* Sidebar */}
-      <div className="w-64 bg-slate-900/50 border-r border-slate-800/50 backdrop-blur-md">
-        <div className="p-6 border-b border-slate-800/50">
+      <div className="w-64 bg-surface-elevated border-r border-border backdrop-blur-md">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">N</span>
+            <div className="w-8 h-8 bg-gradient-to-br from-brand-primary to-brand-accent rounded-lg flex items-center justify-center">
+              <span className="text-text-inverse font-bold text-sm">N</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Nexus</h1>
-              <p className="text-slate-400 text-xs">Nonprofit Platform</p>
+              <h1 className="text-xl font-bold text-text-primary">Nexus</h1>
+              <p className="text-text-secondary text-xs">Nonprofit Platform</p>
             </div>
           </div>
         </div>
 
         <div className="p-4">
           <div className="mb-6">
-            <div className="text-slate-500 text-xs uppercase tracking-wider font-medium mb-3 px-2">
+            <div className="text-text-muted text-xs uppercase tracking-wider font-medium mb-3 px-2">
               Navigation
             </div>
             <nav className="space-y-1">
@@ -191,7 +147,6 @@ const AppContent: React.FC = () => {
                   location.pathname === item.path ||
                   (item.key === "clients" &&
                     location.pathname.startsWith("/client"));
-
                 return (
                   <button
                     key={item.key}
@@ -199,8 +154,8 @@ const AppContent: React.FC = () => {
                     aria-current={isActive ? "page" : undefined}
                     className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 ${
                       isActive
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/50"
+                        ? "bg-brand-primary text-text-inverse shadow-md"
+                        : "text-text-secondary hover:text-text-primary hover:bg-surface-muted"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -208,22 +163,20 @@ const AppContent: React.FC = () => {
                   </button>
                 );
               })}
-
               <button
                 onClick={() => setShowClaudePanel(true)}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/50"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-surface-muted"
               >
                 <Bot className="w-5 h-5" />
                 <span className="font-medium">AI Assistant</span>
               </button>
             </nav>
           </div>
-
-          <div className="border-t border-slate-800/50 pt-4">
-            <div className="text-slate-500 text-xs mb-2 px-2">Current:</div>
-            <div className="text-slate-400 text-sm px-2">
+          <div className="border-t border-border pt-4">
+            <div className="text-text-muted text-xs mb-2 px-2">Current:</div>
+            <div className="text-text-secondary text-sm px-2">
               <div>Dave Hail</div>
-              <div className="text-xs text-slate-500">Nexus Consulting</div>
+              <div className="text-xs text-text-muted">Nexus Consulting</div>
             </div>
           </div>
         </div>
@@ -232,36 +185,32 @@ const AppContent: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-screen">
         {/* Header */}
-        <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md">
+        <header className="border-b border-border bg-surface/50 backdrop-blur-md">
           <div className="px-8 py-6 flex justify-between items-center">
             <div className="flex-1">
-              {/* Breadcrumb */}
               <div className="mb-3">
                 <Breadcrumb />
               </div>
-
-              <h1 className="text-2xl font-bold text-white mb-1">
+              <h1 className="text-2xl font-bold text-text-primary mb-1">
                 {currentPageInfo.label}
               </h1>
-              <p className="text-slate-400">{currentPageInfo.description}</p>
+              <p className="text-text-secondary">
+                {currentPageInfo.description}
+              </p>
             </div>
             <div className="flex items-center space-x-3">
-              <button
-                onClick={toggleNotifications}
-                className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800/50 rounded-lg"
-                aria-label="Notifications"
-              >
+              <button className="text-text-secondary hover:text-text-primary transition-colors p-2 hover:bg-surface-muted rounded-lg">
                 <Bell className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowClaudePanel(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                className="bg-brand-accent hover:bg-brand-primary text-text-inverse px-4 py-2 rounded-lg font-medium flex items-center space-x-2"
               >
                 <Bot className="w-4 h-4" />
                 <span>AI Assistant</span>
               </button>
               {hasRole("admin") && (
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+                <button className="bg-success hover:bg-brand-primary text-text-inverse px-4 py-2 rounded-lg font-medium flex items-center space-x-2">
                   <Plus className="w-4 h-4" />
                   <span>New Campaign</span>
                 </button>
@@ -270,38 +219,35 @@ const AppContent: React.FC = () => {
           </div>
         </header>
 
-        {/* Page Content with Routing */}
+        {/* Page Content */}
         <div className="flex-1 overflow-auto">
           {loading ? (
-            <div className="flex justify-center items-center py-12">
+            <div className="flex justify-center items-center py-12 text-text-secondary">
               <LoadingSpinner size="lg" />
-              <span className="ml-3 text-slate-400">Loading...</span>
+              <span className="ml-3">Loading...</span>
             </div>
           ) : error ? (
             <div className="p-8">
-              <div className="bg-red-900/20 border border-red-800/50 rounded-lg p-6">
-                <h3 className="text-sm font-medium text-red-400 mb-2">
+              <div className="bg-error/10 border border-error/30 rounded-lg p-6">
+                <h3 className="text-sm font-medium text-error mb-2">
                   Application Error
                 </h3>
-                <p className="text-sm text-red-300">{String(error)}</p>
+                <p className="text-sm text-text-secondary">{String(error)}</p>
               </div>
             </div>
           ) : (
             <Suspense
               fallback={
-                <div className="flex justify-center items-center py-12">
+                <div className="flex justify-center items-center py-12 text-text-secondary">
                   <LoadingSpinner size="lg" />
-                  <span className="ml-3 text-slate-400">Loading panel...</span>
+                  <span className="ml-3">Loading panel...</span>
                 </div>
               }
             >
               <div className="p-8">
                 <Routes>
-                  {/* Client-first navigation */}
                   <Route path="/clients" element={<ClientList />} />
                   <Route path="/client/:id" element={<ClientDashboard />} />
-
-                  {/* Client-scoped sections */}
                   <Route
                     path="/client/:id/campaigns"
                     element={<CampaignsPanel />}
@@ -310,14 +256,10 @@ const AppContent: React.FC = () => {
                     path="/client/:id/analytics"
                     element={<AnalyticsDashboard />}
                   />
-
-                  {/* Existing (org-wide) routes remain accessible */}
                   <Route path="/dashboard" element={<DashboardPanel />} />
                   <Route path="/campaigns" element={<CampaignsPanel />} />
                   <Route path="/analytics" element={<AnalyticsDashboard />} />
                   <Route path="/donors" element={<DonorsPlaceholder />} />
-
-                  {/* Default */}
                   <Route
                     path="*"
                     element={<Navigate to="/clients" replace />}

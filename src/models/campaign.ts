@@ -1,5 +1,6 @@
 // src/models/campaign.ts
 export interface Campaign {
+  theme: any;
   type: string;
   id: string;
   name: string;

@@ -12,16 +12,18 @@ import {
   Plus,
   CheckCircle,
   AlertCircle,
-  ChevronDown,
-  ChevronUp,
   Edit3,
   Copy,
   X,
   Bookmark,
+  FileText,
+  Layout,
+  Activity,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
+import LiveDashboards from "@/components/analytics/LiveDashboards";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useClient } from "@/context/ClientContext";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -39,6 +41,8 @@ import {
   type GoalTemplate,
 } from "@/services/goalsService";
 
+import { ComparativeCampaignAnalysis } from "../components/analytics";
+
 interface AnalyticsTimeRange {
   start: Date;
   end: Date;
@@ -50,6 +54,20 @@ const AnalyticsDashboard: React.FC = () => {
   const { id: clientId } = useParams();
   const location = useLocation();
   const { add: addNotification } = useNotifications();
+
+  // Tabs configuration
+  const tabs = [
+    { id: "overview", label: "Overview", icon: BarChart3 },
+    { id: "comparison", label: "Campaign Comparison", icon: TrendingUp },
+    { id: "reports", label: "Executive Reports", icon: FileText },
+    { id: "builder", label: "Report Builder", icon: Layout },
+    { id: "scheduler", label: "Automation", icon: Calendar },
+    { id: "dashboards", label: "Live Dashboards", icon: Activity }, // NEW
+    { id: "goals", label: "Goals & Targets", icon: Target },
+  ];
+
+  // Current active tab state
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Client-scoped if the URL path contains /client/
   const isClientScoped = location.pathname.includes("/client/");
@@ -75,7 +93,6 @@ const AnalyticsDashboard: React.FC = () => {
   // Goals state
   const [goals, setGoals] = useState<Goal[]>([]);
   const [goalAlerts, setGoalAlerts] = useState<GoalAlert[]>([]);
-  const [goalsExpanded, setGoalsExpanded] = useState(true);
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
@@ -119,11 +136,11 @@ const AnalyticsDashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedTimeRange) {
+    if (selectedTimeRange && activeTab === "overview") {
       void loadAnalytics();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [effectiveClientId, selectedTimeRange]);
+  }, [effectiveClientId, selectedTimeRange, activeTab]);
 
   const loadAnalytics = useCallback(async () => {
     if (!selectedTimeRange) return;
@@ -314,32 +331,6 @@ const AnalyticsDashboard: React.FC = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner size="lg" />
-        <span className="ml-3 text-slate-400">Loading analytics…</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-6">
-        <h3 className="text-red-400 font-medium mb-2">
-          Error Loading Analytics
-        </h3>
-        <p className="text-red-300 text-sm mb-4">{error}</p>
-        <button
-          onClick={() => void loadAnalytics()}
-          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
   const currentGoals = goals.filter(
     (g) =>
       g.scope === (effectiveClientId ? "client" : "org") &&
@@ -380,45 +371,49 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Time Range Selector */}
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            {(() => {
-              const idx = Math.max(
-                0,
-                timeRanges.findIndex(
-                  (r) => r.label === selectedTimeRange.label,
-                ),
-              );
-              return (
-                <select
-                  value={idx}
-                  onChange={(e) =>
-                    setSelectedTimeRange(
-                      timeRanges[parseInt(e.target.value, 10)],
-                    )
-                  }
-                  className="pl-9 pr-8 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
-                >
-                  {timeRanges.map((range, index) => (
-                    <option key={`timerange-${index}`} value={index}>
-                      {range.label}
-                    </option>
-                  ))}
-                </select>
-              );
-            })()}
-          </div>
+          {/* Time Range Selector - only show for overview tab */}
+          {activeTab === "overview" && (
+            <div className="relative">
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              {(() => {
+                const idx = Math.max(
+                  0,
+                  timeRanges.findIndex(
+                    (r) => r.label === selectedTimeRange.label,
+                  ),
+                );
+                return (
+                  <select
+                    value={idx}
+                    onChange={(e) =>
+                      setSelectedTimeRange(
+                        timeRanges[parseInt(e.target.value, 10)],
+                      )
+                    }
+                    className="pl-9 pr-8 py-2 bg-slate-800/50 border border-slate-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
+                  >
+                    {timeRanges.map((range, index) => (
+                      <option key={`timerange-${index}`} value={index}>
+                        {range.label}
+                      </option>
+                    ))}
+                  </select>
+                );
+              })()}
+            </div>
+          )}
 
-          {/* Export Button */}
-          <button
-            onClick={() => void handleExport("csv")}
-            disabled={exporting}
-            className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm"
-          >
-            <Download className="w-4 h-4" />
-            <span>{exporting ? "Exporting…" : "Export CSV"}</span>
-          </button>
+          {/* Export Button - only show for overview tab */}
+          {activeTab === "overview" && (
+            <button
+              onClick={() => void handleExport("csv")}
+              disabled={exporting}
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm"
+            >
+              <Download className="w-4 h-4" />
+              <span>{exporting ? "Exporting…" : "Export CSV"}</span>
+            </button>
+          )}
 
           {/* Refresh Button */}
           <button
@@ -431,51 +426,260 @@ const AnalyticsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Goals Section */}
-      <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={() => setGoalsExpanded(!goalsExpanded)}
-              className="flex items-center space-x-2 text-white hover:text-blue-400 transition-colors"
-            >
-              <Target className="w-5 h-5" />
-              <h3 className="text-lg font-semibold">Goals & Targets</h3>
-              {goalsExpanded ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </button>
-            {totalGoals > 0 && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-slate-400">
-                  {metGoals} of {totalGoals} goals met
-                </span>
-                <div className="w-20 bg-slate-600 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all"
-                    style={{
-                      width: `${totalGoals > 0 ? (metGoals / totalGoals) * 100 : 0}%`,
-                    }}
-                  />
+      {/* Tab Navigation */}
+      <div className="border-b border-slate-700">
+        <nav className="-mb-px flex space-x-8">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors ${
+                  activeTab === tab.id
+                    ? "border-blue-500 text-blue-400"
+                    : "border-transparent text-slate-400 hover:text-slate-300 hover:border-slate-300"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {tab.label}
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === "overview" && (
+        <>
+          {loading && (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <LoadingSpinner size="lg" />
+              <span className="ml-3 text-slate-400">Loading analytics…</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-900/20 border border-red-800/50 rounded-xl p-6">
+              <h3 className="text-red-400 font-medium mb-2">
+                Error Loading Analytics
+              </h3>
+              <p className="text-red-300 text-sm mb-4">{error}</p>
+              <button
+                onClick={() => void loadAnalytics()}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {/* Campaign Analytics */}
+          {campaignAnalytics && !loading && !error && (
+            <div className="space-y-6">
+              {/* Key Metrics Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium">
+                      Total Raised
+                    </h3>
+                    <DollarSign className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    $
+                    {campaignAnalytics.fundraisingMetrics.totalRaised.toLocaleString()}
+                  </div>
+                  <p className="text-slate-400 text-sm">
+                    {campaignAnalytics.fundraisingMetrics.completionRate}% of $
+                    {campaignAnalytics.fundraisingMetrics.goalAmount.toLocaleString()}{" "}
+                    goal
+                  </p>
+                </div>
+
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium">
+                      Donors
+                    </h3>
+                    <Users className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {campaignAnalytics.fundraisingMetrics.donorCount.toLocaleString()}
+                  </div>
+                  <p className="text-slate-400 text-sm">
+                    {campaignAnalytics.fundraisingMetrics.repeatDonorRate.toFixed(
+                      1,
+                    )}
+                    % repeat donors
+                  </p>
+                </div>
+
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium">
+                      Avg Gift Size
+                    </h3>
+                    <Target className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    $
+                    {campaignAnalytics.fundraisingMetrics.averageGiftSize.toLocaleString()}
+                  </div>
+                  <p className="text-slate-400 text-sm">
+                    Range: ${campaignAnalytics.fundraisingMetrics.smallestGift}{" "}
+                    – $
+                    {campaignAnalytics.fundraisingMetrics.largestGift.toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium">
+                      Conversion Rate
+                    </h3>
+                    <TrendingUp className="w-5 h-5 text-orange-400" />
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    {campaignAnalytics.conversionMetrics.conversionRate.toFixed(
+                      1,
+                    )}
+                    %
+                  </div>
+                  <p className="text-slate-400 text-sm">
+                    {campaignAnalytics.conversionMetrics.donationPageViews.toLocaleString()}{" "}
+                    page views
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
-          <button
-            onClick={() => {
-              setEditingGoal(null);
-              setShowGoalModal(true);
-            }}
-            className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Goal</span>
-          </button>
-        </div>
 
-        {goalsExpanded && (
+              {/* Channel Performance */}
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  Channel Performance
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {campaignAnalytics.channelPerformance.map(
+                    (channel, index) => (
+                      <div
+                        key={index}
+                        className="p-4 bg-slate-700/50 rounded-lg"
+                      >
+                        <h4 className="text-white font-medium mb-2">
+                          {channel.channel}
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Revenue:</span>
+                            <span className="text-white font-semibold">
+                              ${channel.totalRaised.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Donors:</span>
+                            <span className="text-white">
+                              {channel.donorCount}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Avg Gift:</span>
+                            <span className="text-white">
+                              ${channel.averageGift.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-400">Conv Rate:</span>
+                            <span className="text-white">
+                              {channel.conversionRate}%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Organization Analytics */}
+          {orgAnalytics && !loading && !error && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-slate-400 text-sm font-medium">
+                      Total Raised
+                    </h3>
+                    <div className="flex items-center space-x-1">
+                      {orgAnalytics.growthMetrics.raisedChange > 0 ? (
+                        <TrendingUp className="w-4 h-4 text-green-400" />
+                      ) : (
+                        <TrendingDown className="w-4 h-4 text-red-400" />
+                      )}
+                      <span
+                        className={`text-xs ${orgAnalytics.growthMetrics.raisedChange > 0 ? "text-green-400" : "text-red-400"}`}
+                      >
+                        {orgAnalytics.growthMetrics.raisedChange > 0 ? "+" : ""}
+                        {orgAnalytics.growthMetrics.raisedChange.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-white">
+                    ${orgAnalytics.currentPeriod.totalRaised.toLocaleString()}
+                  </div>
+                </div>
+                {/* Add other org analytics cards as needed */}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Campaign Comparison Tab */}
+      {activeTab === "comparison" && <ComparativeCampaignAnalysis />}
+      {/* Live Dashboards Tab */}
+      {activeTab === "dashboards" && <LiveDashboards />}
+
+      {/* Goals Tab */}
+      {activeTab === "goals" && (
+        <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <Target className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-white">
+                  Goals & Targets
+                </h3>
+              </div>
+              {totalGoals > 0 && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-slate-400">
+                    {metGoals} of {totalGoals} goals met
+                  </span>
+                  <div className="w-20 bg-slate-600 rounded-full h-2">
+                    <div
+                      className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all"
+                      style={{
+                        width: `${totalGoals > 0 ? (metGoals / totalGoals) * 100 : 0}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setEditingGoal(null);
+                setShowGoalModal(true);
+              }}
+              className="flex items-center space-x-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Goal</span>
+            </button>
+          </div>
+
           <div className="space-y-3">
             {currentGoals.length === 0 ? (
               <div className="text-center py-8">
@@ -577,8 +781,8 @@ const AnalyticsDashboard: React.FC = () => {
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Goal Modal */}
       {showGoalModal && (
@@ -594,171 +798,10 @@ const AnalyticsDashboard: React.FC = () => {
           onCreateFromTemplate={handleCreateFromTemplate}
         />
       )}
-
-      {/* Rest of existing analytics content - keeping your existing campaign and org analytics sections */}
-      {campaignAnalytics && (
-        <div className="space-y-6">
-          {/* Key Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">
-                  Total Raised
-                </h3>
-                <DollarSign className="w-5 h-5 text-green-400" />
-              </div>
-              <div className="text-2xl font-bold text-white">
-                $
-                {campaignAnalytics.fundraisingMetrics.totalRaised.toLocaleString()}
-              </div>
-              <p className="text-slate-400 text-sm">
-                {campaignAnalytics.fundraisingMetrics.completionRate}% of $
-                {campaignAnalytics.fundraisingMetrics.goalAmount.toLocaleString()}{" "}
-                goal
-              </p>
-            </div>
-
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">Donors</h3>
-                <Users className="w-5 h-5 text-blue-400" />
-              </div>
-              <div className="text-2xl font-bold text-white">
-                {campaignAnalytics.fundraisingMetrics.donorCount.toLocaleString()}
-              </div>
-              <p className="text-slate-400 text-sm">
-                {campaignAnalytics.fundraisingMetrics.repeatDonorRate.toFixed(
-                  1,
-                )}
-                % repeat donors
-              </p>
-            </div>
-
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">
-                  Avg Gift Size
-                </h3>
-                <Target className="w-5 h-5 text-purple-400" />
-              </div>
-              <div className="text-2xl font-bold text-white">
-                $
-                {campaignAnalytics.fundraisingMetrics.averageGiftSize.toLocaleString()}
-              </div>
-              <p className="text-slate-400 text-sm">
-                Range: ${campaignAnalytics.fundraisingMetrics.smallestGift} – $
-                {campaignAnalytics.fundraisingMetrics.largestGift.toLocaleString()}
-              </p>
-            </div>
-
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">
-                  Conversion Rate
-                </h3>
-                <TrendingUp className="w-5 h-5 text-orange-400" />
-              </div>
-              <div className="text-2xl font-bold text-white">
-                {campaignAnalytics.conversionMetrics.conversionRate.toFixed(1)}%
-              </div>
-              <p className="text-slate-400 text-sm">
-                {campaignAnalytics.conversionMetrics.donationPageViews.toLocaleString()}{" "}
-                page views
-              </p>
-            </div>
-          </div>
-
-          {/* Channel Performance */}
-          <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">
-              Channel Performance
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {campaignAnalytics.channelPerformance.map((channel, index) => (
-                <div key={index} className="p-4 bg-slate-700/50 rounded-lg">
-                  <h4 className="text-white font-medium mb-2">
-                    {channel.channel}
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Revenue:</span>
-                      <span className="text-white font-semibold">
-                        ${channel.totalRaised.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Donors:</span>
-                      <span className="text-white">{channel.donorCount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Avg Gift:</span>
-                      <span className="text-white">
-                        ${channel.averageGift.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Conv Rate:</span>
-                      <span className="text-white">
-                        {channel.conversionRate}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Organization Analytics - abbreviated for space */}
-      {orgAnalytics && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-slate-400 text-sm font-medium">
-                  Total Raised
-                </h3>
-                <div className="flex items-center space-x-1">
-                  {orgAnalytics.growthMetrics.raisedChange > 0 ? (
-                    <TrendingUp className="w-4 h-4 text-green-400" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4 text-red-400" />
-                  )}
-                  <span
-                    className={`text-xs ${orgAnalytics.growthMetrics.raisedChange > 0 ? "text-green-400" : "text-red-400"}`}
-                  >
-                    {orgAnalytics.growthMetrics.raisedChange > 0 ? "+" : ""}
-                    {orgAnalytics.growthMetrics.raisedChange.toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-              <div className="text-2xl font-bold text-white">
-                ${orgAnalytics.currentPeriod.totalRaised.toLocaleString()}
-              </div>
-            </div>
-            {/* Add other org analytics cards as needed */}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
-// {donorInsights && (
-//   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-//     <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-//       <h3 className="text-lg font-semibold text-white mb-4">Top Donors</h3>
-//       <div className="space-y-3">
-//         {donorInsights.topDonors.map((donor: { id: React.Key | null | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; totalGiven: { toLocaleString: () => string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }; }, index: any) => (
-//           <div key={donor.id} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-//             <span className="text-white font-medium">{donor.name}</span>
-//             <span className="text-white font-semibold">${donor.totalGiven.toLocaleString()}</span>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   </div>
-// )}
+
 // Enhanced Goal Modal with Templates and Editing
 const GoalModal: React.FC<{
   scope: "org" | "client";
@@ -778,6 +821,7 @@ const GoalModal: React.FC<{
   const [activeTab, setActiveTab] = useState<"manual" | "templates">(
     editingGoal ? "manual" : "templates",
   );
+
   const [name, setName] = useState(editingGoal?.name || "");
   const [description, setDescription] = useState(
     editingGoal?.description || "",
