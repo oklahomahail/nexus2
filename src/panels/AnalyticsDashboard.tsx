@@ -19,10 +19,11 @@ import {
   FileText,
   Layout,
   Activity,
+  Brain,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
-
+import PredictiveAnalytics from '../components/analytics/PredictiveAnalytics';
 import LiveDashboards from "@/components/analytics/LiveDashboards";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useClient } from "@/context/ClientContext";
@@ -40,7 +41,7 @@ import {
   type Goal,
   type GoalTemplate,
 } from "@/services/goalsService";
-
+import ReportGenerator from "../components/analytics/ReportGenerator";
 import { ComparativeCampaignAnalysis } from "../components/analytics";
 
 interface AnalyticsTimeRange {
@@ -64,10 +65,13 @@ const AnalyticsDashboard: React.FC = () => {
     { id: "scheduler", label: "Automation", icon: Calendar },
     { id: "dashboards", label: "Live Dashboards", icon: Activity }, // NEW
     { id: "goals", label: "Goals & Targets", icon: Target },
+    { id: "predictive", label: "Predictive Analytics", icon: Brain },
+    { id: "reports", label: "Report Generator", icon: FileText }
   ];
 
   // Current active tab state
   const [activeTab, setActiveTab] = useState("overview");
+  {activeTab === "reports" && <ReportGenerator />}
 
   // Client-scoped if the URL path contains /client/
   const isClientScoped = location.pathname.includes("/client/");
@@ -450,6 +454,9 @@ const AnalyticsDashboard: React.FC = () => {
       </div>
 
       {/* Tab Content */}
+      {activeTab === "predictive" && (
+      <PredictiveAnalytics />
+)}
       {activeTab === "overview" && (
         <>
           {loading && (

@@ -41,6 +41,8 @@ interface CampaignMetrics {
   performanceScore: number;
   velocity: "ahead" | "on-track" | "behind";
   timelineData: TimelineDataPoint[];
+  costPerDollar: number;
+  projectedCompletionDate: Date;
 }
 
 interface TimelineDataPoint {
@@ -174,10 +176,13 @@ const ComparativeCampaignAnalysis: React.FC = () => {
     return timelineData;
   };
 
-  // Per-campaign metrics
+  // Main metrics
   const campaignMetrics = useMemo<CampaignMetrics[]>(() => {
     return clientCampaigns.map((campaign) => {
+      // Basic progress calculation
       const progressPercentage = (campaign.raised / campaign.goal) * 100;
+
+      // Date calculations
       const startDate = new Date(campaign.startDate);
       const endDate = new Date(campaign.endDate);
       const now = new Date();
@@ -192,21 +197,25 @@ const ComparativeCampaignAnalysis: React.FC = () => {
       );
       const daysRemaining = Math.max(0, totalDays - daysPassed);
 
-      const timeProgressPercentage = (daysPassed / totalDays) * 100;
-      const efficiency =
-        progressPercentage / Math.max(timeProgressPercentage, 1);
-
-      const dailyAverageNeeded =
-        daysRemaining > 0
-          ? Math.max(0, (campaign.goal - campaign.raised) / daysRemaining)
-          : 0;
+      // Financial metrics
       const dailyAverageActual =
         daysPassed > 0 ? campaign.raised / daysPassed : 0;
+      const remainingAmount = campaign.goal - campaign.raised;
+      const dailyAverageNeeded =
+        daysRemaining > 0 ? Math.max(0, remainingAmount / daysRemaining) : 0;
+      const costPerDollar =
+        campaign.raised > 0 ? (campaign.marketingCost || 0) / campaign.raised : 0;
 
+      // Performance calculations
+      const timeProgressPercentage = (daysPassed / totalDays) * 100;
+      const efficiency = progressPercentage / Math.max(timeProgressPercentage, 1);
+
+      // Velocity assessment
       let velocity: "ahead" | "on-track" | "behind" = "on-track";
       if (efficiency > 1.1) velocity = "ahead";
       else if (efficiency < 0.9) velocity = "behind";
 
+      // Performance score
       const performanceScore = Math.min(
         100,
         Math.max(
@@ -217,6 +226,16 @@ const ComparativeCampaignAnalysis: React.FC = () => {
         ),
       );
 
+      // Projected completion date
+      const projectedCompletionDate = new Date();
+      if (dailyAverageActual > 0 && remainingAmount > 0) {
+        projectedCompletionDate.setDate(
+          projectedCompletionDate.getDate() +
+            Math.ceil(remainingAmount / dailyAverageActual),
+        );
+      }
+
+      // Timeline
       const timelineData = generateTimelineData(campaign);
 
       return {
@@ -230,6 +249,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
         performanceScore,
         velocity,
         timelineData,
+        costPerDollar,
+        projectedCompletionDate,
       };
     });
   }, [clientCampaigns]);
@@ -269,13 +290,15 @@ const ComparativeCampaignAnalysis: React.FC = () => {
 
     for (let day = 1; day <= maxDays; day++) {
       const point: Record<string, number | string> = { day };
-      selectedMetrics.forEach((metric) => {
+      selectedMetrics.forEach((metric, index) => {
         const campaignName = metric.campaign.name;
         const dayData = metric.timelineData.find((d) => d.day === day);
         if (!dayData) return;
         if (timelineView === "progress") {
           point[`${campaignName}_progress`] = dayData.cumulativePercentage;
-          point[`${campaignName}_target`] = dayData.targetPercentage;
+          if (index === 0) {
+            point[`${campaignName}_target`] = dayData.targetPercentage;
+          }
         } else if (timelineView === "velocity") {
           point[`${campaignName}_velocity`] = dayData.velocity;
         } else {
@@ -460,8 +483,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                       timelineView === "progress"
                         ? "Progress %"
                         : timelineView === "velocity"
-                          ? "Daily Amount"
-                          : "Efficiency Ratio",
+                        ? "Daily Amount"
+                        : "Efficiency Ratio",
                     angle: -90,
                     position: "insideLeft",
                   }}
@@ -491,8 +514,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                       timelineView === "progress"
                         ? `${campaignName}_progress`
                         : timelineView === "velocity"
-                          ? `${campaignName}_velocity`
-                          : `${campaignName}_efficiency`;
+                        ? `${campaignName}_velocity`
+                        : `${campaignName}_efficiency`;
                     return (
                       <Line
                         key={`${campaignName}_${timelineView}`}
@@ -507,7 +530,7 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                     );
                   })}
 
-                {/* Target line for progress view */}
+                {/* Target line for progress view (only once for readability) */}
                 {timelineView === "progress" &&
                   filteredMetrics
                     .filter((m) => selectedCampaigns.includes(m.campaign.id))
@@ -656,8 +679,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                           metric.campaign.status === "Active"
                             ? "bg-green-100 text-green-800"
                             : metric.campaign.status === "Completed"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-slate-100 text-slate-800"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-slate-100 text-slate-800"
                         }`}
                       >
                         {metric.campaign.status}
@@ -837,8 +860,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                       {most.velocity === "ahead"
                         ? "Ahead of schedule"
                         : most.velocity === "behind"
-                          ? "Behind schedule"
-                          : "On track"}
+                        ? "Behind schedule"
+                        : "On track"}
                     </p>
                   </div>
                 );
@@ -857,8 +880,7 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                 );
                 const highest = sel.reduce((best, cur) => {
                   const curV =
-                    cur.timelineData[cur.timelineData.length - 1]?.velocity ||
-                    0;
+                    cur.timelineData[cur.timelineData.length - 1]?.velocity || 0;
                   const bestV =
                     best.timelineData[best.timelineData.length - 1]?.velocity ||
                     0;
@@ -876,8 +898,7 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                       Current: {formatCurrency(latestV)}/day
                     </p>
                     <p className="text-sm text-purple-700">
-                      Daily average:{" "}
-                      {formatCurrency(highest.dailyAverageActual)}
+                      Daily average: {formatCurrency(highest.dailyAverageActual)}
                     </p>
                   </div>
                 );
@@ -922,10 +943,10 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                     Math.abs(previous) < 1
                       ? "stable"
                       : Math.abs(change) < previous * 0.1
-                        ? "stable"
-                        : change > 0
-                          ? "increasing"
-                          : "decreasing";
+                      ? "stable"
+                      : change > 0
+                      ? "increasing"
+                      : "decreasing";
                   return { name: m.campaign.name, trend, change };
                 });
 
@@ -955,8 +976,8 @@ const ComparativeCampaignAnalysis: React.FC = () => {
                                 t.trend === "increasing"
                                   ? "text-green-600"
                                   : t.trend === "decreasing"
-                                    ? "text-red-600"
-                                    : "text-slate-600"
+                                  ? "text-red-600"
+                                  : "text-slate-600"
                               }`}
                             >
                               {t.trend}

@@ -1,6 +1,7 @@
 // src/models/campaign.ts
 export interface Campaign {
-  theme: any;
+  marketingCost: number;
+  theme?: Record<string, unknown> | null;
   type: string;
   id: string;
   name: string;

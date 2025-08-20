@@ -45,6 +45,8 @@ const mockCampaigns: Campaign[] = [
     emailsSent: 450,
     clickThroughRate: 12.5,
     conversionRate: 8.2,
+    marketingCost: 2600,
+    theme: null,
   },
   {
     id: "campaign_2",
@@ -73,6 +75,8 @@ const mockCampaigns: Campaign[] = [
     emailsSent: 200,
     clickThroughRate: 8.3,
     conversionRate: 6.1,
+    marketingCost: 1275,
+    theme: null,
   },
   {
     id: "campaign_3",
@@ -101,13 +105,14 @@ const mockCampaigns: Campaign[] = [
     emailsSent: 350,
     clickThroughRate: 15.2,
     conversionRate: 12.4,
+    marketingCost: 1680,
+    theme: null,
   },
 ];
 
 // Helper function to simulate API delay
-const delay = (ms: number): Promise<void> => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 // Helper function to calculate days left
 const calculateDaysLeft = (endDate: string): number => {
@@ -122,10 +127,9 @@ export const getAllCampaigns = async (
   clientId?: string,
 ): Promise<Campaign[]> => {
   await delay(500);
-  if (clientId) {
-    return mockCampaigns.filter((campaign) => campaign.clientId === clientId);
-  }
-  return [...mockCampaigns];
+  return clientId
+    ? mockCampaigns.filter((campaign) => campaign.clientId === clientId)
+    : [...mockCampaigns];
 };
 
 // Get campaigns for specific client
@@ -163,6 +167,8 @@ export const createCampaign = async (
     createdAt: new Date(),
     createdBy: "Current User", // Replace with actual user context
     tags: data.tags || [],
+    marketingCost: 0,
+    theme: null,
   };
 
   mockCampaigns.push(newCampaign);
@@ -178,9 +184,7 @@ export const updateCampaign = async (
   const campaignIndex = mockCampaigns.findIndex(
     (campaign) => campaign.id === id,
   );
-  if (campaignIndex === -1) {
-    return null;
-  }
+  if (campaignIndex === -1) return null;
 
   const updatedCampaign = {
     ...mockCampaigns[campaignIndex],
@@ -201,13 +205,10 @@ export const updateCampaign = async (
 
 export const deleteCampaign = async (id: string): Promise<boolean> => {
   await delay(500);
-
   const campaignIndex = mockCampaigns.findIndex(
     (campaign) => campaign.id === id,
   );
-  if (campaignIndex === -1) {
-    return false;
-  }
+  if (campaignIndex === -1) return false;
 
   mockCampaigns.splice(campaignIndex, 1);
   return true;
@@ -239,7 +240,6 @@ export const getCampaignStats = async (
     activeCampaigns: activeCampaigns.length,
     totalRaised,
     successRate,
-    // Include client-specific stats if filtering by client
     ...(clientId && {
       clientCampaigns: campaigns.length,
       clientActiveCount: activeCampaigns.length,
@@ -255,7 +255,7 @@ export const searchCampaigns = async (
 ): Promise<Campaign[]> => {
   await delay(300);
 
-  let campaigns = clientId
+  const campaigns = clientId
     ? mockCampaigns.filter((c) => c.clientId === clientId)
     : mockCampaigns;
 
@@ -274,8 +274,7 @@ export const getCampaignsByStatus = async (
   clientId?: string,
 ): Promise<Campaign[]> => {
   await delay(300);
-
-  let campaigns = clientId
+  const campaigns = clientId
     ? mockCampaigns.filter((c) => c.clientId === clientId)
     : mockCampaigns;
 
@@ -287,7 +286,6 @@ export const migrateCampaignsToClient = async (
   defaultClientId: string,
 ): Promise<void> => {
   await delay(200);
-
   mockCampaigns.forEach((campaign) => {
     if (!campaign.clientId) {
       campaign.clientId = defaultClientId;
@@ -309,6 +307,5 @@ class CampaignService {
   migrateCampaignsToClient = migrateCampaignsToClient;
 }
 
-// Export singleton instance
 export const campaignService = new CampaignService();
 export default campaignService;
