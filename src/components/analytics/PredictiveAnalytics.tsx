@@ -245,7 +245,6 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
     // Safe field access with defaults
     const donorCount = (campaign as any).donorCount ?? 0;
     const averageGift = (campaign as any).averageGift ?? 0;
-    const _marketingCost = (campaign as any).marketingCost ?? 0;
 
     // Simple donor growth estimate
     const donorGrowthRate =
