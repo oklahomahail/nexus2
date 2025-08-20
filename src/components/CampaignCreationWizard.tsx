@@ -13,7 +13,7 @@ import {
   Gift,
   Star,
 } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 import Modal from "@/components/ui-kit/Modal";
 import { createCampaign } from "@/services/campaignService";
@@ -114,7 +114,7 @@ const defaultValues: WizardFormData = {
   goal: 10000,
   startDate: new Date().toISOString().split("T")[0],
   endDate: "",
-  category: "General" as const,
+  category: "General",
   targetAudience: "",
   theme: "blue",
   isPublic: true,
@@ -135,6 +135,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
 
   const totalSteps = 5;
 
+  /* ------------------------------ Reset on open ------------------------------ */
   useEffect(() => {
     if (!open) return;
 
@@ -149,40 +150,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     return () => clearTimeout(timer);
   }, [open]);
 
-  // Add keyboard shortcut for the wizard
-  useEffect(() => {
-    if (!open) return;
-
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Allow Escape to close
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-
-      // Arrow keys for navigation (when not in input fields)
-      if (
-        e.target instanceof HTMLElement &&
-        !["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)
-      ) {
-        if (
-          e.key === "ArrowRight" &&
-          currentStep < totalSteps &&
-          getStepValidation(currentStep)
-        ) {
-          e.preventDefault();
-          nextStep();
-        } else if (e.key === "ArrowLeft" && currentStep > 1) {
-          e.preventDefault();
-          prevStep();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [open, currentStep]);
-
+  /* ------------------------------ Helpers/State ------------------------------ */
   const updateFormData = (field: keyof WizardFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
@@ -197,32 +165,35 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     }));
   };
 
-  const nextStep = () => {
-    if (currentStep < totalSteps) setCurrentStep(currentStep + 1);
-  };
+  const nextStep = useCallback(() => {
+    setCurrentStep((s) => (s < totalSteps ? s + 1 : s));
+  }, [totalSteps]);
 
-  const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
+  const prevStep = useCallback(() => {
+    setCurrentStep((s) => (s > 1 ? s - 1 : s));
+  }, []);
 
-  const getStepValidation = (step: number) => {
-    switch (step) {
-      case 1:
-        return (
-          formData.name.trim() && formData.type && formData.description.trim()
-        );
-      case 2:
-        return formData.goal > 0;
-      case 3:
-        return formData.startDate && formData.endDate;
-      case 4:
-        return true; // Theme is optional
-      case 5:
-        return true; // Preview step
-      default:
-        return false;
-    }
-  };
+  const getStepValidation = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 1:
+          return (
+            formData.name.trim() && formData.type && formData.description.trim()
+          );
+        case 2:
+          return formData.goal > 0;
+        case 3:
+          return !!formData.startDate && !!formData.endDate;
+        case 4:
+          return true; // Theme is optional
+        case 5:
+          return true; // Preview step
+        default:
+          return false;
+      }
+    },
+    [formData],
+  );
 
   const validate = (): string | null => {
     if (!formData.name.trim()) return "Campaign name is required";
@@ -276,16 +247,58 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     }
   };
 
+  /* -------------------------- Keyboard navigation UX ------------------------- */
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Allow Escape to close
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      // Arrow keys for navigation (when not in input fields)
+      if (
+        e.target instanceof HTMLElement &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)
+      ) {
+        if (
+          e.key === "ArrowRight" &&
+          currentStep < totalSteps &&
+          getStepValidation(currentStep)
+        ) {
+          e.preventDefault();
+          nextStep();
+        } else if (e.key === "ArrowLeft" && currentStep > 1) {
+          e.preventDefault();
+          prevStep();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [
+    open,
+    currentStep,
+    totalSteps,
+    getStepValidation,
+    nextStep,
+    prevStep,
+    onClose,
+  ]);
+
+  /* --------------------------------- Derived -------------------------------- */
   const currentTheme = themes.find((t) => t.id === formData.theme) || themes[0];
   const selectedType = campaignTypes.find((t) => t.id === formData.type);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
     }).format(amount);
-  };
 
   const calculateDaysLeft = () => {
     if (!formData.endDate) return null;
@@ -296,6 +309,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     return diffDays;
   };
 
+  /* ----------------------------- Small components ---------------------------- */
   const Progress = () => (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -363,6 +377,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     </div>
   );
 
+  /* ---------------------------------- Render --------------------------------- */
   return (
     <Modal open={open} onClose={onClose}>
       <div className="max-w-2xl mx-auto">
@@ -414,7 +429,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                       <button
                         key={type.id}
                         type="button"
-                        title={type.description} // 👈 TOOLTIP ADDED HERE!
+                        title={type.description}
                         onClick={() => updateFormData("type", type.id)}
                         className={`p-4 border rounded-lg text-left transition-colors ${
                           formData.type === type.id
@@ -749,7 +764,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                     <button
                       key={theme.id}
                       type="button"
-                      title={`${theme.name} theme - Primary: ${theme.primary}`} // 👈 TOOLTIP FOR THEMES!
+                      title={`${theme.name} theme - Primary: ${theme.primary}`}
                       onClick={() => updateFormData("theme", theme.id)}
                       className={`p-3 border rounded-lg transition-colors ${
                         formData.theme === theme.id
@@ -791,7 +806,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
                     <button
                       key={tag}
                       type="button"
-                      title={`Add "${tag}" tag to help categorize your campaign`} // 👈 TOOLTIPS FOR TAGS!
+                      title={`Add "${tag}" tag to help categorize your campaign`}
                       onClick={() => toggleTag(tag)}
                       className={`px-3 py-1 rounded-full text-sm transition-colors ${
                         formData.tags.includes(tag)
