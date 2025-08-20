@@ -28,7 +28,13 @@ interface CampaignListProps {
   clientId?: string; // NEW: Add clientId prop for filtering
 }
 
-type CampaignType = 'annual' | 'capital' | 'emergency' | 'program' | 'event' | 'endowment';
+type CampaignType =
+  | "annual"
+  | "capital"
+  | "emergency"
+  | "program"
+  | "event"
+  | "endowment";
 
 const CampaignList: React.FC<CampaignListProps> = ({
   onCreateCampaign,
@@ -117,7 +123,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
       emergency: Heart,
       program: Users,
       event: Star,
-      endowment: Gift
+      endowment: Gift,
     };
     return icons[type as CampaignType] || Target;
   };
@@ -132,7 +138,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
   const isNewCampaign = (campaign: Campaign) => {
     if (!campaign.createdAt) return false;
     const createdDate = new Date(campaign.createdAt);
-    const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     return createdDate.getTime() > sevenDaysAgo;
   };
 
@@ -219,9 +225,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
           {searchQuery || statusFilter !== "all" ? (
             <>
               Showing {filteredCampaigns.length} of {campaigns.length} campaigns
-              {searchQuery && (
-                <span> matching "{searchQuery}"</span>
-              )}
+              {searchQuery && <span> matching "{searchQuery}"</span>}
             </>
           ) : (
             `${campaigns.length} total campaigns`
@@ -257,9 +261,9 @@ const CampaignList: React.FC<CampaignListProps> = ({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredCampaigns.map((campaign) => {
-            const TypeIcon = getTypeIcon(campaign.type || 'annual');
+            const TypeIcon = getTypeIcon(campaign.type || "annual");
             const isNew = isNewCampaign(campaign);
-            
+
             return (
               <div
                 key={campaign.id}
@@ -281,14 +285,14 @@ const CampaignList: React.FC<CampaignListProps> = ({
                         >
                           {campaign.status}
                         </span>
-                        
+
                         {/* NEW BADGE for recently created campaigns */}
                         {isNew && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30 animate-pulse">
                             ✨ New
                           </span>
                         )}
-                        
+
                         <span className="text-slate-400 text-xs">
                           {campaign.category}
                         </span>
@@ -342,7 +346,9 @@ const CampaignList: React.FC<CampaignListProps> = ({
                     <Users className="w-3 h-3" />
                     <span>{campaign.donorCount} donors</span>
                   </div>
-                  <div className={`flex items-center space-x-1 ${getDaysLeftColor(campaign.daysLeft)}`}>
+                  <div
+                    className={`flex items-center space-x-1 ${getDaysLeftColor(campaign.daysLeft)}`}
+                  >
                     <Calendar className="w-3 h-3" />
                     <span>{campaign.daysLeft} days left</span>
                   </div>
@@ -400,12 +406,12 @@ const CampaignList: React.FC<CampaignListProps> = ({
 
                 {/* Copy Campaign Link Button */}
                 {isNew && (
-                  <button 
+                  <button
                     onClick={() => {
-                      const campaignUrl = `https://nexus.app/campaign/${campaign.name.toLowerCase().replace(/\s+/g, '-')}`;
+                      const campaignUrl = `https://nexus.app/campaign/${campaign.name.toLowerCase().replace(/\s+/g, "-")}`;
                       void navigator.clipboard.writeText(campaignUrl);
                       // You could add a toast notification here
-                      alert('📋 Campaign link copied to clipboard!');
+                      alert("📋 Campaign link copied to clipboard!");
                     }}
                     className="w-full mt-2 text-blue-400 hover:text-blue-300 text-sm py-1 transition-colors"
                   >

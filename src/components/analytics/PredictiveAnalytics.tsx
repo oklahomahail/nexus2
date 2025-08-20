@@ -1,22 +1,13 @@
-import React, { useState, useMemo, useEffect } from "react";
 import {
-  TrendingUp,
-  TrendingDown,
   Target,
-  Calculator,
   Zap,
   AlertTriangle,
   CheckCircle,
-  BarChart3,
-  Calendar,
   DollarSign,
-  Percent,
   Brain,
-  Play,
 } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -24,12 +15,12 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   ReferenceLine,
 } from "recharts";
-import { useCampaigns } from "../../hooks/useCampaigns";
+
 import { useClient } from "../../context/ClientContext";
+import { useCampaigns } from "../../hooks/useCampaigns";
+
 import type { Campaign } from "../../models/campaign";
 
 type PredictiveAnalyticsProps = {
@@ -156,7 +147,8 @@ const getSuccessColor = (prob: number) => {
 
 const getRiskColor = (impact: RiskFactor["impact"]) => {
   if (impact === "high") return "bg-red-50 border-red-200 text-red-800";
-  if (impact === "medium") return "bg-yellow-50 border-yellow-200 text-yellow-800";
+  if (impact === "medium")
+    return "bg-yellow-50 border-yellow-200 text-yellow-800";
   return "bg-blue-50 border-blue-200 text-blue-800";
 };
 
@@ -173,24 +165,24 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
     injectedCampaigns?.length
       ? injectedCampaigns
       : liveCampaigns?.length
-      ? liveCampaigns
-      : mockCampaigns
+        ? liveCampaigns
+        : mockCampaigns
   ) as Campaign[];
 
   const clientId = (currentClient?.id ?? "acme") as string;
 
   const clientCampaigns = useMemo(
     () => campaigns.filter((c: any) => c.clientId === clientId),
-    [campaigns, clientId]
+    [campaigns, clientId],
   );
 
   const activeCampaigns = useMemo(
     () => clientCampaigns.filter((c) => c.status === "Active"),
-    [clientCampaigns]
+    [clientCampaigns],
   );
 
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>(
-    activeCampaigns[0]?.id ?? ""
+    activeCampaigns[0]?.id ?? "",
   );
 
   // Keep selection in sync if the active set changes
@@ -202,9 +194,18 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
   const [whatIfScenarios] = useState<WhatIfScenario[]>([
     { name: "Baseline", adjustments: {} },
-    { name: "Increased Marketing (+20%)", adjustments: { dailyVelocityMultiplier: 1.2 } },
-    { name: "Major Donor Push (+50% avg gift)", adjustments: { averageGiftMultiplier: 1.5 } },
-    { name: "Campaign Extension (+14 days)", adjustments: { campaignExtension: 14 } },
+    {
+      name: "Increased Marketing (+20%)",
+      adjustments: { dailyVelocityMultiplier: 1.2 },
+    },
+    {
+      name: "Major Donor Push (+50% avg gift)",
+      adjustments: { averageGiftMultiplier: 1.5 },
+    },
+    {
+      name: "Campaign Extension (+14 days)",
+      adjustments: { campaignExtension: 14 },
+    },
   ]);
 
   const [customScenario, setCustomScenario] = useState<WhatIfScenario>({
@@ -226,11 +227,11 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
     const totalDays = Math.max(
       1,
-      Math.ceil((endDate.getTime() - startDate.getTime()) / 86_400_000)
+      Math.ceil((endDate.getTime() - startDate.getTime()) / 86_400_000),
     );
     const daysElapsed = Math.max(
       0,
-      Math.ceil((now.getTime() - startDate.getTime()) / 86_400_000)
+      Math.ceil((now.getTime() - startDate.getTime()) / 86_400_000),
     );
     const daysRemaining = Math.max(0, totalDays - daysElapsed);
 
@@ -238,7 +239,8 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
     const dailyVelocity = daysElapsed > 0 ? campaign.raised / daysElapsed : 0;
 
     const expectedProgress = (daysElapsed / totalDays) * 100;
-    const efficiency = expectedProgress > 0 ? progressPercentage / expectedProgress : 1;
+    const efficiency =
+      expectedProgress > 0 ? progressPercentage / expectedProgress : 1;
 
     // Safe field access with defaults
     const donorCount = (campaign as any).donorCount ?? 0;
@@ -247,32 +249,49 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
     // Simple donor growth estimate
     const donorGrowthRate =
-      daysElapsed > 7 ? Math.max(0, (Number(donorCount) - 50) / daysElapsed) : 2;
+      daysElapsed > 7
+        ? Math.max(0, (Number(donorCount) - 50) / daysElapsed)
+        : 2;
 
     // Success probability heuristic
     const progressScore = Math.min(progressPercentage / 100, 1) * 0.3;
-    const velocityScore = Math.min(dailyVelocity / (campaign.goal / totalDays), 2) * 0.25;
+    const velocityScore =
+      Math.min(dailyVelocity / (campaign.goal / totalDays), 2) * 0.25;
     const efficiencyScore = Math.min(efficiency, 2) * 0.2;
     const timeScore =
-      daysRemaining > 0 ? Math.min(1, daysRemaining / (totalDays * 0.3)) * 0.15 : 0;
+      daysRemaining > 0
+        ? Math.min(1, daysRemaining / (totalDays * 0.3)) * 0.15
+        : 0;
     const donorScore = Math.min(Number(donorCount) / 100, 1) * 0.1;
 
     const successProbability = Math.min(
       95,
-      Math.max(5, (progressScore + velocityScore + efficiencyScore + timeScore + donorScore) * 100)
+      Math.max(
+        5,
+        (progressScore +
+          velocityScore +
+          efficiencyScore +
+          timeScore +
+          donorScore) *
+          100,
+      ),
     );
 
     const generateForecast = (
       scenario: "conservative" | "realistic" | "optimistic",
-      velocityMultiplier: number
+      velocityMultiplier: number,
     ): ForecastResult => {
       const adjustedVelocity = dailyVelocity * velocityMultiplier;
       const volatilityFactor =
-        scenario === "conservative" ? 0.8 : scenario === "optimistic" ? 1.2 : 1.0;
+        scenario === "conservative"
+          ? 0.8
+          : scenario === "optimistic"
+            ? 1.2
+            : 1.0;
 
       const projectedTotal = Math.min(
         campaign.goal * 1.5,
-        campaign.raised + adjustedVelocity * daysRemaining * volatilityFactor
+        campaign.raised + adjustedVelocity * daysRemaining * volatilityFactor,
       );
 
       const dailyProjections: DailyProjection[] = [];
@@ -305,7 +324,12 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
       return {
         projectedTotal: Math.round(projectedTotal),
         projectedCompletionDate,
-        confidenceLevel: scenario === "conservative" ? 85 : scenario === "optimistic" ? 65 : 75,
+        confidenceLevel:
+          scenario === "conservative"
+            ? 85
+            : scenario === "optimistic"
+              ? 65
+              : 75,
         scenarioLabel: scenario,
         dailyProjections,
       };
@@ -350,15 +374,27 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
     // Recommendations
     const recommendations: string[] = [];
     if (efficiency > 1.2) {
-      recommendations.push("Consider increasing goal by 20–30% to maximize impact");
+      recommendations.push(
+        "Consider increasing goal by 20–30% to maximize impact",
+      );
     } else if (efficiency < 0.8) {
-      recommendations.push("Boost daily outreach efforts by 50% to get back on track");
+      recommendations.push(
+        "Boost daily outreach efforts by 50% to get back on track",
+      );
     }
-    if (averageGift && donorCount && averageGift < campaign.goal / Number(donorCount) / 2) {
-      recommendations.push("Focus on increasing average gift size through targeted asks");
+    if (
+      averageGift &&
+      donorCount &&
+      averageGift < campaign.goal / Number(donorCount) / 2
+    ) {
+      recommendations.push(
+        "Focus on increasing average gift size through targeted asks",
+      );
     }
     if (successProbability < 60) {
-      recommendations.push("Consider strategic campaign adjustments or timeline extension");
+      recommendations.push(
+        "Consider strategic campaign adjustments or timeline extension",
+      );
     }
 
     return {
@@ -380,7 +416,7 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
   const predictionModel = useMemo(
     () => (selectedCampaign ? calculatePredictions(selectedCampaign) : null),
-    [selectedCampaign]
+    [selectedCampaign],
   );
 
   /* ------------------------------- UI States ------------------------------ */
@@ -406,15 +442,21 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
     return (
       <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
         <Brain className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-slate-900 mb-2">No Active Campaigns</h3>
-        <p className="text-slate-600">Create an active campaign to see predictive analytics.</p>
+        <h3 className="text-lg font-medium text-slate-900 mb-2">
+          No Active Campaigns
+        </h3>
+        <p className="text-slate-600">
+          Create an active campaign to see predictive analytics.
+        </p>
       </div>
     );
   }
 
   /* ----------------------------- What-if Engine ---------------------------- */
 
-  const calculateWhatIfScenario = (scenario: WhatIfScenario): ForecastResult | null => {
+  const calculateWhatIfScenario = (
+    scenario: WhatIfScenario,
+  ): ForecastResult | null => {
     const { campaign, currentMetrics } = predictionModel;
     const adjustments = scenario.adjustments;
 
@@ -425,7 +467,7 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
     const projectedTotal = Math.min(
       campaign.goal * 1.5,
-      campaign.raised + adjustedVelocity * adjustedDaysRemaining
+      campaign.raised + adjustedVelocity * adjustedDaysRemaining,
     );
 
     const dailyProjections: DailyProjection[] = [];
@@ -461,22 +503,29 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
   };
 
   const scenarioResults = whatIfScenarios
-    .map((scenario) => ({ scenario, result: calculateWhatIfScenario(scenario) }))
-    .filter(
-      (s): s is { scenario: WhatIfScenario; result: ForecastResult } => Boolean(s.result)
+    .map((scenario) => ({
+      scenario,
+      result: calculateWhatIfScenario(scenario),
+    }))
+    .filter((s): s is { scenario: WhatIfScenario; result: ForecastResult } =>
+      Boolean(s.result),
     );
 
   const combinedChartData = [
-    ...predictionModel.forecasts.realistic.dailyProjections.slice(0, 30).map((p) => ({
-      ...p,
-      realistic: p.cumulative,
-      conservative:
-        predictionModel.forecasts.conservative.dailyProjections.find((cp) => cp.day === p.day)
-          ?.cumulative || 0,
-      optimistic:
-        predictionModel.forecasts.optimistic.dailyProjections.find((op) => op.day === p.day)
-          ?.cumulative || 0,
-    })),
+    ...predictionModel.forecasts.realistic.dailyProjections
+      .slice(0, 30)
+      .map((p) => ({
+        ...p,
+        realistic: p.cumulative,
+        conservative:
+          predictionModel.forecasts.conservative.dailyProjections.find(
+            (cp) => cp.day === p.day,
+          )?.cumulative || 0,
+        optimistic:
+          predictionModel.forecasts.optimistic.dailyProjections.find(
+            (op) => op.day === p.day,
+          )?.cumulative || 0,
+      })),
   ];
 
   /* --------------------------------- Render -------------------------------- */
@@ -486,7 +535,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
       {/* Header & Campaign Selector */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Predictive Analytics</h2>
+          <h2 className="text-2xl font-bold text-slate-900">
+            Predictive Analytics
+          </h2>
           <p className="text-slate-600">
             AI-powered forecasting and scenario modeling for campaign success
           </p>
@@ -511,12 +562,14 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl border border-slate-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-slate-600">Success Probability</h3>
+            <h3 className="text-sm font-medium text-slate-600">
+              Success Probability
+            </h3>
             <Brain className="w-5 h-5 text-purple-500" />
           </div>
           <div
             className={`text-3xl font-bold ${getSuccessColor(
-              predictionModel.successProbability
+              predictionModel.successProbability,
             )}`}
           >
             {Math.round(predictionModel.successProbability)}%
@@ -531,7 +584,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
         <div className="bg-white p-6 rounded-xl border border-slate-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-slate-600">Daily Velocity</h3>
+            <h3 className="text-sm font-medium text-slate-600">
+              Daily Velocity
+            </h3>
             <Zap className="w-5 h-5 text-yellow-500" />
           </div>
           <div className="text-2xl font-bold text-slate-900">
@@ -542,7 +597,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
         <div className="bg-white p-6 rounded-xl border border-slate-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-slate-600">Efficiency Ratio</h3>
+            <h3 className="text-sm font-medium text-slate-600">
+              Efficiency Ratio
+            </h3>
             <Target className="w-5 h-5 text-blue-500" />
           </div>
           <div
@@ -550,20 +607,24 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
               predictionModel.currentMetrics.efficiency > 1.1
                 ? "text-green-600"
                 : predictionModel.currentMetrics.efficiency < 0.9
-                ? "text-red-600"
-                : "text-slate-900"
+                  ? "text-red-600"
+                  : "text-slate-900"
             }`}
           >
             {predictionModel.currentMetrics.efficiency.toFixed(2)}x
           </div>
           <div className="text-sm text-slate-500">
-            {predictionModel.currentMetrics.efficiency > 1 ? "Ahead of pace" : "Behind pace"}
+            {predictionModel.currentMetrics.efficiency > 1
+              ? "Ahead of pace"
+              : "Behind pace"}
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-xl border border-slate-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-slate-600">Projected Total</h3>
+            <h3 className="text-sm font-medium text-slate-600">
+              Projected Total
+            </h3>
             <DollarSign className="w-5 h-5 text-green-500" />
           </div>
           <div className="text-2xl font-bold text-slate-900">
@@ -575,20 +636,40 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
       {/* Forecast Chart */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">Forecast Scenarios</h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          Forecast Scenarios
+        </h3>
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={combinedChartData}>
               <defs>
-                <linearGradient id="optimisticGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient
+                  id="optimisticGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
                   <stop offset="5%" stopColor="#10B981" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#10B981" stopOpacity={0.1} />
                 </linearGradient>
-                <linearGradient id="realisticGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient
+                  id="realisticGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
                   <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1} />
                 </linearGradient>
-                <linearGradient id="conservativeGradient" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient
+                  id="conservativeGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
                   <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.1} />
                 </linearGradient>
@@ -644,22 +725,31 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
 
       {/* What-If Scenarios */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-lg font-semibold text-slate-900 mb-4">What-If Scenario Analysis</h3>
+        <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          What-If Scenario Analysis
+        </h3>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
-            <h4 className="font-medium text-slate-800 mb-3">Scenario Comparison</h4>
+            <h4 className="font-medium text-slate-800 mb-3">
+              Scenario Comparison
+            </h4>
             <div className="space-y-3">
               {scenarioResults.map(({ scenario, result }, index) => (
                 <div key={index} className="p-3 bg-slate-50 rounded-lg border">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium text-slate-800">{scenario.name}</span>
+                    <span className="font-medium text-slate-800">
+                      {scenario.name}
+                    </span>
                     <span className="text-lg font-bold text-slate-900">
                       {formatCurrency(result.projectedTotal)}
                     </span>
                   </div>
                   <div className="text-sm text-slate-600">
-                    Completion: {new Date(result.projectedCompletionDate).toLocaleDateString()}
+                    Completion:{" "}
+                    {new Date(
+                      result.projectedCompletionDate,
+                    ).toLocaleDateString()}
                   </div>
                   <div className="mt-2 w-full bg-slate-200 rounded-full h-2">
                     <div
@@ -667,7 +757,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
                       style={{
                         width: `${Math.min(
                           100,
-                          (result.projectedTotal / predictionModel.campaign.goal) * 100
+                          (result.projectedTotal /
+                            predictionModel.campaign.goal) *
+                            100,
                         )}%`,
                       }}
                     />
@@ -678,7 +770,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
           </div>
 
           <div>
-            <h4 className="font-medium text-slate-800 mb-3">Custom Scenario Builder</h4>
+            <h4 className="font-medium text-slate-800 mb-3">
+              Custom Scenario Builder
+            </h4>
             <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -689,7 +783,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
                   min="0.5"
                   max="2.0"
                   step="0.1"
-                  value={customScenario.adjustments.dailyVelocityMultiplier || 1}
+                  value={
+                    customScenario.adjustments.dailyVelocityMultiplier || 1
+                  }
                   onChange={(e) =>
                     setCustomScenario({
                       ...customScenario,
@@ -704,16 +800,25 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
                 <div className="flex justify-between text-xs text-slate-500 mt-1">
                   <span>50% slower</span>
                   <span>
-                    {((customScenario.adjustments.dailyVelocityMultiplier || 1) * 100).toFixed(0)}%
+                    {(
+                      (customScenario.adjustments.dailyVelocityMultiplier ||
+                        1) * 100
+                    ).toFixed(0)}
+                    %
                   </span>
                   <span>2x faster</span>
                 </div>
               </div>
 
               <div className="p-3 bg-white rounded border">
-                <div className="text-sm font-medium text-slate-800">Custom Projection:</div>
+                <div className="text-sm font-medium text-slate-800">
+                  Custom Projection:
+                </div>
                 <div className="text-lg font-bold text-blue-600">
-                  {formatCurrency(calculateWhatIfScenario(customScenario)?.projectedTotal || 0)}
+                  {formatCurrency(
+                    calculateWhatIfScenario(customScenario)?.projectedTotal ||
+                      0,
+                  )}
                 </div>
               </div>
             </div>
@@ -732,11 +837,16 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
             {predictionModel.riskFactors.length === 0 ? (
               <div className="text-center py-4">
                 <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                <p className="text-slate-600">No significant risks identified</p>
+                <p className="text-slate-600">
+                  No significant risks identified
+                </p>
               </div>
             ) : (
               predictionModel.riskFactors.map((risk, index) => (
-                <div key={index} className={`p-3 rounded-lg border ${getRiskColor(risk.impact)}`}>
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border ${getRiskColor(risk.impact)}`}
+                >
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="font-medium">{risk.factor}</h4>
                     <span className="text-xs px-2 py-1 bg-white rounded">
@@ -744,7 +854,9 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
                     </span>
                   </div>
                   <p className="text-sm mb-2">{risk.description}</p>
-                  <p className="text-xs font-medium">Mitigation: {risk.mitigation}</p>
+                  <p className="text-xs font-medium">
+                    Mitigation: {risk.mitigation}
+                  </p>
                 </div>
               ))
             )}
@@ -758,7 +870,10 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
           </h3>
           <div className="space-y-3">
             {predictionModel.recommendations.map((rec, index) => (
-              <div key={index} className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <div
+                key={index}
+                className="p-3 bg-blue-50 rounded-lg border border-blue-200"
+              >
                 <div className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                   <p className="text-sm text-blue-800">{rec}</p>
@@ -770,8 +885,12 @@ const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({
           <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
             <h4 className="font-medium text-green-800 mb-2">Success Drivers</h4>
             <div className="text-sm text-green-700">
-              Based on your current performance, focus on maintaining daily velocity above{" "}
-              {formatCurrency(predictionModel.currentMetrics.dailyVelocity * 0.9)} to stay on track.
+              Based on your current performance, focus on maintaining daily
+              velocity above{" "}
+              {formatCurrency(
+                predictionModel.currentMetrics.dailyVelocity * 0.9,
+              )}{" "}
+              to stay on track.
             </div>
           </div>
         </div>

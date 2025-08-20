@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { BarChart3, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import Card from "@/components/ui-kit/Card";
 import { Input } from "@/components/ui-kit/Input";
@@ -7,6 +7,7 @@ import ClaudeToolbar from "@/features/claude/ClaudeToolbar";
 import useAutoSave from "@/hooks/useAutoSave";
 import type { Campaign } from "@/models/campaign";
 import { createManualBackup } from "@/services/backup";
+
 import CampaignAnalyticsDetail from "./CampaignAnalyticsDetail";
 
 interface CampaignDetailProps {

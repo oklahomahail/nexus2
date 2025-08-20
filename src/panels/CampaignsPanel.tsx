@@ -1,4 +1,5 @@
 // src/panels/CampaignsPanel.tsx
+import { Target } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 
@@ -15,7 +16,6 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { Campaign } from "../models/campaign";
 import * as campaignService from "../services/campaignService";
 import { CampaignStats } from "../services/campaignService";
-import { Target } from "lucide-react";
 
 type ViewMode = "list" | "detail";
 

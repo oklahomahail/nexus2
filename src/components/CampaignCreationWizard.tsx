@@ -155,26 +155,32 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
 
     const handleKeyPress = (e: KeyboardEvent) => {
       // Allow Escape to close
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
         return;
       }
-      
+
       // Arrow keys for navigation (when not in input fields)
-      if (e.target instanceof HTMLElement && 
-          !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
-        if (e.key === 'ArrowRight' && currentStep < totalSteps && getStepValidation(currentStep)) {
+      if (
+        e.target instanceof HTMLElement &&
+        !["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)
+      ) {
+        if (
+          e.key === "ArrowRight" &&
+          currentStep < totalSteps &&
+          getStepValidation(currentStep)
+        ) {
           e.preventDefault();
           nextStep();
-        } else if (e.key === 'ArrowLeft' && currentStep > 1) {
+        } else if (e.key === "ArrowLeft" && currentStep > 1) {
           e.preventDefault();
           prevStep();
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [open, currentStep]);
 
   const updateFormData = (field: keyof WizardFormData, value: any) => {
@@ -258,7 +264,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
 
       const newCampaign = await createCampaign(campaignData);
       onSaved?.(newCampaign);
-      
+
       // Success feedback
       alert(`🎉 Campaign "${formData.name}" created successfully!`);
       onClose();
