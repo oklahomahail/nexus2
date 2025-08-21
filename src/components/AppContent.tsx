@@ -9,7 +9,7 @@ import {
   Bell,
   Building,
 } from "lucide-react";
-import React, { Suspense, useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState, useEffect } from "react";
 import {
   Routes,
   Route,
@@ -24,6 +24,12 @@ import { useUI } from "@/context/useUI";
 import CampaignsPanel from "@/panels/CampaignsPanel";
 
 import LoadingSpinner from "./LoadingSpinner";
+import {
+  ConnectionStatus,
+  ConnectionBanner,
+} from "../components/ConnectionStatus";
+import DevClientSelector from "../components/DevClientSelector";
+import { useWebSocket } from "../hooks/useWebSocket";
 
 // Lazy loaded components
 const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
@@ -52,6 +58,33 @@ const AppContent: React.FC = () => {
   const [showClaudePanel, setShowClaudePanel] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Initialize WebSocket connection
+  useWebSocket({ autoConnect: true });
+
+  // Initialize WebSocket development tools
+  useEffect(() => {
+    if (
+      import.meta.env.DEV &&
+      import.meta.env.VITE_ENABLE_REAL_TIME === "true"
+    ) {
+      void import("../services/mockWebSocketServer").then(({ mockServer }) => {
+        // Make mockServer globally available in development
+        (window as any).mockServer = mockServer;
+        mockServer.start();
+
+        console.log("🚀 Mock WebSocket server initialized");
+        console.log("💡 Try these commands in console:");
+        console.log(
+          '   mockServer.simulateCampaignUpdate("campaign-123", "raised", 5000)',
+        );
+        console.log(
+          '   mockServer.simulateMilestone("campaign-123", "goal_reached", 100)',
+        );
+        console.log('   mockServer.startCampaignSimulation("campaign-123")');
+      });
+    }
+  }, []);
 
   const currentCampaign = useMemo(
     () => ({
@@ -121,6 +154,9 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary flex">
+      {/* Connection status banner (shows when disconnected) */}
+      <ConnectionBanner />
+
       {/* Sidebar */}
       <div className="w-64 bg-surface-elevated border-r border-border backdrop-blur-md">
         <div className="p-6 border-b border-border">
@@ -199,6 +235,9 @@ const AppContent: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
+              {/* Connection status indicator */}
+              <ConnectionStatus showText size="sm" />
+
               <button className="text-text-secondary hover:text-text-primary transition-colors p-2 hover:bg-surface-muted rounded-lg">
                 <Bell className="w-5 h-5" />
               </button>
@@ -279,6 +318,9 @@ const AppContent: React.FC = () => {
           currentCampaign={currentCampaign}
         />
       </Suspense>
+
+      {/* Development Client Selector */}
+      <DevClientSelector />
     </div>
   );
 };

@@ -14,6 +14,7 @@ import React, { useState, useEffect } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 
+import LiveCampaignDashboard from "../components/LiveCampaignDashboard";
 import * as campaignService from "../services/campaignService";
 
 interface QuickActionCardProps {
@@ -261,7 +262,7 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">
-          Welcome back, Dave! 👋
+          Welcome back, Dave!
         </h1>
         <p className="text-slate-400">
           Here's what's happening with your nonprofit today.
@@ -314,6 +315,21 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
           icon={TrendingUp}
           loading={loading}
         />
+      </div>
+
+      {/* Live Campaign Tracking Section */}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Live Campaign Tracking
+          </h2>
+          <p className="text-slate-400">
+            Real-time progress updates and milestone notifications for all
+            active campaigns.
+          </p>
+        </div>
+
+        <LiveCampaignDashboard />
       </div>
 
       {/* Main Content Grid */}
