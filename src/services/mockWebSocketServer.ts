@@ -1,8 +1,6 @@
 // src/services/mockWebSocketServer.ts
 // Simple mock WebSocket server for development
 export class MockWebSocketServer {
-  private _clients: Set<WebSocket> = new Set();
-  private _campaigns: Map<string, any> = new Map();
   private intervals: Map<string, NodeJS.Timeout> = new Map();
 
   start(port: number = 8080) {
