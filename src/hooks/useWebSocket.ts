@@ -21,7 +21,7 @@ export interface UseWebSocketReturn {
   disconnect: () => void;
   subscribeToCampaign: (campaignId: string) => void;
   unsubscribeFromCampaign: (campaignId: string) => void;
-  sendMessage: (type: string, payload: any) => void;
+  sendMessage: <T = unknown>(type: string, payload: T) => void;
 }
 
 export function useWebSocket(
@@ -29,88 +29,130 @@ export function useWebSocket(
 ): UseWebSocketReturn {
   const { autoConnect = true, subscribeToCampaigns = [] } = options;
   const { currentClient } = useClient();
+
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>("disconnected");
-  const subscribedCampaigns = useRef<Set<string>>(new Set());
-  const isInitialized = useRef(false);
 
-  // Connection management
+  // Tracks desired subscriptions regardless of current socket state
+  const subscribedCampaigns = useRef<Set<string>>(
+    new Set(subscribeToCampaigns),
+  );
+
+  // Queue for outbound messages while disconnected
+  const pendingMessages = useRef<Array<{ type: string; payload: unknown }>>([]);
+
+  // Prevent duplicate connect attempts
+  const connecting = useRef(false);
+  const initializedForClient = useRef<string | null>(null);
+
   const connect = useCallback(async () => {
-    if (!currentClient?.id) {
-      console.warn("Cannot connect WebSocket: no client selected");
-      return;
-    }
+    const clientId = currentClient?.id;
+    if (!clientId) return; // silent no-op until a client is selected
+
+    if (connecting.current) return;
+    if (websocketService.getConnectionStatus() === "connected") return;
 
     try {
-      await websocketService.connect(currentClient.id);
-
-      // Subscribe to campaigns after connection
-      subscribeToCampaigns.forEach((campaignId) => {
-        websocketService.subscribeToCampaign(campaignId);
-        subscribedCampaigns.current.add(campaignId);
-      });
-    } catch (error) {
-      console.error("Failed to connect WebSocket:", error);
+      connecting.current = true;
+      await websocketService.connect(clientId);
+    } catch (err) {
+      // Keep the error visible but concise
+      console.error("WebSocket connect failed:", err);
+    } finally {
+      connecting.current = false;
     }
-  }, [currentClient?.id, subscribeToCampaigns]);
+  }, [currentClient?.id]);
 
   const disconnect = useCallback(() => {
     websocketService.disconnect();
-    subscribedCampaigns.current.clear();
   }, []);
 
-  // Campaign subscription management
   const subscribeToCampaign = useCallback((campaignId: string) => {
+    // Always record intent to subscribe
+    subscribedCampaigns.current.add(campaignId);
+
+    // If connected, send immediately; otherwise, it will be sent on next connect
     if (websocketService.isConnected()) {
       websocketService.subscribeToCampaign(campaignId);
-      subscribedCampaigns.current.add(campaignId);
     }
   }, []);
 
   const unsubscribeFromCampaign = useCallback((campaignId: string) => {
+    subscribedCampaigns.current.delete(campaignId);
     if (websocketService.isConnected()) {
       websocketService.unsubscribeFromCampaign(campaignId);
-      subscribedCampaigns.current.delete(campaignId);
     }
   }, []);
 
-  // Message sending
-  const sendMessage = useCallback((type: string, payload: any) => {
-    websocketService.send({ type, payload });
+  const sendMessage = useCallback(<T>(type: string, payload: T) => {
+    if (websocketService.isConnected()) {
+      websocketService.send({ type, payload });
+      return;
+    }
+    // Queue and flush on next connect
+    pendingMessages.current.push({ type, payload });
   }, []);
 
-  // Set up connection status listener
+  // Connection status listener
   useEffect(() => {
-    const unsubscribe =
-      websocketService.onConnectionChange(setConnectionStatus);
+    const unsubscribe = websocketService.onConnectionChange((status) => {
+      setConnectionStatus(status);
+
+      // On each successful connection, rehydrate subscriptions and flush messages
+      if (status === "connected") {
+        // Resubscribe to everything we intend to follow
+        for (const id of subscribedCampaigns.current) {
+          websocketService.subscribeToCampaign(id);
+        }
+        // Flush any queued messages
+        if (pendingMessages.current.length) {
+          for (const msg of pendingMessages.current) {
+            websocketService.send(msg);
+          }
+          pendingMessages.current = [];
+        }
+      }
+    });
 
     // Set initial status
     setConnectionStatus(websocketService.getConnectionStatus());
-
     return unsubscribe;
   }, []);
 
-  // Auto-connect when client changes
+  // Auto-connect lifecycle per selected client
   useEffect(() => {
-    if (autoConnect && currentClient?.id && !isInitialized.current) {
-      isInitialized.current = true;
+    const clientId = currentClient?.id;
+
+    if (!autoConnect) return;
+    if (!clientId) return;
+
+    // Only initialize once per client id
+    if (initializedForClient.current !== clientId) {
+      initializedForClient.current = clientId;
+      // Seed desired subs from options on first init for this client
+      for (const id of subscribeToCampaigns) {
+        subscribedCampaigns.current.add(id);
+      }
       void connect();
     }
 
+    // Cleanup when client changes away or component unmounts
     return () => {
-      if (isInitialized.current) {
+      if (
+        initializedForClient.current &&
+        initializedForClient.current !== clientId
+      ) {
         disconnect();
-        isInitialized.current = false;
+        initializedForClient.current = null;
       }
     };
-  }, [currentClient?.id, autoConnect, connect, disconnect]);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
+  }, [
+    autoConnect,
+    currentClient?.id,
+    subscribeToCampaigns,
+    connect,
+    disconnect,
+  ]);
 
   return {
     isConnected: connectionStatus === "connected",
@@ -123,31 +165,27 @@ export function useWebSocket(
   };
 }
 
-// Specialized hooks for specific event types
+/* ---------- Event-specific helpers ---------- */
+
 export function useCampaignUpdates(campaignId?: string) {
   const [updates, setUpdates] = useState<CampaignUpdate[]>([]);
   const { subscribeToCampaign, unsubscribeFromCampaign } = useWebSocket();
 
   useEffect(() => {
-    const unsubscribe = websocketService.on<CampaignUpdate>(
+    const off = websocketService.on<CampaignUpdate>(
       "campaign_update",
       (update) => {
         if (!campaignId || update.campaignId === campaignId) {
-          setUpdates((prev) => [update, ...prev].slice(0, 100)); // Keep last 100 updates
+          setUpdates((prev) => [update, ...prev].slice(0, 100));
         }
       },
     );
 
-    // Subscribe to specific campaign if provided
-    if (campaignId) {
-      subscribeToCampaign(campaignId);
-    }
+    if (campaignId) subscribeToCampaign(campaignId);
 
     return () => {
-      unsubscribe();
-      if (campaignId) {
-        unsubscribeFromCampaign(campaignId);
-      }
+      off();
+      if (campaignId) unsubscribeFromCampaign(campaignId);
     };
   }, [campaignId, subscribeToCampaign, unsubscribeFromCampaign]);
 
@@ -158,20 +196,13 @@ export function useMilestoneAlerts() {
   const [alerts, setAlerts] = useState<MilestoneAlert[]>([]);
 
   useEffect(() => {
-    const unsubscribe = websocketService.on<MilestoneAlert>(
-      "milestone_alert",
-      (alert) => {
-        setAlerts((prev) => [alert, ...prev].slice(0, 50)); // Keep last 50 alerts
-      },
-    );
-
-    return unsubscribe;
+    return websocketService.on<MilestoneAlert>("milestone_alert", (alert) => {
+      setAlerts((prev) => [alert, ...prev].slice(0, 50));
+    });
   }, []);
 
   const dismissAlert = useCallback((campaignId: string) => {
-    setAlerts((prev) =>
-      prev.filter((alert) => alert.campaignId !== campaignId),
-    );
+    setAlerts((prev) => prev.filter((a) => a.campaignId !== campaignId));
   }, []);
 
   return { alerts, dismissAlert, clearAlerts: () => setAlerts([]) };
@@ -181,42 +212,30 @@ export function useNotifications() {
   const [notifications, setNotifications] = useState<NotificationMessage[]>([]);
 
   useEffect(() => {
-    const unsubscribe = websocketService.on<NotificationMessage>(
-      "notification",
-      (notification) => {
-        setNotifications((prev) => [notification, ...prev].slice(0, 100));
-      },
-    );
-
-    return unsubscribe;
+    return websocketService.on<NotificationMessage>("notification", (n) => {
+      setNotifications((prev) => [n, ...prev].slice(0, 100));
+    });
   }, []);
 
   const markAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((notification) =>
-        notification.id === id ? { ...notification, read: true } : notification,
-      ),
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   }, []);
 
   const dismissNotification = useCallback((id: string) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== id),
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return {
     notifications,
-    unreadCount,
+    unreadCount: notifications.filter((n) => !n.read).length,
     markAsRead,
     dismissNotification,
     clearNotifications: () => setNotifications([]),
   };
 }
 
-// Connection status indicator hook
 export function useConnectionStatus() {
   const { connectionStatus, connect } = useWebSocket({ autoConnect: false });
 
