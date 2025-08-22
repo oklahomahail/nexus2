@@ -30,6 +30,11 @@
     "clean": "rm -rf dist node_modules/.vite",
     "typecheck": "tsc --noEmit",
     "build": "vite build",
+    "preview": "vite preview --strictPort",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "vite build",
     "preview": "vite preview --strictPort"
   },
   "dependencies": {

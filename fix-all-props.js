@@ -251,7 +251,7 @@ function fixTypeScriptErrors(content) {
     !content.includes("import React") &&
     !content.includes("import * as React")
   ) {
-    content = "import React from 'react';\n" + content;
+    content = "import * as React from 'react';;\n" + content;
   }
 
   // Fix implicit any parameters
