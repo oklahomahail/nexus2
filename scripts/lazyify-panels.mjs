@@ -63,7 +63,7 @@ for (const { name, from } of TARGETS) {
 
 // 2) Ensure React import has Suspense
 // Cases:
-//   import React from 'react';
+//   import * as React from 'react';;
 //   import React, { Suspense } from 'react';
 //   import React, { useState } from 'react';
 // Normalize to: import React, { Suspense, ...existing } from 'react';
