@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 export interface Notification {
@@ -56,25 +57,20 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
 
   const dot = (color: string) => (
     <span
-      className={`inline-block w-2 h-2 rounded-full ${color}`}
+      className={clsx("inline-block w-2 h-2 rounded-full", color)}
       aria-hidden
     />
   );
 
-  const colorFor = (t: Notification["type"]) => {
-    switch (t) {
-      case "success":
-        return "bg-green-400";
-      case "warning":
-        return "bg-yellow-400";
-      case "error":
-        return "bg-red-400";
-      default:
-        return "bg-blue-400";
-    }
-  };
+  type NotifType = "info" | "success" | "warning" | "error";
+  const dotColor = {
+    success: "bg-green-400",
+    warning: "bg-yellow-400",
+    error: "bg-red-400",
+    info: "bg-blue-400",
+  } satisfies Record<NotifType, string>;
 
-  const rowBg = (t: Notification["type"], read: boolean) => {
+  const rowBg = (t: NotifType, read: boolean) => {
     if (read) return "bg-slate-900/30 border-slate-800";
     switch (t) {
       case "success":
@@ -131,10 +127,13 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
           <button
             key={n.id}
             onClick={() => onNotificationClick?.(n)}
-            className={`w-full text-left p-3 border rounded-lg ${rowBg(n.type, n.read)}`}
+            className={clsx(
+              "w-full text-left p-3 border rounded-lg",
+              rowBg(n.type, n.read),
+            )}
           >
             <div className="flex items-start space-x-3">
-              <div className="mt-2">{dot(colorFor(n.type))}</div>
+              <div className="mt-2">{dot(dotColor[n.type as NotifType])}</div>
               <div className="flex-1">
                 <p className="text-sm font-medium">{n.title}</p>
                 <p className="text-sm text-slate-300 mt-1">{n.message}</p>

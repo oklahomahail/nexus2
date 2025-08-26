@@ -30,5 +30,8 @@ jobs:
       - name: Typecheck (app)
         run: pnpm run typecheck:app
 
+      - name: Check dynamic Tailwind classes
+        run: pnpm run check:tailwind:dynamic
+
       - name: Build
         run: pnpm run build

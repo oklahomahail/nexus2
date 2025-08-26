@@ -1,5 +1,73 @@
 /* Nexus Platform - Unified CSS Foundation */
 @import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+/* Tailwind v4 theme tokens mapped from your design variables */
+@theme {
+  /* Color tokens (enable utilities like text-brand-primary, bg-surface-muted, etc.) */
+  --color-brand-primary: rgb(var(--brand-primary));
+  --color-brand-secondary: rgb(var(--brand-secondary));
+  --color-brand-accent: rgb(var(--brand-accent));
+  --color-brand-dark: rgb(var(--text-inverse));
+  --color-brand-muted: rgb(var(--surface-muted));
+
+  --color-bg-primary: rgb(var(--bg-primary));
+  --color-bg-secondary: rgb(var(--bg-secondary));
+  --color-bg-tertiary: rgb(var(--bg-tertiary));
+
+  --color-surface: rgb(var(--surface-primary));
+  --color-surface-elevated: rgb(var(--surface-secondary));
+  --color-surface-muted: rgb(var(--surface-muted));
+
+  --color-border: rgb(var(--border-primary));
+  --color-border-muted: rgb(var(--border-muted));
+
+  --color-text-primary: rgb(var(--text-primary));
+  --color-text-secondary: rgb(var(--text-secondary));
+  --color-text-muted: rgb(var(--text-muted));
+  --color-text-inverse: rgb(var(--text-inverse));
+
+  --color-success: rgb(var(--success));
+  --color-warning: rgb(var(--warning));
+  --color-error: rgb(var(--error));
+  --color-info: rgb(var(--info));
+
+  /* Typography */
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    ui-sans-serif, system-ui, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --font-mono:
+    "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Sizing scales */
+  --spacing-18: 4.5rem;
+  --spacing-88: 22rem;
+  --spacing-128: 32rem;
+
+  /* Radii */
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+
+  /* Shadows (usable via shadow-soft, shadow-medium, shadow-strong) */
+  --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-medium:
+    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+  --shadow-strong:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+
+  /* Breakpoints */
+  --breakpoint-xs: 475px;
+  --breakpoint-3xl: 1600px;
+
+  /* Animations (usable via animate-fade-in, etc.) */
+  --animate-fade-in: fadeIn 0.2s ease-out both;
+  --animate-slide-up: slideUp 0.3s ease-out both;
+  --animate-scale-in: scaleIn 0.2s ease-out both;
+  --animate-shimmer: shimmer 2s infinite linear;
+}
 
 @layer base {
   /* CSS Custom Properties for Design System */
@@ -41,9 +109,7 @@
   html {
     background-color: rgb(var(--bg-primary));
     color: rgb(var(--text-primary));
-    font-family:
-      -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Inter",
-      sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -65,47 +131,37 @@
   .custom-scrollbar::-webkit-scrollbar {
     @apply w-2;
   }
-
   .custom-scrollbar::-webkit-scrollbar-track {
     @apply bg-slate-800;
   }
-
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-slate-600 rounded-full;
   }
-
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     @apply bg-slate-500;
   }
 
-  /* Shadow Utilities */
-  .shadow-md {
-    box-shadow:
-      0 1px 3px 0 rgba(0, 0, 0, 0.1),
-      0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  /* Shadow Utilities (avoid overriding Tailwind's shadow-md) */
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
   }
-
   .shadow-medium {
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-medium);
   }
-
   .shadow-strong {
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-strong);
   }
 
   /* Glass Effect */
   .glass {
-    @apply backdrop-blur-md bg-white/10 border border-white/20;
+    @apply backdrop-blur-md border;
+    background-color: rgb(255 255 255 / 0.1);
+    border-color: rgb(255 255 255 / 0.2);
   }
-
   .glass-dark {
     @apply backdrop-blur-md;
-    background-color: rgba(var(--surface-primary), 0.5);
-    border: 1px solid rgba(var(--border-primary), 0.5);
+    background-color: rgb(var(--surface-primary) / 0.5);
+    border: 1px solid rgb(var(--border-primary) / 0.5);
   }
 
   /* Text Utilities */
@@ -156,22 +212,23 @@
   /* Component Base Styles */
   .card-base {
     @apply rounded-2xl transition-all duration-200;
-    background-color: rgba(var(--surface-primary), 0.5);
-    border: 1px solid rgba(var(--border-primary), 0.5);
+    background-color: rgb(var(--surface-primary) / 0.5);
+    border: 1px solid rgb(var(--border-primary) / 0.5);
     backdrop-filter: blur(4px);
   }
-
   .card-hover {
-    @apply hover:shadow-md hover:-translate-y-0.5;
+    @apply hover:-translate-y-0.5;
+    box-shadow: var(--shadow-soft);
   }
   .card-hover:hover {
-    border-color: rgba(var(--brand-secondary), 0.3);
+    border-color: rgb(var(--brand-secondary) / 0.3);
   }
 
   .panel-base {
-    @apply rounded-2xl shadow-md;
-    background-color: rgba(var(--surface-primary), 0.5);
-    border: 1px solid rgba(var(--border-primary), 0.5);
+    @apply rounded-2xl;
+    box-shadow: var(--shadow-soft);
+    background-color: rgb(var(--surface-primary) / 0.5);
+    border: 1px solid rgb(var(--border-primary) / 0.5);
     backdrop-filter: blur(4px);
   }
 
@@ -179,7 +236,7 @@
     @apply px-4 py-2.5 rounded-xl font-semibold transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
     background-color: rgb(var(--brand-primary));
-    color: white;
+    color: #fff;
   }
   .button-primary:hover:not(:disabled) {
     background-color: rgb(var(--brand-secondary));
@@ -194,12 +251,12 @@
   .button-secondary {
     @apply px-4 py-2.5 rounded-xl font-semibold transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    background-color: rgba(var(--surface-primary), 0.8);
+    background-color: rgb(var(--surface-primary) / 0.8);
     color: rgb(var(--text-primary));
-    border: 1px solid rgba(var(--border-primary), 0.5);
+    border: 1px solid rgb(var(--border-primary) / 0.5);
   }
   .button-secondary:hover:not(:disabled) {
-    background-color: rgba(var(--surface-secondary), 0.8);
+    background-color: rgb(var(--surface-secondary) / 0.8);
   }
   .button-secondary:focus {
     --tw-ring-color: rgb(var(--brand-primary));
@@ -212,7 +269,7 @@
     color: rgb(var(--brand-primary));
   }
   .button-ghost:hover:not(:disabled) {
-    background-color: rgba(var(--brand-primary), 0.1);
+    background-color: rgb(var(--brand-primary) / 0.1);
   }
   .button-ghost:focus {
     --tw-ring-color: rgb(var(--brand-primary));
@@ -221,8 +278,8 @@
   .input-base {
     @apply w-full px-4 py-3 rounded-xl transition-all duration-200;
     @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
-    background-color: rgba(var(--surface-primary), 0.5);
-    border: 1px solid rgba(var(--border-primary), 0.5);
+    background-color: rgb(var(--surface-primary) / 0.5);
+    border: 1px solid rgb(var(--border-primary) / 0.5);
     color: rgb(var(--text-primary));
   }
   .input-base::placeholder {
@@ -282,13 +339,13 @@
 
   /* Animation Utilities */
   .animate-fade-in {
-    animation: fadeIn 0.2s ease-out;
+    animation: var(--animate-fade-in);
   }
   .animate-slide-up {
-    animation: slideUp 0.3s ease-out;
+    animation: var(--animate-slide-up);
   }
   .animate-scale-in {
-    animation: scaleIn 0.2s ease-out;
+    animation: var(--animate-scale-in);
   }
 
   @keyframes fadeIn {
@@ -320,16 +377,14 @@
     }
   }
 
-  /* Responsive Utilities */
+  /* Responsive Layout Helpers */
   .container-responsive {
     @apply mx-auto px-4 sm:px-6 lg:px-8;
     max-width: 1280px;
   }
-
   .grid-responsive {
     @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6;
   }
-
   .grid-auto-fit {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -367,13 +422,14 @@
 
   /* Loading states */
   .loading-skeleton {
-    @apply animate-pulse bg-slate-700/30 rounded;
+    @apply animate-pulse rounded;
+    background-color: rgb(71 85 105 / 0.3);
   }
 
   .loading-shimmer {
     position: relative;
     overflow: hidden;
-    background-color: rgba(var(--surface-primary), 0.5);
+    background-color: rgb(var(--surface-primary) / 0.5);
   }
   .loading-shimmer::after {
     position: absolute;
@@ -382,15 +438,38 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.1),
+      rgb(255 255 255 / 0.1),
       transparent
     );
-    animation: shimmer 2s infinite;
+    animation: var(--animate-shimmer);
     content: "";
   }
+
   @keyframes shimmer {
     100% {
       transform: translateX(100%);
     }
+  }
+
+  /* Safelist island: ensures these utilities are emitted even if referenced only via maps/variables */
+  .__safelist {
+    @apply /* Stat color backgrounds */
+      bg-blue-600 hover:bg-blue-700
+      bg-green-600 hover:bg-green-700
+      bg-purple-600 hover:bg-purple-700
+      bg-indigo-600 hover:bg-indigo-700
+
+      /* Icon/text colors */
+      text-blue-100 text-green-100 text-purple-100 text-indigo-100
+      text-green-400 text-red-400 text-slate-400 text-blue-400 text-yellow-400
+
+      /* Type backgrounds and notification variants */
+      bg-green-400/10 bg-blue-400/10 bg-yellow-400/10
+      bg-green-400 bg-yellow-400 bg-red-400 bg-blue-400
+      bg-slate-900/30 border-slate-800
+      bg-green-900/15 border-green-800/50
+      bg-yellow-900/15 border-yellow-800/50
+      bg-red-900/15 border-red-800/50
+      bg-blue-900/15 border-blue-800/50;
   }
 }

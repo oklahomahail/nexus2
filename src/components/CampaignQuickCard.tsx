@@ -17,11 +17,24 @@ const CampaignQuickCard: React.FC<CampaignQuickCardProps> = ({
   const progress =
     campaign.goal > 0 ? (campaign.raised / campaign.goal) * 100 : 0;
 
+  const rootClass = [
+    "cursor-pointer",
+    "hover:shadow-lg",
+    "transition-shadow",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const statusClass =
+    campaign.status === "Active"
+      ? "bg-green-100 text-green-800"
+      : campaign.status === "Completed"
+        ? "bg-blue-100 text-blue-800"
+        : "bg-gray-100 text-gray-800";
+
   return (
-    <div
-      className={`cursor-pointer hover:shadow-lg transition-shadow ${className || ""}`}
-      onClick={onClick}
-    >
+    <div className={rootClass} onClick={onClick}>
       <Card>
         <div className="space-y-3">
           <div>
@@ -60,13 +73,14 @@ const CampaignQuickCard: React.FC<CampaignQuickCardProps> = ({
 
           <div className="flex justify-between items-center text-sm">
             <span
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                campaign.status === "Active"
-                  ? "bg-green-100 text-green-800"
-                  : campaign.status === "Completed"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-gray-100 text-gray-800"
-              }`}
+              className={[
+                "px-2",
+                "py-1",
+                "rounded-full",
+                "text-xs",
+                "font-medium",
+                statusClass,
+              ].join(" ")}
             >
               {campaign.status}
             </span>

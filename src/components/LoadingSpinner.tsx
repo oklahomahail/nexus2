@@ -1,4 +1,4 @@
-// src/components/LoadingSpinner.tsx - Updated for dark theme
+// src/components/LoadingSpinner.tsx - Updated for dark theme (no template literals)
 import React from "react";
 
 interface LoadingSpinnerProps {
@@ -12,19 +12,35 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   text,
   className = "",
 }) => {
-  const sizeClasses = {
+  const sizeClasses: Record<
+    NonNullable<LoadingSpinnerProps["size"]>,
+    string
+  > = {
     sm: "w-4 h-4",
     md: "w-6 h-6",
     lg: "w-8 h-8",
     xl: "w-12 h-12",
   };
 
+  const spinnerClass = [
+    sizeClasses[size],
+    "animate-spin",
+    "rounded-full",
+    "border-2",
+    "border-slate-600",
+    "border-t-blue-500",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const wrap = ["flex items-center justify-center", className]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div className={wrap}>
       <div className="flex flex-col items-center space-y-3">
-        <div
-          className={`${sizeClasses[size]} animate-spin rounded-full border-2 border-slate-600 border-t-blue-500`}
-        />
+        <div className={spinnerClass} />
         {text && <p className="text-slate-400 text-sm font-medium">{text}</p>}
       </div>
     </div>

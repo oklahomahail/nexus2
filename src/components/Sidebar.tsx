@@ -21,7 +21,6 @@ const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
   const { activeView, sidebarCollapsed, setActiveView, toggleSidebar } =
     useUI();
 
-  // Loosen types here to avoid breaking on evolving hook shapes
   const campaignsAny = useCampaigns() as any;
   const analyticsAny = useAnalytics() as any;
 
@@ -29,12 +28,25 @@ const Sidebar: React.FC<SidebarProps> = ({ navigationItems }) => {
   const organization = analyticsAny?.organization ?? null;
   const user = analyticsAny?.user ?? null;
 
+  const asideClass = [
+    "bg-surface/50",
+    "border-r",
+    "border-surface",
+    "backdrop-blur-md",
+    "transition-all",
+    "duration-300",
+    sidebarCollapsed ? "w-16" : "w-64",
+    "hidden sm:block",
+    "relative",
+    "flex",
+    "flex-col",
+    "h-screen",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <aside
-      className={`bg-surface/50 border-r border-surface backdrop-blur-md transition-all duration-300 ${
-        sidebarCollapsed ? "w-16" : "w-64"
-      } hidden sm:block relative flex flex-col h-screen`}
-    >
+    <aside className={asideClass}>
       {/* Header */}
       <div className="p-6 border-b border-surface/50 flex items-center justify-between flex-shrink-0">
         {!sidebarCollapsed && (

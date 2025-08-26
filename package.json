@@ -1,6 +1,6 @@
 {
   "name": "nexus",
-  "version": "0.5.0",
+  "version": "0.1.0",
   "private": true,
   "engines": {
     "node": ">=20.11.0"
@@ -11,7 +11,7 @@
       "@tailwindcss/oxide"
     ]
   },
-  "packageManager": "pnpm@9.12.0+sha512.4abf725084d7bcbafbd728bfc7bee61f2f791f977fd87542b3579dcb23504d170d46337945e4c66485cd12d588a0c0e570ed9c477e7ccdd8507cf05f3f92eaca",
+  "packageManager": "pnpm@10.0.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -27,18 +27,9 @@
     "verify:barrels": "node scripts/verify-barrels.mjs",
     "check:paths": "pnpm lint && pnpm verify:barrels",
     "test": "vitest",
-    "clean": "rm -rf dist node_modules/.vite",
-    "typecheck": "tsc --noEmit",
-    "build": "vite build",
-    "preview": "vite preview --strictPort",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "build": "vite build",
-    "preview": "vite preview --strictPort"
+    "check:tailwind:dynamic": "node scripts/check-dynamic-classes.js"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.7",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "express": "^5.1.0",
@@ -62,10 +53,9 @@
     "@types/node": "^20.19.10",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
-    "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.7.0",
-    "autoprefixer": "10",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^3.10.1",
@@ -78,9 +68,8 @@
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "lint-staged": "^15.5.2",
-    "postcss": "8",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
     "vite": "^7.1.1",

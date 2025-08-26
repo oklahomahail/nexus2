@@ -24,6 +24,7 @@ Open http://localhost:5173 to view in the browser.
 - Expand donor and campaign features
 - Integrate AI content & analytics
 - Add authentication and permissions
+
 ## Backup Module
 
 Use the **barrel** import only:
@@ -38,3 +39,4 @@ import {
   saveBackup,
   deleteBackup,
 } from "@/services/backup";
+```
