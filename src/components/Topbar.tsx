@@ -118,9 +118,8 @@ const Topbar: React.FC<TopbarProps> = ({
     setNotifications(mockNotifications);
   }, []);
 
-  // Poll notifications (30s visible / 3m hidden)
-
-  void usePolling(fetchNotifications, {
+  /// Poll notifications (30s visible / 3m hidden)
+  const __polling: void = usePolling(fetchNotifications, {
     visibleInterval: 30000,
     hiddenInterval: 180000,
     enabled: true,
