@@ -1,48 +1,46 @@
 // src/hooks/useDonorAnalytics.ts
-
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useClient } from "@/context/ClientContext";
-import { BehavioralSegment } from "@/models/donorAnalytics";
+import type { BehavioralSegment } from "@/models/donorAnalytics";
 import * as donorAnalyticsService from "@/services/donorAnalyticsService";
 
 export function useDonorAnalytics() {
   const { currentClient } = useClient();
+  const clientId = currentClient?.id;
+
   const [segments, setSegments] = useState<BehavioralSegment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Load segment analytics
   const loadSegmentAnalytics = useCallback(async () => {
-    if (!currentClient?.id) return;
+    if (!clientId) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await donorAnalyticsService.getSegmentAnalytics(
-        currentClient.id,
-      );
+      const response =
+        await donorAnalyticsService.getSegmentAnalytics(clientId);
       setSegments(response.segments);
     } catch (err) {
-      setError("Failed to load donor segments");
-      console.error("Donor analytics error:", err);
+      console.error("Donor analytics load failed:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load donor segments",
+      );
     } finally {
       setLoading(false);
     }
-  }, [currentClient?.id]);
+  }, [clientId]);
 
   // Get campaign insights
   const getCampaignInsights = useCallback(
     async (campaignId: string) => {
-      if (!currentClient?.id) throw new Error("No client selected");
-
-      return await donorAnalyticsService.getCampaignInsights(
-        currentClient.id,
-        campaignId,
-      );
+      if (!clientId) throw new Error("No client selected");
+      return donorAnalyticsService.getCampaignInsights(clientId, campaignId);
     },
-    [currentClient?.id],
+    [clientId],
   );
 
   // Get engagement trends
@@ -53,14 +51,10 @@ export function useDonorAnalytics() {
       granularity: "daily" | "weekly" | "monthly" | "quarterly";
       segmentId?: string;
     }) => {
-      if (!currentClient?.id) throw new Error("No client selected");
-
-      return await donorAnalyticsService.getEngagementTrends(
-        currentClient.id,
-        params,
-      );
+      if (!clientId) throw new Error("No client selected");
+      return donorAnalyticsService.getEngagementTrends(clientId, params);
     },
-    [currentClient?.id],
+    [clientId],
   );
 
   // Create new segment
@@ -71,24 +65,26 @@ export function useDonorAnalytics() {
         "segmentId" | "donorCount" | "lastUpdated"
       >,
     ) => {
-      if (!currentClient?.id) throw new Error("No client selected");
+      if (!clientId) throw new Error("No client selected");
 
       setLoading(true);
       try {
         const newSegment = await donorAnalyticsService.createSegment(
-          currentClient.id,
+          clientId,
           segmentData,
         );
         setSegments((prev) => [...prev, newSegment]);
         return newSegment;
       } catch (err) {
-        setError("Failed to create segment");
+        setError(
+          err instanceof Error ? err.message : "Failed to create segment",
+        );
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [currentClient?.id],
+    [clientId],
   );
 
   // Get targeting recommendations
@@ -99,25 +95,35 @@ export function useDonorAnalytics() {
       preferred_channels?: string[];
       goals: ("retention" | "acquisition" | "engagement" | "reactivation")[];
     }) => {
-      if (!currentClient?.id) throw new Error("No client selected");
-
-      return await donorAnalyticsService.getCampaignTargetingRecommendations(
-        currentClient.id,
+      if (!clientId) throw new Error("No client selected");
+      return donorAnalyticsService.getCampaignTargetingRecommendations(
+        clientId,
         campaignData,
       );
     },
-    [currentClient?.id],
+    [clientId],
   );
 
-  // Load initial data
+  // Initial load (fire-and-forget, errors handled inside)
   useEffect(() => {
-    loadSegmentAnalytics();
+    void loadSegmentAnalytics();
   }, [loadSegmentAnalytics]);
 
   // Privacy compliance helper
-  const isPrivacyCompliant = useCallback((data: any) => {
+  const isPrivacyCompliant = useCallback((data: unknown) => {
     return donorAnalyticsService.PrivacyUtils.validatePrivacyCompliance(data);
   }, []);
+
+  // Computed
+  const totalDonorCount = useMemo(
+    () => segments.reduce((sum, s) => sum + s.donorCount, 0),
+    [segments],
+  );
+
+  const activeSegmentCount = useMemo(
+    () => segments.filter((s) => s.isActive).length,
+    [segments],
+  );
 
   return {
     // State
@@ -136,10 +142,7 @@ export function useDonorAnalytics() {
     isPrivacyCompliant,
 
     // Computed values
-    totalDonorCount: segments.reduce(
-      (sum, segment) => sum + segment.donorCount,
-      0,
-    ),
-    activeSegmentCount: segments.filter((s) => s.isActive).length,
+    totalDonorCount,
+    activeSegmentCount,
   };
 }
