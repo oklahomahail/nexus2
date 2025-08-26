@@ -30,12 +30,9 @@ interface TopbarProps {
   title?: string;
   description?: string;
   showSearch?: boolean;
-  /** Optional area to inject custom actions (renders before the New Campaign button) */
   actions?: React.ReactNode;
   user?: UserInfo;
-  /** Hide the "New Campaign" button if desired */
   showNewCampaignButton?: boolean;
-  /** Override the default navigation for the New Campaign button */
   onNewCampaign?: () => void | Promise<void>;
 }
 
@@ -70,7 +67,7 @@ const Topbar: React.FC<TopbarProps> = ({
   // Search input focus ref
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Keyboard shortcuts: "/" focuses search, "Escape" closes menus
+  // Keyboard shortcuts
   useKeyboardShortcuts([
     {
       key: "/",
@@ -122,7 +119,7 @@ const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   // Poll notifications (30s visible / 3m hidden)
-  // If usePolling returns a Promise, explicitly ignore it to satisfy no-floating-promises.
+  // If the hook returns a Promise, explicitly ignore it to satisfy no-floating-promises.
   void usePolling(fetchNotifications, {
     visibleInterval: 30000,
     hiddenInterval: 180000,
@@ -155,7 +152,6 @@ const Topbar: React.FC<TopbarProps> = ({
   // Lint-safe handler for New Campaign button (no-floating-promises)
   const handleNewCampaignClick = useCallback(() => {
     if (onNewCampaign) {
-      // Make the possible Promise explicit and handled
       void Promise.resolve(onNewCampaign()).catch(() => {
         /* optionally toast/log an error */
       });
@@ -216,10 +212,8 @@ const Topbar: React.FC<TopbarProps> = ({
 
           {/* Right: Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            {/* Custom actions slot */}
             {actions}
 
-            {/* New Campaign */}
             {showNewCampaignButton && (
               <button
                 type="button"
@@ -231,7 +225,6 @@ const Topbar: React.FC<TopbarProps> = ({
               </button>
             )}
 
-            {/* Storage quota */}
             <div className="hidden lg:block">
               <StorageQuotaChip />
             </div>
@@ -266,7 +259,6 @@ const Topbar: React.FC<TopbarProps> = ({
               )}
             </div>
 
-            {/* Settings */}
             <button
               className="hidden sm:block p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-200"
               aria-label="Settings"
@@ -381,7 +373,7 @@ const Topbar: React.FC<TopbarProps> = ({
         </div>
       </div>
 
-      {/* Client-scoped header (only on client routes) */}
+      {/* Client-scoped header */}
       {isClientScoped && (
         <div className="px-6 pb-4 border-t border-slate-800/50">
           <ClientHeader />
