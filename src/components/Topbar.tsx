@@ -127,12 +127,20 @@ const Topbar: React.FC<TopbarProps> = ({
   useEffect(() => {
     let timer: number | undefined;
 
-    const run = async () => {
+    // Non-async runner so the call site never returns a Promise
+    const run = () => {
       try {
-        await fetchNotifications();
+        const maybe = fetchNotifications();
+        if (maybe && typeof (maybe as any).then === "function") {
+          void (maybe as Promise<void>).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error("Topbar polling failed:", err);
+            }
+          });
+        }
       } catch (err) {
         if (process.env.NODE_ENV !== "production") {
-          console.error("Topbar polling failed:", err);
+          console.error("Topbar polling threw:", err);
         }
       }
     };
@@ -141,11 +149,8 @@ const Topbar: React.FC<TopbarProps> = ({
       const hidden =
         typeof document !== "undefined" &&
         document.visibilityState === "hidden";
-      const interval = hidden ? 180000 : 30000; // 3m when hidden, 30s when visible
-      timer = window.setInterval(() => {
-        // satisfy no-floating-promises explicitly
-        void run();
-      }, interval);
+      const interval = hidden ? 180000 : 30000; // 3m hidden, 30s visible
+      timer = window.setInterval(run, interval);
     };
 
     const onVisibility = () => {
@@ -156,9 +161,8 @@ const Topbar: React.FC<TopbarProps> = ({
       start();
     };
 
-    // initial run + start cadence
-    // use .catch for the initial call to satisfy the linter
-    run().catch(() => {});
+    // Initial run (no promise at the callsite) + start cadence
+    run();
     start();
     document.addEventListener("visibilitychange", onVisibility);
 
