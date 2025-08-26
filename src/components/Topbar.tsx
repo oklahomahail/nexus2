@@ -122,7 +122,8 @@ const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   // Poll notifications (30s visible / 3m hidden)
-  usePolling(fetchNotifications, {
+  // If usePolling returns a Promise, explicitly ignore it to satisfy no-floating-promises.
+  void usePolling(fetchNotifications, {
     visibleInterval: 30000,
     hiddenInterval: 180000,
     enabled: true,
