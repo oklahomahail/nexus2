@@ -41,7 +41,7 @@ function fixRemainingIssues(content, filename) {
     !fixedContent.includes("import React") &&
     !fixedContent.includes("import * as React")
   ) {
-    fixedContent = "import React from 'react';\n" + fixedContent;
+    fixedContent = "import * as React from 'react';;\n" + fixedContent;
   }
 
   // 2. Fix remaining underscore prop issues that were missed
