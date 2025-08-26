@@ -151,6 +151,18 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
+  // Lint-safe handler for New Campaign button (no-floating-promises)
+  const handleNewCampaignClick = useCallback(() => {
+    if (onNewCampaign) {
+      // Make the possible Promise explicit and handled
+      void Promise.resolve(onNewCampaign()).catch(() => {
+        /* optionally toast/log an error */
+      });
+    } else {
+      navigate("/campaigns/new");
+    }
+  }, [onNewCampaign, navigate]);
+
   return (
     <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md sticky top-0 z-40">
       {/* Main topbar */}
@@ -208,23 +220,14 @@ const Topbar: React.FC<TopbarProps> = ({
 
             {/* New Campaign */}
             {showNewCampaignButton && (
-              <>
-                <button type="button" />
-                <button
-                  type="button"
-                  onClick={async () => {
-                    if (onNewCampaign) {
-                      await onNewCampaign();
-                    } else {
-                      navigate("/campaigns/new");
-                    }
-                  }}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
-                >
-                  <span className="hidden sm:inline">+ New Campaign</span>
-                  <span className="sm:hidden">+</span>
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={handleNewCampaignClick}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
+              >
+                <span className="hidden sm:inline">+ New Campaign</span>
+                <span className="sm:hidden">+</span>
+              </button>
             )}
 
             {/* Storage quota */}
