@@ -119,15 +119,13 @@ const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   // Poll notifications (30s visible / 3m hidden)
-  // Normalize to a Promise so the linter is satisfied that we're intentionally ignoring it.
-  void Promise.resolve(
-    usePolling(fetchNotifications, {
-      visibleInterval: 30000,
-      hiddenInterval: 180000,
-      enabled: true,
-      deps: [fetchNotifications],
-    }),
-  );
+
+  void usePolling(fetchNotifications, {
+    visibleInterval: 30000,
+    hiddenInterval: 180000,
+    enabled: true,
+    deps: [fetchNotifications], // memoized useCallback
+  });
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
