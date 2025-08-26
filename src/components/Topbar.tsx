@@ -119,7 +119,6 @@ const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   // Poll notifications (30s visible / 3m hidden)
-
   usePolling(fetchNotifications, {
     visibleInterval: 30000,
     hiddenInterval: 180000,
