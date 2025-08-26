@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from "react";
+import clsx from "clsx";
+import React, { useEffect, useState } from "react";
 
 import CampaignQuickCard from "./CampaignQuickCard";
 import LoadingSpinner from "./LoadingSpinner";
 import { Campaign } from "../models/campaign";
 import * as campaignService from "../services/campaignService";
 
+type Filters = Record<string, unknown>;
+
 interface CampaignListProps {
-  onViewCampaign: (_campaign: Campaign) => void;
+  onViewCampaign: (campaign: Campaign) => void;
   onCreateCampaign?: () => void;
-  filters?: any;
+  /** Optional filters applied client-side after fetch */
+  filters?: Filters;
+  /** Initial view; user can toggle locally */
   viewMode?: "grid" | "list";
   className?: string;
+  /** Optional: fetch only campaigns for this client */
+  clientId?: string;
 }
 
 const CampaignList: React.FC<CampaignListProps> = ({
@@ -19,26 +26,52 @@ const CampaignList: React.FC<CampaignListProps> = ({
   filters = {},
   viewMode = "grid",
   className = "",
+  clientId,
 }) => {
   const [loading, setLoading] = useState(true);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [mode, setMode] = useState<"grid" | "list">(viewMode);
 
   useEffect(() => {
-    const loadCampaigns = async () => {
+    const load = async () => {
       try {
         setLoading(true);
-        const data = await campaignService.getAllCampaigns(filters);
-        setCampaigns(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Failed to load campaigns:", error);
+        // Service expects a string (e.g., clientId) or no arg – not a filters object
+        const raw =
+          typeof clientId === "string" && clientId.length > 0
+            ? await campaignService.getAllCampaigns(clientId)
+            : await campaignService.getAllCampaigns();
+
+        const list = Array.isArray(raw) ? raw : [];
+
+        // Lightweight client-side filter pass (best-effort)
+        const filtered =
+          filters && Object.keys(filters).length
+            ? list.filter((c) =>
+                Object.entries(filters).every(([k, v]) => {
+                  if (v == null || v === "") return true;
+                  const val = (c as any)[k];
+                  if (val == null) return false;
+                  // loose string match when possible, else strict equality
+                  if (typeof v === "string") {
+                    return String(val).toLowerCase().includes(v.toLowerCase());
+                  }
+                  return val === v;
+                }),
+              )
+            : list;
+
+        setCampaigns(filtered);
+      } catch (err) {
+        console.error("Failed to load campaigns:", err);
         setCampaigns([]);
       } finally {
         setLoading(false);
       }
     };
 
-    void loadCampaigns();
-  }, [filters]);
+    void load();
+  }, [clientId, filters]);
 
   if (loading) {
     return (
@@ -48,22 +81,26 @@ const CampaignList: React.FC<CampaignListProps> = ({
     );
   }
 
-  const headerWrap = ["space-y-6", className].filter(Boolean).join(" ");
+  const headerWrap = clsx("space-y-6", className);
 
   const gridClass =
-    viewMode === "grid"
+    mode === "grid"
       ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       : "space-y-4";
 
-  const gridBtnClass =
-    viewMode === "grid"
-      ? "px-3 py-1 rounded text-sm font-medium transition-colors bg-white text-gray-900 shadow-sm"
-      : "px-3 py-1 rounded text-sm font-medium transition-colors text-gray-500 hover:text-gray-700";
+  const gridBtnClass = clsx(
+    "px-3 py-1 rounded text-sm font-medium transition-colors",
+    mode === "grid"
+      ? "bg-white text-gray-900 shadow-sm"
+      : "text-gray-500 hover:text-gray-700",
+  );
 
-  const listBtnClass =
-    viewMode === "list"
-      ? "px-3 py-1 rounded text-sm font-medium transition-colors bg-white text-gray-900 shadow-sm"
-      : "px-3 py-1 rounded text-sm font-medium transition-colors text-gray-500 hover:text-gray-700";
+  const listBtnClass = clsx(
+    "px-3 py-1 rounded text-sm font-medium transition-colors",
+    mode === "list"
+      ? "bg-white text-gray-900 shadow-sm"
+      : "text-gray-500 hover:text-gray-700",
+  );
 
   return (
     <div className={headerWrap}>
@@ -78,20 +115,10 @@ const CampaignList: React.FC<CampaignListProps> = ({
         <div className="flex items-center space-x-4">
           {/* View Mode Toggle */}
           <div className="flex rounded-lg bg-gray-100 p-1">
-            <button
-              onClick={() => {
-                /* setViewMode("grid") */
-              }}
-              className={gridBtnClass}
-            >
+            <button onClick={() => setMode("grid")} className={gridBtnClass}>
               Grid
             </button>
-            <button
-              onClick={() => {
-                /* setViewMode("list") */
-              }}
-              className={listBtnClass}
-            >
+            <button onClick={() => setMode("list")} className={listBtnClass}>
               List
             </button>
           </div>
@@ -122,12 +149,12 @@ const CampaignList: React.FC<CampaignListProps> = ({
         </div>
       ) : (
         <div className={gridClass}>
-          {campaigns.map((campaign: Campaign) => (
+          {campaigns.map((campaign) => (
             <CampaignQuickCard
               key={campaign.id}
               campaign={campaign}
               onClick={() => onViewCampaign(campaign)}
-              className={viewMode === "list" ? "max-w-none" : ""}
+              className={mode === "list" ? "max-w-none" : ""}
             />
           ))}
         </div>

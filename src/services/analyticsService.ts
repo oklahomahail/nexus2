@@ -2,13 +2,12 @@
 import {
   AnalyticsFilters,
   CampaignAnalytics,
-  _DonorInsights,
+  DonorInsights,
   OrganizationAnalytics,
 } from "../models/analytics";
 
 /**
  * Deterministic RNG based on a string seed (mulberry32-ish).
- * Returns a function that yields [0,1) pseudo-random numbers.
  */
 function createRng(seedKey: string) {
   // Simple 32-bit hash
@@ -37,119 +36,268 @@ function slug(s: string) {
     .replace(/(^-|-$)/g, "");
 }
 
-/**
- * Small utility to make deterministic integers in a range using rng().
- */
+/** Helpers */
 function randInt(rng: () => number, min: number, max: number) {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 
+// --------------------------
+// TYPES
+// --------------------------
+
+/** Local type for convenience if other code wants it */
+export type AnalyticsTimeRange = { start: Date; end: Date; label: string };
+
+export interface GoalAlert {
+  goalId: string;
+  met: boolean;
+  actual: number;
+  target: number;
+  metric: string;
+  goalName?: string;
+}
+
+// --------------------------
+// ANALYTICS SERVICE CLASS
+// --------------------------
+
 class AnalyticsService {
   // --------------------------
-  // Helpers
+  // Public helpers
+  // --------------------------
+  getTimeRanges(): AnalyticsTimeRange[] {
+    const now = new Date();
+    return [
+      {
+        start: new Date(now.getFullYear(), now.getMonth(), 1),
+        end: now,
+        label: "This Month",
+      },
+      {
+        start: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+        end: new Date(now.getFullYear(), now.getMonth(), 0),
+        label: "Last Month",
+      },
+      {
+        start: new Date(now.getFullYear(), now.getMonth() - 2, 1),
+        end: new Date(now.getFullYear(), now.getMonth(), 0),
+        label: "Last 3 Months",
+      },
+      {
+        start: new Date(now.getFullYear(), 0, 1),
+        end: now,
+        label: "Year to Date",
+      },
+    ];
+  }
+
+  // --------------------------
+  // CLIENT ANALYTICS
   // --------------------------
 
   /**
-   * Deterministic time-series using a seeded RNG.
-   * Ensures cumulative totals do not exceed provided caps.
+   * Optional client rollup (kept for compatibility).
+   * Returns a lightweight aggregate; you can enrich later.
    */
-  private generateTimeSeriesData(
-    startDate: string,
-    endDate: string,
-    totalRaised: number,
-    totalDonors: number,
-    seedKey?: string,
-  ) {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const days = Math.max(
-      1,
-      Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+  async getClientAnalytics(
+    clientId: string,
+    arg?: AnalyticsFilters | AnalyticsTimeRange,
+  ): Promise<{
+    clientId: string;
+    metrics: Record<string, number>;
+    revenueOverTime: Array<{
+      date: string;
+      revenue: number;
+      donors: number;
+      campaigns: number;
+    }>;
+    campaigns: Array<{
+      id: string;
+      name: string;
+      raised: number;
+      donorCount: number;
+      status: "Active" | "Paused" | "Ended";
+      progress: number;
+    }>;
+    donorSegments: Array<{
+      segment: string;
+      count: number;
+      revenue: number;
+      averageGift: number;
+      retentionRate: number;
+    }>;
+  }> {
+    // Normalize to filters (so it's deterministic with the rest of the service)
+    const filters: AnalyticsFilters | undefined = isTimeRange(arg)
+      ? {
+          dateRange: {
+            startDate: arg.start.toISOString().split("T")[0],
+            endDate: arg.end.toISOString().split("T")[0],
+          },
+        }
+      : arg;
+
+    // Reuse campaign/org generators to keep consistency
+    const seed = `${this.makeSeed(filters)}|client|${clientId}`;
+    const rng = createRng(seed);
+
+    const startDate = filters?.dateRange?.startDate ?? "2024-07-01";
+    const endDate = filters?.dateRange?.endDate ?? "2024-08-31";
+    const totalRaised = clamp(
+      Math.round(180000 + rng() * 90000),
+      90000,
+      350000,
+    );
+    const donors = clamp(Math.round(1800 + rng() * 700), 900, 4000);
+    const campaigns = clamp(Math.round(4 + rng() * 4), 2, 12);
+
+    const revenueOverTime = this.generateTimeSeriesData(
+      startDate,
+      endDate,
+      totalRaised,
+      donors,
+      `${seed}|ts`,
+    ).map((d) => ({
+      date: d.date,
+      revenue: d.dailyRaised,
+      donors: d.dailyDonors,
+      campaigns: Math.max(1, Math.round((campaigns / 30) * (1 + rng()))),
+    }));
+
+    const campaignsList = Array.from(
+      { length: Math.min(campaigns, 8) },
+      (_, i) => {
+        const raised = clamp(
+          Math.round(totalRaised * (0.12 + rng() * 0.1)),
+          5000,
+          80000,
+        );
+        const donorCount = clamp(
+          Math.round(donors * (0.05 + rng() * 0.08)),
+          20,
+          800,
+        );
+        const status: "Active" | "Paused" | "Ended" =
+          rng() > 0.1 ? "Active" : rng() > 0.5 ? "Paused" : "Ended";
+        const progress = clamp(
+          Math.round((raised / (raised * (1.1 + rng() * 0.9))) * 100),
+          10,
+          100,
+        );
+        return {
+          id: `${clientId}-c${i + 1}`,
+          name: `Campaign ${i + 1}`,
+          raised,
+          donorCount,
+          status,
+          progress,
+        };
+      },
     );
 
-    const rng = createRng(
-      seedKey ?? `ts|${startDate}|${endDate}|${totalRaised}|${totalDonors}|v1`,
-    );
+    const segments = ["Major", "Mid", "Small", "First-time"].map((segment) => ({
+      segment,
+      count: clamp(Math.round(donors * (0.05 + rng() * 0.35)), 10, donors),
+      revenue: clamp(
+        Math.round(totalRaised * (0.05 + rng() * 0.35)),
+        1000,
+        totalRaised,
+      ),
+      averageGift: clamp(Math.round(100 + rng() * 900), 20, 6000),
+      retentionRate: clamp(Math.round(40 + rng() * 40), 15, 95),
+    }));
 
-    const data = [];
-    let cumulativeRaised = 0;
-    let cumulativeDonors = 0;
-
-    // Bias curve: early–mid–late weights for more natural progression
-    const weights = Array.from({ length: days }, (_, i) => {
-      const x = i / Math.max(1, days - 1); // 0..1
-      // bell-ish curve centered mid-period
-      return 0.6 * Math.exp(-12 * Math.pow(x - 0.5, 2)) + 0.4;
-    });
-    const weightSum = weights.reduce((a, b) => a + b, 0);
-
-    // Allocate totals across days using weights plus a small random jitter
-    const raisedAlloc = weights.map((w) => w / weightSum);
-    const donorsAlloc = weights.map((w) => w / weightSum);
-
-    for (let i = 0; i < days; i++) {
-      const currentDate = new Date(start);
-      currentDate.setDate(start.getDate() + i);
-
-      // jitter within ±20% deterministically
-      const jitterRaised = 0.8 + rng() * 0.4;
-      const jitterDonors = 0.8 + rng() * 0.4;
-
-      const dailyRaised = Math.max(
-        0,
-        Math.round(totalRaised * raisedAlloc[i] * jitterRaised),
-      );
-      const dailyDonors = Math.max(
-        0,
-        Math.round(totalDonors * donorsAlloc[i] * jitterDonors),
-      );
-
-      cumulativeRaised = Math.min(cumulativeRaised + dailyRaised, totalRaised);
-      cumulativeDonors = Math.min(cumulativeDonors + dailyDonors, totalDonors);
-
-      data.push({
-        date: currentDate.toISOString().split("T")[0],
-        dailyRaised,
-        dailyDonors,
-        cumulativeRaised,
-        cumulativeDonors,
-      });
-    }
-
-    // If rounding left us short, top off the last day to hit targets exactly
-    const last = data[data.length - 1];
-    if (last) {
-      last.cumulativeRaised = totalRaised;
-      last.cumulativeDonors = totalDonors;
-      // adjust last daily to keep consistency
-      last.dailyRaised = Math.max(
-        0,
-        totalRaised - (data[data.length - 2]?.cumulativeRaised ?? 0),
-      );
-      last.dailyDonors = Math.max(
-        0,
-        totalDonors - (data[data.length - 2]?.cumulativeDonors ?? 0),
-      );
-    }
-
-    return data;
+    return {
+      clientId,
+      metrics: {
+        totalRaised,
+        donors,
+        campaigns,
+      },
+      revenueOverTime,
+      campaigns: campaignsList,
+      donorSegments: segments,
+    };
   }
 
-  private makeSeed(filters?: AnalyticsFilters) {
-    const dr = filters?.dateRange;
-    return `seed|${dr?.startDate ?? "start"}|${dr?.endDate ?? "end"}`;
+  async exportClientAnalytics(
+    clientId: string,
+    format: "csv" | "json",
+  ): Promise<string | Blob> {
+    const rollup = await this.getClientAnalytics(clientId);
+    if (format === "json") {
+      return new Blob([JSON.stringify(rollup, null, 2)], {
+        type: "application/json",
+      });
+    }
+    const rows = [
+      "metric,value",
+      `totalRaised,${rollup.metrics.totalRaised}`,
+      `donors,${rollup.metrics.donors}`,
+      `campaigns,${rollup.metrics.campaigns}`,
+    ];
+    return rows.join("\n");
   }
 
   // --------------------------
-  // Campaign Analytics
+  // GOALS & ALERTS
+  // --------------------------
+
+  async evaluateGoals(
+    scope: "org" | "client",
+    scopeId?: string,
+    filters?: AnalyticsFilters,
+  ): Promise<GoalAlert[]> {
+    await delay(150);
+
+    // Get current metrics based on scope
+    let metrics: Record<string, number> = {};
+
+    if (scope === "org") {
+      const orgData = await this.getOrganizationAnalytics(filters);
+      metrics = {
+        totalRaised: orgData.currentPeriod.totalRaised,
+        donorCount: orgData.currentPeriod.donorCount,
+        campaignCount: orgData.currentPeriod.campaignCount,
+        growthRate: orgData.growthMetrics.raisedChange,
+      };
+    } else if (scope === "client" && scopeId) {
+      const clientData = await this.getClientAnalytics(scopeId, filters);
+      metrics = {
+        totalRaised: clientData.metrics.totalRaised,
+        donorCount: clientData.metrics.donors,
+        campaignCount: clientData.metrics.campaigns,
+      };
+    }
+
+    // Import and use the goals service
+    const { goalsService } = await import("@/services/goalsService");
+    const evaluations = goalsService.evaluate(metrics, { scope, scopeId });
+
+    // Convert to GoalAlert format
+    const goals = goalsService.list();
+    return evaluations.map((evaluation) => {
+      const goal = goals.find((g) => g.id === evaluation.goalId);
+      return {
+        goalId: evaluation.goalId,
+        met: evaluation.met,
+        actual: evaluation.actual,
+        target: goal?.target ?? 0,
+        metric: goal?.metric ?? "unknown",
+        goalName: goal?.metric ?? "Unknown Goal",
+      };
+    });
+  }
+
+  // --------------------------
+  // CAMPAIGN ANALYTICS
   // --------------------------
 
   async getCampaignAnalytics(
     campaignId: string,
     filters?: AnalyticsFilters,
   ): Promise<CampaignAnalytics> {
-    // Simulate latency
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await delay(300);
 
     const seed = `${this.makeSeed(filters)}|campaign|${campaignId}`;
     const rng = createRng(seed);
@@ -158,7 +306,6 @@ class AnalyticsService {
     const startDate = filters?.dateRange?.startDate ?? "2024-07-01";
     const endDate = filters?.dateRange?.endDate ?? "2024-08-31";
 
-    // Deterministic totals with sensible bounds
     const totalRaised = clamp(Math.round(28000 + rng() * 12000), 20000, 60000);
     const goalAmount = 50000;
     const donorCount = clamp(Math.round(110 + rng() * 60), 80, 220);
@@ -171,7 +318,7 @@ class AnalyticsService {
     const emailsSent = clamp(Math.round(2500 + rng() * 2000), 1000, 8000);
     const emailsOpened = Math.round(emailsSent * (0.35 + rng() * 0.2));
     const emailsClicked = Math.round(emailsOpened * (0.22 + rng() * 0.2));
-    const openRate = Math.round((emailsOpened / emailsSent) * 1000) / 10; // one decimal
+    const openRate = Math.round((emailsOpened / emailsSent) * 1000) / 10;
     const clickThroughRate =
       Math.round((emailsClicked / emailsSent) * 1000) / 10;
     const unsubscribeRate = Math.round((0.5 + rng() * 1.8) * 10) / 10;
@@ -190,8 +337,8 @@ class AnalyticsService {
     );
     const conversionRate =
       Math.round((conversions / Math.max(1, donationPageViews)) * 1000) / 10;
-    const abandonmentRate = Math.round((20 + rng() * 25) * 10) / 10; // %
-    const averageTimeOnPage = clamp(Math.round(120 + rng() * 90), 45, 300); // seconds
+    const abandonmentRate = Math.round((20 + rng() * 25) * 10) / 10;
+    const averageTimeOnPage = clamp(Math.round(120 + rng() * 90), 45, 300);
 
     const firstTimeDonors = clamp(
       Math.round(donorCount * (0.6 + rng() * 0.2)),
@@ -345,11 +492,11 @@ class AnalyticsService {
   }
 
   // --------------------------
-  // Donor Insights
+  // DONOR INSIGHTS
   // --------------------------
 
-  async getDonorInsights(filters?: AnalyticsFilters): Promise<_DonorInsights> {
-    await new Promise((resolve) => setTimeout(resolve, 250));
+  async getDonorInsights(filters?: AnalyticsFilters): Promise<DonorInsights> {
+    await delay(250);
 
     const seed = `${this.makeSeed(filters)}|donors`;
     const rng = createRng(seed);
@@ -377,26 +524,19 @@ class AnalyticsService {
 
     return {
       topDonors,
-      donorRetention: {
-        current,
-        previous,
-        change,
-      },
-      acquisition: {
-        newDonors,
-        returningDonors,
-      },
+      donorRetention: { current, previous, change },
+      acquisition: { newDonors, returningDonors },
     };
   }
 
   // --------------------------
-  // Organization Analytics
+  // ORGANIZATION ANALYTICS
   // --------------------------
 
   async getOrganizationAnalytics(
     filters?: AnalyticsFilters,
   ): Promise<OrganizationAnalytics> {
-    await new Promise((resolve) => setTimeout(resolve, 280));
+    await delay(280);
 
     const seed = `${this.makeSeed(filters)}|org`;
     const rng = createRng(seed);
@@ -462,6 +602,30 @@ class AnalyticsService {
       },
     ];
 
+    // Add clientPerformance to satisfy OrganizationAnalytics contract
+    const clientPerformance = Array.from({ length: 6 }, (_, i) => {
+      const revenue = clamp(
+        Math.round(currentTotal * (0.04 + rng() * 0.08)),
+        8000,
+        120000,
+      );
+      const donors = clamp(
+        Math.round(currentDonors * (0.04 + rng() * 0.08)),
+        60,
+        900,
+      );
+      const campaigns = clamp(Math.round(1 + rng() * 4), 1, 8);
+      const growth = Math.round((-3 + rng() * 10) * 10) / 10; // -3%..+7%
+      return {
+        clientId: `client-${i + 1}`,
+        clientName: `Client ${i + 1}`,
+        revenue,
+        donors,
+        campaigns,
+        growth,
+      };
+    });
+
     return {
       currentPeriod: {
         startDate: currentStart,
@@ -488,18 +652,19 @@ class AnalyticsService {
         label: "Fundraising Performance",
       },
       topPerformingCampaigns,
+      clientPerformance,
     };
   }
 
   // --------------------------
-  // CSV Export
+  // CSV EXPORT
   // --------------------------
 
   async exportAnalyticsData(
     type: "campaign" | "donor" | "organization",
     filters?: AnalyticsFilters,
   ): Promise<string> {
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    await delay(150);
 
     if (type === "organization") {
       const org = await this.getOrganizationAnalytics(filters);
@@ -533,14 +698,124 @@ class AnalyticsService {
     const d = await this.getDonorInsights(filters);
     const rows = [
       "rank,name,totalGiven",
-      ...d.topDonors.map(
-        (td: { name: any; totalGiven: any }, i: number) =>
-          `${i + 1},${td.name},${td.totalGiven}`,
-      ),
+      ...d.topDonors.map((td, i) => `${i + 1},${td.name},${td.totalGiven}`),
     ];
     return `data:text/csv;charset=utf-8,${encodeURIComponent(rows.join("\n"))}`;
   }
+
+  // --------------------------
+  // INTERNAL HELPERS
+  // --------------------------
+
+  private makeSeed(filters?: AnalyticsFilters) {
+    const dr = filters?.dateRange;
+    return `seed|${dr?.startDate ?? "start"}|${dr?.endDate ?? "end"}`;
+  }
+
+  /**
+   * Deterministic time-series using a seeded RNG.
+   * Ensures cumulative totals do not exceed provided caps.
+   */
+  private generateTimeSeriesData(
+    startDate: string,
+    endDate: string,
+    totalRaised: number,
+    totalDonors: number,
+    seedKey?: string,
+  ) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.max(
+      1,
+      Math.ceil((end.getTime() - start.getTime()) / 86400000) + 1,
+    );
+
+    const rng = createRng(
+      seedKey ?? `ts|${startDate}|${endDate}|${totalRaised}|${totalDonors}|v1`,
+    );
+
+    const data: Array<{
+      date: string;
+      dailyRaised: number;
+      dailyDonors: number;
+      cumulativeRaised: number;
+      cumulativeDonors: number;
+    }> = [];
+    let cumulativeRaised = 0;
+    let cumulativeDonors = 0;
+
+    // bell-ish curve centered mid-period
+    const weights = Array.from({ length: days }, (_, i) => {
+      const x = i / Math.max(1, days - 1); // 0..1
+      return 0.6 * Math.exp(-12 * Math.pow(x - 0.5, 2)) + 0.4;
+    });
+    const weightSum = weights.reduce((a, b) => a + b, 0);
+
+    const raisedAlloc = weights.map((w) => w / weightSum);
+    const donorsAlloc = weights.map((w) => w / weightSum);
+
+    for (let i = 0; i < days; i++) {
+      const currentDate = new Date(start);
+      currentDate.setDate(start.getDate() + i);
+
+      const jitterRaised = 0.8 + rng() * 0.4;
+      const jitterDonors = 0.8 + rng() * 0.4;
+
+      const dailyRaised = Math.max(
+        0,
+        Math.round(totalRaised * raisedAlloc[i] * jitterRaised),
+      );
+      const dailyDonors = Math.max(
+        0,
+        Math.round(totalDonors * donorsAlloc[i] * jitterDonors),
+      );
+
+      cumulativeRaised = Math.min(cumulativeRaised + dailyRaised, totalRaised);
+      cumulativeDonors = Math.min(cumulativeDonors + dailyDonors, totalDonors);
+
+      data.push({
+        date: currentDate.toISOString().split("T")[0],
+        dailyRaised,
+        dailyDonors,
+        cumulativeRaised,
+        cumulativeDonors,
+      });
+    }
+
+    // Top off to exact totals
+    const last = data[data.length - 1];
+    if (last) {
+      last.cumulativeRaised = totalRaised;
+      last.cumulativeDonors = totalDonors;
+      last.dailyRaised = Math.max(
+        0,
+        totalRaised - (data[data.length - 2]?.cumulativeRaised ?? 0),
+      );
+      last.dailyDonors = Math.max(
+        0,
+        totalDonors - (data[data.length - 2]?.cumulativeDonors ?? 0),
+      );
+    }
+
+    return data;
+  }
 }
+
+// --------------------------
+// UTILITIES
+// --------------------------
+
+// Small util
+function isTimeRange(x: any): x is AnalyticsTimeRange {
+  return (
+    x &&
+    x.start instanceof Date &&
+    x.end instanceof Date &&
+    typeof x.label === "string"
+  );
+}
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export const analyticsService = new AnalyticsService();
 export default analyticsService;

@@ -111,7 +111,7 @@ body {
   @apply bg-gray-50 text-gray-900 font-sans;
 }
 `,
-  "src/main.tsx": `import React from 'react';
+  "src/main.tsx": `import * as React from 'react';;
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
@@ -150,7 +150,7 @@ function App() {
 
 export default App;
 `,
-  "src/components/DashboardPanel.tsx": `import React from 'react';
+  "src/components/DashboardPanel.tsx": `import * as React from 'react';;
 
 interface DashboardPanelProps {
   totalDonors: number;

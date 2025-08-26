@@ -1,4 +1,4 @@
-import { _DonorInsights as DonorInsights } from "../models/analytics"; // Use correct export name
+import { DonorInsights as DonorInsights } from "../models/analytics"; // Use correct export name
 
 export interface DonorView {
   name: string;

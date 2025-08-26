@@ -1,5 +1,5 @@
 // src/viewModels/donorChartView.ts
-import { _DonorInsights as DonorInsights } from "../models/analytics";
+import { DonorInsights as DonorInsights } from "../models/analytics";
 
 export interface RetentionItem {
   label: string;

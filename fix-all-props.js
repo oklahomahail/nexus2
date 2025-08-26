@@ -190,7 +190,7 @@ function fixImportExportIssues(content) {
   // Specific fix for DonorInsights
   content = content.replace(
     /import\s*{\s*DonorInsights\s*}\s*from\s*(['"][^'"]*analytics['"])/,
-    "import { _DonorInsights as DonorInsights } from $1",
+    "import { DonorInsights as DonorInsights } from $1",
   );
 
   return content;
@@ -251,7 +251,7 @@ function fixTypeScriptErrors(content) {
     !content.includes("import React") &&
     !content.includes("import * as React")
   ) {
-    content = "import React from 'react';\n" + content;
+    content = "import * as React from 'react';;\n" + content;
   }
 
   // Fix implicit any parameters

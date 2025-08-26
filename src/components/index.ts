@@ -9,6 +9,7 @@ export { default as DonorInsightsPanel } from "./DonorInsightsPanel";
 export { default as LoginForm } from "./LoginForm";
 export { default as IconButton } from "./IconButton";
 export { default as IconBadge } from "./IconBadge";
+export { ComparativeCampaignAnalysis } from "./analytics";
 
 // Export ui-kit components individually
 export { Card, Input, Panel } from "./ui-kit";

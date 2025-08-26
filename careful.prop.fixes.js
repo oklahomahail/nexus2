@@ -94,7 +94,7 @@ function fixDonorInsightsPanel(content) {
   // Fix import
   content = content.replace(
     'import { DonorInsights } from "../models/analytics";',
-    'import { _DonorInsights as DonorInsights } from "../models/analytics";',
+    'import { DonorInsights as DonorInsights } from "../models/analytics";',
   );
 
   // Add missing interface

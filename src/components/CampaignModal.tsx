@@ -1,183 +1,357 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { Campaign } from "../models/campaign";
+import Modal from "@/components/ui-kit/Modal";
+import type {
+  Campaign,
+  CreateCampaignData,
+  UpdateCampaignData,
+} from "@/models/campaign";
+import { createCampaign, updateCampaign } from "@/services/campaignService";
 
-// Define the form data interface
-interface CampaignFormData {
-  id?: string;
-  name: string;
-  description: string;
-  goal: string; // Form fields are typically strings
-  // Add other form fields as needed
-}
+export type CampaignModalMode = "create" | "edit";
 
 interface CampaignModalProps {
-  isOpen: boolean;
+  open: boolean;
+  mode: CampaignModalMode;
+  campaign?: Campaign | null; // only for edit mode
+  clientId?: string; // Optional - will show error if not provided for create mode
   onClose: () => void;
-  onSave: (_data: any) => void;
-  initialData?: Partial<CampaignFormData> | Campaign; // Accept either type
-  mode: "create" | "edit";
+  onSaved?: (campaign: Campaign) => void; // notify parent to refresh, navigate, etc.
 }
 
-// Helper function to convert Campaign to CampaignFormData
-const campaignToFormData = (campaign: Campaign): CampaignFormData => {
-  return {
-    id: campaign.id,
-    name: campaign.name || "",
-    description: campaign.description || "",
-    goal: campaign.goal?.toString() || "", // Handle potential undefined values
-    // Add other field conversions as needed
-  };
+const defaultValues: Omit<CreateCampaignData, "clientId"> = {
+  name: "",
+  description: "",
+  goal: 10000,
+  startDate: "",
+  endDate: "",
+  category: "General",
+  targetAudience: "",
+  tags: [],
+  notes: "",
 };
 
-// Helper function to check if data is a Campaign object
-const isCampaign = (data: any): data is Campaign => {
-  return data && typeof data.goal === "number";
-};
-
-const CampaignModal: React.FC<CampaignModalProps> = ({
-  isOpen,
-  onClose,
-  onSave,
-  initialData,
+export default function CampaignModal({
+  open,
   mode,
-}) => {
-  const [formData, setFormData] = useState<CampaignFormData>({
-    name: "",
-    description: "",
-    goal: "",
-  });
+  campaign,
+  clientId,
+  onClose,
+  onSaved,
+}: CampaignModalProps) {
+  const [values, setValues] =
+    useState<Omit<CreateCampaignData, "clientId">>(defaultValues);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const nameRef = useRef<HTMLInputElement | null>(null);
+
+  const isEdit = mode === "edit";
 
   useEffect(() => {
-    if (initialData) {
-      // Convert Campaign to form data if needed
-      const convertedData = isCampaign(initialData)
-        ? campaignToFormData(initialData)
-        : (initialData as Partial<CampaignFormData>);
-
-      setFormData({
-        name: convertedData.name || "",
-        description: convertedData.description || "",
-        goal: convertedData.goal || "",
-        id: convertedData.id,
+    if (!open) return;
+    if (isEdit && campaign) {
+      setValues({
+        name: campaign.name,
+        description: campaign.description ?? "",
+        goal: campaign.goal,
+        startDate: campaign.startDate,
+        endDate: campaign.endDate,
+        category: campaign.category,
+        targetAudience: campaign.targetAudience ?? "",
+        tags: campaign.tags || [],
+        notes: campaign.notes ?? "",
       });
     } else {
-      // Reset form for create mode
-      setFormData({
-        name: "",
-        description: "",
-        goal: "",
+      // Set default dates for new campaigns
+      const today = new Date().toISOString().split("T")[0];
+      const oneMonthLater = new Date();
+      oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+      const endDate = oneMonthLater.toISOString().split("T")[0];
+
+      setValues({
+        ...defaultValues,
+        startDate: today,
+        endDate: endDate,
       });
     }
-  }, [initialData, mode]);
+    setError(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    const t = setTimeout(() => nameRef.current?.focus(), 50);
+    return () => clearTimeout(t);
+  }, [open, isEdit, campaign]);
 
-    // Convert form data back to the expected format for the API
-    const submitData = {
-      ...formData,
-      goal: parseFloat(formData.goal), // Convert string back to number
+  const validate = (): string | null => {
+    if (!values.name.trim()) return "Campaign name is required.";
+    if (values.goal <= 0) return "Goal amount must be greater than 0.";
+    if (!values.startDate) return "Start date is required.";
+    if (!values.endDate) return "End date is required.";
+    if (new Date(values.endDate) <= new Date(values.startDate)) {
+      return "End date must be after start date.";
+    }
+    if (mode === "create" && !clientId) {
+      return "Please select a client to create a campaign.";
+    }
+    return null;
+  };
+
+  const handleChange =
+    (key: keyof typeof values) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
+      const value =
+        key === "goal" ? parseFloat(e.target.value) || 0 : e.target.value;
+      setValues((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
     };
 
-    onSave(submitData);
+  const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const tags = e.target.value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    setValues((prev) => ({ ...prev, tags }));
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (saving) return;
 
-  if (!isOpen) return null;
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError(null);
+
+      let saved: Campaign;
+      if (isEdit && campaign) {
+        const updates: UpdateCampaignData = { ...values };
+        const updated = await updateCampaign(campaign.id, updates);
+        if (!updated) throw new Error("Failed to update campaign.");
+        saved = updated;
+      } else {
+        if (!clientId) {
+          throw new Error("Client ID is required for creating campaigns.");
+        }
+        const campaignData: CreateCampaignData = { ...values, clientId };
+        const created = await createCampaign(campaignData);
+        saved = created;
+      }
+
+      onSaved?.(saved);
+      onClose();
+    } catch (err: any) {
+      console.error("CampaignModal save error", err);
+      setError(err?.message || "An error occurred while saving the campaign.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">
-          {mode === "create" ? "Create Campaign" : "Edit Campaign"}
-        </h2>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={isEdit ? "Edit Campaign" : "New Campaign"}
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {error && (
+          <div className="status-error rounded-lg border px-3 py-2 text-sm">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
             <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              htmlFor="campaign-name"
+              className="text-sm font-medium text-text-primary"
             >
-              Campaign Name
+              Campaign Name <span className="text-brand-accent">*</span>
             </label>
             <input
+              id="campaign-name"
+              ref={nameRef}
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={values.name}
+              onChange={handleChange("name")}
+              placeholder="End of Year Giving Campaign"
+              className="input-base"
               required
             />
           </div>
 
-          <div>
+          <div className="flex flex-col gap-1.5">
             <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700 mb-1"
+              htmlFor="campaign-goal"
+              className="text-sm font-medium text-text-primary"
             >
-              Description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="goal"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Goal Amount
+              Goal Amount <span className="text-brand-accent">*</span>
             </label>
             <input
+              id="campaign-goal"
               type="number"
-              id="goal"
-              name="goal"
-              value={formData.goal}
-              onChange={handleChange}
-              min="0"
+              min="1"
               step="0.01"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={values.goal}
+              onChange={handleChange("goal")}
+              placeholder="50000"
+              className="input-base"
               required
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="campaign-start"
+              className="text-sm font-medium text-text-primary"
             >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-wite rounded-md hover:bg-blue-700 transition-colors"
-            >
-              {mode === "create" ? "Create" : "Update"}
-            </button>
+              Start Date <span className="text-brand-accent">*</span>
+            </label>
+            <input
+              id="campaign-start"
+              type="date"
+              value={values.startDate}
+              onChange={handleChange("startDate")}
+              className="input-base"
+              required
+            />
           </div>
-        </form>
-      </div>
-    </div>
-  );
-};
 
-export default CampaignModal;
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="campaign-end"
+              className="text-sm font-medium text-text-primary"
+            >
+              End Date <span className="text-brand-accent">*</span>
+            </label>
+            <input
+              id="campaign-end"
+              type="date"
+              value={values.endDate}
+              onChange={handleChange("endDate")}
+              className="input-base"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="campaign-category"
+              className="text-sm font-medium text-text-primary"
+            >
+              Category
+            </label>
+            <select
+              id="campaign-category"
+              value={values.category}
+              onChange={handleChange("category")}
+              className="input-base"
+            >
+              <option value="General">General</option>
+              <option value="Education">Education</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Environment">Environment</option>
+              <option value="Emergency">Emergency</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="campaign-audience"
+              className="text-sm font-medium text-text-primary"
+            >
+              Target Audience
+            </label>
+            <input
+              id="campaign-audience"
+              type="text"
+              value={values.targetAudience || ""}
+              onChange={handleChange("targetAudience")}
+              placeholder="Individual donors and families"
+              className="input-base"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5 md:col-span-2">
+            <label
+              htmlFor="campaign-tags"
+              className="text-sm font-medium text-text-primary"
+            >
+              Tags{" "}
+              <span className="text-text-muted text-xs">(comma-separated)</span>
+            </label>
+            <input
+              id="campaign-tags"
+              type="text"
+              value={values.tags?.join(", ") || ""}
+              onChange={handleTagsChange}
+              placeholder="year-end, annual, major-gifts"
+              className="input-base"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="campaign-description"
+            className="text-sm font-medium text-text-primary"
+          >
+            Description
+          </label>
+          <textarea
+            id="campaign-description"
+            value={values.description || ""}
+            onChange={handleChange("description")}
+            placeholder="Describe the purpose and goals of this campaign..."
+            className="input-base min-h-[90px] resize-none"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="campaign-notes"
+            className="text-sm font-medium text-text-primary"
+          >
+            Internal Notes
+          </label>
+          <textarea
+            id="campaign-notes"
+            value={values.notes || ""}
+            onChange={handleChange("notes")}
+            placeholder="Internal notes about this campaign..."
+            className="input-base min-h-[60px] resize-none"
+          />
+        </div>
+
+        <div className="mt-2 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="button-secondary"
+          >
+            Cancel
+          </button>
+          <button type="submit" disabled={saving} className="button-primary">
+            {saving
+              ? isEdit
+                ? "Saving..."
+                : "Creating..."
+              : isEdit
+                ? "Save Changes"
+                : "Create Campaign"}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
