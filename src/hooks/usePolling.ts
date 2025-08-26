@@ -10,16 +10,19 @@ export type UsePollingOptions = {
   enabled?: boolean;
   /** Run once immediately on mount/change (default: true) */
   immediate?: boolean;
-  /** Extra deps that should restart polling when they change (default: []) */
-  deps?: readonly unknown[];
+  /** Memoized list of deps that should restart polling when they change */
+  deps?: ReadonlyArray<unknown>;
   /** Optional error handler for fetcher failures */
   onError?: (error: unknown) => void;
 };
 
 /**
  * Polls the given async/sync callback on an interval, switching cadence based on
- * document visibility. The hook **returns void** and internally catches errors,
+ * document visibility. The hook returns void and internally catches errors,
  * so it's safe with `@typescript-eslint/no-floating-promises`.
+ *
+ * NOTE: Pass a memoized `deps` array (e.g. `[fetchFn]`) so the effect only re-runs
+ * when those deps actually change.
  */
 export function usePolling(
   callback: () => void | Promise<void>,
@@ -47,7 +50,6 @@ export function usePolling(
       try {
         const maybe = cbRef.current();
         if (maybe && typeof (maybe as any).then === "function") {
-          // Explicitly catch to avoid unhandled rejections
           void (maybe as Promise<void>).catch((err) => {
             if (onErrorRef.current) onErrorRef.current(err);
             else if (process.env.NODE_ENV !== "production") {
@@ -92,6 +94,6 @@ export function usePolling(
       }
       if (timer !== undefined) clearInterval(timer);
     };
-    // Re-run when timing flags or deps change
-  }, [visibleInterval, hiddenInterval, enabled, immediate, ...deps]);
+    // Depend on the deps array reference, not its spread
+  }, [visibleInterval, hiddenInterval, enabled, immediate, deps]);
 }

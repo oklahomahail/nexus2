@@ -125,6 +125,7 @@ const Topbar: React.FC<TopbarProps> = ({
       visibleInterval: 30000,
       hiddenInterval: 180000,
       enabled: true,
+      deps: [fetchNotifications],
     }),
   );
 
