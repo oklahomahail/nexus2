@@ -1,51 +1,40 @@
 // src/App.tsx
-import { Suspense } from "react";
-import { BrowserRouter } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import AppContent from "./components/AppContent";
-import LoadingSpinner from "./components/LoadingSpinner";
-import LoginForm from "./components/LoginForm";
-import { useAuth } from "./context/AuthContext";
-import { ClientProvider } from "./context/ClientContext";
-import ThemeProbe from "./dev/ThemeProbe";
+import CampaignCreationWizard from "./components/CampaignCreationWizard";
+import Topbar from "./components/Topbar";
+import ClientDashboard from "./pages/ClientDashboard";
+import ClientList from "./pages/ClientList";
+import AnalyticsDashboard from "./panels/AnalyticsDashboard";
+import CampaignsPanel from "./panels/CampaignsPanel";
 
-function App() {
-  const { user } = useAuth();
-
-  // Only enable ThemeProbe in dev mode or if explicitly requested with ?dev=1
-  const isDevEnv = import.meta.env.MODE === "development";
-  let showDevProbe = false;
-
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const raw = params.get("dev");
-    if (raw) {
-      showDevProbe = !["0", "false", "off", "no"].includes(raw.toLowerCase());
-    }
-  } catch {
-    showDevProbe = false;
-  }
-
-  if (!user) {
-    return <LoginForm />;
-  }
-
+const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <ClientProvider>
-        {isDevEnv && showDevProbe && <ThemeProbe />}
-        <Suspense
-          fallback={
-            <div className="min-h-screen flex items-center justify-center">
-              <LoadingSpinner size="lg" />
-            </div>
-          }
-        >
-          <AppContent />
-        </Suspense>
-      </ClientProvider>
-    </BrowserRouter>
+    <div className="min-h-screen bg-slate-900">
+      <Topbar title="Dashboard" />
+      <main className="p-6">
+        <Routes>
+          <Route path="/" element={<Navigate to="/clients" replace />} />
+          <Route path="/clients" element={<ClientList />} />
+          <Route path="/client/:id" element={<ClientDashboard />} />
+          <Route path="/campaigns" element={<CampaignsPanel />} />
+          <Route
+            path="/campaigns/new"
+            element={
+              <CampaignCreationWizard
+                open={false}
+                onClose={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            }
+          />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
+        </Routes>
+      </main>
+    </div>
   );
-}
+};
 
 export default App;

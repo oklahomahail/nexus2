@@ -1,0 +1,13 @@
+# .github/workflows/guards.yml
+name: guards
+on: [pull_request]
+jobs:
+  markers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on conflict markers
+        run: |
+          if git grep -n -I -E '^(<<<<<<<|=======|>>>>>>>)' -- . ':!node_modules' ; then
+            echo "Conflict markers found"; exit 1; 
+          fi

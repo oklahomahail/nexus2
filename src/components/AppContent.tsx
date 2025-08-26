@@ -5,8 +5,8 @@ import {
   TrendingUp,
   Users,
   Bot,
-  Plus,
-  Bell,
+  Menu,
+  X,
 } from "lucide-react";
 import React, { Suspense, useMemo, useState } from "react";
 
@@ -15,6 +15,7 @@ import { useUI } from "@/context/useUI";
 import CampaignsPanel from "@/panels/CampaignsPanel";
 
 import LoadingSpinner from "./LoadingSpinner";
+import Topbar from "./Topbar";
 
 const ClaudePanel = React.lazy(() => import("../features/claude/ClaudePanel"));
 const AnalyticsDashboard = React.lazy(
@@ -37,9 +38,12 @@ const AppContent: React.FC = () => {
   const { activeView, setActiveView, loading = false, error = null } = useUI();
   const { hasRole } = useAuth();
   const [showClaudePanel, setShowClaudePanel] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const toggleNotifications = () => {
-    /* no-op for now */
+  // Handler for the New Campaign button
+  const handleNewCampaign = () => {
+    setActiveView("campaigns");
+    setSidebarOpen(false); // Close mobile sidebar
   };
 
   const currentCampaign = useMemo(
@@ -110,17 +114,42 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 bg-slate-900/50 border-r border-slate-800/50 backdrop-blur-md">
+      <div
+        className={`
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50
+        w-64 bg-slate-900/50 border-r border-slate-800/50 backdrop-blur-md
+        transition-transform duration-300 ease-in-out
+      `}
+      >
         <div className="p-6 border-b border-slate-800/50">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">N</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">N</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-white">Nexus</h1>
+                <p className="text-slate-400 text-xs">Nonprofit Platform</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">Nexus</h1>
-              <p className="text-slate-400 text-xs">Nonprofit Platform</p>
-            </div>
+
+            {/* Mobile close button */}
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-1 rounded-lg hover:bg-slate-800/50 text-slate-400 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -142,7 +171,10 @@ const AppContent: React.FC = () => {
                 return (
                   <button
                     key={item.key}
-                    onClick={() => setActiveView(item.key)}
+                    onClick={() => {
+                      setActiveView(item.key);
+                      setSidebarOpen(false); // Close mobile sidebar
+                    }}
                     aria-current={isActive ? "page" : undefined}
                     className={[
                       base,
@@ -158,7 +190,10 @@ const AppContent: React.FC = () => {
               })}
 
               <button
-                onClick={() => setShowClaudePanel(true)}
+                onClick={() => {
+                  setShowClaudePanel(true);
+                  setSidebarOpen(false); // Close mobile sidebar
+                }}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-white hover:bg-slate-800/50"
               >
                 <Bot className="w-5 h-5" />
@@ -178,40 +213,36 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-screen">
-        {/* Header */}
-        <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md">
-          <div className="px-8 py-6 flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-white mb-1">
-                {currentNavItem.label}
-              </h1>
-              <p className="text-slate-400">{currentNavItem.description}</p>
-            </div>
+      <main className="flex-1 flex flex-col min-h-screen lg:ml-0">
+        {/* Replace Topbar with mobile-aware version */}
+        <Topbar
+          title={currentNavItem.label}
+          description={currentNavItem.description}
+          showSearch={true}
+          showNewCampaignButton={hasRole("admin")}
+          onNewCampaign={handleNewCampaign}
+          actions={
             <div className="flex items-center space-x-3">
+              {/* Mobile menu button */}
               <button
-                onClick={toggleNotifications}
-                className="text-slate-400 hover:text-white transition-colors p-2 hover:bg-slate-800/50 rounded-lg"
-                aria-label="Notifications"
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2.5 text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-xl transition-all duration-200"
+                aria-label="Open menu"
               >
-                <Bell className="w-5 h-5" />
+                <Menu className="w-5 h-5" />
               </button>
+
+              {/* AI Assistant button */}
               <button
                 onClick={() => setShowClaudePanel(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors flex items-center space-x-2"
               >
                 <Bot className="w-4 h-4" />
-                <span>AI Assistant</span>
+                <span className="hidden sm:inline">AI Assistant</span>
               </button>
-              {hasRole("admin") && (
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-                  <Plus className="w-4 h-4" />
-                  <span>New Campaign</span>
-                </button>
-              )}
             </div>
-          </div>
-        </header>
+          }
+        />
 
         {/* Page Content */}
         <div className="flex-1 overflow-auto">
@@ -221,7 +252,7 @@ const AppContent: React.FC = () => {
               <span className="ml-3 text-slate-400">Loading...</span>
             </div>
           ) : error ? (
-            <div className="p-8">
+            <div className="p-4 sm:p-8">
               <div className="bg-red-900/20 border border-red-800/50 rounded-lg p-6">
                 <h3 className="text-sm font-medium text-red-400 mb-2">
                   Application Error
@@ -238,7 +269,7 @@ const AppContent: React.FC = () => {
                 </div>
               }
             >
-              <div className="p-8">
+              <div className="p-4 sm:p-8">
                 <CurrentComponent />
               </div>
             </Suspense>
