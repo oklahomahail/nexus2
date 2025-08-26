@@ -119,12 +119,14 @@ const Topbar: React.FC<TopbarProps> = ({
   }, []);
 
   // Poll notifications (30s visible / 3m hidden)
-  // If the hook returns a Promise, explicitly ignore it to satisfy no-floating-promises.
-  void usePolling(fetchNotifications, {
-    visibleInterval: 30000,
-    hiddenInterval: 180000,
-    enabled: true,
-  });
+  // Normalize to a Promise so the linter is satisfied that we're intentionally ignoring it.
+  void Promise.resolve(
+    usePolling(fetchNotifications, {
+      visibleInterval: 30000,
+      hiddenInterval: 180000,
+      enabled: true,
+    }),
+  );
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
