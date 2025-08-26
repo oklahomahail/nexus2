@@ -85,7 +85,11 @@ const AppContent: React.FC = () => {
       });
     }
   }, []);
-
+  useEffect(() => {
+    const h = () => setShowClaudePanel(true);
+    window.addEventListener("open-claude-panel", h);
+    return () => window.removeEventListener("open-claude-panel", h);
+  }, []);
   const currentCampaign = useMemo(
     () => ({
       id: "campaign_1",
@@ -203,6 +207,7 @@ const AppContent: React.FC = () => {
                 onClick={() => setShowClaudePanel(true)}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-surface-muted"
               >
+                () =window.dispatchEvent(new CustomEvent("open-claude-panel"))
                 <Bot className="w-5 h-5" />
                 <span className="font-medium">AI Assistant</span>
               </button>
