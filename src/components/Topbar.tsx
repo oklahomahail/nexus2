@@ -120,11 +120,11 @@ const Topbar: React.FC<TopbarProps> = ({
 
   // Poll notifications (30s visible / 3m hidden)
 
-  void usePolling(fetchNotifications, {
+  usePolling(fetchNotifications, {
     visibleInterval: 30000,
     hiddenInterval: 180000,
     enabled: true,
-    deps: [fetchNotifications], // memoized useCallback
+    deps: [fetchNotifications], // memoized via useCallback
   });
 
   const unreadCount = useMemo(
