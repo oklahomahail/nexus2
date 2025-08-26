@@ -1,3 +1,4 @@
+// src/panels/DashboardPanel.tsx
 import {
   Target,
   TrendingUp,
@@ -10,22 +11,21 @@ import {
   Clock,
   BarChart3,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, type FC, type ComponentType } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "@/context/AuthContext";
-
-import LiveCampaignDashboard from "../components/LiveCampaignDashboard";
-import * as campaignService from "../services/campaignService";
+import * as campaignService from "@/services/campaignService";
 
 interface QuickActionCardProps {
   title: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   onClick: () => void;
   color?: "blue" | "green" | "purple" | "indigo";
 }
 
-const QuickActionCard: React.FC<QuickActionCardProps> = ({
+const QuickActionCard: FC<QuickActionCardProps> = ({
   title,
   description,
   icon: Icon,
@@ -37,21 +37,20 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
     green: "bg-green-600 hover:bg-green-700",
     purple: "bg-purple-600 hover:bg-purple-700",
     indigo: "bg-indigo-600 hover:bg-indigo-700",
-  };
+  } as const;
 
   const iconColors = {
     blue: "text-blue-100",
     green: "text-green-100",
     purple: "text-purple-100",
     indigo: "text-indigo-100",
-  };
+  } as const;
 
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`p-6 rounded-xl text-left transition-all duration-200 hover:scale-105 hover:shadow-lg ${
-        colorClasses[color]
-      }`}
+      className={`p-6 rounded-xl text-left transition-all duration-200 hover:scale-105 hover:shadow-lg ${colorClasses[color]}`}
     >
       <div className="flex items-center justify-between mb-4">
         <Icon className={`w-6 h-6 ${iconColors[color]}`} />
@@ -62,12 +61,12 @@ const QuickActionCard: React.FC<QuickActionCardProps> = ({
   );
 };
 
-const MetricCard: React.FC<{
+const MetricCard: FC<{
   title: string;
   value: string | number;
   change?: string;
   trend?: "up" | "down" | "neutral";
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
   loading?: boolean;
 }> = ({
   title,
@@ -81,7 +80,7 @@ const MetricCard: React.FC<{
     up: "text-green-400",
     down: "text-red-400",
     neutral: "text-slate-400",
-  };
+  } as const;
 
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 hover:scale-105 transition-transform duration-200">
@@ -98,7 +97,7 @@ const MetricCard: React.FC<{
       <h3 className="text-slate-400 text-sm font-medium mb-1">{title}</h3>
       <p className="text-white text-2xl font-bold">
         {loading ? (
-          <div className="animate-pulse bg-slate-600 h-8 w-20 rounded"></div>
+          <span className="animate-pulse bg-slate-600 h-8 w-20 inline-block rounded" />
         ) : (
           value
         )}
@@ -107,7 +106,7 @@ const MetricCard: React.FC<{
   );
 };
 
-const ActivityItem: React.FC<{
+const ActivityItem: FC<{
   title: string;
   time: string;
   type: "donation" | "campaign" | "alert";
@@ -116,13 +115,13 @@ const ActivityItem: React.FC<{
     donation: <DollarSign className="w-4 h-4 text-green-400" />,
     campaign: <Target className="w-4 h-4 text-blue-400" />,
     alert: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-  };
+  } as const;
 
   const typeBg = {
     donation: "bg-green-400/10",
     campaign: "bg-blue-400/10",
     alert: "bg-yellow-400/10",
-  };
+  } as const;
 
   return (
     <div className="flex items-center space-x-3 p-3 hover:bg-slate-800/30 rounded-lg transition-colors">
@@ -140,46 +139,43 @@ interface DashboardPanelProps {
   totalRevenue?: number;
 }
 
-const DashboardPanel: React.FC<DashboardPanelProps> = ({
+const DashboardPanel: FC<DashboardPanelProps> = ({
   totalDonors = 1247,
   totalRevenue = 127500,
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [campaignStats, setCampaignStats] = useState<any>(null);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load real campaign data
+  // Load campaign data
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [stats, campaignList] = await Promise.all([
+        const [stats, list] = await Promise.all([
           campaignService.getCampaignStats(),
           campaignService.getAllCampaigns(),
         ]);
         setCampaignStats(stats);
-        setCampaigns(campaignList.slice(0, 3)); // Get top 3 campaigns for status
-      } catch (error) {
-        console.error("Failed to load dashboard data:", error);
+        setCampaigns(list.slice(0, 3));
+      } catch (err) {
+        console.error("Failed to load dashboard data:", err);
       } finally {
         setLoading(false);
       }
     };
-
-    if (user) {
-      void loadData();
-    }
+    if (user) void loadData();
   }, [user]);
 
   if (!user) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
+    if (typeof window !== "undefined") window.location.href = "/";
     return null;
   }
 
-  // Mock data for recent activity
+  // Mock activity (placeholder)
   const recentActivity = [
     {
       title: "New donation: $500 from John Smith",
@@ -208,64 +204,63 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
     },
   ];
 
+  // Wire Quick Actions to routes
   const quickActions = [
     {
       title: "Create Campaign",
       description: "Launch a new fundraising campaign",
       icon: Target,
       color: "green" as const,
-      onClick: () => console.log("Navigate to campaign creation"),
+      onClick: () => navigate("/campaigns?new=1"),
     },
     {
       title: "View Analytics",
       description: "See performance insights",
       icon: BarChart3,
       color: "blue" as const,
-      onClick: () => console.log("Navigate to analytics"),
+      onClick: () => navigate("/analytics"),
     },
     {
       title: "Manage Donors",
       description: "View and organize donor data",
       icon: Users,
       color: "purple" as const,
-      onClick: () => console.log("Navigate to donors"),
+      onClick: () => navigate("/donors"),
     },
     {
       title: "Schedule Outreach",
       description: "Plan communication campaigns",
       icon: Calendar,
       color: "indigo" as const,
-      onClick: () => console.log("Navigate to messaging"),
+      onClick: () => navigate("/campaigns?tab=outreach"),
+      // Or: () => window.dispatchEvent(new CustomEvent("open-claude-panel"))
     },
   ];
 
-  const getCampaignStatusIcon = (campaign: any) => {
-    if (campaign.progress >= 100) return CheckCircle;
-    if (campaign.daysLeft <= 7) return Clock;
-    return Target;
-  };
-
-  const getCampaignStatusColor = (campaign: any) => {
-    if (campaign.progress >= 100) return "text-green-400";
-    if (campaign.daysLeft <= 7) return "text-yellow-400";
-    return "text-blue-400";
-  };
-
-  const getCampaignStatusBg = (campaign: any) => {
-    if (campaign.progress >= 100) return "bg-green-600/10 border-green-600/20";
-    if (campaign.daysLeft <= 7) return "bg-yellow-600/10 border-yellow-600/20";
-    return "bg-blue-600/10 border-blue-600/20";
-  };
+  const getCampaignStatusIcon = (c: any) =>
+    c.progress >= 100 ? CheckCircle : c.daysLeft <= 7 ? Clock : Target;
+  const getCampaignStatusColor = (c: any) =>
+    c.progress >= 100
+      ? "text-green-400"
+      : c.daysLeft <= 7
+        ? "text-yellow-400"
+        : "text-blue-400";
+  const getCampaignStatusBg = (c: any) =>
+    c.progress >= 100
+      ? "bg-green-600/10 border-green-600/20"
+      : c.daysLeft <= 7
+        ? "bg-yellow-600/10 border-yellow-600/20"
+        : "bg-blue-600/10 border-blue-600/20";
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
+      {/* Welcome */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">
           Welcome back, Dave!
         </h1>
         <p className="text-slate-400">
-          Here's what's happening with your nonprofit today.
+          Here&apos;s what&apos;s happening with your nonprofit today.
         </p>
       </div>
 
@@ -317,19 +312,17 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
         />
       </div>
 
-      {/* Live Campaign Tracking Section */}
+      {/* Live Campaign Tracking (copy reflects polling-first) */}
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">
             Live Campaign Tracking
           </h2>
           <p className="text-slate-400">
-            Real-time progress updates and milestone notifications for all
-            active campaigns.
+            Auto-refreshed status and milestone summaries for active campaigns.
           </p>
         </div>
-
-        <LiveCampaignDashboard />
+        {/* (Realtime dashboard was archived; add widgets here if/when restored) */}
       </div>
 
       {/* Main Content Grid */}
@@ -340,8 +333,8 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
             Quick Actions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {quickActions.map((action, index) => (
-              <QuickActionCard key={index} {...action} />
+            {quickActions.map((action) => (
+              <QuickActionCard key={action.title} {...action} />
             ))}
           </div>
         </div>
@@ -355,11 +348,14 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
             </h2>
           </div>
           <div className="space-y-2">
-            {recentActivity.map((item, index) => (
-              <ActivityItem key={index} {...item} />
+            {recentActivity.map((item, idx) => (
+              <ActivityItem key={idx} {...item} />
             ))}
           </div>
-          <button className="w-full mt-4 text-sm text-blue-400 hover:text-blue-300 transition-colors">
+          <button
+            type="button"
+            className="w-full mt-4 text-sm text-blue-400 hover:text-blue-300 transition-colors"
+          >
             View all activity →
           </button>
         </div>
@@ -376,31 +372,29 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
               <div
                 key={i}
                 className="animate-pulse bg-slate-700/50 rounded-lg h-20"
-              ></div>
+              />
             ))}
           </div>
         ) : campaigns.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {campaigns.map((campaign) => {
-              const StatusIcon = getCampaignStatusIcon(campaign);
+            {campaigns.map((c) => {
+              const StatusIcon = getCampaignStatusIcon(c);
               return (
                 <div
-                  key={campaign.id}
-                  className={`flex items-center space-x-3 p-4 rounded-lg border ${getCampaignStatusBg(campaign)}`}
+                  key={c.id}
+                  className={`flex items-center space-x-3 p-4 rounded-lg border ${getCampaignStatusBg(c)}`}
                 >
                   <StatusIcon
-                    className={`w-5 h-5 ${getCampaignStatusColor(campaign)}`}
+                    className={`w-5 h-5 ${getCampaignStatusColor(c)}`}
                   />
                   <div>
-                    <p
-                      className={`font-medium ${getCampaignStatusColor(campaign)}`}
-                    >
-                      {campaign.name}
+                    <p className={`font-medium ${getCampaignStatusColor(c)}`}>
+                      {c.name}
                     </p>
                     <p className="text-slate-400 text-sm">
-                      {campaign.progress >= 100
-                        ? `Goal achieved: $${campaign.raised.toLocaleString()}`
-                        : `Progress: ${campaign.progress}% ($${campaign.raised.toLocaleString()})`}
+                      {c.progress >= 100
+                        ? `Goal achieved: $${c.raised.toLocaleString()}`
+                        : `Progress: ${c.progress}% ($${c.raised.toLocaleString()})`}
                     </p>
                   </div>
                 </div>
