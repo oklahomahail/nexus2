@@ -8,7 +8,13 @@ import {
   LogOut,
   HelpCircle,
 } from "lucide-react";
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import ClientHeader from "@/components/ClientHeader";
@@ -17,7 +23,6 @@ import NotificationsPanel, {
   type Notification,
 } from "@/components/NotificationsPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { usePolling } from "@/hooks/usePolling";
 
 interface UserInfo {
   name: string;
@@ -118,13 +123,50 @@ const Topbar: React.FC<TopbarProps> = ({
     setNotifications(mockNotifications);
   }, []);
 
-  /// Poll notifications (30s visible / 3m hidden)
-  const __polling: void = usePolling(fetchNotifications, {
-    visibleInterval: 30000,
-    hiddenInterval: 180000,
-    enabled: true,
-    deps: [fetchNotifications], // memoized via useCallback
-  });
+  // Poll notifications (30s visible / 3m hidden)
+  useEffect(() => {
+    let timer: number | undefined;
+
+    const run = async () => {
+      try {
+        await fetchNotifications();
+      } catch (err) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Topbar polling failed:", err);
+        }
+      }
+    };
+
+    const start = () => {
+      const hidden =
+        typeof document !== "undefined" &&
+        document.visibilityState === "hidden";
+      const interval = hidden ? 180000 : 30000; // 3m when hidden, 30s when visible
+      timer = window.setInterval(() => {
+        // satisfy no-floating-promises explicitly
+        void run();
+      }, interval);
+    };
+
+    const onVisibility = () => {
+      if (timer !== undefined) {
+        clearInterval(timer);
+        timer = undefined;
+      }
+      start();
+    };
+
+    // initial run + start cadence
+    // use .catch for the initial call to satisfy the linter
+    run().catch(() => {});
+    start();
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (timer !== undefined) clearInterval(timer);
+    };
+  }, [fetchNotifications]);
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
