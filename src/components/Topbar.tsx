@@ -208,20 +208,23 @@ const Topbar: React.FC<TopbarProps> = ({
 
             {/* New Campaign */}
             {showNewCampaignButton && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (onNewCampaign) {
-                    void onNewCampaign(); // satisfy no-floating-promises
-                  } else {
-                    navigate("/campaigns/new");
-                  }
-                }}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
-              >
-                <span className="hidden sm:inline">+ New Campaign</span>
-                <span className="sm:hidden">+</span>
-              </button>
+              <>
+                <button type="button" />
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (onNewCampaign) {
+                      await onNewCampaign();
+                    } else {
+                      navigate("/campaigns/new");
+                    }
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
+                >
+                  <span className="hidden sm:inline">+ New Campaign</span>
+                  <span className="sm:hidden">+</span>
+                </button>
+              </>
             )}
 
             {/* Storage quota */}
