@@ -18,19 +18,18 @@ jobs:
     timeout-minutes: 15
     env:
       CI: true
-      # Safe default so Vite won’t choke if code reads it
       VITE_APP_VERSION: ${{ github.sha }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # needed so the guard can merge-base against origin/main
+          fetch-depth: 0  # needed so the guard can merge-base against origin/main
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.0.0  # keep in sync with package.json
+          version: 10.0.0
 
       - name: Setup Node
         uses: actions/setup-node@v4
