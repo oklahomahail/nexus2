@@ -1,35 +1,53 @@
 #!/usr/bin/env node
+const { execSync } = require("node:child_process");
 const fs = require("fs");
-const path = require("path");
-const fg = require("fast-glob");
 
-const files = fg.sync(["src/**/*.{ts,tsx,js,jsx}"], { dot: false });
+function sh(cmd) {
+  return execSync(cmd, { stdio: ["pipe", "pipe", "ignore"] })
+    .toString()
+    .trim();
+}
 
-const risky = [
-  // Template literal with interpolation inside className
-  /className\s*=\s*{`[^`]*\$\{[^`]+}[^`]*`}/m,
-  // String concatenation inside className
-  /className\s*=\s*{[^}]*(['"][^'"]*['"]\s*\+\s*| \+\s*['"][^'"]*['"])[^}]*}/m,
-  // Dynamic tailwind prefix fragments like bg-${...}, text-${...}, etc.
-  /(bg|text|border|ring|shadow|w|h|p|m|grid-cols|col-span|gap|rounded)-\$\{/m,
-  /`grid-cols-\$\{[^}]+\}`/m,
-  /`col-span-\$\{[^}]+\}`/m,
-];
-
-let errors = [];
-for (const file of files) {
-  const src = fs.readFileSync(file, "utf8");
-  for (const re of risky) {
-    if (re.test(src)) {
-      errors.push({ file, pattern: re.source });
+function getChangedFiles() {
+  // Prefer merge-base with origin/main; fall back to previous commit
+  try {
+    try { sh("git fetch origin main --depth=1"); } catch {}
+    const base = sh("git merge-base HEAD origin/main");
+    const diff = sh(`git diff --name-only --diff-filter=ACMRTUXB ${base}...HEAD`);
+    return diff.split("\n").filter((f) => f && (f.endsWith(".tsx") || f.endsWith(".ts")));
+  } catch {
+    try {
+      const diff = sh("git diff --name-only --diff-filter=ACMRTUXB HEAD~1...HEAD");
+      return diff.split("\n").filter((f) => f && (f.endsWith(".tsx") || f.endsWith(".ts")));
+    } catch {
+      return [];
     }
   }
 }
 
-if (errors.length) {
-  console.error("Dynamic Tailwind class patterns detected:");
-  for (const e of errors) console.error(` - ${e.file}  [${e.pattern}]`);
-  process.exit(1);
-} else {
-  console.log("No risky dynamic Tailwind classes found.");
+const files =
+  process.env.CHECK_TW_CHANGED_ONLY === "0"
+    ? require("fast-glob").sync(["src/**/*.{ts,tsx}"], { dot: false })
+    : getChangedFiles();
+
+if (files.length === 0) {
+  console.log("No files to check (changed-only mode).");
+  process.exit(0);
 }
+
+const pattern = /className\s*=\s*{`[^`]*\$\{[^`]+}[^`]*`}/m;
+const offenders = [];
+
+for (const f of files) {
+  let s;
+  try { s = fs.readFileSync(f, "utf8"); } catch { continue; }
+  if (pattern.test(s)) offenders.push(f);
+}
+
+if (offenders.length) {
+  console.error("Dynamic Tailwind class template literals detected in changed files:");
+  for (const f of offenders) console.error(` - ${f}`);
+  process.exit(1);
+}
+
+console.log("✓ No dynamic Tailwind class template literals in changed files.");

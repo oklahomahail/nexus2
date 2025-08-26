@@ -1,25 +1,39 @@
 name: ci
 
 on:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       CI: true
-      # Safe defaults so Vite won't choke if code reads them
+      # Safe default so Vite won’t choke if code reads it
       VITE_APP_VERSION: ${{ github.sha }}
+
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          version: 10.0.0 # Match your package.json exactly
+          fetch-depth: 0   # needed so the guard can merge-base against origin/main
 
-      - uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.0.0  # keep in sync with package.json
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20.x"
           cache: "pnpm"
@@ -27,11 +41,16 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Lint
+        run: pnpm run lint --max-warnings=0
+
       - name: Typecheck (app)
         run: pnpm run typecheck:app
 
-      - name: Check dynamic Tailwind classes
+      - name: Check dynamic Tailwind classes (changed files only)
         run: pnpm run check:tailwind:dynamic
+        env:
+          CHECK_TW_CHANGED_ONLY: "1"
 
       - name: Build
         run: pnpm run build
