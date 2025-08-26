@@ -146,7 +146,6 @@ const Topbar: React.FC<TopbarProps> = ({
   const handleNotificationClick = useCallback(
     (notification: Notification) => {
       handleMarkAsRead(notification.id);
-      // Navigate to a detail view if desired:
       // navigate(`/notifications/${notification.id}`);
     },
     [handleMarkAsRead],
@@ -213,7 +212,7 @@ const Topbar: React.FC<TopbarProps> = ({
                 type="button"
                 onClick={() => {
                   if (onNewCampaign) {
-                    void onNewCampaign();
+                    void onNewCampaign(); // satisfy no-floating-promises
                   } else {
                     navigate("/campaigns/new");
                   }
