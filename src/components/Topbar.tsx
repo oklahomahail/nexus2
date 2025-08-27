@@ -123,54 +123,61 @@ const Topbar: React.FC<TopbarProps> = ({
     setNotifications(mockNotifications);
   }, []);
 
-  // Poll notifications (30s visible / 3m hidden)
+  // Refresh on mount and whenever the tab regains focus/visibility
   useEffect(() => {
-    let timer: number | undefined;
-
-    // Non-async runner so the call site never returns a Promise
-    const run = () => {
+    const run = async () => {
       try {
-        const maybe = fetchNotifications();
-        if (maybe && typeof (maybe as any).then === "function") {
-          void (maybe as Promise<void>).catch((err) => {
-            if (process.env.NODE_ENV !== "production") {
-              console.error("Topbar polling failed:", err);
-            }
-          });
-        }
+        await fetchNotifications();
       } catch (err) {
         if (process.env.NODE_ENV !== "production") {
-          console.error("Topbar polling threw:", err);
+          console.error("Notifications refresh failed:", err);
         }
       }
     };
 
-    const start = () => {
-      const hidden =
-        typeof document !== "undefined" &&
-        document.visibilityState === "hidden";
-      const interval = hidden ? 180000 : 30000; // 3m hidden, 30s visible
-      timer = window.setInterval(run, interval);
-    };
+    // initial
+    void run();
 
-    const onVisibility = () => {
-      if (timer !== undefined) {
-        clearInterval(timer);
-        timer = undefined;
+    const onFocus = () => {
+      void run().catch((err) => {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Notifications refresh on focus failed:", err);
+        }
+      });
+    };
+    const onVisible = () => {
+      if (!document.hidden) {
+        void run().catch((err) => {
+          if (process.env.NODE_ENV !== "production") {
+            console.error("Notifications refresh on visible failed:", err);
+          }
+        });
       }
-      start();
     };
 
-    // Initial run (no promise at the callsite) + start cadence
-    run();
-    start();
-    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisible);
 
     return () => {
-      document.removeEventListener("visibilitychange", onVisibility);
-      if (timer !== undefined) clearInterval(timer);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [fetchNotifications]);
+
+  // Also refresh when opening the notifications panel
+  useEffect(() => {
+    if (!showNotifications) return;
+
+    void (async () => {
+      try {
+        await fetchNotifications();
+      } catch (err) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("Notifications refresh on open failed:", err);
+        }
+      }
+    })();
+  }, [showNotifications, fetchNotifications]);
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
@@ -195,14 +202,18 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
-  // Lint-safe handler for New Campaign button (no-floating-promises)
-  const handleNewCampaignClick = useCallback(() => {
-    if (onNewCampaign) {
-      void Promise.resolve(onNewCampaign()).catch(() => {
-        /* optionally toast/log an error */
-      });
-    } else {
-      navigate("/campaigns/new");
+  // Safe handler for New Campaign button - FIXED: Added explicit catch
+  const handleNewCampaignClick = useCallback(async () => {
+    try {
+      if (onNewCampaign) {
+        await onNewCampaign();
+      } else {
+        navigate("/campaigns/new");
+      }
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("onNewCampaign failed:", err);
+      }
     }
   }, [onNewCampaign, navigate]);
 
@@ -263,7 +274,13 @@ const Topbar: React.FC<TopbarProps> = ({
             {showNewCampaignButton && (
               <button
                 type="button"
-                onClick={handleNewCampaignClick}
+                onClick={() =>
+                  void handleNewCampaignClick().catch((err) => {
+                    if (process.env.NODE_ENV !== "production") {
+                      console.error("New campaign click handler failed:", err);
+                    }
+                  })
+                }
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
               >
                 <span className="hidden sm:inline">+ New Campaign</span>
