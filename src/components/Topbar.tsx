@@ -95,8 +95,8 @@ const Topbar: React.FC<TopbarProps> = ({
   // Search input focus ref
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Keyboard shortcuts
-  useKeyboardShortcuts([
+  // Keyboard shortcuts (prefix with `void` to silence potential promise returns)
+  void useKeyboardShortcuts([
     {
       key: "/",
       preventDefault: true,
@@ -138,29 +138,27 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
-  // Lint-safe handler (no-floating-promises): schedule work, and catch inside.
+  // Lint-safe handler: call and catch inside, never return a Promise from the handler.
   const handleNewCampaignClick = useCallback(() => {
     if (!onNewCampaign) {
       navigate("/campaigns/new");
       return;
     }
 
-    window.setTimeout(() => {
-      try {
-        const maybe = onNewCampaign();
-        if (maybe && typeof (maybe as any).catch === "function") {
-          (maybe as Promise<void>).catch((err) => {
-            if (process.env.NODE_ENV !== "production") {
-              console.error("onNewCampaign failed:", err);
-            }
-          });
-        }
-      } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("onNewCampaign threw:", err);
-        }
+    try {
+      const maybe = onNewCampaign();
+      if (maybe && typeof (maybe as any).catch === "function") {
+        (maybe as Promise<void>).catch((err) => {
+          if (process.env.NODE_ENV !== "production") {
+            console.error("onNewCampaign failed:", err);
+          }
+        });
       }
-    }, 0);
+    } catch (err) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("onNewCampaign threw:", err);
+      }
+    }
   }, [onNewCampaign, navigate]);
 
   return (
@@ -171,7 +169,7 @@ const Topbar: React.FC<TopbarProps> = ({
           {/* Left: Brand + Title */}
           <div className="flex items-center space-x-4 sm:space-x-6 min-w-0">
             <div className="flex items-center space-x-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs sm:text-sm">
                   N
                 </span>
