@@ -203,18 +203,21 @@ const Topbar: React.FC<TopbarProps> = ({
   );
 
   // Safe handler for New Campaign button - FIXED: Added explicit catch
-  const handleNewCampaignClick = useCallback(async () => {
-    try {
-      if (onNewCampaign) {
-        await onNewCampaign();
-      } else {
-        navigate("/campaigns/new");
+  const handleNewCampaignClick = useCallback(() => {
+    const run = async () => {
+      try {
+        if (onNewCampaign) {
+          await onNewCampaign();
+        } else {
+          navigate("/campaigns/new");
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("onNewCampaign failed:", err);
+        }
       }
-    } catch (err) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("onNewCampaign failed:", err);
-      }
-    }
+    };
+    void run();
   }, [onNewCampaign, navigate]);
 
   return (
@@ -274,13 +277,7 @@ const Topbar: React.FC<TopbarProps> = ({
             {showNewCampaignButton && (
               <button
                 type="button"
-                onClick={() =>
-                  void handleNewCampaignClick().catch((err) => {
-                    if (process.env.NODE_ENV !== "production") {
-                      console.error("New campaign click handler failed:", err);
-                    }
-                  })
-                }
+                onClick={handleNewCampaignClick}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
               >
                 <span className="hidden sm:inline">+ New Campaign</span>
