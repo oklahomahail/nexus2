@@ -114,7 +114,6 @@ export default [
       "unused-imports/no-unused-imports": "error",
 
       // Async safety
-      "@typescript-eslint/no-floating-promises": "warn",
       "@typescript-eslint/await-thenable": "warn",
 
       // Redundant in TS

@@ -1,58 +1,66 @@
-export {};
-import { useEffect } from "react";
+// src/hooks/useKeyboardShortcuts.ts
+import { useEffect, useRef } from "react";
 
-export type KeyBinding = {
-  key: string; // e.g. "k", "s", "Enter", "Escape", "/"
-  ctrl?: boolean;
-  shift?: boolean;
-  alt?: boolean;
-  meta?: boolean; // ⌘ on macOS, Windows key on Windows
-  preventDefault?: boolean; // default true
-  allowInInputs?: boolean; // default false
-  when?: () => boolean; // optional guard; return true to enable
-  handler: (e: KeyboardEvent) => void;
+type Shortcut = {
+  key: string;
+  handler: (e: KeyboardEvent) => void | Promise<void>;
+  /** Prevent default browser behavior for this key */
+  preventDefault?: boolean;
+  /** Allow shortcut when focused inside inputs/textareas/contentEditable */
+  allowInInputs?: boolean;
+  /** Extra guard to enable/disable dynamically */
+  when?: () => boolean;
 };
 
-function isTypingField(target: EventTarget | null): boolean {
-  const el = target as HTMLElement | null;
-  if (!el) return false;
-  if (el instanceof HTMLInputElement) return true;
-  if (el instanceof HTMLTextAreaElement) return true;
-  if (el.isContentEditable) return true;
-  return false;
-}
-
-function match(e: KeyboardEvent, b: KeyBinding): boolean {
-  if (b.key.toLowerCase() !== e.key.toLowerCase()) return false;
-  if ((b.ctrl ?? false) !== e.ctrlKey) return false;
-  if ((b.shift ?? false) !== e.shiftKey) return false;
-  if ((b.alt ?? false) !== e.altKey) return false;
-  if ((b.meta ?? false) !== e.metaKey) return false;
-  return true;
-}
-
 /**
- * Registers window-level keydown handlers for the provided bindings.
- * Defaults: preventDefault = true, allowInInputs = false.
+ * Register global keyboard shortcuts.
+ * NOTE: This hook returns void and never bubbles up a Promise,
+ * so it won't trigger no-floating-promises at the callsite.
  */
-export function useKeyboardShortcuts(bindings?: KeyBinding[]) {
+export function useKeyboardShortcuts(shortcuts: Shortcut[]): void {
+  const shortcutsRef = useRef(shortcuts);
+
+  // Always keep latest shortcuts without re-subscribing the listener
   useEffect(() => {
-    if (!bindings || bindings.length === 0) return;
+    shortcutsRef.current = shortcuts;
+  }, [shortcuts]);
 
+  useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      for (const b of bindings) {
-        if (b.when && !b.when()) continue;
-        if (!b.allowInInputs && isTypingField(e.target)) continue;
+      const target = e.target as HTMLElement | null;
+      const isInput =
+        !!target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          (target as HTMLElement).isContentEditable);
 
-        if (match(e, b)) {
-          if (b.preventDefault !== false) e.preventDefault();
-          b.handler(e);
-          break;
+      for (const s of shortcutsRef.current) {
+        if (s.key !== e.key) continue;
+        if (!s.allowInInputs && isInput) continue;
+        if (s.when && !s.when()) continue;
+
+        if (s.preventDefault) e.preventDefault();
+
+        try {
+          const maybe = s.handler(e);
+          // Swallow any async rejections inside the hook so the caller
+          // never sees a Promise and ESLint stays happy.
+          if (maybe && typeof (maybe as Promise<void>).then === "function") {
+            void (maybe as Promise<void>).catch((err) => {
+              if (process.env.NODE_ENV !== "production") {
+                console.error("Keyboard shortcut handler failed:", err);
+              }
+            });
+          }
+        } catch (err) {
+          if (process.env.NODE_ENV !== "production") {
+            console.error("Keyboard shortcut handler threw:", err);
+          }
         }
       }
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [bindings]);
+  }, []);
 }

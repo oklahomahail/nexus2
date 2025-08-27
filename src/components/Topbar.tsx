@@ -17,6 +17,7 @@ import NotificationsPanel, {
   type Notification,
 } from "@/components/NotificationsPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { safeCall } from "@/utils/safeCall";
 
 interface UserInfo {
   name: string;
@@ -32,7 +33,8 @@ interface TopbarProps {
   actions?: React.ReactNode;
   user?: UserInfo;
   showNewCampaignButton?: boolean;
-  onNewCampaign?: () => void | Promise<void>;
+  /** Now synchronous only, so no floating promises anywhere */
+  onNewCampaign?: () => void;
 }
 
 const defaultUser: UserInfo = {
@@ -95,8 +97,8 @@ const Topbar: React.FC<TopbarProps> = ({
   // Search input focus ref
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Keyboard shortcuts (prefix with `void` to silence potential promise returns)
-  void useKeyboardShortcuts([
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
     {
       key: "/",
       preventDefault: true,
@@ -133,33 +135,15 @@ const Topbar: React.FC<TopbarProps> = ({
   const handleNotificationClick = useCallback(
     (notification: Notification) => {
       handleMarkAsRead(notification.id);
-      // navigate(`/notifications/${notification.id}`);
+      // optional: navigate(`/notifications/${notification.id}`);
     },
     [handleMarkAsRead],
   );
 
-  // Lint-safe handler: call and catch inside, never return a Promise from the handler.
-  const handleNewCampaignClick = useCallback(() => {
-    if (!onNewCampaign) {
-      navigate("/campaigns/new");
-      return;
-    }
-
-    try {
-      const maybe = onNewCampaign();
-      if (maybe && typeof (maybe as any).catch === "function") {
-        (maybe as Promise<void>).catch((err) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error("onNewCampaign failed:", err);
-          }
-        });
-      }
-    } catch (err) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("onNewCampaign threw:", err);
-      }
-    }
-  }, [onNewCampaign, navigate]);
+  const handleNewCampaignClick = useMemo(
+    () => safeCall(onNewCampaign ?? (() => navigate("/campaigns/new"))),
+    [onNewCampaign, navigate],
+  );
 
   return (
     <header className="border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-md sticky top-0 z-40">
@@ -169,7 +153,7 @@ const Topbar: React.FC<TopbarProps> = ({
           {/* Left: Brand + Title */}
           <div className="flex items-center space-x-4 sm:space-x-6 min-w-0">
             <div className="flex items-center space-x-3">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs sm:text-sm">
                   N
                 </span>
@@ -218,7 +202,7 @@ const Topbar: React.FC<TopbarProps> = ({
             {showNewCampaignButton && (
               <button
                 type="button"
-                onClick={handleNewCampaignClick}
+                onClick={handleNewCampaignClick} // ✅ always returns void
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
               >
                 <span className="hidden sm:inline">+ New Campaign</span>
