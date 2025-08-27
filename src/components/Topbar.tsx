@@ -8,13 +8,7 @@ import {
   LogOut,
   HelpCircle,
 } from "lucide-react";
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useMemo, useState, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import ClientHeader from "@/components/ClientHeader";
@@ -47,6 +41,33 @@ const defaultUser: UserInfo = {
   organization: "Nexus Consulting",
 };
 
+const DEFAULT_NOTIFICATIONS: Notification[] = [
+  {
+    id: "1",
+    title: "New Donation Received",
+    message: "John Smith donated $500 to the Annual Fund campaign",
+    type: "success",
+    timestamp: new Date(Date.now() - 2 * 60 * 1000),
+    read: false,
+  },
+  {
+    id: "2",
+    title: "Campaign Goal Achieved",
+    message: "Spring Fundraiser has reached 100% of its goal",
+    type: "success",
+    timestamp: new Date(Date.now() - 60 * 60 * 1000),
+    read: false,
+  },
+  {
+    id: "3",
+    title: "Monthly Report Available",
+    message: "Your monthly analytics report is ready for download",
+    type: "info",
+    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    read: true,
+  },
+];
+
 const Topbar: React.FC<TopbarProps> = ({
   title,
   description,
@@ -59,7 +80,9 @@ const Topbar: React.FC<TopbarProps> = ({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>(
+    DEFAULT_NOTIFICATIONS,
+  );
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -92,93 +115,6 @@ const Topbar: React.FC<TopbarProps> = ({
     },
   ]);
 
-  // Mock notifications fetcher (replace with real service)
-  const fetchNotifications = useCallback(async () => {
-    const mockNotifications: Notification[] = [
-      {
-        id: "1",
-        title: "New Donation Received",
-        message: "John Smith donated $500 to the Annual Fund campaign",
-        type: "success",
-        timestamp: new Date(Date.now() - 2 * 60 * 1000),
-        read: false,
-      },
-      {
-        id: "2",
-        title: "Campaign Goal Achieved",
-        message: "Spring Fundraiser has reached 100% of its goal",
-        type: "success",
-        timestamp: new Date(Date.now() - 60 * 60 * 1000),
-        read: false,
-      },
-      {
-        id: "3",
-        title: "Monthly Report Available",
-        message: "Your monthly analytics report is ready for download",
-        type: "info",
-        timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-        read: true,
-      },
-    ];
-    setNotifications(mockNotifications);
-  }, []);
-
-  // Refresh on mount and whenever the tab regains focus/visibility
-  useEffect(() => {
-    const run = async () => {
-      try {
-        await fetchNotifications();
-      } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Notifications refresh failed:", err);
-        }
-      }
-    };
-
-    // initial
-    void run();
-
-    const onFocus = () => {
-      void run().catch((err) => {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Notifications refresh on focus failed:", err);
-        }
-      });
-    };
-    const onVisible = () => {
-      if (!document.hidden) {
-        void run().catch((err) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error("Notifications refresh on visible failed:", err);
-          }
-        });
-      }
-    };
-
-    window.addEventListener("focus", onFocus);
-    document.addEventListener("visibilitychange", onVisible);
-
-    return () => {
-      window.removeEventListener("focus", onFocus);
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [fetchNotifications]);
-
-  // Also refresh when opening the notifications panel
-  useEffect(() => {
-    if (!showNotifications) return;
-
-    void (async () => {
-      try {
-        await fetchNotifications();
-      } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Notifications refresh on open failed:", err);
-        }
-      }
-    })();
-  }, [showNotifications, fetchNotifications]);
-
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
     [notifications],
@@ -202,22 +138,17 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
-  // Safe handler for New Campaign button - FIXED: Added explicit catch
+  // Safe handler for New Campaign button (explicitly ignore/catch promise)
   const handleNewCampaignClick = useCallback(() => {
-    const run = async () => {
-      try {
-        if (onNewCampaign) {
-          await onNewCampaign();
-        } else {
-          navigate("/campaigns/new");
-        }
-      } catch (err) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("onNewCampaign failed:", err);
-        }
+    if (!onNewCampaign) {
+      navigate("/campaigns/new");
+      return;
+    }
+    void Promise.resolve(onNewCampaign()).catch((err) => {
+      if (process.env.NODE_ENV !== "production") {
+        console.error("onNewCampaign failed:", err);
       }
-    };
-    void run();
+    });
   }, [onNewCampaign, navigate]);
 
   return (
