@@ -75,6 +75,12 @@ export default [
       },
     },
     rules: {
+      // ---- Type-aware recommended baselines ----
+      // Merge in TS ESLint's recommended type-checked + stylistic type-checked rules,
+      // then override with our project-specific choices below.
+      ...(tseslint.configs.recommendedTypeChecked?.rules ?? {}),
+      ...(tseslint.configs.stylisticTypeChecked?.rules ?? {}),
+
       // React/Vite rules
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
@@ -115,6 +121,13 @@ export default [
 
       // Async safety
       "@typescript-eslint/await-thenable": "warn",
+      "@typescript-eslint/no-floating-promises": [
+        "error",
+        {
+          ignoreVoid: true, // allow: void someAsync()
+          ignoreIIFE: true,
+        },
+      ],
 
       // Redundant in TS
       "no-undef": "off",

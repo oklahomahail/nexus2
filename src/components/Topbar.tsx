@@ -33,7 +33,7 @@ interface TopbarProps {
   actions?: React.ReactNode;
   user?: UserInfo;
   showNewCampaignButton?: boolean;
-  /** Now synchronous only, so no floating promises anywhere */
+  /** Synchronous only to avoid floating promises at the callsite */
   onNewCampaign?: () => void;
 }
 
@@ -140,6 +140,7 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
+  // Safe, memoized click handler (always returns void)
   const handleNewCampaignClick = useMemo(
     () => safeCall(onNewCampaign ?? (() => navigate("/campaigns/new"))),
     [onNewCampaign, navigate],
