@@ -138,15 +138,20 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
-  // Safe handler for New Campaign button (explicitly ignore/catch promise)
+  // Lint-safe handler: defer and catch inside the microtask
   const handleNewCampaignClick = useCallback(() => {
     if (!onNewCampaign) {
       navigate("/campaigns/new");
       return;
     }
-    void Promise.resolve(onNewCampaign()).catch((err) => {
-      if (process.env.NODE_ENV !== "production") {
-        console.error("onNewCampaign failed:", err);
+    queueMicrotask(() => {
+      const p = onNewCampaign();
+      if (p && typeof (p as Promise<void>).catch === "function") {
+        (p as Promise<void>).catch((err) => {
+          if (process.env.NODE_ENV !== "production") {
+            console.error("onNewCampaign failed:", err);
+          }
+        });
       }
     });
   }, [onNewCampaign, navigate]);
