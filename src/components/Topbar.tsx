@@ -138,22 +138,29 @@ const Topbar: React.FC<TopbarProps> = ({
     [handleMarkAsRead],
   );
 
-  // Lint-safe handler: defer and catch inside the microtask
+  // Lint-safe handler (no-floating-promises): schedule work, and catch inside.
   const handleNewCampaignClick = useCallback(() => {
     if (!onNewCampaign) {
       navigate("/campaigns/new");
       return;
     }
-    queueMicrotask(() => {
-      const p = onNewCampaign();
-      if (p && typeof (p as Promise<void>).catch === "function") {
-        (p as Promise<void>).catch((err) => {
-          if (process.env.NODE_ENV !== "production") {
-            console.error("onNewCampaign failed:", err);
-          }
-        });
+
+    window.setTimeout(() => {
+      try {
+        const maybe = onNewCampaign();
+        if (maybe && typeof (maybe as any).catch === "function") {
+          (maybe as Promise<void>).catch((err) => {
+            if (process.env.NODE_ENV !== "production") {
+              console.error("onNewCampaign failed:", err);
+            }
+          });
+        }
+      } catch (err) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error("onNewCampaign threw:", err);
+        }
       }
-    });
+    }, 0);
   }, [onNewCampaign, navigate]);
 
   return (
