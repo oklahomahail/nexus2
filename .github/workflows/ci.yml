@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # needed so the guard can merge-base against origin/main
+          fetch-depth: 0 # needed so the guard can merge-base against origin/main
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

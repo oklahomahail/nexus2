@@ -1,6 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useEffect,
+} from "react";
 import { BrowserRouter } from "react-router-dom";
+
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { initDatabase } from "@/services/database";
 
 import { AnalyticsProvider } from "./analytics/AnalyticsContext";
 import {
@@ -10,6 +19,7 @@ import {
   AppUIAction,
 } from "./appReducer"; // Changed AppAction to AppUIAction
 import { AuthProvider } from "./AuthContext";
+import { ToastProvider } from "./ToastContext";
 
 // Define the app context type
 interface AppContextType {
@@ -35,18 +45,38 @@ export const AppProviders: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [state, dispatch] = useReducer(appReducer, initialUIState); // Changed from initialState
 
+  // Initialize database on app start
+  useEffect(() => {
+    const initDb = async () => {
+      try {
+        await initDatabase();
+        console.log("Database initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize database:", error);
+        // Note: We can't use toast here since ToastProvider isn't yet available
+        // This error will be shown in the console and handled by error boundaries
+      }
+    };
+
+    void initDb();
+  }, []);
+
   const value: AppContextType = {
     state,
     dispatch,
   };
 
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <AppContext.Provider value={value}>
-          <AnalyticsProvider>{children}</AnalyticsProvider>
-        </AppContext.Provider>
-      </AuthProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ToastProvider>
+          <AuthProvider>
+            <AppContext.Provider value={value}>
+              <AnalyticsProvider>{children}</AnalyticsProvider>
+            </AppContext.Provider>
+          </AuthProvider>
+        </ToastProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };

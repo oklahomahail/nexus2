@@ -4,7 +4,9 @@ const fs = require("fs");
 
 function sh(cmd) {
   try {
-    return execSync(cmd, { stdio: ["pipe", "pipe", "ignore"] }).toString().trim();
+    return execSync(cmd, { stdio: ["pipe", "pipe", "ignore"] })
+      .toString()
+      .trim();
   } catch {
     return "";
   }
@@ -37,12 +39,16 @@ const pattern = /className\s*=\s*{`[^`]*\$\{[^`]+}[^`]*`}/m;
 const offenders = [];
 for (const f of files) {
   let s = "";
-  try { s = fs.readFileSync(f, "utf8"); } catch {}
+  try {
+    s = fs.readFileSync(f, "utf8");
+  } catch {}
   if (pattern.test(s)) offenders.push(f);
 }
 
 if (offenders.length) {
-  console.error("Dynamic Tailwind template literals detected in changed files:");
+  console.error(
+    "Dynamic Tailwind template literals detected in changed files:",
+  );
   for (const f of offenders) console.error(` - ${f}`);
   process.exit(1);
 }
