@@ -8,7 +8,7 @@ import {
   LogOut,
   HelpCircle,
 } from "lucide-react";
-import React, { useMemo, useState, useCallback, useRef } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import ClientHeader from "@/components/ClientHeader";
@@ -82,9 +82,7 @@ const Topbar: React.FC<TopbarProps> = ({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [notifications, setNotifications] = useState<Notification[]>(
-    DEFAULT_NOTIFICATIONS,
-  );
+  const [notifications] = useState<Notification[]>(DEFAULT_NOTIFICATIONS);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -121,12 +119,6 @@ const Topbar: React.FC<TopbarProps> = ({
     () => notifications.filter((n) => !n.read).length,
     [notifications],
   );
-
-  const _handleMarkAsRead = useCallback((id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-    );
-  }, []);
 
   // Notification handlers removed - now handled internally by NotificationsPanel
 
