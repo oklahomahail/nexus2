@@ -3,20 +3,26 @@
 
 import { v4 as uuidv4 } from "uuid";
 
+import { ClientData } from "@/services/realClientService";
+
 import { indexedDbService, STORES, DatabaseError } from "./indexedDbService";
 
-// Client interface (same as existing)
+// Import consistent client types
+
+// Client interface aligned with ClientData
 export interface Client {
   id: string;
   name: string;
   shortName?: string;
-  website?: string;
+  website?: string | null;
   primaryContactName?: string;
   primaryContactEmail?: string;
   notes?: string;
   brand?: {
     logoUrl?: string;
   };
+  isActive: boolean;
+  userId: string;
   createdAt: number;
   updatedAt: number;
 }
@@ -30,7 +36,7 @@ const delay = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // Mock data for initial seeding
-const getMockClients = (): Client[] => [
+const getMockClients = (): ClientData[] => [
   {
     id: "acme",
     name: "Acme Nonprofit",
@@ -42,8 +48,10 @@ const getMockClients = (): Client[] => [
     brand: {
       logoUrl: "/logos/acme-logo.png",
     },
-    createdAt: Date.now() - 30 * 24 * 60 * 60 * 1000, // 30 days ago
-    updatedAt: Date.now() - 5 * 24 * 60 * 60 * 1000, // 5 days ago
+    isActive: true,
+    userId: "mock-user-id",
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days ago
+    updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
   },
   {
     id: "green-future",
@@ -56,8 +64,10 @@ const getMockClients = (): Client[] => [
     brand: {
       logoUrl: "/logos/green-future-logo.png",
     },
-    createdAt: Date.now() - 45 * 24 * 60 * 60 * 1000, // 45 days ago
-    updatedAt: Date.now() - 10 * 24 * 60 * 60 * 1000, // 10 days ago
+    isActive: true,
+    userId: "mock-user-id",
+    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(), // 45 days ago
+    updatedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), // 10 days ago
   },
   {
     id: "community-care",
@@ -67,8 +77,10 @@ const getMockClients = (): Client[] => [
     primaryContactName: "Sarah Williams",
     primaryContactEmail: "sarah@communitycare.org",
     notes: "Healthcare and social services for underserved communities",
-    createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000, // 60 days ago
-    updatedAt: Date.now() - 15 * 24 * 60 * 60 * 1000, // 15 days ago
+    isActive: true,
+    userId: "mock-user-id",
+    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days ago
+    updatedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
   },
 ];
 
@@ -98,7 +110,7 @@ const ensureInitialized = async (): Promise<void> => {
 // Persistent Client Service Implementation
 export const clientService = {
   // Get all clients
-  async getAll(): Promise<Client[]> {
+  async getAll(): Promise<ClientData[]> {
     await delay(300);
     await ensureInitialized();
 
@@ -111,7 +123,7 @@ export const clientService = {
   },
 
   // Get a single client by ID
-  async getById(id: string): Promise<Client | undefined> {
+  async getById(id: string): Promise<ClientData | undefined> {
     await delay(200);
     await ensureInitialized();
 
@@ -125,15 +137,17 @@ export const clientService = {
   },
 
   // Create a new client
-  async create(data: CreateClientData): Promise<Client> {
+  async create(data: CreateClientData): Promise<ClientData> {
     await delay(500);
     await ensureInitialized();
 
-    const newClient: Client = {
-      id: uuidv4(),
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+    const newClient: ClientData = {
       ...data,
+      id: uuidv4(),
+      isActive: true,
+      userId: "mock-user-id",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     try {
@@ -148,8 +162,8 @@ export const clientService = {
   // Update an existing client
   async update(
     id: string,
-    updates: Partial<Client>,
-  ): Promise<Client | undefined> {
+    updates: Partial<ClientData>,
+  ): Promise<ClientData | undefined> {
     await delay(500);
     await ensureInitialized();
 
@@ -157,10 +171,10 @@ export const clientService = {
       const existingClient = await indexedDbService.get(STORES.CLIENTS, id);
       if (!existingClient) return undefined;
 
-      const updatedClient: Client = {
+      const updatedClient: ClientData = {
         ...existingClient,
         ...updates,
-        updatedAt: Date.now(),
+        updatedAt: new Date().toISOString(),
       };
 
       await indexedDbService.put(STORES.CLIENTS, updatedClient);
@@ -202,12 +216,12 @@ export const clientService = {
   },
 
   // Add async list method for consistency with component expectations
-  async list(): Promise<Client[]> {
+  async list(): Promise<ClientData[]> {
     return this.getAll();
   },
 
   // Search clients by name
-  async search(query: string): Promise<Client[]> {
+  async search(query: string): Promise<ClientData[]> {
     await delay(300);
     await ensureInitialized();
 
@@ -228,13 +242,18 @@ export const clientService = {
   },
 
   // Get clients sorted by creation date
-  async getRecent(limit: number = 10): Promise<Client[]> {
+  async getRecent(limit: number = 10): Promise<ClientData[]> {
     await delay(200);
     await ensureInitialized();
 
     try {
       const clients = await this.getAll();
-      return clients.sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
+      return clients
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )
+        .slice(0, limit);
     } catch (error) {
       console.error("Error getting recent clients:", error);
       throw new DatabaseError("Failed to retrieve recent clients");
@@ -242,13 +261,13 @@ export const clientService = {
   },
 
   // Export data for backup
-  async exportData(): Promise<Client[]> {
+  async exportData(): Promise<ClientData[]> {
     await ensureInitialized();
     return this.getAll();
   },
 
   // Import data from backup
-  async importData(clients: Client[]): Promise<void> {
+  async importData(clients: ClientData[]): Promise<void> {
     await ensureInitialized();
 
     try {
@@ -264,18 +283,20 @@ export const clientService = {
 };
 
 // Wrapper Functions for compatibility with existing components
-export const listClients = async (): Promise<Client[]> => {
+export const listClients = async (): Promise<ClientData[]> => {
   return clientService.getAll();
 };
 
-export const createClient = async (data: CreateClientData): Promise<Client> => {
+export const createClient = async (
+  data: CreateClientData,
+): Promise<ClientData> => {
   return clientService.create(data);
 };
 
 export const updateClient = async (
   id: string,
   updates: UpdateClientData,
-): Promise<Client | undefined> => {
+): Promise<ClientData | undefined> => {
   return clientService.update(id, updates);
 };
 
@@ -285,13 +306,13 @@ export const deleteClient = async (id: string): Promise<boolean> => {
 
 export const getClientById = async (
   id: string,
-): Promise<Client | undefined> => {
+): Promise<ClientData | undefined> => {
   return clientService.getById(id);
 };
 
-export const searchClients = async (query: string): Promise<Client[]> => {
+export const searchClients = async (query: string): Promise<ClientData[]> => {
   return clientService.search(query);
 };
 
 // Keep the existing type export for backward compatibility
-export type { Client as ClientType };
+export type { ClientData as ClientType };

@@ -20,43 +20,8 @@ type AnalyticsView = "overview" | "campaigns" | "donors" | "export";
 type DateRange = { startDate: string; endDate: string };
 type AnalyticsFilters = { dateRange: DateRange };
 
-type OrganizationAnalytics = {
-  currentPeriod: {
-    totalRaised: number;
-    donorCount: number;
-    campaignsActive: number;
-  };
-  previousPeriod: { totalRaised: number; donorCount: number };
-  topPerformingCampaigns: {
-    id: string;
-    name: string;
-    raised: number;
-    goal: number;
-    daysLeft: number;
-    status: "active" | "completed" | "draft";
-  }[];
-  recentActivities: {
-    id: string;
-    type: "donation" | "campaign" | "donor" | "goal";
-    title: string;
-    description: string;
-    timestamp: Date;
-    amount?: number;
-  }[];
-  monthlyData: {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      color: string;
-    }[];
-  };
-  goals: {
-    monthly: { current: number; goal: number };
-    quarterly: { current: number; goal: number };
-    annual: { current: number; goal: number };
-  };
-};
+// Use the imported OrganizationAnalytics from models
+import { OrganizationAnalytics as ImportedOrgAnalytics } from "../models/analytics";
 
 const AnalyticsDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -68,8 +33,9 @@ const AnalyticsDashboard: React.FC = () => {
   }
 
   const [activeView, setActiveView] = useState<AnalyticsView>("overview");
-  const [orgAnalytics, setOrgAnalytics] =
-    useState<OrganizationAnalytics | null>(null);
+  const [orgAnalytics, setOrgAnalytics] = useState<ImportedOrgAnalytics | null>(
+    null,
+  );
   const [donorInsights, setDonorInsights] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -258,7 +224,7 @@ const AnalyticsDashboard: React.FC = () => {
               />
               <KPIWidget
                 title="Active Campaigns"
-                value={orgAnalytics.currentPeriod.campaignsActive}
+                value={orgAnalytics.currentPeriod.campaignCount}
                 icon="🎯"
                 color="purple"
               />
@@ -318,7 +284,7 @@ const AnalyticsDashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <KPIWidget
                 title="Total Campaign Revenue"
-                value={`$${orgAnalytics.topPerformingCampaigns.reduce((sum, c) => sum + c.raised, 0).toLocaleString()}`}
+                value={`$${orgAnalytics.topPerformingCampaigns.reduce((sum: number, c: any) => sum + c.raised, 0).toLocaleString()}`}
                 icon="💰"
                 color="green"
               />
@@ -326,7 +292,7 @@ const AnalyticsDashboard: React.FC = () => {
                 title="Active Campaigns"
                 value={
                   orgAnalytics.topPerformingCampaigns.filter(
-                    (c) => c.status === "active",
+                    (c: any) => c.status === "active",
                   ).length
                 }
                 icon="🚀"
@@ -336,7 +302,7 @@ const AnalyticsDashboard: React.FC = () => {
                 title="Completed Campaigns"
                 value={
                   orgAnalytics.topPerformingCampaigns.filter(
-                    (c) => c.status === "completed",
+                    (c: any) => c.status === "completed",
                   ).length
                 }
                 icon="✅"
@@ -350,7 +316,7 @@ const AnalyticsDashboard: React.FC = () => {
                 Campaign Performance Details
               </h3>
               <div className="space-y-4">
-                {orgAnalytics.topPerformingCampaigns.map((campaign) => {
+                {orgAnalytics.topPerformingCampaigns.map((campaign: any) => {
                   const progress = (campaign.raised / campaign.goal) * 100;
                   const statusColors = {
                     active: "text-green-400 bg-green-900/20 border-green-800",
@@ -370,7 +336,9 @@ const AnalyticsDashboard: React.FC = () => {
                         <span
                           className={clsx(
                             "px-3 py-1 rounded-full text-xs font-medium border",
-                            statusColors[campaign.status],
+                            statusColors[
+                              campaign.status as keyof typeof statusColors
+                            ],
                           )}
                         >
                           {campaign.status.toUpperCase()}

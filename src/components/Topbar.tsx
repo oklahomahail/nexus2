@@ -122,23 +122,13 @@ const Topbar: React.FC<TopbarProps> = ({
     [notifications],
   );
 
-  const handleMarkAsRead = useCallback((id: string) => {
+  const _handleMarkAsRead = useCallback((id: string) => {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   }, []);
 
-  const handleMarkAllAsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  }, []);
-
-  const handleNotificationClick = useCallback(
-    (notification: Notification) => {
-      handleMarkAsRead(notification.id);
-      // optional: navigate(`/notifications/${notification.id}`);
-    },
-    [handleMarkAsRead],
-  );
+  // Notification handlers removed - now handled internally by NotificationsPanel
 
   // Safe, memoized click handler (always returns void)
   const handleNewCampaignClick = useMemo(
@@ -235,11 +225,7 @@ const Topbar: React.FC<TopbarProps> = ({
               {showNotifications && (
                 <div className="absolute right-0 top-full mt-2 z-50 max-w-[calc(100vw-1rem)] sm:max-w-none">
                   <NotificationsPanel
-                    notifications={notifications}
                     onClose={() => setShowNotifications(false)}
-                    onMarkAsRead={handleMarkAsRead}
-                    onMarkAllAsRead={handleMarkAllAsRead}
-                    onNotificationClick={handleNotificationClick}
                   />
                 </div>
               )}

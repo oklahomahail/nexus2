@@ -29,6 +29,20 @@ export interface ApiClientConfig {
   retries?: number;
   retryDelay?: number;
   defaultHeaders?: Record<string, string>;
+  enableLogging?: boolean;
+}
+
+export interface RequestInterceptor {
+  (config: {
+    url: string;
+    options: RequestInit;
+  }):
+    | { url: string; options: RequestInit }
+    | Promise<{ url: string; options: RequestInit }>;
+}
+
+export interface ResponseInterceptor {
+  (response: Response, data: unknown): unknown | Promise<unknown>;
 }
 
 export interface IApiClient {
@@ -51,6 +65,8 @@ export interface IApiClient {
   delete<T>(endpoint: string, options?: RequestOptions): Promise<T>;
   setAuthToken(token: string): void;
   clearAuthToken(): void;
+  addRequestInterceptor(interceptor: RequestInterceptor): void;
+  addResponseInterceptor(interceptor: ResponseInterceptor): void;
 }
 
 export interface RequestOptions {
@@ -63,6 +79,8 @@ export interface RequestOptions {
 class ApiClient implements IApiClient {
   private config: ApiClientConfig;
   private authToken: string | null = null;
+  private requestInterceptors: RequestInterceptor[] = [];
+  private responseInterceptors: ResponseInterceptor[] = [];
 
   constructor(config: ApiClientConfig) {
     this.config = {
@@ -70,6 +88,7 @@ class ApiClient implements IApiClient {
       retries: 3,
       retryDelay: 1000,
       defaultHeaders: { "Content-Type": "application/json" },
+      enableLogging: false,
       ...config,
     };
   }
@@ -80,6 +99,24 @@ class ApiClient implements IApiClient {
 
   clearAuthToken(): void {
     this.authToken = null;
+  }
+
+  addRequestInterceptor(interceptor: RequestInterceptor): void {
+    this.requestInterceptors.push(interceptor);
+  }
+
+  addResponseInterceptor(interceptor: ResponseInterceptor): void {
+    this.responseInterceptors.push(interceptor);
+  }
+
+  private log(
+    level: "debug" | "info" | "warn" | "error",
+    message: string,
+    data?: unknown,
+  ): void {
+    if (this.config.enableLogging) {
+      console[level](`[ApiClient] ${message}`, data);
+    }
   }
 
   private getHeaders(
@@ -101,18 +138,33 @@ class ApiClient implements IApiClient {
     options: RequestInit & { retries?: number } = {},
   ): Promise<T> {
     const { retries = this.config.retries, ...requestOptions } = options;
-    const url = `${this.config.baseUrl}${endpoint}`;
+    let url = `${this.config.baseUrl}${endpoint}`;
+    let finalOptions: RequestInit = {
+      ...requestOptions,
+      headers: this.getHeaders(
+        requestOptions.headers as Record<string, string>,
+      ),
+    };
+
+    // Apply request interceptors
+    for (const interceptor of this.requestInterceptors) {
+      const result = await interceptor({ url, options: finalOptions });
+      url = result.url;
+      finalOptions = result.options;
+    }
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
+    this.log(
+      "debug",
+      `Making ${finalOptions.method || "GET"} request to ${url}`,
+    );
+
     try {
       const response = await fetch(url, {
-        ...requestOptions,
+        ...finalOptions,
         signal: controller.signal,
-        headers: this.getHeaders(
-          requestOptions.headers as Record<string, string>,
-        ),
       });
 
       clearTimeout(timeoutId);
@@ -134,6 +186,10 @@ class ApiClient implements IApiClient {
           }
         }
 
+        this.log("error", `API error: ${errorMessage}`, {
+          status: response.status,
+          details: errorDetails,
+        });
         throw new ApiClientError(
           errorMessage,
           response.status,
@@ -146,19 +202,63 @@ class ApiClient implements IApiClient {
         return undefined as T;
       }
 
-      const data = await response.json();
-      return data as T;
+      const rawData = await response.json();
+
+      // Handle different response patterns:
+      // 1. Direct data responses (e.g., { clients: [...] })
+      // 2. Wrapped responses (e.g., { success: true, data: { clients: [...] } })
+
+      // Check if this looks like a wrapped response
+      if (
+        rawData &&
+        typeof rawData === "object" &&
+        "success" in rawData &&
+        "data" in rawData
+      ) {
+        // Handle wrapped response format
+        if (!rawData.success) {
+          const errorMessage = rawData.message || "API request failed";
+          throw new ApiClientError(
+            errorMessage,
+            response.status,
+            rawData.code,
+            rawData,
+          );
+        }
+        return rawData.data as T;
+      }
+
+      // Apply response interceptors
+      let processedData = rawData;
+      for (const interceptor of this.responseInterceptors) {
+        processedData = await interceptor(response, processedData);
+      }
+
+      this.log(
+        "debug",
+        `Request successful: ${response.status}`,
+        processedData,
+      );
+
+      // Handle direct response format
+      return processedData as T;
     } catch (error) {
       clearTimeout(timeoutId);
 
       if (error instanceof ApiClientError) {
         // Don't retry client errors (4xx)
         if (error.status >= 400 && error.status < 500) {
+          this.log("warn", `Client error (${error.status}): ${error.message}`);
           throw error;
         }
 
         // Retry server errors (5xx) and network errors
         if (retries && retries > 0) {
+          this.log(
+            "warn",
+            `Retrying request (${retries} attempts left)`,
+            error.message,
+          );
           await this.sleep(this.config.retryDelay!);
           return this.makeRequest<T>(endpoint, {
             ...options,
@@ -168,10 +268,16 @@ class ApiClient implements IApiClient {
       }
 
       if (error instanceof Error && error.name === "AbortError") {
+        this.log("error", "Request timeout");
         throw new ApiClientError("Request timeout", 408);
       }
 
       if (retries && retries > 0 && !(error instanceof ApiClientError)) {
+        this.log(
+          "warn",
+          `Retrying request due to network error (${retries} attempts left)`,
+          error,
+        );
         await this.sleep(this.config.retryDelay!);
         return this.makeRequest<T>(endpoint, {
           ...options,
@@ -179,6 +285,7 @@ class ApiClient implements IApiClient {
         });
       }
 
+      this.log("error", "Request failed", error);
       throw error;
     }
   }
@@ -243,6 +350,7 @@ export const apiClient = new ApiClient({
   timeout: 10000,
   retries: 3,
   retryDelay: 1000,
+  enableLogging: import.meta.env.DEV, // Enable logging in development
 });
 
 // Factory function for creating API clients with different configurations

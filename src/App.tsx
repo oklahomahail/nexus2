@@ -5,29 +5,15 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import CampaignCreationWizard from "./components/CampaignCreationWizard";
 import NotificationsPanel from "./components/NotificationsPanel";
 import Topbar from "./components/Topbar";
-import { useNotifications } from "./hooks/useNotifications";
 import ClientDashboard from "./pages/ClientDashboard";
 import ClientList from "./pages/ClientList";
 import AnalyticsDashboard from "./panels/AnalyticsDashboard";
 import CampaignsPanel from "./panels/CampaignsPanel";
 
 function NotificationsRoute() {
-  const notifications = useNotifications();
-
-  // Convert NotificationDTO to Notification format
-  const convertedNotifications = notifications.items.map((dto) => ({
-    ...dto,
-    timestamp: new Date(dto.timestamp),
-  }));
-
   return (
     <div className="max-w-md mx-auto mt-8">
-      <NotificationsPanel
-        notifications={convertedNotifications}
-        onClose={() => window.history.back()}
-        onMarkAsRead={notifications.markAsRead}
-        onMarkAllAsRead={notifications.markAllAsRead}
-      />
+      <NotificationsPanel onClose={() => window.history.back()} />
     </div>
   );
 }

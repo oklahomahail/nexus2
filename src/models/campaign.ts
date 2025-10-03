@@ -13,7 +13,7 @@ export interface Campaign {
   daysLeft: number;
   startDate: string;
   endDate: string;
-  status: "Active" | "Draft" | "Completed" | "Paused";
+  status: "Active" | "Draft" | "Completed" | "Paused" | "Cancelled";
   category:
     | "General"
     | "Education"

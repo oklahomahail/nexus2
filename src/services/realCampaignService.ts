@@ -181,7 +181,7 @@ function mapFrontendToApiCampaign(
   data: CreateCampaignData | UpdateCampaignData,
 ) {
   const backendType = (() => {
-    switch (data.type) {
+    switch ((data as any).type) {
       case "annual":
         return "FUNDRAISING";
       case "event":
@@ -217,16 +217,8 @@ export const getAllCampaigns = async (
     if (clientId) queryParams.append("clientId", clientId);
 
     const endpoint = `/campaigns${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
-    const response = await apiClient.get<{
-      success: boolean;
-      data: CampaignListResponse;
-    }>(endpoint);
-
-    if (!response.success || !response.data) {
-      throw new Error("Failed to fetch campaigns");
-    }
-
-    return response.data.campaigns.map(mapApiCampaignToFrontend);
+    const response = await apiClient.get<CampaignListResponse>(endpoint);
+    return response.campaigns.map(mapApiCampaignToFrontend);
   } catch (error) {
     logger.error("Error getting campaigns:", error);
     throw error;
@@ -241,16 +233,10 @@ export const getCampaignsByClient = async (
 
 export const getCampaignById = async (id: string): Promise<Campaign | null> => {
   try {
-    const response = await apiClient.get<{
-      success: boolean;
-      data: { campaign: ApiCampaign };
-    }>(`/campaigns/${id}`);
-
-    if (!response.success || !response.data?.campaign) {
-      return null;
-    }
-
-    return mapApiCampaignToFrontend(response.data.campaign);
+    const response = await apiClient.get<{ campaign: ApiCampaign }>(
+      `/campaigns/${id}`,
+    );
+    return mapApiCampaignToFrontend(response.campaign);
   } catch (error) {
     logger.error("Error getting campaign by ID:", error);
     if ((error as any)?.status === 404) {
@@ -265,17 +251,12 @@ export const createCampaign = async (
 ): Promise<Campaign> => {
   try {
     const apiData = mapFrontendToApiCampaign(data);
-    const response = await apiClient.post<{
-      success: boolean;
-      data: { campaign: ApiCampaign };
-    }>("/campaigns", apiData);
-
-    if (!response.success || !response.data?.campaign) {
-      throw new Error("Failed to create campaign");
-    }
-
-    logger.info("Campaign created successfully:", response.data.campaign.id);
-    return mapApiCampaignToFrontend(response.data.campaign);
+    const response = await apiClient.post<{ campaign: ApiCampaign }>(
+      "/campaigns",
+      apiData,
+    );
+    logger.info("Campaign created successfully:", response.campaign.id);
+    return mapApiCampaignToFrontend(response.campaign);
   } catch (error) {
     logger.error("Error creating campaign:", error);
     throw error;
@@ -288,17 +269,12 @@ export const updateCampaign = async (
 ): Promise<Campaign | null> => {
   try {
     const apiData = mapFrontendToApiCampaign(data);
-    const response = await apiClient.put<{
-      success: boolean;
-      data: { campaign: ApiCampaign };
-    }>(`/campaigns/${id}`, apiData);
-
-    if (!response.success || !response.data?.campaign) {
-      return null;
-    }
-
+    const response = await apiClient.put<{ campaign: ApiCampaign }>(
+      `/campaigns/${id}`,
+      apiData,
+    );
     logger.info("Campaign updated successfully:", id);
-    return mapApiCampaignToFrontend(response.data.campaign);
+    return mapApiCampaignToFrontend(response.campaign);
   } catch (error) {
     logger.error("Error updating campaign:", error);
     if ((error as any)?.status === 404) {
@@ -310,16 +286,9 @@ export const updateCampaign = async (
 
 export const deleteCampaign = async (id: string): Promise<boolean> => {
   try {
-    const response = await apiClient.delete<{
-      success: boolean;
-      message: string;
-    }>(`/campaigns/${id}`);
-
-    if (response.success) {
-      logger.info("Campaign deleted successfully:", id);
-      return true;
-    }
-    return false;
+    await apiClient.delete(`/campaigns/${id}`);
+    logger.info("Campaign deleted successfully:", id);
+    return true;
   } catch (error) {
     logger.error("Error deleting campaign:", error);
     if ((error as any)?.status === 404) {
@@ -400,16 +369,10 @@ export const getCampaignAnalytics = async (
   campaignId: string,
 ): Promise<CampaignAnalyticsData> => {
   try {
-    const response = await apiClient.get<{
-      success: boolean;
-      data: CampaignAnalyticsData;
-    }>(`/campaigns/${campaignId}/analytics`);
-
-    if (!response.success || !response.data) {
-      throw new Error("Failed to fetch campaign analytics");
-    }
-
-    return response.data;
+    const response = await apiClient.get<CampaignAnalyticsData>(
+      `/campaigns/${campaignId}/analytics`,
+    );
+    return response;
   } catch (error) {
     logger.error("Error getting campaign analytics:", error);
     throw error;

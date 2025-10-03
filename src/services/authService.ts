@@ -1,6 +1,7 @@
 // src/services/authService.ts - Real backend authentication
 
-import { apiClient } from "./apiClient";
+import { apiClient } from "@/services/apiClient";
+
 import { logger } from "../utils/logger";
 
 export interface AuthUser {
@@ -89,19 +90,12 @@ export async function login(
   password: string,
 ): Promise<AuthUser> {
   try {
-    const response = await apiClient.post<{
-      success: boolean;
-      data: LoginResponse;
-    }>("/auth/login", {
+    const response = await apiClient.post<LoginResponse>("/auth/login", {
       email,
       password,
     });
 
-    if (!response.success || !response.data) {
-      throw new Error("Login failed");
-    }
-
-    const { user, tokens } = response.data;
+    const { user, tokens } = response;
 
     // Store tokens
     setTokens(tokens.accessToken, tokens.refreshToken);
@@ -125,16 +119,11 @@ export async function login(
 
 export async function register(userData: RegisterData): Promise<AuthUser> {
   try {
-    const response = await apiClient.post<{
-      success: boolean;
-      data: LoginResponse;
-    }>("/auth/register", userData);
-
-    if (!response.success || !response.data) {
-      throw new Error("Registration failed");
-    }
-
-    const { user, tokens } = response.data;
+    const response = await apiClient.post<LoginResponse>(
+      "/auth/register",
+      userData,
+    );
+    const { user, tokens } = response;
 
     // Store tokens
     setTokens(tokens.accessToken, tokens.refreshToken);
@@ -181,18 +170,14 @@ export async function refreshToken(): Promise<boolean> {
       throw new Error("No refresh token available");
     }
 
-    const response = await apiClient.post<{
-      success: boolean;
-      data: { tokens: LoginResponse["tokens"] };
-    }>("/auth/refresh", {
-      refreshToken: refreshTokenValue,
-    });
+    const response = await apiClient.post<{ tokens: LoginResponse["tokens"] }>(
+      "/auth/refresh",
+      {
+        refreshToken: refreshTokenValue,
+      },
+    );
 
-    if (!response.success || !response.data) {
-      throw new Error("Token refresh failed");
-    }
-
-    const { tokens } = response.data;
+    const { tokens } = response;
     setTokens(tokens.accessToken, tokens.refreshToken);
 
     logger?.debug("Tokens refreshed successfully");

@@ -11,8 +11,9 @@ interface KPIData {
     direction: "up" | "down" | "neutral";
     period: string;
   };
-  icon?: string;
-  color?: "blue" | "green" | "red" | "yellow" | "purple";
+  icon?: string | React.ReactElement;
+  color?: "blue" | "green" | "red" | "yellow" | "purple" | "orange";
+  format?: "number" | "currency" | "percentage";
 }
 
 interface ChartData {
@@ -40,6 +41,7 @@ export const KPIWidget: React.FC<KPIData> = ({
   change,
   icon,
   color = "blue",
+  format,
 }) => {
   const colorClasses = {
     blue: "bg-blue-900/20 border-blue-800/50 text-blue-300",
@@ -47,6 +49,7 @@ export const KPIWidget: React.FC<KPIData> = ({
     red: "bg-red-900/20 border-red-800/50 text-red-300",
     yellow: "bg-yellow-900/20 border-yellow-800/50 text-yellow-300",
     purple: "bg-purple-900/20 border-purple-800/50 text-purple-300",
+    orange: "bg-orange-900/20 border-orange-800/50 text-orange-300",
   };
 
   const changeClasses = {
@@ -55,13 +58,29 @@ export const KPIWidget: React.FC<KPIData> = ({
     neutral: "text-slate-400",
   };
 
+  const formatValue = (val: string | number) => {
+    if (format === "currency") {
+      return `$${Number(val).toLocaleString()}`;
+    }
+    if (format === "percentage") {
+      return `${val}%`;
+    }
+    return val.toLocaleString();
+  };
+
   return (
     <div className={clsx("p-6 rounded-lg border", colorClasses[color])}>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-medium text-slate-400">{title}</h3>
-        {icon && <span className="text-xl">{icon}</span>}
+        {icon && (
+          <span className="text-xl">
+            {typeof icon === "string" ? icon : icon}
+          </span>
+        )}
       </div>
-      <div className="text-2xl font-bold text-white mb-1">{value}</div>
+      <div className="text-2xl font-bold text-white mb-1">
+        {formatValue(value)}
+      </div>
       {change && (
         <div
           className={clsx(

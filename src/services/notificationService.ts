@@ -1,5 +1,5 @@
 // src/services/notificationsService.ts
-import { apiClient } from "./apiClient";
+import { apiClient } from "@/services/apiClient";
 
 export type NotificationDTO = {
   id: string;

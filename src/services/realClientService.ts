@@ -1,19 +1,26 @@
-import { apiClient } from "@/config/api";
-import { APIResponse } from "@/config/api";
+import { apiClient } from "@/services/apiClient";
 
 // Types matching backend Prisma schema
 export interface ClientData {
   id: string;
   name: string;
+  shortName?: string; // Add missing shortName
   email?: string | null;
   phone?: string | null;
   website?: string | null;
   address?: string | null;
   description?: string | null;
+  primaryContactName?: string; // Add missing field
+  primaryContactEmail?: string; // Add missing field
+  notes?: string; // Add missing field
   isActive: boolean;
   createdAt: string; // ISO date string from API
   updatedAt: string; // ISO date string from API
   userId: string;
+  // Add brand support
+  brand?: {
+    logoUrl?: string;
+  };
   // Relations from backend include
   _count?: {
     campaigns: number;
@@ -37,11 +44,15 @@ export interface ClientData {
 
 export type CreateClientData = {
   name: string;
+  shortName?: string;
   email?: string;
   phone?: string;
   website?: string;
   address?: string;
   description?: string;
+  primaryContactName?: string;
+  primaryContactEmail?: string;
+  notes?: string;
 };
 
 export type UpdateClientData = Partial<CreateClientData>;
@@ -51,66 +62,64 @@ export type Client = ClientData;
 
 export const realClientService = {
   async getAllClients(): Promise<ClientData[]> {
-    const response =
-      await apiClient.get<APIResponse<{ clients: ClientData[] }>>(
-        "/api/clients",
+    try {
+      const response = await apiClient.get<{ clients: ClientData[] }>(
+        "/clients",
       );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to fetch clients");
+      return response.clients;
+    } catch (error) {
+      console.error("Failed to fetch clients:", error);
+      throw error;
     }
-
-    return response.data.data.clients;
   },
 
   async getClientById(id: string): Promise<ClientData> {
-    const response = await apiClient.get<APIResponse<{ client: ClientData }>>(
-      `/api/clients/${id}`,
-    );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to fetch client");
+    try {
+      const response = await apiClient.get<{ client: ClientData }>(
+        `/clients/${id}`,
+      );
+      return response.client;
+    } catch (error) {
+      console.error(`Failed to fetch client ${id}:`, error);
+      throw error;
     }
-
-    return response.data.data.client;
   },
 
   async createClient(clientData: CreateClientData): Promise<ClientData> {
-    const response = await apiClient.post<APIResponse<{ client: ClientData }>>(
-      "/api/clients",
-      clientData,
-    );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to create client");
+    try {
+      const response = await apiClient.post<{ client: ClientData }>(
+        "/clients",
+        clientData,
+      );
+      return response.client;
+    } catch (error) {
+      console.error("Failed to create client:", error);
+      throw error;
     }
-
-    return response.data.data.client;
   },
 
   async updateClient(
     id: string,
     clientData: UpdateClientData,
   ): Promise<ClientData> {
-    const response = await apiClient.put<APIResponse<{ client: ClientData }>>(
-      `/api/clients/${id}`,
-      clientData,
-    );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to update client");
+    try {
+      const response = await apiClient.put<{ client: ClientData }>(
+        `/clients/${id}`,
+        clientData,
+      );
+      return response.client;
+    } catch (error) {
+      console.error(`Failed to update client ${id}:`, error);
+      throw error;
     }
-
-    return response.data.data.client;
   },
 
   async deleteClient(id: string): Promise<void> {
-    const response = await apiClient.delete<APIResponse<{}>>(
-      `/api/clients/${id}`,
-    );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || "Failed to delete client");
+    try {
+      await apiClient.delete(`/clients/${id}`);
+    } catch (error) {
+      console.error(`Failed to delete client ${id}:`, error);
+      throw error;
     }
   },
 
