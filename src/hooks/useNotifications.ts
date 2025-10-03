@@ -60,8 +60,8 @@ export function useNotifications() {
 
   // Polling (tab-aware cadence)
   usePolling(load, {
-    visibleInterval: POLLING.visibleMs,
-    hiddenInterval: POLLING.hiddenMs,
+    visibleInterval: POLLING.notifications.visibleMs,
+    hiddenInterval: POLLING.notifications.hiddenMs,
     enabled: true,
     immediate: false,
     // keep this primitive to avoid unnecessary restarts
@@ -78,8 +78,13 @@ export function useNotifications() {
     [],
   );
 
+  const markAllAsRead = useCallback(
+    () => setItems((prev) => prev.map((n) => ({ ...n, read: true }))),
+    [],
+  );
+
   return useMemo(
-    () => ({ items, loading, error, reload: load, markAsRead }),
-    [items, loading, error, load, markAsRead],
+    () => ({ items, loading, error, reload: load, markAsRead, markAllAsRead }),
+    [items, loading, error, load, markAsRead, markAllAsRead],
   );
 }

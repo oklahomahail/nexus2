@@ -13,10 +13,17 @@ import CampaignsPanel from "./panels/CampaignsPanel";
 
 function NotificationsRoute() {
   const notifications = useNotifications();
+
+  // Convert NotificationDTO to Notification format
+  const convertedNotifications = notifications.items.map((dto) => ({
+    ...dto,
+    timestamp: new Date(dto.timestamp),
+  }));
+
   return (
     <div className="max-w-md mx-auto mt-8">
       <NotificationsPanel
-        notifications={notifications.notifications}
+        notifications={convertedNotifications}
         onClose={() => window.history.back()}
         onMarkAsRead={notifications.markAsRead}
         onMarkAllAsRead={notifications.markAllAsRead}

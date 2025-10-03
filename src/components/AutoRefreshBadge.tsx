@@ -1,7 +1,6 @@
 // src/components/AutoRefreshBadge.tsx
 import clsx from "clsx";
 import { RefreshCw } from "lucide-react";
-import React from "react";
 
 interface AutoRefreshBadgeProps {
   isPolling: boolean;
