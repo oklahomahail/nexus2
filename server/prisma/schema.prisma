@@ -1,0 +1,309 @@
+// Prisma schema for Nexus donor management platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User and Authentication
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String?
+  lastName  String?
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  clients      Client[]
+  campaigns    Campaign[]
+  refreshTokens RefreshToken[]
+  activities   Activity[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// Client Management
+model Client {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  website     String?
+  address     String?
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  campaigns Campaign[]
+  donors    Donor[]
+
+  @@map("clients")
+}
+
+// Campaign Management
+model Campaign {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  type        CampaignType   @default(FUNDRAISING)
+  status      CampaignStatus @default(DRAFT)
+  startDate   DateTime?
+  endDate     DateTime?
+  goalAmount  Decimal?       @db.Decimal(12, 2)
+  raisedAmount Decimal       @default(0) @db.Decimal(12, 2)
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  // Relationships
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  clientId    String
+  client      Client       @relation(fields: [clientId], references: [id])
+  donations   Donation[]
+  activities  Activity[]
+  analytics   CampaignAnalytics[]
+
+  @@map("campaigns")
+}
+
+// Donor Management
+model Donor {
+  id        String     @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  zipCode   String?
+  country   String?    @default("US")
+  donorType DonorType  @default(INDIVIDUAL)
+  status    DonorStatus @default(ACTIVE)
+  totalDonated Decimal @default(0) @db.Decimal(12, 2)
+  firstDonationDate DateTime?
+  lastDonationDate  DateTime?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relationships
+  clientId  String
+  client    Client     @relation(fields: [clientId], references: [id])
+  donations Donation[]
+  segments  DonorSegment[]
+  tags      DonorTag[]
+
+  @@unique([email, clientId])
+  @@map("donors")
+}
+
+// Donation Tracking
+model Donation {
+  id          String        @id @default(cuid())
+  amount      Decimal       @db.Decimal(12, 2)
+  currency    String        @default("USD")
+  method      PaymentMethod @default(ONLINE)
+  status      DonationStatus @default(PENDING)
+  reference   String?
+  notes       String?
+  isRecurring Boolean       @default(false)
+  donatedAt   DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relationships
+  donorId    String
+  donor      Donor    @relation(fields: [donorId], references: [id])
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@map("donations")
+}
+
+// Donor Segmentation
+model DonorSegment {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  criteria    Json     // Store segmentation criteria as JSON
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  donors DonorSegmentAssignment[]
+
+  @@map("donor_segments")
+}
+
+model DonorSegmentAssignment {
+  id        String   @id @default(cuid())
+  donorId   String
+  segmentId String
+  assignedAt DateTime @default(now())
+
+  // Relationships
+  donor   Donor        @relation(fields: [donorId], references: [id])
+  segment DonorSegment @relation(fields: [segmentId], references: [id])
+
+  @@unique([donorId, segmentId])
+  @@map("donor_segment_assignments")
+}
+
+// Donor Tags
+model DonorTag {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?  @default("#3B82F6")
+  createdAt DateTime @default(now())
+
+  // Relationships
+  donors DonorTagAssignment[]
+
+  @@map("donor_tags")
+}
+
+model DonorTagAssignment {
+  id      String @id @default(cuid())
+  donorId String
+  tagId   String
+
+  // Relationships
+  donor Donor    @relation(fields: [donorId], references: [id])
+  tag   DonorTag @relation(fields: [tagId], references: [id])
+
+  @@unique([donorId, tagId])
+  @@map("donor_tag_assignments")
+}
+
+// Analytics and Reporting
+model CampaignAnalytics {
+  id             String   @id @default(cuid())
+  campaignId     String
+  date           DateTime
+  views          Int      @default(0)
+  uniqueVisitors Int      @default(0)
+  conversions    Int      @default(0)
+  donationCount  Int      @default(0)
+  donationAmount Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt      DateTime @default(now())
+
+  // Relationships
+  campaign Campaign @relation(fields: [campaignId], references: [id])
+
+  @@unique([campaignId, date])
+  @@map("campaign_analytics")
+}
+
+// Activity Logging
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  description String
+  metadata    Json?        // Store additional data as JSON
+  createdAt   DateTime     @default(now())
+
+  // Relationships
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  campaignId String?
+  campaign   Campaign? @relation(fields: [campaignId], references: [id])
+
+  @@map("activities")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum CampaignType {
+  FUNDRAISING
+  AWARENESS
+  EVENT
+  MEMBERSHIP
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum DonorType {
+  INDIVIDUAL
+  CORPORATE
+  FOUNDATION
+  ORGANIZATION
+}
+
+enum DonorStatus {
+  ACTIVE
+  INACTIVE
+  PROSPECT
+  LAPSED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  BANK_TRANSFER
+  PAYPAL
+  CHECK
+  CASH
+  ONLINE
+  OTHER
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum ActivityType {
+  USER_LOGIN
+  USER_LOGOUT
+  CAMPAIGN_CREATED
+  CAMPAIGN_UPDATED
+  CAMPAIGN_DELETED
+  DONATION_RECEIVED
+  DONOR_ADDED
+  DONOR_UPDATED
+  CLIENT_CREATED
+  CLIENT_UPDATED
+  EXPORT_GENERATED
+  EMAIL_SENT
+}
