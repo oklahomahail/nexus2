@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useReducer, ReactNode } from "react";
+import { BrowserRouter } from "react-router-dom";
 
 import { AnalyticsProvider } from "./analytics/AnalyticsContext";
 import {
@@ -40,10 +41,12 @@ export const AppProviders: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AuthProvider>
-      <AppContext.Provider value={value}>
-        <AnalyticsProvider>{children}</AnalyticsProvider>
-      </AppContext.Provider>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContext.Provider value={value}>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
+        </AppContext.Provider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };

@@ -1,105 +1,85 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+// src/hooks/useNotifications.ts
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-export type NotificationType = "info" | "success" | "warning" | "error";
+import { POLLING } from "@/config/runtime";
+import { usePolling } from "@/hooks/usePolling";
+import type { NotificationDTO } from "@/services/notificationService";
+import { fetchNotifications } from "@/services/notificationService";
 
-export interface NotificationItem {
-  id: string;
-  title: string;
-  message: string;
-  type: NotificationType;
-  timestamp: Date;
-  read: boolean;
-}
+type ISO8601 = string;
 
-export interface UseNotificationsApi {
-  open: boolean;
-  toggle: () => void;
-  notifications: NotificationItem[];
-  add: (
-    _n: Omit<NotificationItem, "id" | "timestamp" | "read"> & {
-      id?: string;
-      timestamp?: Date;
-      read?: boolean;
-    },
-  ) => string;
-  markAsRead: (_id: string) => void;
-  markAllAsRead: () => void;
-  clear: () => void;
-}
+// Guard for any possible timestamp type we might get from DTOs.
+const toMillis = (t: string | number | Date) => new Date(t).getTime();
+const toIso = (t: string | number | Date): ISO8601 => new Date(t).toISOString();
 
-export function useNotifications(): UseNotificationsApi {
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<NotificationItem[]>(() => seed());
-  const idSeq = useRef(1000);
+export function useNotifications() {
+  const [items, setItems] = useState<NotificationDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const toggle = useCallback(() => setOpen((v) => !v), []);
+  // Cursor for incremental fetches; undefined until first load completes.
+  const sinceRef = useRef<ISO8601 | undefined>(undefined);
 
-  const add: UseNotificationsApi["add"] = useCallback((n) => {
-    const id = n.id ?? `n_${idSeq.current++}`;
-    const item: NotificationItem = {
-      id,
-      title: n.title,
-      message: n.message,
-      type: n.type,
-      timestamp: n.timestamp ?? new Date(),
-      read: n.read ?? false,
-    };
-    setItems((prev) => [item, ...prev]);
-    return id;
+  // Use functional state updates inside `load` so it has NO deps (no stale or TS complaints).
+  const load = useCallback(async () => {
+    try {
+      setError(null);
+
+      const data = await fetchNotifications(sinceRef.current);
+
+      if (data.length > 0) {
+        setItems((prev) => {
+          // Dedup by id (newest payload wins)
+          const map = new Map<string, NotificationDTO>();
+          // Put incoming first so it overwrites any prev dupes
+          [...data, ...prev].forEach((n) => map.set(n.id, n));
+
+          const merged = [...map.values()].sort(
+            (a, b) => toMillis(b.timestamp) - toMillis(a.timestamp),
+          );
+
+          // Advance cursor to newest known item
+          sinceRef.current = toIso(merged[0].timestamp);
+          return merged;
+        });
+      } else if (!sinceRef.current) {
+        // Establish a baseline cursor so future polls ask for deltas
+        sinceRef.current = toIso(Date.now());
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e : new Error("Unknown error"));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const markAsRead = useCallback((id: string) => {
-    setItems((prev) =>
-      prev.map((x) => (x.id === id ? { ...x, read: true } : x)),
-    );
-  }, []);
+  // Initial fetch
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const markAllAsRead = useCallback(() => {
-    setItems((prev) => prev.map((x) => ({ ...x, read: true })));
-  }, []);
+  // Polling (tab-aware cadence)
+  usePolling(load, {
+    visibleInterval: POLLING.visibleMs,
+    hiddenInterval: POLLING.hiddenMs,
+    enabled: true,
+    immediate: false,
+    // keep this primitive to avoid unnecessary restarts
+    deps: [items.length],
+    onError: (e: unknown) =>
+      setError(e instanceof Error ? e : new Error("Unknown error")),
+  });
 
-  const clear = useCallback(() => setItems([]), []);
+  const markAsRead = useCallback(
+    (id: string) =>
+      setItems((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
+      ),
+    [],
+  );
 
   return useMemo(
-    () => ({
-      open,
-      toggle,
-      notifications: items,
-      add,
-      markAsRead,
-      markAllAsRead,
-      clear,
-    }),
-    [open, toggle, items, add, markAsRead, markAllAsRead, clear],
+    () => ({ items, loading, error, reload: load, markAsRead }),
+    [items, loading, error, load, markAsRead],
   );
-}
-
-// simple starter data
-function seed(): NotificationItem[] {
-  return [
-    {
-      id: "1",
-      title: "New Donation Received",
-      message: "John Smith donated $500 to the Annual Fund campaign",
-      type: "success",
-      timestamp: new Date(Date.now() - 2 * 60 * 1000),
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Campaign Goal Achieved",
-      message: "Spring Fundraiser has reached 100% of its goal",
-      type: "success",
-      timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      read: false,
-    },
-    {
-      id: "3",
-      title: "Monthly Report Available",
-      message: "Your monthly analytics report is ready for download",
-      type: "info",
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-      read: true,
-    },
-  ];
 }
