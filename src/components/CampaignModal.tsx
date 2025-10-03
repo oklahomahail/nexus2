@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Modal from "@/components/ui-kit/Modal";
+import { useToast } from "@/context/ToastContext";
 import type {
   Campaign,
   CreateCampaignData,
   UpdateCampaignData,
 } from "@/models/campaign";
 import { createCampaign, updateCampaign } from "@/services/campaignService";
+import { validateCampaign } from "@/utils/validation";
 
 export type CampaignModalMode = "create" | "edit";
 
@@ -43,7 +45,9 @@ export default function CampaignModal({
     useState<Omit<CreateCampaignData, "clientId">>(defaultValues);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const nameRef = useRef<HTMLInputElement | null>(null);
+  const { success, error: toastError } = useToast();
 
   const isEdit = mode === "edit";
 
@@ -80,18 +84,27 @@ export default function CampaignModal({
     return () => clearTimeout(t);
   }, [open, isEdit, campaign]);
 
-  const validate = (): string | null => {
-    if (!values.name.trim()) return "Campaign name is required.";
-    if (values.goal <= 0) return "Goal amount must be greater than 0.";
-    if (!values.startDate) return "Start date is required.";
-    if (!values.endDate) return "End date is required.";
-    if (new Date(values.endDate) <= new Date(values.startDate)) {
-      return "End date must be after start date.";
-    }
+  const validate = (): string[] => {
+    // Use the comprehensive validation utility
     if (mode === "create" && !clientId) {
-      return "Please select a client to create a campaign.";
+      return ["Please select a client to create a campaign."];
     }
-    return null;
+
+    const campaignData = {
+      clientId: clientId || "",
+      name: values.name,
+      description: values.description,
+      goal: values.goal,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      category: values.category,
+      targetAudience: values.targetAudience,
+      tags: values.tags,
+      notes: values.notes,
+    };
+
+    const validation = validateCampaign(campaignData);
+    return validation.success ? [] : validation.errors;
   };
 
   const handleChange =
@@ -107,6 +120,9 @@ export default function CampaignModal({
         ...prev,
         [key]: value,
       }));
+      // Clear errors when user makes changes
+      setError(null);
+      setValidationErrors([]);
     };
 
   const handleTagsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -121,15 +137,18 @@ export default function CampaignModal({
     e?.preventDefault();
     if (saving) return;
 
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
+    const validationErrors = validate();
+    if (validationErrors.length > 0) {
+      setValidationErrors(validationErrors);
+      setError("Please fix the validation errors below");
+      toastError("Validation Error", validationErrors[0]);
       return;
     }
 
     try {
       setSaving(true);
       setError(null);
+      setValidationErrors([]);
 
       let saved: Campaign;
       if (isEdit && campaign) {
@@ -146,11 +165,21 @@ export default function CampaignModal({
         saved = created;
       }
 
+      // Success notification
+      success(
+        isEdit ? "Campaign Updated!" : "Campaign Created!",
+        `"${saved.name}" has been successfully ${isEdit ? "updated" : "created"}.`,
+        { duration: 4000 },
+      );
+
       onSaved?.(saved);
       onClose();
     } catch (err: any) {
       console.error("CampaignModal save error", err);
-      setError(err?.message || "An error occurred while saving the campaign.");
+      const errorMessage =
+        err?.message || "An error occurred while saving the campaign.";
+      setError(errorMessage);
+      toastError(isEdit ? "Update Failed" : "Creation Failed", errorMessage);
     } finally {
       setSaving(false);
     }
@@ -163,9 +192,19 @@ export default function CampaignModal({
       title={isEdit ? "Edit Campaign" : "New Campaign"}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {error && (
+        {(error || validationErrors.length > 0) && (
           <div className="status-error rounded-lg border px-3 py-2 text-sm">
-            {error}
+            {error && <p className="mb-2">{error}</p>}
+            {validationErrors.length > 0 && (
+              <div className="space-y-1">
+                {validationErrors.map((err, i) => (
+                  <p key={i} className="flex items-center gap-2">
+                    <span className="w-1 h-1 bg-current rounded-full"></span>
+                    {err}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

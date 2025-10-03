@@ -16,7 +16,9 @@ import {
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
 import Modal from "@/components/ui-kit/Modal";
+import { useToast } from "@/context/ToastContext";
 import { createCampaign } from "@/services/campaignService";
+import { validateCampaign } from "@/utils/validation";
 
 interface CampaignWizardProps {
   open: boolean;
@@ -131,7 +133,9 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
   const [formData, setFormData] = useState<WizardFormData>(defaultValues);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const nameRef = useRef<HTMLInputElement | null>(null);
+  const { success, error: toastError } = useToast();
 
   const totalSteps = 5;
 
@@ -154,6 +158,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
   const updateFormData = (field: keyof WizardFormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
+    setValidationErrors([]); // Clear validation errors when user makes changes
   };
 
   const toggleTag = (tag: string) => {
@@ -195,31 +200,40 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     [formData],
   );
 
-  const validate = (): string | null => {
-    if (!formData.name.trim()) return "Campaign name is required";
-    if (!formData.type) return "Campaign type is required";
-    if (!formData.description.trim()) return "Campaign description is required";
-    if (formData.goal <= 0) return "Goal must be greater than 0";
-    if (!formData.startDate) return "Start date is required";
-    if (!formData.endDate) return "End date is required";
-    if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-      return "End date must be after start date";
-    }
-    return null;
+  const validate = (): string[] => {
+    // Use the comprehensive validation utility
+    const campaignData = {
+      clientId: clientId || "",
+      name: formData.name,
+      description: formData.description,
+      goal: formData.goal,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      category: formData.category,
+      targetAudience: formData.targetAudience,
+      tags: formData.tags,
+    };
+
+    const validation = validateCampaign(campaignData);
+    return validation.success ? [] : validation.errors;
   };
 
   const handleSubmit = async () => {
     if (saving) return;
 
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
+    const validationErrors = validate();
+    if (validationErrors.length > 0) {
+      setValidationErrors(validationErrors);
+      setError("Please fix the validation errors below");
+      // Show first validation error as toast
+      toastError("Validation Error", validationErrors[0]);
       return;
     }
 
     try {
       setSaving(true);
       setError(null);
+      setValidationErrors([]);
 
       const campaignData = {
         clientId: clientId || "",
@@ -236,12 +250,18 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
       const newCampaign = await createCampaign(campaignData);
       onSaved?.(newCampaign);
 
-      // Success feedback
-      alert(`🎉 Campaign "${formData.name}" created successfully!`);
+      // Success feedback with toast
+      success(
+        "Campaign Created!",
+        `"${formData.name}" has been successfully created and is ready to launch.`,
+        { duration: 6000 },
+      );
       onClose();
     } catch (err: any) {
       console.error("Campaign creation error:", err);
-      setError(err?.message || "Failed to create campaign");
+      const errorMessage = err?.message || "Failed to create campaign";
+      setError(errorMessage);
+      toastError("Campaign Creation Failed", errorMessage);
     } finally {
       setSaving(false);
     }
@@ -383,9 +403,22 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
       <div className="max-w-2xl mx-auto">
         <Progress />
 
-        {error && (
+        {(error || validationErrors.length > 0) && (
           <div className="mb-4 p-3 bg-red-900/20 border border-red-800/50 rounded-lg">
-            <p className="text-red-400 text-sm">{error}</p>
+            {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
+            {validationErrors.length > 0 && (
+              <div className="space-y-1">
+                {validationErrors.map((err, i) => (
+                  <p
+                    key={i}
+                    className="text-red-400 text-sm flex items-center gap-2"
+                  >
+                    <span className="w-1 h-1 bg-red-400 rounded-full"></span>
+                    {err}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
