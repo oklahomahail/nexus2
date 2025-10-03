@@ -1,0 +1,195 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10.0.0'
+
+jobs:
+  # Test and build job
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run type checking
+        run: pnpm typecheck
+
+      - name: Run linting
+        run: pnpm lint
+
+      - name: Run tests
+        run: pnpm test run
+
+      - name: Build application
+        run: pnpm build
+        env:
+          VITE_API_ENVIRONMENT: ${{ github.event.inputs.environment || 'production' }}
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_CLAUDE_API_KEY: ${{ secrets.VITE_CLAUDE_API_KEY }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+          retention-days: 30
+
+  # Deploy to Vercel
+  deploy-vercel:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.preview-url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
+      - name: Deploy to Vercel
+        id: deploy
+        uses: vercel/action@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: ${{ github.event.inputs.environment == 'production' && '--prod' || '' }}
+
+  # Deploy to Netlify (alternative)
+  deploy-netlify:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: false  # Set to true to enable Netlify deployment
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
+      - name: Deploy to Netlify
+        uses: netlify/actions/deploy@master
+        with:
+          publish-dir: './dist'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+  # Docker deployment
+  deploy-docker:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    if: false  # Set to true to enable Docker deployment
+    environment: 
+      name: ${{ github.event.inputs.environment || 'production' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: production
+          push: true
+          tags: |
+            ${{ secrets.REGISTRY_URL }}/nexus:latest
+            ${{ secrets.REGISTRY_URL }}/nexus:${{ github.sha }}
+          build-args: |
+            VITE_API_ENVIRONMENT=${{ github.event.inputs.environment || 'production' }}
+            VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}
+            VITE_CLAUDE_API_KEY=${{ secrets.VITE_CLAUDE_API_KEY }}
+
+  # Notification job
+  notify:
+    needs: [test-and-build, deploy-vercel]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Notify deployment status
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            Deployment to ${{ github.event.inputs.environment || 'production' }} completed!
+            Status: ${{ job.status }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
