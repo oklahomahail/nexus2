@@ -1,25 +1,62 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
+import clsx from "clsx";
 import { useAuth } from "@/context/AuthContext";
 import AnalyticsFiltersComponent from "../components/AnalyticsFiltersComponent";
 import DonorInsightsPanel from "../components/DonorInsightsPanel";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MetricsOverview from "../components/MetricsOverview";
+import {
+  KPIWidget,
+  ChartWidget,
+  ActivityFeed,
+  GoalProgressWidget,
+  CampaignSummaryWidget,
+} from "../components/AnalyticsWidgets";
 import { analyticsService } from "../services/analyticsService";
+import { usePolling } from "@/hooks/usePolling";
+import { POLLING } from "@/config/runtime";
 
 type AnalyticsView = "overview" | "campaigns" | "donors" | "export";
 type DateRange = { startDate: string; endDate: string };
 type AnalyticsFilters = { dateRange: DateRange };
 
 type OrganizationAnalytics = {
-  currentPeriod: { totalRaised: number };
-  previousPeriod: { totalRaised: number };
+  currentPeriod: {
+    totalRaised: number;
+    donorCount: number;
+    campaignsActive: number;
+  };
+  previousPeriod: { totalRaised: number; donorCount: number };
   topPerformingCampaigns: {
     id: string;
     name: string;
     raised: number;
     goal: number;
+    daysLeft: number;
+    status: "active" | "completed" | "draft";
   }[];
+  recentActivities: {
+    id: string;
+    type: "donation" | "campaign" | "donor" | "goal";
+    title: string;
+    description: string;
+    timestamp: Date;
+    amount?: number;
+  }[];
+  monthlyData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      color: string;
+    }[];
+  };
+  goals: {
+    monthly: { current: number; goal: number };
+    quarterly: { current: number; goal: number };
+    annual: { current: number; goal: number };
+  };
 };
 
 const AnalyticsDashboard: React.FC = () => {
@@ -47,6 +84,15 @@ const AnalyticsDashboard: React.FC = () => {
   useEffect(() => {
     void loadAnalyticsData();
   }, [filters]);
+
+  // Auto-refresh analytics data
+  usePolling(loadAnalyticsData, {
+    visibleInterval: POLLING.dashboard.visibleMs,
+    hiddenInterval: POLLING.dashboard.hiddenMs,
+    enabled: true,
+    immediate: false,
+    deps: [filters],
+  });
 
   const loadAnalyticsData = async () => {
     try {
@@ -180,54 +226,195 @@ const AnalyticsDashboard: React.FC = () => {
       <div className="space-y-6">
         {activeView === "overview" && orgAnalytics && (
           <>
-            <MetricsOverview />
-            <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4 text-white">
-                Performance Overview
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-400">
-                    ${orgAnalytics.currentPeriod.totalRaised.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-slate-400">Current Period</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-400">
-                    ${orgAnalytics.previousPeriod.totalRaised.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-slate-400">Previous Period</p>
-                </div>
-              </div>
+            {/* KPI Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <KPIWidget
+                title="Total Raised"
+                value={`$${orgAnalytics.currentPeriod.totalRaised.toLocaleString()}`}
+                change={{
+                  value: `${(((orgAnalytics.currentPeriod.totalRaised - orgAnalytics.previousPeriod.totalRaised) / orgAnalytics.previousPeriod.totalRaised) * 100).toFixed(1)}%`,
+                  direction:
+                    orgAnalytics.currentPeriod.totalRaised >
+                    orgAnalytics.previousPeriod.totalRaised
+                      ? "up"
+                      : "down",
+                  period: "vs last period",
+                }}
+                icon="💰"
+                color="green"
+              />
+              <KPIWidget
+                title="Active Donors"
+                value={orgAnalytics.currentPeriod.donorCount.toLocaleString()}
+                change={{
+                  value: `${orgAnalytics.currentPeriod.donorCount - orgAnalytics.previousPeriod.donorCount}`,
+                  direction:
+                    orgAnalytics.currentPeriod.donorCount >
+                    orgAnalytics.previousPeriod.donorCount
+                      ? "up"
+                      : "down",
+                  period: "new donors",
+                }}
+                icon="👥"
+                color="blue"
+              />
+              <KPIWidget
+                title="Active Campaigns"
+                value={orgAnalytics.currentPeriod.campaignsActive}
+                icon="🎯"
+                color="purple"
+              />
+              <KPIWidget
+                title="Avg Donation"
+                value={`$${Math.round(orgAnalytics.currentPeriod.totalRaised / orgAnalytics.currentPeriod.donorCount).toLocaleString()}`}
+                icon="📊"
+                color="yellow"
+              />
             </div>
+
+            {/* Goals Progress */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <GoalProgressWidget
+                title="Monthly Goal"
+                current={orgAnalytics.goals.monthly.current}
+                goal={orgAnalytics.goals.monthly.goal}
+                period="This Month"
+              />
+              <GoalProgressWidget
+                title="Quarterly Goal"
+                current={orgAnalytics.goals.quarterly.current}
+                goal={orgAnalytics.goals.quarterly.goal}
+                period="Q4 2024"
+              />
+              <GoalProgressWidget
+                title="Annual Goal"
+                current={orgAnalytics.goals.annual.current}
+                goal={orgAnalytics.goals.annual.goal}
+                period="2024"
+              />
+            </div>
+
+            {/* Charts and Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ChartWidget
+                title="Monthly Fundraising Trend"
+                data={orgAnalytics.monthlyData}
+                height="300px"
+              />
+              <ActivityFeed
+                activities={orgAnalytics.recentActivities}
+                maxItems={8}
+              />
+            </div>
+
+            {/* Campaign Overview */}
+            <CampaignSummaryWidget
+              campaigns={orgAnalytics.topPerformingCampaigns}
+            />
           </>
         )}
 
         {activeView === "campaigns" && orgAnalytics && (
           <div className="space-y-6">
+            {/* Campaign Performance KPIs */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <KPIWidget
+                title="Total Campaign Revenue"
+                value={`$${orgAnalytics.topPerformingCampaigns.reduce((sum, c) => sum + c.raised, 0).toLocaleString()}`}
+                icon="💰"
+                color="green"
+              />
+              <KPIWidget
+                title="Active Campaigns"
+                value={
+                  orgAnalytics.topPerformingCampaigns.filter(
+                    (c) => c.status === "active",
+                  ).length
+                }
+                icon="🚀"
+                color="blue"
+              />
+              <KPIWidget
+                title="Completed Campaigns"
+                value={
+                  orgAnalytics.topPerformingCampaigns.filter(
+                    (c) => c.status === "completed",
+                  ).length
+                }
+                icon="✅"
+                color="purple"
+              />
+            </div>
+
+            {/* Detailed Campaign List */}
             <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold mb-4 text-white">
-                Top Performing Campaigns
+                Campaign Performance Details
               </h3>
-              <div className="space-y-3">
-                {orgAnalytics.topPerformingCampaigns.map((campaign) => (
-                  <div
-                    key={campaign.id}
-                    className="flex justify-between items-center p-3 bg-slate-900/50 border border-slate-800 rounded"
-                  >
-                    <span className="font-medium text-white">
-                      {campaign.name}
-                    </span>
-                    <div className="text-right">
-                      <p className="font-semibold text-blue-300">
-                        ${campaign.raised.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-slate-400">
-                        Goal: ${campaign.goal.toLocaleString()}
-                      </p>
+              <div className="space-y-4">
+                {orgAnalytics.topPerformingCampaigns.map((campaign) => {
+                  const progress = (campaign.raised / campaign.goal) * 100;
+                  const statusColors = {
+                    active: "text-green-400 bg-green-900/20 border-green-800",
+                    completed: "text-blue-400 bg-blue-900/20 border-blue-800",
+                    draft: "text-yellow-400 bg-yellow-900/20 border-yellow-800",
+                  };
+
+                  return (
+                    <div
+                      key={campaign.id}
+                      className="p-4 bg-slate-800/30 border border-slate-700 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-white text-lg">
+                          {campaign.name}
+                        </h4>
+                        <span
+                          className={clsx(
+                            "px-3 py-1 rounded-full text-xs font-medium border",
+                            statusColors[campaign.status],
+                          )}
+                        >
+                          {campaign.status.toUpperCase()}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                        <div>
+                          <p className="text-sm text-slate-400">Raised</p>
+                          <p className="font-semibold text-green-300">
+                            ${campaign.raised.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-slate-400">Goal</p>
+                          <p className="font-semibold text-white">
+                            ${campaign.goal.toLocaleString()}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-slate-400">Progress</p>
+                          <p className="font-semibold text-blue-300">
+                            {progress.toFixed(1)}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-sm text-slate-400">Days Left</p>
+                          <p className="font-semibold text-white">
+                            {campaign.daysLeft}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

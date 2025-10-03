@@ -603,7 +603,7 @@ class AnalyticsService {
     ];
 
     // Add clientPerformance to satisfy OrganizationAnalytics contract
-    const clientPerformance = Array.from({ length: 6 }, (_, i) => {
+    const clientPerformance = Array.from({ length: 6 }, (_, _i) => {
       const revenue = clamp(
         Math.round(currentTotal * (0.04 + rng() * 0.08)),
         8000,
@@ -617,8 +617,8 @@ class AnalyticsService {
       const campaigns = clamp(Math.round(1 + rng() * 4), 1, 8);
       const growth = Math.round((-3 + rng() * 10) * 10) / 10; // -3%..+7%
       return {
-        clientId: `client-${i + 1}`,
-        clientName: `Client ${i + 1}`,
+        clientId: `client-${_i + 1}`,
+        clientName: `Client ${_i + 1}`,
         revenue,
         donors,
         campaigns,
@@ -626,20 +626,125 @@ class AnalyticsService {
       };
     });
 
+    // Generate recent activities
+    const recentActivities = Array.from({ length: 15 }, (_, _i) => {
+      const activities: Array<{
+        type: "donation" | "campaign" | "donor" | "goal";
+        title: string;
+        description: string;
+        amount?: number;
+      }> = [
+        {
+          type: "donation",
+          title: "New Donation Received",
+          description: "Major gift from Sarah Johnson",
+          amount: 2500,
+        },
+        {
+          type: "campaign",
+          title: "Campaign Launched",
+          description: "Holiday Giving Campaign is now live",
+        },
+        {
+          type: "goal",
+          title: "Monthly Goal Achieved",
+          description: "October fundraising goal reached!",
+          amount: 50000,
+        },
+        {
+          type: "donor",
+          title: "New Donor Registered",
+          description: "Welcome Michael Davis to our community",
+        },
+        {
+          type: "donation",
+          title: "Corporate Gift Received",
+          description: "Tech Corp annual donation",
+          amount: 10000,
+        },
+      ];
+
+      const activity = activities[_i % activities.length];
+      const hoursAgo = Math.floor(rng() * 72) + 1; // 1-72 hours ago
+
+      return {
+        id: `activity-${_i}`,
+        ...activity,
+        timestamp: new Date(Date.now() - hoursAgo * 60 * 60 * 1000),
+        amount: activity.amount
+          ? activity.amount + randInt(rng, -500, 1000)
+          : undefined,
+      };
+    });
+
+    // Generate monthly trend data
+    const monthlyData = {
+      labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      datasets: [
+        {
+          label: "Monthly Revenue",
+          data: Array.from({ length: 12 }, (_, _i) => {
+            const baseAmount = currentTotal / 12;
+            return Math.round(baseAmount * (0.7 + rng() * 0.6));
+          }),
+          color: "#3b82f6",
+        },
+      ],
+    };
+
+    // Generate goals data
+    const goals = {
+      monthly: {
+        current: Math.round((currentTotal / 12) * (new Date().getMonth() + 1)),
+        goal: Math.round((currentTotal / 12) * 12 * 1.1), // 10% stretch
+      },
+      quarterly: {
+        current: Math.round(
+          (currentTotal / 4) * Math.ceil((new Date().getMonth() + 1) / 3),
+        ),
+        goal: Math.round((currentTotal / 4) * 4 * 1.15), // 15% stretch
+      },
+      annual: {
+        current: currentTotal,
+        goal: Math.round(currentTotal * 1.2), // 20% stretch
+      },
+    };
+
+    // Enhanced campaign data with status and days left
+    const enhancedCampaigns = topPerformingCampaigns.map((campaign, _i) => ({
+      ...campaign,
+      daysLeft: Math.floor(rng() * 45) + 5, // 5-50 days
+      status: (["active", "active", "active", "completed", "draft"] as const)[
+        _i % 5
+      ],
+    }));
+
     return {
       currentPeriod: {
         startDate: currentStart,
         endDate: currentEnd,
         totalRaised: currentTotal,
         donorCount: currentDonors,
-        campaignCount: currentCampaigns,
+        campaignsActive: currentCampaigns,
       },
       previousPeriod: {
         startDate: previousStart,
         endDate: previousEnd,
         totalRaised: previousTotal,
         donorCount: previousDonors,
-        campaignCount: previousCampaigns,
       },
       growthMetrics: {
         raisedChange: growthRaised,
@@ -651,8 +756,11 @@ class AnalyticsService {
         previous: previousTotal,
         label: "Fundraising Performance",
       },
-      topPerformingCampaigns,
+      topPerformingCampaigns: enhancedCampaigns,
       clientPerformance,
+      recentActivities,
+      monthlyData,
+      goals,
     };
   }
 
@@ -698,7 +806,7 @@ class AnalyticsService {
     const d = await this.getDonorInsights(filters);
     const rows = [
       "rank,name,totalGiven",
-      ...d.topDonors.map((td, i) => `${i + 1},${td.name},${td.totalGiven}`),
+      ...d.topDonors.map((td, _i) => `${_i + 1},${td.name},${td.totalGiven}`),
     ];
     return `data:text/csv;charset=utf-8,${encodeURIComponent(rows.join("\n"))}`;
   }

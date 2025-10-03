@@ -1,6 +1,13 @@
 import clsx from "clsx";
 import React from "react";
 
+import { useNotifications } from "@/hooks/useNotifications";
+import {
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "@/services/notificationService";
+import type { NotificationDTO } from "@/services/notificationService";
+
 export interface Notification {
   id: string;
   title: string;
@@ -11,49 +18,35 @@ export interface Notification {
 }
 
 interface NotificationsPanelProps {
-  notifications?: Notification[];
   onClose?: () => void;
-  onMarkAsRead?: (_id: string) => void;
-  onMarkAllAsRead?: () => void;
-  onNotificationClick?: (_notification: Notification) => void;
+  onNotificationClick?: (_notification: NotificationDTO) => void;
 }
 
 const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
-  notifications = [],
   onClose,
-  onMarkAsRead,
-  onMarkAllAsRead,
   onNotificationClick,
 }) => {
-  const sampleNotifications: Notification[] = [
-    {
-      id: "1",
-      title: "New Donation Received",
-      message: "John Smith donated $500 to the Annual Fund campaign",
-      type: "success",
-      timestamp: new Date(Date.now() - 2 * 60 * 1000),
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Campaign Goal Achieved",
-      message: "Spring Fundraiser has reached 100% of its goal",
-      type: "success",
-      timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      read: false,
-    },
-    {
-      id: "3",
-      title: "Monthly Report Available",
-      message: "Your monthly analytics report is ready for download",
-      type: "info",
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
-      read: true,
-    },
-  ];
-
-  const items = notifications.length ? notifications : sampleNotifications;
+  const { items, loading, error, markAsRead, markAllAsRead } =
+    useNotifications();
   const unread = items.filter((n) => !n.read).length;
+
+  const handleMarkAsRead = async (id: string) => {
+    try {
+      await markNotificationAsRead(id);
+      markAsRead(id);
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllNotificationsAsRead();
+      markAllAsRead();
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+    }
+  };
 
   const dot = (color: string) => (
     <span
@@ -84,7 +77,8 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
     }
   };
 
-  const formatAgo = (d: Date) => {
+  const formatAgo = (timestamp: string) => {
+    const d = new Date(timestamp);
     const mins = Math.floor((Date.now() - d.getTime()) / 60000);
     if (mins < 1) return "Just now";
     if (mins < 60) return `${mins} min${mins !== 1 ? "s" : ""} ago`;
@@ -105,9 +99,13 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
           )}
         </div>
         <div className="flex items-center gap-2">
+          {loading && (
+            <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full" />
+          )}
           <button
-            onClick={() => onMarkAllAsRead?.()}
-            className="text-slate-300 hover:text-white text-xs"
+            onClick={handleMarkAllAsRead}
+            disabled={loading || unread === 0}
+            className="text-slate-300 hover:text-white text-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Mark all read
           </button>
@@ -122,39 +120,53 @@ const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
         </div>
       </div>
 
+      {error && (
+        <div className="bg-red-900/20 border border-red-700 rounded-lg p-3 mb-4">
+          <p className="text-red-200 text-sm">Failed to load notifications</p>
+        </div>
+      )}
+
       <div className="space-y-3">
-        {items.map((n) => (
-          <button
-            key={n.id}
-            onClick={() => onNotificationClick?.(n)}
-            className={clsx(
-              "w-full text-left p-3 border rounded-lg",
-              rowBg(n.type, n.read),
-            )}
-          >
-            <div className="flex items-start space-x-3">
-              <div className="mt-2">{dot(dotColor[n.type as NotifType])}</div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{n.title}</p>
-                <p className="text-sm text-slate-300 mt-1">{n.message}</p>
-                <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
-                  <span>{formatAgo(n.timestamp)}</span>
-                  {!n.read && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onMarkAsRead?.(n.id);
-                      }}
-                      className="text-blue-400 hover:text-blue-300"
-                    >
-                      Mark read
-                    </button>
-                  )}
+        {items.length === 0 && !loading ? (
+          <div className="text-center py-8">
+            <p className="text-slate-400">No notifications</p>
+          </div>
+        ) : (
+          items.map((n) => (
+            <button
+              key={n.id}
+              onClick={() => onNotificationClick?.(n)}
+              className={clsx(
+                "w-full text-left p-3 border rounded-lg transition-opacity",
+                rowBg(n.type, n.read),
+                loading && "opacity-50",
+              )}
+            >
+              <div className="flex items-start space-x-3">
+                <div className="mt-2">{dot(dotColor[n.type as NotifType])}</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{n.title}</p>
+                  <p className="text-sm text-slate-300 mt-1">{n.message}</p>
+                  <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+                    <span>{formatAgo(n.timestamp)}</span>
+                    {!n.read && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void handleMarkAsRead(n.id);
+                        }}
+                        className="text-blue-400 hover:text-blue-300"
+                        disabled={loading}
+                      >
+                        Mark read
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </button>
-        ))}
+            </button>
+          ))
+        )}
       </div>
 
       <div className="mt-4 pt-4 border-t border-slate-800">
