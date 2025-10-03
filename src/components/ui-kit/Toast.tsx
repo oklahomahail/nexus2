@@ -21,6 +21,11 @@ const ToastComponent: React.FC<ToastComponentProps> = ({ toast, onRemove }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleRemove = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => onRemove(toast.id), 300); // Wait for exit animation
+  }, [onRemove, toast.id]);
+
   useEffect(() => {
     if (toast.duration && toast.duration > 0) {
       const timer = setTimeout(() => {
@@ -29,11 +34,6 @@ const ToastComponent: React.FC<ToastComponentProps> = ({ toast, onRemove }) => {
       return () => clearTimeout(timer);
     }
   }, [toast.duration, handleRemove]);
-
-  const handleRemove = useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => onRemove(toast.id), 300); // Wait for exit animation
-  }, [onRemove, toast.id]);
 
   const getIcon = () => {
     const iconClass = "w-5 h-5";

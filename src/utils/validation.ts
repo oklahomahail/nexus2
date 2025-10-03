@@ -5,7 +5,8 @@ import { z } from "zod";
 
 // Common validation rules
 const requiredString = z.string().min(1, "This field is required");
-const optionalString = z.string().optional();
+const optionalStringWithMax = (max: number, message: string) =>
+  z.string().max(max, message).optional();
 const requiredEmail = z.string().email("Please enter a valid email address");
 const optionalEmail = z
   .string()
@@ -38,7 +39,7 @@ export const campaignSchema = z
       "Campaign name must be 100 characters or less",
     ),
     clientId: requiredString,
-    description: optionalString.max(
+    description: optionalStringWithMax(
       500,
       "Description must be 500 characters or less",
     ),
@@ -52,12 +53,12 @@ export const campaignSchema = z
       "Environment",
       "Emergency",
     ]),
-    targetAudience: optionalString.max(
+    targetAudience: optionalStringWithMax(
       200,
       "Target audience must be 200 characters or less",
     ),
     tags: z.array(z.string()).optional(),
-    notes: optionalString.max(1000, "Notes must be 1000 characters or less"),
+    notes: optionalStringWithMax(1000, "Notes must be 1000 characters or less"),
   })
   .refine((data) => new Date(data.endDate) > new Date(data.startDate), {
     message: "End date must be after start date",
@@ -77,14 +78,17 @@ export const clientSchema = z.object({
     100,
     "Organization name must be 100 characters or less",
   ),
-  shortName: optionalString.max(50, "Short name must be 50 characters or less"),
+  shortName: optionalStringWithMax(
+    50,
+    "Short name must be 50 characters or less",
+  ),
   website: optionalUrl,
-  primaryContactName: optionalString.max(
+  primaryContactName: optionalStringWithMax(
     100,
     "Contact name must be 100 characters or less",
   ),
   primaryContactEmail: optionalEmail,
-  notes: optionalString.max(1000, "Notes must be 1000 characters or less"),
+  notes: optionalStringWithMax(1000, "Notes must be 1000 characters or less"),
   brand: z
     .object({
       logoUrl: optionalUrl,
@@ -114,7 +118,7 @@ export function validateData<T>(
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors: Record<string, string> = {};
-      error.errors.forEach((err) => {
+      error.issues.forEach((err) => {
         const path = err.path.join(".");
         errors[path] = err.message;
       });
@@ -161,14 +165,14 @@ export function validateField(
   try {
     const validatedValue = schema.parse(value);
     return {
-      value: validatedValue,
+      value: validatedValue as string | number,
       isValid: true,
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         value: value as string | number,
-        error: error.errors[0]?.message || "Invalid value",
+        error: error.issues[0]?.message || "Invalid value",
         isValid: false,
       };
     }

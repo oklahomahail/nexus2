@@ -9,5 +9,4 @@ export { default as ToastContainer } from "./ToastContainer";
 // export { default as Button } from './Button';
 // export { default as Modal } from './Modal';
 
-// Export toast types
-export type { Toast as ToastType, ToastType as ToastVariant } from "./Toast";
+// Note: Toast types are available from @/types/toast
