@@ -8,33 +8,46 @@ import { logger } from "@/config/logger";
 const router = Router();
 router.use(authenticateToken);
 
-// Validation schemas
-const createCampaignSchema = z
-  .object({
-    name: z.string().min(1, "Campaign name is required"),
-    description: z.string().optional(),
-    type: z
-      .enum(["FUNDRAISING", "AWARENESS", "EVENT", "MEMBERSHIP"])
-      .default("FUNDRAISING"),
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
-    goalAmount: z.number().positive().optional(),
-    clientId: z.string().min(1, "Client ID is required"),
-  })
-  .refine(
-    (data) => {
-      if (data.startDate && data.endDate) {
-        return new Date(data.startDate) < new Date(data.endDate);
-      }
-      return true;
-    },
-    {
-      message: "End date must be after start date",
-      path: ["endDate"],
-    },
-  );
+// Validation schemas - Base schema without refinements for partial operations
+const baseCampaignSchema = z.object({
+  name: z.string().min(1, "Campaign name is required"),
+  description: z.string().optional(),
+  type: z
+    .enum(["FUNDRAISING", "AWARENESS", "EVENT", "MEMBERSHIP"])
+    .default("FUNDRAISING"),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+  goalAmount: z.number().positive().optional(),
+  clientId: z.string().min(1, "Client ID is required"),
+});
 
-const updateCampaignSchema = createCampaignSchema.partial();
+// Create schema with refinements for creation
+const createCampaignSchema = baseCampaignSchema.refine(
+  (data) => {
+    if (data.startDate && data.endDate) {
+      return new Date(data.startDate) < new Date(data.endDate);
+    }
+    return true;
+  },
+  {
+    message: "End date must be after start date",
+    path: ["endDate"],
+  },
+);
+
+// Update schema with partial and refinements
+const updateCampaignSchema = baseCampaignSchema.partial().refine(
+  (data) => {
+    if (data.startDate && data.endDate) {
+      return new Date(data.startDate) < new Date(data.endDate);
+    }
+    return true;
+  },
+  {
+    message: "End date must be after start date",
+    path: ["endDate"],
+  },
+);
 
 const querySchema = z.object({
   page: z.string().transform(Number).default("1"),

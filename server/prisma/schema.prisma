@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ model User {
   password  String
   firstName String?
   lastName  String?
-  role      UserRole @default(USER)
+  role      String   @default("USER") // UserRole
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,12 +70,12 @@ model Campaign {
   id          String         @id @default(cuid())
   name        String
   description String?
-  type        CampaignType   @default(FUNDRAISING)
-  status      CampaignStatus @default(DRAFT)
+  type        String         @default("FUNDRAISING") // CampaignType
+  status      String         @default("DRAFT") // CampaignStatus
   startDate   DateTime?
   endDate     DateTime?
-  goalAmount  Decimal?       @db.Decimal(12, 2)
-  raisedAmount Decimal       @default(0) @db.Decimal(12, 2)
+  goalAmount  Float?
+  raisedAmount Float         @default(0)
   isActive    Boolean        @default(true)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
@@ -104,9 +104,9 @@ model Donor {
   state     String?
   zipCode   String?
   country   String?    @default("US")
-  donorType DonorType  @default(INDIVIDUAL)
-  status    DonorStatus @default(ACTIVE)
-  totalDonated Decimal @default(0) @db.Decimal(12, 2)
+  donorType String     @default("INDIVIDUAL") // DonorType
+  status    String     @default("ACTIVE") // DonorStatus
+  totalDonated Float @default(0)
   firstDonationDate DateTime?
   lastDonationDate  DateTime?
   isActive  Boolean    @default(true)
@@ -117,8 +117,8 @@ model Donor {
   clientId  String
   client    Client     @relation(fields: [clientId], references: [id])
   donations Donation[]
-  segments  DonorSegment[]
-  tags      DonorTag[]
+  segments  DonorSegmentAssignment[]
+  tags      DonorTagAssignment[]
 
   @@unique([email, clientId])
   @@map("donors")
@@ -127,10 +127,10 @@ model Donor {
 // Donation Tracking
 model Donation {
   id          String        @id @default(cuid())
-  amount      Decimal       @db.Decimal(12, 2)
+  amount      Float
   currency    String        @default("USD")
-  method      PaymentMethod @default(ONLINE)
-  status      DonationStatus @default(PENDING)
+  method      String        @default("ONLINE") // PaymentMethod
+  status      String        @default("PENDING") // DonationStatus
   reference   String?
   notes       String?
   isRecurring Boolean       @default(false)
@@ -152,7 +152,7 @@ model DonorSegment {
   id          String   @id @default(cuid())
   name        String
   description String?
-  criteria    Json     // Store segmentation criteria as JSON
+  criteria    String   // Store segmentation criteria as JSON string
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -212,7 +212,7 @@ model CampaignAnalytics {
   uniqueVisitors Int      @default(0)
   conversions    Int      @default(0)
   donationCount  Int      @default(0)
-  donationAmount Decimal  @default(0) @db.Decimal(12, 2)
+  donationAmount Float    @default(0)
   createdAt      DateTime @default(now())
 
   // Relationships
@@ -225,9 +225,9 @@ model CampaignAnalytics {
 // Activity Logging
 model Activity {
   id          String       @id @default(cuid())
-  type        ActivityType
+  type        String // ActivityType
   description String
-  metadata    Json?        // Store additional data as JSON
+  metadata    String?      // Store additional data as JSON string
   createdAt   DateTime     @default(now())
 
   // Relationships
@@ -239,71 +239,12 @@ model Activity {
   @@map("activities")
 }
 
-// Enums
-enum UserRole {
-  ADMIN
-  MANAGER
-  USER
-}
-
-enum CampaignType {
-  FUNDRAISING
-  AWARENESS
-  EVENT
-  MEMBERSHIP
-}
-
-enum CampaignStatus {
-  DRAFT
-  ACTIVE
-  PAUSED
-  COMPLETED
-  CANCELLED
-}
-
-enum DonorType {
-  INDIVIDUAL
-  CORPORATE
-  FOUNDATION
-  ORGANIZATION
-}
-
-enum DonorStatus {
-  ACTIVE
-  INACTIVE
-  PROSPECT
-  LAPSED
-}
-
-enum PaymentMethod {
-  CREDIT_CARD
-  BANK_TRANSFER
-  PAYPAL
-  CHECK
-  CASH
-  ONLINE
-  OTHER
-}
-
-enum DonationStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  REFUNDED
-  CANCELLED
-}
-
-enum ActivityType {
-  USER_LOGIN
-  USER_LOGOUT
-  CAMPAIGN_CREATED
-  CAMPAIGN_UPDATED
-  CAMPAIGN_DELETED
-  DONATION_RECEIVED
-  DONOR_ADDED
-  DONOR_UPDATED
-  CLIENT_CREATED
-  CLIENT_UPDATED
-  EXPORT_GENERATED
-  EMAIL_SENT
-}
+// Note: SQLite doesn't support enums, using strings instead:
+// UserRole: ADMIN, MANAGER, USER
+// CampaignType: FUNDRAISING, AWARENESS, EVENT, MEMBERSHIP
+// CampaignStatus: DRAFT, ACTIVE, PAUSED, COMPLETED, CANCELLED
+// DonorType: INDIVIDUAL, CORPORATE, FOUNDATION, ORGANIZATION
+// DonorStatus: ACTIVE, INACTIVE, PROSPECT, LAPSED
+// PaymentMethod: CREDIT_CARD, BANK_TRANSFER, PAYPAL, CHECK, CASH, ONLINE, OTHER
+// DonationStatus: PENDING, COMPLETED, FAILED, REFUNDED, CANCELLED
+// ActivityType: USER_LOGIN, USER_LOGOUT, CAMPAIGN_CREATED, CAMPAIGN_UPDATED, CAMPAIGN_DELETED, DONATION_RECEIVED, DONOR_ADDED, DONOR_UPDATED, CLIENT_CREATED, CLIENT_UPDATED, EXPORT_GENERATED, EMAIL_SENT

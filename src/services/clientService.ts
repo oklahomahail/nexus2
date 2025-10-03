@@ -1,3 +1,4 @@
 // src/services/clientService.ts
-// Re-export from persistent service for backward compatibility
-export * from "./database/persistentClientService";
+// Re-export from real service for backend integration
+export * from "./realClientService";
+export { realClientService as clientService } from "./realClientService";
