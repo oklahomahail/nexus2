@@ -310,6 +310,3 @@ export function useApiConfig() {
     availableConfigurations: apiConfigService.getAvailableConfigurations(),
   };
 }
-
-// Export types for external use
-export type { ApiConfiguration, ApiEndpoints };

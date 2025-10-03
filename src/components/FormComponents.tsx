@@ -127,15 +127,14 @@ export function useForm<T extends Record<string, any>>({
       if (!validationSchema) return null;
 
       try {
-        const fieldSchema =
-          validationSchema.shape[field as keyof typeof validationSchema.shape];
-        if (fieldSchema) {
-          fieldSchema.parse(value);
-        }
+        validationSchema.parse({ [field]: value });
         return null;
       } catch (error) {
         if (error instanceof ZodError) {
-          return error.errors[0]?.message || "Invalid value";
+          const fieldError = error.issues.find((issue) =>
+            issue.path.includes(field),
+          );
+          return fieldError?.message || "Invalid value";
         }
         return "Invalid value";
       }
@@ -153,9 +152,9 @@ export function useForm<T extends Record<string, any>>({
     } catch (error) {
       if (error instanceof ZodError) {
         const newErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          const path = err.path.join(".");
-          newErrors[path] = err.message;
+        error.issues.forEach((issue) => {
+          const path = issue.path.join(".");
+          newErrors[path] = issue.message;
         });
         setErrors(newErrors);
       }
@@ -265,7 +264,7 @@ export const FormField: React.FC<FormFieldProps> = ({
         </label>
       )}
       <div className="relative">
-        {React.cloneElement(children as React.ReactElement, { id })}
+        {React.cloneElement(children as React.ReactElement<any>, { id })}
       </div>
       {showError && (
         <p className="mt-1 text-sm text-red-600" role="alert">
@@ -323,7 +322,7 @@ export const Input: React.FC<InputProps> = ({
         )}
         onChange={handleChange}
         onBlur={handleBlur}
-        aria-invalid={showError}
+        aria-invalid={showError ? "true" : "false"}
         aria-describedby={showError ? `${id}-error` : undefined}
         {...props}
       />
@@ -377,7 +376,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         )}
         onChange={handleChange}
         onBlur={handleBlur}
-        aria-invalid={showError}
+        aria-invalid={showError ? "true" : "false"}
         aria-describedby={showError ? `${id}-error` : undefined}
         {...props}
       />
@@ -461,7 +460,7 @@ export const Select: React.FC<SelectProps> = ({
           disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
-          aria-invalid={showError}
+          aria-invalid={showError ? "true" : "false"}
         >
           <span className="block truncate">
             {selectedOption?.label || placeholder || "Select an option"}
@@ -562,7 +561,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         )}
         onChange={handleChange}
         onBlur={handleBlur}
-        aria-invalid={showError}
+        aria-invalid={showError ? "true" : "false"}
         aria-describedby={showError ? `${id}-error` : undefined}
         {...props}
       />

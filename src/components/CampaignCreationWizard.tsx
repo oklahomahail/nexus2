@@ -215,7 +215,7 @@ const CampaignCreationWizard: React.FC<CampaignWizardProps> = ({
     };
 
     const validation = validateCampaign(campaignData);
-    return validation.success ? [] : validation.errors;
+    return validation.success ? [] : Object.values(validation.errors || {});
   };
 
   const handleSubmit = async () => {

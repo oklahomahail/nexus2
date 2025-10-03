@@ -104,7 +104,7 @@ export default function CampaignModal({
     };
 
     const validation = validateCampaign(campaignData);
-    return validation.success ? [] : validation.errors;
+    return validation.success ? [] : Object.values(validation.errors || {});
   };
 
   const handleChange =
