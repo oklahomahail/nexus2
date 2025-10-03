@@ -738,13 +738,14 @@ class AnalyticsService {
         endDate: currentEnd,
         totalRaised: currentTotal,
         donorCount: currentDonors,
-        campaignsActive: currentCampaigns,
+        campaignCount: currentCampaigns,
       },
       previousPeriod: {
         startDate: previousStart,
         endDate: previousEnd,
         totalRaised: previousTotal,
         donorCount: previousDonors,
+        campaignCount: previousCampaigns,
       },
       growthMetrics: {
         raisedChange: growthRaised,

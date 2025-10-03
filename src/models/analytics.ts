@@ -60,6 +60,27 @@ export interface OrganizationAnalytics {
     donorsChange: number;
     campaignsChange: number;
   };
+  recentActivities: {
+    id: string;
+    type: "donation" | "campaign" | "donor" | "goal";
+    title: string;
+    description: string;
+    timestamp: Date;
+    amount?: number;
+  }[];
+  monthlyData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      color: string;
+    }[];
+  };
+  goals: {
+    monthly: { current: number; goal: number };
+    quarterly: { current: number; goal: number };
+    annual: { current: number; goal: number };
+  };
 }
 
 // ---------- DONOR INSIGHTS ----------

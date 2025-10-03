@@ -5,7 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 import AnalyticsFiltersComponent from "../components/AnalyticsFiltersComponent";
 import DonorInsightsPanel from "../components/DonorInsightsPanel";
 import LoadingSpinner from "../components/LoadingSpinner";
-import MetricsOverview from "../components/MetricsOverview";
 import {
   KPIWidget,
   ChartWidget,
@@ -84,16 +83,6 @@ const AnalyticsDashboard: React.FC = () => {
   useEffect(() => {
     void loadAnalyticsData();
   }, [filters]);
-
-  // Auto-refresh analytics data
-  usePolling(loadAnalyticsData, {
-    visibleInterval: POLLING.dashboard.visibleMs,
-    hiddenInterval: POLLING.dashboard.hiddenMs,
-    enabled: true,
-    immediate: false,
-    deps: [filters],
-  });
-
   const loadAnalyticsData = async () => {
     try {
       setLoading(true);
@@ -114,6 +103,15 @@ const AnalyticsDashboard: React.FC = () => {
       setLoading(false);
     }
   };
+
+  // Auto-refresh analytics data
+  usePolling(loadAnalyticsData, {
+    visibleInterval: POLLING.dashboard.visibleMs,
+    hiddenInterval: POLLING.dashboard.hiddenMs,
+    enabled: true,
+    immediate: false,
+    deps: [filters],
+  });
 
   const handleExportData = async () => {
     try {
