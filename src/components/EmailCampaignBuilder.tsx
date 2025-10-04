@@ -84,10 +84,10 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     }
   }, [clientId]);
 
-  const _loadTemplates = () => {
+  const __loadTemplates = useCallback(async () => {
     const availableTemplates = EmailTemplateEngine.getAllTemplates();
     setTemplates(availableTemplates);
-  };
+  }, []);
 
   useEffect(() => {
     void loadSegments();
@@ -232,11 +232,14 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     return EmailTemplateEngine.createDragDropTemplate(emailComponents);
   };
 
-  const _useTemplate = (template: ChannelTemplate) => {
+  const __useTemplate = (templateId: string) => {
+    const template = templates.find((t) => t.id === templateId);
+    if (!template) return;
+
     setEmailData((prev) => ({
       ...prev,
-      subject: template.content.subject,
-      htmlContent: template.content.htmlContent,
+      subject: template.content?.subject || prev.subject,
+      htmlContent: template.content?.htmlContent || prev.htmlContent,
       templateId: template.id,
     }));
     setCurrentStep("design");

@@ -222,7 +222,7 @@ class PersonalizationService {
     logger.info(`Building personalization context for donor: ${donor.id}`);
 
     // Get donor's journey stage
-    const _journeyStage = await this.getDonorJourneyStage(donor);
+    const __journeyStage = await this.getDonorJourneyStage(donor);
 
     // Analyze behavioral patterns (mock implementation)
     const behaviorProfile = await this.buildBehaviorProfile(donor);
@@ -691,7 +691,7 @@ class PersonalizationService {
     confidence: number;
   } {
     const donations = donor.donations || [];
-    const _now = new Date();
+    const __now = new Date();
 
     // Analyze historical donation patterns for timing
     let optimalHour = context.behaviorProfile.preferences.bestContactTime.hour;
@@ -1123,7 +1123,7 @@ class PersonalizationService {
     ];
 
     stages.forEach((stage) => {
-      const ___now = new Date();
+      const ____now = new Date();
       const fullStage: DonorJourneyStage = {
         id: stage.id!,
         name: stage.name!,

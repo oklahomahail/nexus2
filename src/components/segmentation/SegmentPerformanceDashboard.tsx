@@ -232,7 +232,7 @@ export const SegmentPerformanceDashboard: React.FC<
       performance: SegmentPerformance[],
     ): SegmentComparison[] => {
       return segments.map((segment, index) => {
-        const _perf = performance[index] || {};
+        const __perf = performance[index] || {};
         const changePercent = (Math.random() - 0.5) * 40; // -20% to +20%
 
         return {
@@ -321,7 +321,7 @@ export const SegmentPerformanceDashboard: React.FC<
   }, [loadDashboardData, refreshInterval]);
 
   // Get performance metrics for selected segment
-  const _selectedSegmentMetrics = useMemo(() => {
+  const __selectedSegmentMetrics = useMemo(() => {
     if (!selectedSegment) return null;
 
     const performance = performanceData.find(

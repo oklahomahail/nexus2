@@ -328,7 +328,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     if (!analytics) return null;
 
     const { attribution } = analytics;
-    const ___totalPercentage = Object.values(attribution).reduce(
+    const ____totalPercentage = Object.values(attribution).reduce(
       (sum: number, attr: any) => sum + attr.percentage,
       0,
     );
