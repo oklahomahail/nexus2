@@ -1,51 +1,38 @@
-// vite.config.ts
 /// <reference types="vitest" />
 
 import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
-
 export default defineConfig({
+  base: "/",
   plugins: [react()],
+
   resolve: {
     alias: { "@": path.resolve(__dirname, "src") },
     dedupe: ["react", "react-dom"],
   },
+
   optimizeDeps: {
     include: ["react", "react-dom", "react/jsx-runtime"],
-    // Exclude heavy libraries to allow proper chunking
     exclude: ["recharts", "lucide-react"],
   },
+
   build: {
-    sourcemap: true,
     outDir: "dist",
     emptyOutDir: true,
-    // Enable chunk size warnings
-    chunkSizeWarningLimit: 1000,
+    sourcemap: true,
+    chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
-        // Manual chunking for better caching and loading
         manualChunks: {
-          // Vendor chunk for stable dependencies
           vendor: ["react", "react-dom", "react-router-dom"],
-
-          // UI library chunk
-          ui: ["clsx", "tailwindcss"],
-
-          // Charts chunk (heavy library)
-          charts: ["recharts"],
-
-          // Icons chunk (many small imports)
           icons: ["lucide-react"],
-
-          // Analytics features (heavy, not always used)
+          charts: ["recharts"],
           analytics: [
             "./src/components/analytics/ComparativeCampaignAnalysis.tsx",
             "./src/components/analytics/WritingStats.tsx",
             "./src/panels/AnalyticsDashboard.tsx",
           ],
-
-          // Utils and services
           utils: [
             "crypto-js",
             "uuid",
@@ -54,40 +41,37 @@ export default defineConfig({
             "./src/services/campaignService.ts",
           ],
         },
-
-        // Optimize chunk names for caching
+        entryFileNames: "js/[name]-[hash].js",
         chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId
-                .split("/")
-                .pop()
-                ?.replace(".tsx", "")
-                .replace(".ts", "") || "chunk"
-            : "chunk";
-          return `js/${facadeModuleId}-[hash].js`;
+          const name =
+            (chunkInfo.name ||
+              chunkInfo.facadeModuleId?.split("/").pop()?.replace(/\.(t|j)sx?$/, "") ||
+              "chunk");
+          return `js/${name}-[hash].js`;
+        },
+        assetFileNames: ({ name }) => {
+          if (!name) return "assets/[name]-[hash][extname]";
+          if (/\.(css)$/.test(name)) return "css/[name]-[hash][extname]";
+          if (/\.(png|jpe?g|gif|svg|webp|avif)$/.test(name)) return "img/[name]-[hash][extname]";
+          if (/\.(woff2?|ttf|otf|eot)$/.test(name)) return "fonts/[name]-[hash][extname]";
+          return "assets/[name]-[hash][extname]";
         },
       },
     },
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
+    commonjsOptions: { transformMixedEsModules: true },
   },
+
   server: {
     port: 5173,
     strictPort: false,
     open: false,
     proxy: {
-      "/ws": {
-        target: "http://localhost:8787",
-        ws: true,
-        changeOrigin: true,
-      },
+      "/ws": { target: "http://localhost:8787", ws: true, changeOrigin: true },
     },
   },
-  preview: {
-    port: 4173,
-    strictPort: false,
-  },
+
+  preview: { port: 4173, strictPort: false },
+
   test: {
     globals: true,
     environment: "jsdom",
