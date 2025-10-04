@@ -222,7 +222,7 @@ class PersonalizationService {
     logger.info(`Building personalization context for donor: ${donor.id}`);
 
     // Get donor's journey stage
-    const _journeyStage = this.identifyJourneyStage(donor);
+    const _journeyStage = await this.getDonorJourneyStage(donor);
 
     // Analyze behavioral patterns (mock implementation)
     const behaviorProfile = await this.buildBehaviorProfile(donor);
@@ -743,6 +743,7 @@ class PersonalizationService {
     }
 
     // Calculate next optimal send time
+    const now = new Date();
     const optimalSendTime = new Date(now);
 
     // Adjust to optimal day of week

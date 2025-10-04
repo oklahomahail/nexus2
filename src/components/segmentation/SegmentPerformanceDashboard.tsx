@@ -148,73 +148,6 @@ export const SegmentPerformanceDashboard: React.FC<
     "30d",
   );
 
-  // Load initial data
-  useEffect(() => {
-    void loadDashboardData();
-  }, [selectedSegment, dateRange, timeframe, loadDashboardData]);
-
-  // Auto-refresh data
-  useEffect(() => {
-    const interval = setInterval(() => {
-      void loadDashboardData();
-    }, refreshInterval);
-
-    return () => clearInterval(interval);
-  }, [refreshInterval, selectedSegment, dateRange, loadDashboardData]);
-
-  // Load all dashboard data
-  const loadDashboardData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Load segments
-      const segmentsData = getSegments();
-      setSegments(segmentsData);
-
-      // Set default selected segment if none specified
-      if (!selectedSegment && segmentsData.length > 0) {
-        setSelectedSegment(segmentsData[0].id);
-      }
-
-      // Load performance data
-      const performancePromises = segmentsData.map((segment) =>
-        getSegmentPerformance(segment.id, dateRange.start, dateRange.end),
-      );
-      const performanceResults = await Promise.all(performancePromises);
-      setPerformanceData(performanceResults);
-
-      // Generate mock time series data
-      const timeSeriesDataGen = generateTimeSeriesData(dateRange, timeframe);
-      setTimeSeriesData(timeSeriesDataGen);
-
-      // Generate mock alerts
-      const alertsData = generateMockAlerts(segmentsData);
-      setAlerts(alertsData);
-
-      // Generate segment comparisons
-      const comparisons = generateSegmentComparisons(
-        segmentsData,
-        performanceResults,
-      );
-      setSegmentComparisons(comparisons);
-
-      setLastRefresh(new Date());
-    } catch (err) {
-      console.error("Error loading dashboard data:", err);
-      setError("Failed to load dashboard data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    selectedSegment,
-    dateRange,
-    timeframe,
-    generateTimeSeriesData,
-    generateMockAlerts,
-    generateSegmentComparisons,
-  ]);
-
   // Generate mock time series data
   const generateTimeSeriesData = useCallback(
     (range: { start: Date; end: Date }, period: string): TimeSeriesData[] => {
@@ -319,6 +252,74 @@ export const SegmentPerformanceDashboard: React.FC<
     },
     [],
   );
+
+  // Load all dashboard data
+  const loadDashboardData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Load segments
+      const segmentsData = getSegments();
+      setSegments(segmentsData);
+
+      // Set default selected segment if none specified
+      if (!selectedSegment && segmentsData.length > 0) {
+        setSelectedSegment(segmentsData[0].id);
+      }
+
+      // Load performance data
+      const performancePromises = segmentsData.map((segment) =>
+        getSegmentPerformance(segment.id, dateRange.start, dateRange.end),
+      );
+      const performanceResults = await Promise.all(performancePromises);
+      setPerformanceData(performanceResults);
+
+      // Generate mock time series data
+      const timeSeriesDataGen = generateTimeSeriesData(dateRange, timeframe);
+      setTimeSeriesData(timeSeriesDataGen);
+
+      // Generate mock alerts
+      const alertsData = generateMockAlerts(segmentsData);
+      setAlerts(alertsData);
+
+      // Generate segment comparisons
+      const comparisons = generateSegmentComparisons(
+        segmentsData,
+        performanceResults,
+      );
+      setSegmentComparisons(comparisons);
+
+      setLastRefresh(new Date());
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+      setError("Failed to load dashboard data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    selectedSegment,
+    dateRange,
+    timeframe,
+    generateTimeSeriesData,
+    generateMockAlerts,
+    generateSegmentComparisons,
+  ]);
+
+  // Load initial data
+  useEffect(() => {
+    void loadDashboardData();
+  }, [loadDashboardData]);
+
+  // Auto-refresh data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      void loadDashboardData();
+    }, refreshInterval);
+
+    return () => clearInterval(interval);
+  }, [loadDashboardData, refreshInterval]);
+
 
   // Get performance metrics for selected segment
   const _selectedSegmentMetrics = useMemo(() => {

@@ -37,7 +37,7 @@ export interface ModelTrainingResult {
     crossValidation?: Record<string, number>;
   };
   featureImportance: Array<{
-    feature: string;
+    ___featureName: string;
     importance: number;
     rank: number;
   }>;
@@ -171,7 +171,7 @@ class PredictiveAnalyticsService {
         dateRange: trainingData.metadata.dateRange,
         featureImportance: modelResult.featureImportance.reduce(
           (obj, item) => {
-            obj[item.feature] = item.importance;
+            obj[item.___featureName] = item.importance;
             return obj;
           },
           {} as Record<string, number>,
@@ -339,7 +339,7 @@ class PredictiveAnalyticsService {
     // Generate feature importance
     const featureImportance = config.features
       .map((feature, index) => ({
-        feature,
+        ___featureName: feature,
         importance: Math.random() * 0.3 + 0.1, // 0.1 to 0.4
         rank: index + 1,
       }))

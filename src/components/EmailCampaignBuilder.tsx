@@ -75,19 +75,6 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [abTestEnabled, setAbTestEnabled] = useState(false);
 
-  useEffect(() => {
-    void loadSegments();
-    // loadSegments(); // Duplicate call removed
-    if (existingEmail) {
-      setEmailData(existingEmail);
-    }
-  }, [existingEmail, clientId, loadSegments]);
-
-  const _loadTemplates = () => {
-    const availableTemplates = EmailTemplateEngine.getAllTemplates();
-    setTemplates(availableTemplates);
-  };
-
   const loadSegments = useCallback(async () => {
     try {
       const availableSegments = await getEmailSegments(clientId);
@@ -96,6 +83,19 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
       console.error("Error loading segments:", error);
     }
   }, [clientId]);
+
+  const _loadTemplates = () => {
+    const availableTemplates = EmailTemplateEngine.getAllTemplates();
+    setTemplates(availableTemplates);
+  };
+
+  useEffect(() => {
+    void loadSegments();
+    // loadSegments(); // Duplicate call removed
+    if (existingEmail) {
+      setEmailData(existingEmail);
+    }
+  }, [existingEmail, clientId, loadSegments]);
 
   const handleSave = async () => {
     if (!emailData.name || !emailData.subject || !emailData.htmlContent) {
@@ -445,7 +445,6 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
                       subject: template.content?.subject || prev.subject,
                       htmlContent:
                         template.content?.htmlContent || prev.htmlContent,
-                      fromName: template.content?.fromName || prev.fromName,
                     }));
                   }}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium"

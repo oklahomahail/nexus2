@@ -60,10 +60,6 @@ export const CrossChannelAnalyticsDashboard: React.FC<
   const [analytics, setAnalytics] = useState<any>(null);
   const [campaignReport, setCampaignReport] = useState<any>(null);
 
-  useEffect(() => {
-    void loadAnalytics();
-  }, [campaignId, clientId, attributionModel, loadAnalytics]);
-
   const loadAnalytics = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -84,6 +80,10 @@ export const CrossChannelAnalyticsDashboard: React.FC<
       setIsLoading(false);
     }
   }, [campaignId, clientId, dateRange]);
+
+  useEffect(() => {
+    void loadAnalytics();
+  }, [loadAnalytics]);
 
   const handleRefresh = async () => {
     await loadAnalytics();
@@ -151,21 +151,21 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     const kpis = [
       {
         title: "Total Reach",
-        value: formatNumber(unifiedMetrics.totalReach),
+        value: formatNumber(__unifiedMetrics.totalReach),
         change: "+12.5%",
         positive: true,
         icon: Users,
       },
       {
         title: "Total Revenue",
-        value: formatCurrency(unifiedMetrics.totalRevenue),
+        value: formatCurrency(__unifiedMetrics.totalRevenue),
         change: "+8.3%",
         positive: true,
         icon: DollarSign,
       },
       {
         title: "Conversions",
-        value: formatNumber(unifiedMetrics.totalConversions),
+        value: formatNumber(__unifiedMetrics.totalConversions),
         change: "+15.7%",
         positive: true,
         icon: Target,
@@ -179,7 +179,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
       },
       {
         title: "Total Impressions",
-        value: formatNumber(unifiedMetrics.totalImpressions),
+        value: formatNumber(__unifiedMetrics.totalImpressions),
         change: "+18.9%",
         positive: true,
         icon: Eye,

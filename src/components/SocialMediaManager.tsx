@@ -68,24 +68,6 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
     [platform: string]: any;
   }>({});
 
-  useEffect(() => {
-    void loadPosts();
-    void loadTrendingHashtags();
-  }, [clientId, campaignId, loadPosts, loadTrendingHashtags]);
-
-  useEffect(() => {
-    // Validate content for each platform when message changes
-    if (postData.message) {
-      selectedPlatforms.forEach(async (platform) => {
-        const validation = await validateContent(postData.message!, platform);
-        setContentValidation((prev) => ({
-          ...prev,
-          [platform]: validation,
-        }));
-      });
-    }
-  }, [postData.message, selectedPlatforms]);
-
   const loadPosts = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -109,6 +91,24 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
       console.error("Error loading trending hashtags:", error);
     }
   }, []);
+
+  useEffect(() => {
+    void loadPosts();
+    void loadTrendingHashtags();
+  }, [clientId, campaignId, loadPosts, loadTrendingHashtags]);
+
+  useEffect(() => {
+    // Validate content for each platform when message changes
+    if (postData.message) {
+      selectedPlatforms.forEach(async (platform) => {
+        const validation = await validateContent(postData.message!, platform);
+        setContentValidation((prev) => ({
+          ...prev,
+          [platform]: validation,
+        }));
+      });
+    }
+  }, [postData.message, selectedPlatforms]);
 
   const handlePlatformToggle = (platform: SocialPlatform) => {
     const newPlatforms = selectedPlatforms.includes(platform)

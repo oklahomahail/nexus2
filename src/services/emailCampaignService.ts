@@ -525,7 +525,7 @@ export const initializeEmailTemplates = () => {
         htmlContent: `
           <h1>Thank You!</h1>
           <p>Dear {{first_name}},</p>
-          <p>Thank you for your generous donation of ${donation_amount} to {campaign_name}.</p>
+          <p>Thank you for your generous donation of {{donation_amount}} to {{campaign_name}}.</p>
           <p>Your contribution makes a real difference in {{cause_area}}.</p>
           <p>Tax-deductible receipt: #{{receipt_number}}</p>
           <p>With gratitude,<br>{{organization_name}}</p>

@@ -71,11 +71,6 @@ export const ChannelTemplatesLibrary: React.FC<
     sortBy: "popular",
   });
 
-  // Load templates and statistics
-  useEffect(() => {
-    void loadTemplates();
-  }, [filters, searchQuery, channelType, clientId, loadTemplates]);
-
   const loadTemplates = useCallback(async () => {
     setLoading(true);
     try {
@@ -126,6 +121,11 @@ export const ChannelTemplatesLibrary: React.FC<
       setLoading(false);
     }
   }, [filters, searchQuery, activeTab, clientId]);
+
+  // Load templates and statistics
+  useEffect(() => {
+    void loadTemplates();
+  }, [loadTemplates]);
 
   const statistics = useMemo(() => getTemplateStatistics(), []);
 
