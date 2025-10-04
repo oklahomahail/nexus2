@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import Modal from "@/components/ui-kit/Modal";
-import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/hooks/useToast";
 import type {
   Campaign,
   CreateCampaignData,

@@ -1,18 +1,12 @@
 // src/context/ToastContext.tsx
 // Context for managing toast notifications
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useCallback, type ReactNode } from "react";
 
 import ToastContainer from "@/components/ui-kit/ToastContainer";
 import type { Toast } from "@/types/toast";
 
-interface ToastContextValue {
+export interface ToastContextValue {
   toasts: Toast[];
   addToast: (toast: Omit<Toast, "id">) => string;
   removeToast: (id: string) => void;
@@ -41,7 +35,7 @@ interface ToastContextValue {
   ) => string;
 }
 
-const ToastContext = createContext<ToastContextValue | undefined>(undefined);
+export const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
 interface ToastProviderProps {
   children: ReactNode;
@@ -146,10 +140,4 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   );
 };
 
-export const useToast = (): ToastContextValue => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within a ToastProvider");
-  }
-  return context;
-};
+// useToast hook moved to @/hooks/useToast.ts to fix Fast Refresh warnings

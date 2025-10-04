@@ -1,8 +1,9 @@
 // src/components/FormComponents.tsx - Advanced form components with validation
 
 import { clsx } from "clsx";
-import React, { useCallback, useId, useState, useRef, useEffect } from "react";
-import { z, ZodSchema, ZodError } from "zod";
+import React, { useId, useState, useRef, useEffect } from "react";
+
+import type { ZodSchema } from "zod";
 
 // Types and interfaces
 export interface ValidationError {
@@ -108,136 +109,7 @@ export interface DatePickerProps {
   disabled?: boolean;
 }
 
-// Form Validation Hook
-export function useForm<T extends Record<string, any>>({
-  initialValues,
-  validationSchema,
-  validateOnChange = false,
-  validateOnBlur = true,
-  onSubmit,
-}: UseFormOptions<T>) {
-  const [values, setValues] = useState<T>(initialValues);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-
-  const validateField = useCallback(
-    (field: string, value: any): string | null => {
-      if (!validationSchema) return null;
-
-      try {
-        validationSchema.parse({ [field]: value });
-        return null;
-      } catch (error) {
-        if (error instanceof ZodError) {
-          const fieldError = error.issues.find((issue) =>
-            issue.path.includes(field),
-          );
-          return fieldError?.message || "Invalid value";
-        }
-        return "Invalid value";
-      }
-    },
-    [validationSchema],
-  );
-
-  const validateForm = useCallback((): boolean => {
-    if (!validationSchema) return true;
-
-    try {
-      validationSchema.parse(values);
-      setErrors({});
-      return true;
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.issues.forEach((issue) => {
-          const path = issue.path.join(".");
-          newErrors[path] = issue.message;
-        });
-        setErrors(newErrors);
-      }
-      return false;
-    }
-  }, [values, validationSchema]);
-
-  const setValue = useCallback(
-    (field: string, value: any) => {
-      setValues((prev) => ({ ...prev, [field]: value }));
-      setIsDirty(true);
-
-      if (validateOnChange) {
-        const error = validateField(field, value);
-        setErrors((prev) => ({
-          ...prev,
-          [field]: error || "",
-        }));
-      }
-    },
-    [validateField, validateOnChange],
-  );
-
-  const setFieldTouched = useCallback(
-    (field: string) => {
-      setTouched((prev) => ({ ...prev, [field]: true }));
-
-      if (validateOnBlur) {
-        const error = validateField(field, values[field as keyof T]);
-        setErrors((prev) => ({
-          ...prev,
-          [field]: error || "",
-        }));
-      }
-    },
-    [validateField, validateOnBlur, values],
-  );
-
-  const handleSubmit = useCallback(
-    async (e?: React.FormEvent) => {
-      e?.preventDefault();
-      setIsSubmitting(true);
-
-      const isValid = validateForm();
-      if (isValid && onSubmit) {
-        try {
-          await onSubmit(values);
-        } catch (error) {
-          console.error("Form submission error:", error);
-        }
-      }
-
-      setIsSubmitting(false);
-    },
-    [validateForm, onSubmit, values],
-  );
-
-  const reset = useCallback(() => {
-    setValues(initialValues);
-    setErrors({});
-    setTouched({});
-    setIsSubmitting(false);
-    setIsDirty(false);
-  }, [initialValues]);
-
-  const isValid =
-    Object.keys(errors).length === 0 &&
-    Object.values(errors).every((error) => !error);
-
-  return {
-    values,
-    errors,
-    touched,
-    isValid,
-    isSubmitting,
-    isDirty,
-    setValue,
-    setFieldTouched,
-    handleSubmit,
-    reset,
-    validateForm,
-  };
-}
+// Form Validation Hook moved to @/hooks/useForm.ts
 
 // Form Field Container Component
 export const FormField: React.FC<FormFieldProps> = ({
@@ -569,21 +441,4 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   );
 };
 
-// Common validation schemas
-export const validationSchemas = {
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  required: z.string().min(1, "This field is required"),
-  phone: z
-    .string()
-    .regex(/^[+]?[1-9][\d]{0,15}$/, "Please enter a valid phone number"),
-  url: z.string().url("Please enter a valid URL"),
-  positiveNumber: z.number().positive("Must be a positive number"),
-  date: z.string().refine(
-    (date) => {
-      const parsed = new Date(date);
-      return !isNaN(parsed.getTime());
-    },
-    { message: "Please enter a valid date" },
-  ),
-};
+// Common validation schemas moved to @/utils/validationSchemas.ts

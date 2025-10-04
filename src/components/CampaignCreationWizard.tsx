@@ -16,7 +16,7 @@ import {
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
 import Modal from "@/components/ui-kit/Modal";
-import { useToast } from "@/context/ToastContext";
+import { useToast } from "@/hooks/useToast";
 import { createCampaign } from "@/services/campaignService";
 import { validateCampaign } from "@/utils/validation";
 
