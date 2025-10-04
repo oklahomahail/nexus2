@@ -10,6 +10,7 @@ import CampaignBuilderDemo from "./pages/CampaignBuilderDemo";
 import CampaignOverviewDemo from "./pages/CampaignOverviewDemo";
 import ClientDashboard from "./pages/ClientDashboard";
 import ClientList from "./pages/ClientList";
+import MessagingFrameworkDemo from "./pages/MessagingFrameworkDemo";
 import AnalyticsDashboard from "./panels/AnalyticsDashboard";
 import CampaignsPanel from "./panels/CampaignsPanel";
 
@@ -51,6 +52,10 @@ const App: React.FC = () => {
           <Route
             path="/demo/campaign-builder"
             element={<CampaignBuilderDemo />}
+          />
+          <Route
+            path="/demo/messaging-framework"
+            element={<MessagingFrameworkDemo />}
           />
           <Route
             path="/demo/form-components"

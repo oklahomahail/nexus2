@@ -158,15 +158,30 @@ export const CampaignBuilderWizard: React.FC<CampaignBuilderWizardProps> = ({
               messaging variations for different audience segments.
             </p>
             <div className="space-y-3 pt-4">
-              <p className="text-sm text-slate-500">
-                Coming in Phase 2 of development
+              <p className="text-sm text-slate-300">
+                ✅ <strong>Phase 3: Complete!</strong>
               </p>
+              <div className="space-y-2 text-sm text-slate-400">
+                <p>• Core Story Builder with narrative validation</p>
+                <p>• Talking Points Repository with statistics & quotes</p>
+                <p>• Voice & Tone Configuration with brand consistency</p>
+              </div>
+              <div className="flex gap-3 justify-center pt-4">
+                <Button
+                  onClick={() =>
+                    window.open("/demo/messaging-framework", "_blank")
+                  }
+                  variant="primary"
+                >
+                  🚀 Try Messaging Framework
+                </Button>
+              </div>
               <div className="flex gap-3 justify-center">
                 <Button onClick={goToPrevStep} variant="outline">
                   ← Previous
                 </Button>
                 <Button onClick={goToNextStep} variant="primary">
-                  Skip for now →
+                  Continue to Channels →
                 </Button>
               </div>
             </div>

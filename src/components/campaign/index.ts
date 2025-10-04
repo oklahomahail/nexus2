@@ -14,3 +14,6 @@ export type {
   CampaignBuilderStep,
   CampaignBuilderData,
 } from "./CampaignBuilderWizard";
+
+// Messaging framework components
+export * from "./messaging";
