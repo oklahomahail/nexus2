@@ -277,7 +277,7 @@ class PredictiveAnalyticsService {
     return 0; // Default for null/undefined
   }
 
-  private encodeCategorical(value: string, featureName: string): number {
+  private encodeCategorical(value: string, _featureName: string): number {
     // Simple hash-based encoding for categorical variables
     let hash = 0;
     for (let i = 0; i < value.length; i++) {
@@ -1010,7 +1010,7 @@ class PredictiveAnalyticsService {
     return metrics;
   }
 
-  private generateSegmentPerformance(model: PredictionModel): Array<{
+  private generateSegmentPerformance(_model: PredictionModel): Array<{
     segmentId: string;
     metrics: Record<string, number>;
   }> {
@@ -1028,7 +1028,7 @@ class PredictiveAnalyticsService {
     }));
   }
 
-  private generateTimeWindowPerformance(model: PredictionModel): Array<{
+  private generateTimeWindowPerformance(_model: PredictionModel): Array<{
     period: string;
     metrics: Record<string, number>;
   }> {

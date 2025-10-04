@@ -320,7 +320,6 @@ export const SegmentPerformanceDashboard: React.FC<
     return () => clearInterval(interval);
   }, [loadDashboardData, refreshInterval]);
 
-
   // Get performance metrics for selected segment
   const _selectedSegmentMetrics = useMemo(() => {
     if (!selectedSegment) return null;

@@ -220,7 +220,7 @@ export const InteractiveDashboard: React.FC<InteractiveDashboardProps> = ({
   }, [layout]);
 
   // Find empty position for new widget
-  const findEmptyPosition = (
+  const findEmptyPosition = useCallback((
     rowSpan: number,
     colSpan: number,
   ): { row: number; col: number } => {
@@ -271,7 +271,7 @@ export const InteractiveDashboard: React.FC<InteractiveDashboardProps> = ({
 
     // If no space found, return bottom position
     return { row: Math.max(0, gridRows - rowSpan), col: 0 };
-  };
+  }, [currentLayout]);
 
   // Handle widget movement
   const handleWidgetMove = useCallback(

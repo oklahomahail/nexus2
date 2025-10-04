@@ -226,7 +226,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
   const renderChannelPerformance = () => {
     if (!analytics) return null;
 
-    const { channelPerformance, unifiedMetrics } = analytics;
+    const { channelPerformance, unifiedMetrics: __unifiedMetrics } = analytics;
 
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">

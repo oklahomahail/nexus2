@@ -52,7 +52,7 @@ export const ChannelTemplatesLibrary: React.FC<
 }) => {
   // State
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [_viewMode, _setViewMode] = useState<ViewMode>("grid");
   const [selectedTemplate, setSelectedTemplate] =
     useState<ChannelTemplate | null>(null);
   const [showPreview, setShowPreview] = useState(false);
