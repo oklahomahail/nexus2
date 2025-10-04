@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { z } from "zod";
 
 import { useAuth } from "@/context/AuthContext";
+import { useForm } from "@/hooks/useForm";
 import { logger } from "@/utils/logger";
+import { validationSchemas } from "@/utils/validationSchemas";
 
-import { useForm, Input, validationSchemas } from "./FormComponents";
+import { Input } from "./FormComponents";
 
 // Validation schemas
 const loginSchema = z.object({
@@ -52,7 +54,7 @@ export const LoginForm: React.FC<AuthFormsProps> = ({ onSuccess }) => {
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: async (formData) => {
+    onSubmit: async (formData: LoginFormData) => {
       try {
         setError("");
         await login(formData.email, formData.password);
@@ -146,7 +148,7 @@ export const RegisterForm: React.FC<AuthFormsProps> = ({ onSuccess }) => {
       confirmPassword: "",
     },
     validationSchema: registerSchema,
-    onSubmit: async (formData) => {
+    onSubmit: async (formData: RegisterFormData) => {
       try {
         setError("");
         await register({
