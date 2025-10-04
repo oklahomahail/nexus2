@@ -18,6 +18,20 @@ export type { Column, DataTableProps } from "./DataTable";
 export { Select } from "./Select";
 export type { Option, SelectProps } from "./Select";
 
+export { DatePicker, DateRangePicker } from "./DatePicker";
+export type { DatePickerProps, DateRangePickerProps } from "./DatePicker";
+
+export { Checkbox, CheckboxGroup, Radio, RadioGroup } from "./Checkbox";
+export type {
+  CheckboxProps,
+  CheckboxGroupProps,
+  RadioProps,
+  RadioGroupProps,
+} from "./Checkbox";
+
+export { FileUpload } from "./FileUpload";
+export type { FileUploadProps } from "./FileUpload";
+
 // Feedback components
 export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";

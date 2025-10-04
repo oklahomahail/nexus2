@@ -3,8 +3,11 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import CampaignCreationWizard from "./components/CampaignCreationWizard";
+import FormComponentsDemo from "./components/demos/FormComponentsDemo";
 import NotificationsPanel from "./components/NotificationsPanel";
 import Topbar from "./components/Topbar";
+import CampaignBuilderDemo from "./pages/CampaignBuilderDemo";
+import CampaignOverviewDemo from "./pages/CampaignOverviewDemo";
 import ClientDashboard from "./pages/ClientDashboard";
 import ClientList from "./pages/ClientList";
 import AnalyticsDashboard from "./panels/AnalyticsDashboard";
@@ -41,6 +44,18 @@ const App: React.FC = () => {
             }
           />
           <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route
+            path="/demo/campaign-overview"
+            element={<CampaignOverviewDemo />}
+          />
+          <Route
+            path="/demo/campaign-builder"
+            element={<CampaignBuilderDemo />}
+          />
+          <Route
+            path="/demo/form-components"
+            element={<FormComponentsDemo />}
+          />
         </Routes>
       </main>
     </div>

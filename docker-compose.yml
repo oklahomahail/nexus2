@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Development service
@@ -86,7 +86,7 @@ volumes:
 # Additional compose file for staging
 ---
 # docker-compose.staging.yml
-version: '3.8'
+version: "3.8"
 
 services:
   nexus-staging:

@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment environment'
+        description: "Deployment environment"
         required: true
-        default: 'production'
+        default: "production"
         type: choice
         options:
           - development
@@ -18,14 +18,14 @@ on:
           - production
 
 env:
-  NODE_VERSION: '20'
-  PNPM_VERSION: '10.0.0'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "10.0.0"
 
 jobs:
   # Test and build job
   test-and-build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -86,7 +86,7 @@ jobs:
     needs: test-and-build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
-    environment: 
+    environment:
       name: ${{ github.event.inputs.environment || 'production' }}
       url: ${{ steps.deploy.outputs.preview-url }}
 
@@ -113,8 +113,8 @@ jobs:
   deploy-netlify:
     needs: test-and-build
     runs-on: ubuntu-latest
-    if: false  # Set to true to enable Netlify deployment
-    environment: 
+    if: false # Set to true to enable Netlify deployment
+    environment:
       name: ${{ github.event.inputs.environment || 'production' }}
 
     steps:
@@ -130,7 +130,7 @@ jobs:
       - name: Deploy to Netlify
         uses: netlify/actions/deploy@master
         with:
-          publish-dir: './dist'
+          publish-dir: "./dist"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
@@ -141,8 +141,8 @@ jobs:
   deploy-docker:
     needs: test-and-build
     runs-on: ubuntu-latest
-    if: false  # Set to true to enable Docker deployment
-    environment: 
+    if: false # Set to true to enable Docker deployment
+    environment:
       name: ${{ github.event.inputs.environment || 'production' }}
 
     steps:
@@ -185,7 +185,7 @@ jobs:
         if: always()
         with:
           status: ${{ job.status }}
-          channel: '#deployments'
+          channel: "#deployments"
           text: |
             Deployment to ${{ github.event.inputs.environment || 'production' }} completed!
             Status: ${{ job.status }}
