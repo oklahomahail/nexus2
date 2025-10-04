@@ -65,7 +65,7 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     status: "draft",
     segmentIds: [],
   });
-  const [templates, setTemplates] = useState<ChannelTemplate[]>([]);
+  const [templates] = useState<ChannelTemplate[]>([]);
   const [segments, setSegments] = useState<
     Array<{ id: string; name: string; count: number }>
   >([]);
@@ -84,10 +84,10 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     }
   }, [clientId]);
 
-  const __loadTemplates = useCallback(async () => {
-    const availableTemplates = EmailTemplateEngine.getAllTemplates();
-    setTemplates(availableTemplates);
-  }, []);
+  // const loadTemplates = useCallback(async () => {
+  //   const availableTemplates = EmailTemplateEngine.getAllTemplates();
+  //   setTemplates(availableTemplates);
+  // }, []);
 
   useEffect(() => {
     void loadSegments();
@@ -232,18 +232,18 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     return EmailTemplateEngine.createDragDropTemplate(emailComponents);
   };
 
-  const __useTemplate = (templateId: string) => {
-    const template = templates.find((t) => t.id === templateId);
-    if (!template) return;
-
-    setEmailData((prev) => ({
-      ...prev,
-      subject: template.content?.subject || prev.subject,
-      htmlContent: template.content?.htmlContent || prev.htmlContent,
-      templateId: template.id,
-    }));
-    setCurrentStep("design");
-  };
+  // const useTemplate = (templateId: string) => {
+  //   const template = templates.find((t) => t.id === templateId);
+  //   if (!template) return;
+  //
+  //   setEmailData((prev) => ({
+  //     ...prev,
+  //     subject: template.content?.subject || prev.subject,
+  //     htmlContent: template.content?.htmlContent || prev.htmlContent,
+  //     templateId: template.id,
+  //   }));
+  //   setCurrentStep("design");
+  // };
 
   const renderStepIndicator = () => {
     const steps: { key: BuilderStep; label: string }[] = [

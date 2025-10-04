@@ -211,7 +211,7 @@ class DynamicSegmentationEngine {
     now: Date,
   ): BehavioralPattern | null {
     // Mock engagement data analysis
-    const _mockEngagementScore = Math.random() * 100;
+    // const mockEngagementScore = Math.random() * 100;
     const mockActivity = Math.floor(Math.random() * 50) + 10;
 
     return {
@@ -250,9 +250,9 @@ class DynamicSegmentationEngine {
     now: Date,
   ): BehavioralPattern | null {
     // Mock channel preference analysis
-    const channels = ["email", "direct_mail", "phone", "social_media"];
-    const _preferredChannel =
-      channels[Math.floor(Math.random() * channels.length)];
+    // const channels = ["email", "direct_mail", "phone", "social_media"];
+    // const preferredChannel =
+    //   channels[Math.floor(Math.random() * channels.length)];
 
     return {
       id: `${donor.id}_channel_behavior`,

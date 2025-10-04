@@ -328,10 +328,11 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     if (!analytics) return null;
 
     const { attribution } = analytics;
-    const ____totalPercentage = Object.values(attribution).reduce(
+    const totalPercentage = Object.values(attribution).reduce(
       (sum: number, attr: any) => sum + attr.percentage,
       0,
     );
+    void totalPercentage; // Keep for future use
 
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">

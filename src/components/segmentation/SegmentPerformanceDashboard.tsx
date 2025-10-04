@@ -19,7 +19,7 @@ import {
   Activity,
   Zap,
 } from "lucide-react";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   BarChart,
   Bar,
@@ -129,9 +129,7 @@ export const SegmentPerformanceDashboard: React.FC<
   const [selectedSegment, setSelectedSegment] = useState<string>(
     selectedSegmentId || "",
   );
-  const [performanceData, setPerformanceData] = useState<SegmentPerformance[]>(
-    [],
-  );
+  const [, setPerformanceData] = useState<SegmentPerformance[]>([]);
   const [alerts, setAlerts] = useState<PerformanceAlert[]>([]);
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([]);
   const [segmentComparisons, setSegmentComparisons] = useState<
@@ -229,10 +227,10 @@ export const SegmentPerformanceDashboard: React.FC<
   const generateSegmentComparisons = useCallback(
     (
       segments: AudienceSegment[],
-      performance: SegmentPerformance[],
+      _performance: SegmentPerformance[],
     ): SegmentComparison[] => {
-      return segments.map((segment, index) => {
-        const __perf = performance[index] || {};
+      return segments.map((segment, _index) => {
+        // const perf = performance[index] || {};
         const changePercent = (Math.random() - 0.5) * 40; // -20% to +20%
 
         return {
@@ -321,22 +319,22 @@ export const SegmentPerformanceDashboard: React.FC<
   }, [loadDashboardData, refreshInterval]);
 
   // Get performance metrics for selected segment
-  const __selectedSegmentMetrics = useMemo(() => {
-    if (!selectedSegment) return null;
-
-    const performance = performanceData.find(
-      (p) => p?.segmentId === selectedSegment,
-    );
-    const comparison = segmentComparisons.find(
-      (c) => c.segmentId === selectedSegment,
-    );
-
-    return {
-      performance,
-      comparison,
-      segment: segments.find((s) => s.id === selectedSegment),
-    };
-  }, [selectedSegment, performanceData, segmentComparisons, segments]);
+  // const selectedSegmentMetrics = useMemo(() => {
+  //   if (!selectedSegment) return null;
+  //
+  //   const performance = performanceData.find(
+  //     (p) => p?.segmentId === selectedSegment,
+  //   );
+  //   const comparison = segmentComparisons.find(
+  //     (c) => c.segmentId === selectedSegment,
+  //   );
+  //
+  //   return {
+  //     performance,
+  //     comparison,
+  //     segment: segments.find((s) => s.id === selectedSegment),
+  //   };
+  // }, [selectedSegment, performanceData, segmentComparisons, segments]);
 
   // Handle alert dismissal
   const dismissAlert = useCallback(async (alertId: string) => {

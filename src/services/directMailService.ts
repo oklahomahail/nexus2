@@ -41,20 +41,20 @@ export interface CostBreakdown {
 }
 
 // Direct Mail Providers
-const ____PRINT_PROVIDERS = {
-  "print-partner-1": {
-    name: "Professional Print Solutions",
-    minimums: { postcards: 500, letters: 250, brochures: 1000 },
-    turnaround: { rush: 3, standard: 7, economy: 14 },
-    costMultipliers: { rush: 1.8, standard: 1.0, economy: 0.8 },
-  },
-  "print-partner-2": {
-    name: "Direct Mail Express",
-    minimums: { postcards: 250, letters: 100, brochures: 500 },
-    turnaround: { rush: 2, standard: 5, economy: 10 },
-    costMultipliers: { rush: 2.2, standard: 1.2, economy: 0.9 },
-  },
-} as const;
+// const PRINT_PROVIDERS = {
+//   "print-partner-1": {
+//     name: "Professional Print Solutions",
+//     minimums: { postcards: 500, letters: 250, brochures: 1000 },
+//     turnaround: { rush: 3, standard: 7, economy: 14 },
+//     costMultipliers: { rush: 1.8, standard: 1.0, economy: 0.8 },
+//   },
+//   "print-partner-2": {
+//     name: "Direct Mail Express",
+//     minimums: { postcards: 250, letters: 100, brochures: 500 },
+//     turnaround: { rush: 2, standard: 5, economy: 10 },
+//     costMultipliers: { rush: 2.2, standard: 1.2, economy: 0.9 },
+//   },
+// } as const;
 
 // USPS Postage Rates (2024 estimates)
 const POSTAGE_RATES = {

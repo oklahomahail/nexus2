@@ -101,7 +101,7 @@ export interface ModelPerformanceReport {
 class PredictiveAnalyticsService {
   private static instance: PredictiveAnalyticsService;
   private models: Map<string, PredictionModel> = new Map();
-  private _trainingDataSets: Map<string, TrainingDataSet> = new Map();
+  // private trainingDataSets: Map<string, TrainingDataSet> = new Map();
   private predictionCache: Map<string, DonorPrediction[]> = new Map(); // donorId -> predictions
   private modelPerformance: Map<string, ModelPerformanceReport> = new Map();
 
