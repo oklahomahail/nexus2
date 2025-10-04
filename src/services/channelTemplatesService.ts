@@ -633,7 +633,7 @@ Thanks to supporters like you, we've accomplished:
 • {{impact_stat_2}}
 • {{impact_stat_3}}
 
-Your previous gift of $\{last_donation_amount\} was instrumental in making these results possible. Today, I'm asking you to consider a gift of $\{suggested_amount\} to our \{year\} Annual Fund.
+Your previous gift of ${last_donation_amount} was instrumental in making these results possible. Today, I'm asking you to consider a gift of ${suggested_amount} to our {year} Annual Fund.
 
 Your investment will directly support:
 {{impact_description}}
@@ -700,7 +700,7 @@ P.S. {{postscript_message}}`,
 
 Thank you!
 
-Your generous gift of $\{donation_amount\} means so much to our work and the people we serve.
+Your generous gift of ${donation_amount} means so much to our work and the people we serve.
 
 {{brief_impact_message}}
 

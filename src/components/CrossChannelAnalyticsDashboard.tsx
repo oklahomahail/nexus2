@@ -17,7 +17,7 @@ import {
   PieChart,
   Activity,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import type { ChannelType, AttributionModel } from "@/models/channels";
 import {
@@ -64,7 +64,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     void loadAnalytics();
   }, [campaignId, clientId, attributionModel, loadAnalytics]);
 
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -83,7 +83,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [campaignId, clientId, dateRange]);
 
   const handleRefresh = async () => {
     await loadAnalytics();
@@ -145,7 +145,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
   const renderKPICards = () => {
     if (!analytics || !campaignReport) return null;
 
-    const { unifiedMetrics } = analytics;
+    const { unifiedMetrics: __unifiedMetrics } = analytics;
     const { summary } = campaignReport;
 
     const kpis = [
@@ -328,7 +328,7 @@ export const CrossChannelAnalyticsDashboard: React.FC<
     if (!analytics) return null;
 
     const { attribution } = analytics;
-    const totalPercentage = Object.values(attribution).reduce(
+    const ___totalPercentage = Object.values(attribution).reduce(
       (sum: number, attr: any) => sum + attr.percentage,
       0,
     );

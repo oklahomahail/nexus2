@@ -300,7 +300,7 @@ class PredictiveAnalyticsService {
       validation: Record<string, number>;
     };
     featureImportance: Array<{
-      _featureName: string;
+      ___featureName: string;
       importance: number;
       rank: number;
     }>;
@@ -507,7 +507,7 @@ class PredictiveAnalyticsService {
   private calculatePredictionConfidence(
     model: PredictionModel,
     featureVector: number[],
-    prediction: any,
+    ___prediction: any,
   ): number {
     // Base confidence on model performance and feature completeness
     let confidence = 0.5;
@@ -535,7 +535,7 @@ class PredictiveAnalyticsService {
   private generatePredictionReasoning(
     model: PredictionModel,
     features: Record<string, any>,
-    prediction: any,
+    ___prediction: any,
   ): string[] {
     const reasoning: string[] = [];
 
@@ -738,7 +738,7 @@ class PredictiveAnalyticsService {
 
   private calculateModelWeight(
     modelId: string,
-    predictions: DonorPrediction[],
+    ___predictions: DonorPrediction[],
   ): number {
     const model = this.models.get(modelId);
     if (!model) return 0;
@@ -992,13 +992,13 @@ class PredictiveAnalyticsService {
   }
 
   private generatePerformanceMetrics(
-    model: PredictionModel,
+    ___model: PredictionModel,
   ): Record<string, number> {
     // Simulate current performance vs. original training performance
     const degradationFactor = Math.random() * 0.1 + 0.9; // 10% max degradation
 
     const metrics: Record<string, number> = {};
-    Object.entries(model.performance).forEach(([metric, value]) => {
+    Object.entries(___model.performance).forEach(([metric, value]) => {
       metrics[metric] = value * degradationFactor;
     });
 

@@ -349,7 +349,18 @@ export const SegmentBuilder: React.FC<SegmentBuilderProps> = ({
   // Load initial data
   useEffect(() => {
     if (initialSegment) {
-      setRuleGroups(initialSegment.rules ? [initialSegment.rules] : ruleGroups);
+      setRuleGroups(
+        initialSegment.rules
+          ? [initialSegment.rules]
+          : [
+              {
+                id: "main_group",
+                name: "Main Rules",
+                rules: [],
+                logicalOperator: "AND",
+              },
+            ],
+      );
     }
   }, [initialSegment]);
 
@@ -526,7 +537,7 @@ export const SegmentBuilder: React.FC<SegmentBuilderProps> = ({
   useEffect(() => {
     if (selectedTab === "preview" && errors.length === 0) {
       const timeoutId = setTimeout(() => {
-        generatePreview();
+        void generatePreview();
       }, 1000);
 
       return () => clearTimeout(timeoutId);
@@ -834,7 +845,7 @@ export const SegmentBuilder: React.FC<SegmentBuilderProps> = ({
 
   // Render rule group
   const renderRuleGroup = useCallback(
-    (group: RuleGroup, index: number) => {
+    (group: RuleGroup, _index: number) => {
       return (
         <div
           key={group.id}

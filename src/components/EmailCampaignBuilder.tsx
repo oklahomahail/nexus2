@@ -16,7 +16,7 @@ import {
   Calendar,
   TestTube,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import type {
   EmailCampaign,
@@ -88,14 +88,14 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     setTemplates(availableTemplates);
   };
 
-  const loadSegments = async () => {
+  const loadSegments = useCallback(async () => {
     try {
       const availableSegments = await getEmailSegments(clientId);
       setSegments(availableSegments);
     } catch (error) {
       console.error("Error loading segments:", error);
     }
-  };
+  }, [clientId]);
 
   const handleSave = async () => {
     if (!emailData.name || !emailData.subject || !emailData.htmlContent) {

@@ -75,7 +75,7 @@ export class AutomationEngine {
     for (const ruleId of ruleIds) {
       const rule = this.automationRules.get(ruleId);
       if (rule && rule.isActive) {
-        this.evaluateRule(rule, eventData);
+        void this.evaluateRule(rule, eventData);
       }
     }
   }

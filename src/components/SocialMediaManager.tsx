@@ -14,7 +14,7 @@ import {
   MessageSquare,
   Heart,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import type {
   SocialMediaPost,
@@ -71,7 +71,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
   useEffect(() => {
     void loadPosts();
     void loadTrendingHashtags();
-  }, [clientId, campaignId]);
+  }, [clientId, campaignId, loadPosts, loadTrendingHashtags]);
 
   useEffect(() => {
     // Validate content for each platform when message changes
@@ -86,7 +86,7 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
     }
   }, [postData.message, selectedPlatforms]);
 
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       setIsLoading(true);
       const allPosts = await getAllSocialMediaPosts(clientId);
@@ -99,16 +99,16 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [clientId, campaignId]);
 
-  const loadTrendingHashtags = async () => {
+  const loadTrendingHashtags = useCallback(async () => {
     try {
       const hashtags = await getTrendingHashtags(10);
       setTrendingHashtags(hashtags);
     } catch (error) {
       console.error("Error loading trending hashtags:", error);
     }
-  };
+  }, []);
 
   const handlePlatformToggle = (platform: SocialPlatform) => {
     const newPlatforms = selectedPlatforms.includes(platform)

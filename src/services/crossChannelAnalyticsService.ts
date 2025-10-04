@@ -510,7 +510,7 @@ export const getCrossChannelAnalytics = async (
 
 export const generateCampaignReport = async (
   campaignId: string,
-  dateRange: { start: Date; end: Date },
+  _dateRange: { start: Date; end: Date },
 ): Promise<{
   summary: any;
   channelBreakdown: any;

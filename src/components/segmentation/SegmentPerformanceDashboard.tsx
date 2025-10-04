@@ -151,7 +151,7 @@ export const SegmentPerformanceDashboard: React.FC<
   // Load initial data
   useEffect(() => {
     void loadDashboardData();
-  }, [selectedSegment, dateRange, timeframe]);
+  }, [selectedSegment, dateRange, timeframe, loadDashboardData]);
 
   // Auto-refresh data
   useEffect(() => {
@@ -160,7 +160,7 @@ export const SegmentPerformanceDashboard: React.FC<
     }, refreshInterval);
 
     return () => clearInterval(interval);
-  }, [refreshInterval, selectedSegment, dateRange]);
+  }, [refreshInterval, selectedSegment, dateRange, loadDashboardData]);
 
   // Load all dashboard data
   const loadDashboardData = useCallback(async () => {
@@ -169,7 +169,7 @@ export const SegmentPerformanceDashboard: React.FC<
 
     try {
       // Load segments
-      const segmentsData = await getSegments();
+      const segmentsData = getSegments();
       setSegments(segmentsData);
 
       // Set default selected segment if none specified
@@ -206,7 +206,14 @@ export const SegmentPerformanceDashboard: React.FC<
     } finally {
       setLoading(false);
     }
-  }, [selectedSegment, dateRange, timeframe]);
+  }, [
+    selectedSegment,
+    dateRange,
+    timeframe,
+    generateTimeSeriesData,
+    generateMockAlerts,
+    generateSegmentComparisons,
+  ]);
 
   // Generate mock time series data
   const generateTimeSeriesData = useCallback(

@@ -10,7 +10,7 @@ import {
   Plus,
   Heart,
 } from "lucide-react";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 import type { ChannelTemplate, ChannelType } from "@/models/channels";
 import {
@@ -74,9 +74,9 @@ export const ChannelTemplatesLibrary: React.FC<
   // Load templates and statistics
   useEffect(() => {
     void loadTemplates();
-  }, [filters, searchQuery, channelType, clientId]);
+  }, [filters, searchQuery, channelType, clientId, loadTemplates]);
 
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     setLoading(true);
     try {
       let fetchedTemplates: ChannelTemplate[] = [];
@@ -125,7 +125,7 @@ export const ChannelTemplatesLibrary: React.FC<
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, searchQuery, activeTab, clientId]);
 
   const statistics = useMemo(() => getTemplateStatistics(), []);
 
