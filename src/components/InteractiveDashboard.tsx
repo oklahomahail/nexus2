@@ -220,58 +220,58 @@ export const InteractiveDashboard: React.FC<InteractiveDashboardProps> = ({
   }, [layout]);
 
   // Find empty position for new widget
-  const findEmptyPosition = useCallback((
-    rowSpan: number,
-    colSpan: number,
-  ): { row: number; col: number } => {
-    const { gridRows, gridCols, widgets } = currentLayout;
+  const findEmptyPosition = useCallback(
+    (rowSpan: number, colSpan: number): { row: number; col: number } => {
+      const { gridRows, gridCols, widgets } = currentLayout;
 
-    // Create a grid to track occupied positions
-    const occupied = Array(gridRows)
-      .fill(null)
-      .map(() => Array(gridCols).fill(false));
+      // Create a grid to track occupied positions
+      const occupied = Array(gridRows)
+        .fill(null)
+        .map(() => Array(gridCols).fill(false));
 
-    widgets.forEach((widget) => {
-      if (!widget.visible) return;
-      for (
-        let r = widget.position.row;
-        r < widget.position.row + widget.position.rowSpan;
-        r++
-      ) {
+      widgets.forEach((widget) => {
+        if (!widget.visible) return;
         for (
-          let c = widget.position.col;
-          c < widget.position.col + widget.position.colSpan;
-          c++
+          let r = widget.position.row;
+          r < widget.position.row + widget.position.rowSpan;
+          r++
         ) {
-          if (r < gridRows && c < gridCols) {
-            occupied[r][c] = true;
-          }
-        }
-      }
-    });
-
-    // Find first available position
-    for (let row = 0; row <= gridRows - rowSpan; row++) {
-      for (let col = 0; col <= gridCols - colSpan; col++) {
-        let canPlace = true;
-
-        for (let r = row; r < row + rowSpan && canPlace; r++) {
-          for (let c = col; c < col + colSpan && canPlace; c++) {
-            if (occupied[r][c]) {
-              canPlace = false;
+          for (
+            let c = widget.position.col;
+            c < widget.position.col + widget.position.colSpan;
+            c++
+          ) {
+            if (r < gridRows && c < gridCols) {
+              occupied[r][c] = true;
             }
           }
         }
+      });
 
-        if (canPlace) {
-          return { row, col };
+      // Find first available position
+      for (let row = 0; row <= gridRows - rowSpan; row++) {
+        for (let col = 0; col <= gridCols - colSpan; col++) {
+          let canPlace = true;
+
+          for (let r = row; r < row + rowSpan && canPlace; r++) {
+            for (let c = col; c < col + colSpan && canPlace; c++) {
+              if (occupied[r][c]) {
+                canPlace = false;
+              }
+            }
+          }
+
+          if (canPlace) {
+            return { row, col };
+          }
         }
       }
-    }
 
-    // If no space found, return bottom position
-    return { row: Math.max(0, gridRows - rowSpan), col: 0 };
-  }, [currentLayout]);
+      // If no space found, return bottom position
+      return { row: Math.max(0, gridRows - rowSpan), col: 0 };
+    },
+    [currentLayout],
+  );
 
   // Handle widget movement
   const handleWidgetMove = useCallback(
