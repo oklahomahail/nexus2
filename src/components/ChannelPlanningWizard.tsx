@@ -455,7 +455,7 @@ export const ChannelPlanningWizard: React.FC<ChannelPlanningWizardProps> = ({
       </div>
 
       <div className="space-y-4">
-        {channelConfigs.map((config, index) => (
+        {channelConfigs.map((config) => (
           <div
             key={config.type}
             className={`border-2 rounded-lg p-4 transition-all ${
@@ -1311,7 +1311,7 @@ export const ChannelPlanningWizard: React.FC<ChannelPlanningWizardProps> = ({
               <div className="space-y-2">
                 {enabledChannels
                   .sort((a, b) => a.priority - b.priority)
-            .map((config, _index) => (
+                  .map((config, _index) => (
                     <div
                       key={config.type}
                       className="flex items-center space-x-2 text-sm"
@@ -1325,11 +1325,11 @@ export const ChannelPlanningWizard: React.FC<ChannelPlanningWizardProps> = ({
                               ? "📮"
                               : "📊"}
                       </div>
-                      <span className="font-medium">{index + 1}.</span>
+                      <span className="font-medium">{_index + 1}.</span>
                       <span className="capitalize">
                         {config.type.replace("_", " ")}
                       </span>
-                      {index > 0 && (
+                      {_index > 0 && (
                         <span className="text-gray-600">
                           (+{config.config.sendDelay}m)
                         </span>

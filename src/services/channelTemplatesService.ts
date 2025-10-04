@@ -288,7 +288,7 @@ class TemplateLibrary {
                 </div>
                 
                 <p style="font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
-                  Your previous gift of $\{last_donation_amount\} helped make this possible.
+                  Your previous gift of ${last_donation_amount} helped make this possible.
                   Will you consider making a gift to our {{year}} Annual Fund today?
                 </p>
                 
@@ -321,7 +321,7 @@ This Year's Impact:
 - {{impact_stat_2}}  
 - {{impact_stat_3}}
 
-Your previous gift of $\{last_donation_amount\} helped make this possible. Will you consider making a gift to our \{year\} Annual Fund today?
+Your previous gift of ${last_donation_amount} helped make this possible. Will you consider making a gift to our {year} Annual Fund today?
 
 Make a gift online: {{donation_link}}
 
@@ -372,7 +372,7 @@ Tax ID: {{tax_id}} | Unsubscribe: {{unsubscribe_link}}`,
                 </h2>
                 
                 <p style="font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
-                  We are incredibly grateful for your generous gift of <strong>$\{donation_amount\}</strong>
+                  We are incredibly grateful for your generous gift of <strong>${donation_amount}</strong>
                   to {{campaign_name}}. Your support directly impacts our ability to {{mission_statement}}.
                 </p>
                 
@@ -385,7 +385,7 @@ Tax ID: {{tax_id}} | Unsubscribe: {{unsubscribe_link}}`,
                     </tr>
                     <tr>
                       <td style="padding: 5px 0;"><strong>Amount:</strong></td>
-                      <td style="padding: 5px 0;">$\{donation_amount\}</td>
+                      <td style="padding: 5px 0;">${donation_amount}</td>
                     </tr>
                     <tr>
                       <td style="padding: 5px 0;"><strong>Method:</strong></td>
@@ -447,11 +447,11 @@ Tax ID: {{tax_id}} | Unsubscribe: {{unsubscribe_link}}`,
         type: "social_media",
         category: "fundraising",
         content: {
-          message: `🎯 GOAL: $\{goal_amount\} by \{end_date\}
+          message: `🎯 GOAL: ${goal_amount} by {end_date}
 
 We're {{progress_percentage}}% of the way to our goal! Every donation, no matter the size, brings us closer to {{campaign_purpose}}.
 
-✨ Your $\{suggested_amount\} can:
+✨ Your ${suggested_amount} can:
 {{impact_description}}
 
 Join {{donor_count}} supporters who've already given. Will you be next?

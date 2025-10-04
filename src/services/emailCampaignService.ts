@@ -437,7 +437,7 @@ export const scheduleEmailCampaign = async (
 
 // Email List Management
 export const getEmailSegments = async (
-  clientId: string,
+  _clientId: string,
 ): Promise<Array<{ id: string; name: string; count: number }>> => {
   // Mock segments - in real implementation, this would fetch from donor segments service
   return [
@@ -451,7 +451,7 @@ export const getEmailSegments = async (
 
 // Email Deliverability & Analytics
 export const getEmailDeliverabilityStats = async (
-  clientId: string,
+  _clientId: string,
 ): Promise<{
   reputation: number;
   spamScore: number;
@@ -525,7 +525,7 @@ export const initializeEmailTemplates = () => {
         htmlContent: `
           <h1>Thank You!</h1>
           <p>Dear {{first_name}},</p>
-          <p>Thank you for your generous donation of $\{donation_amount\} to \{campaign_name\}.</p>
+          <p>Thank you for your generous donation of ${donation_amount} to {campaign_name}.</p>
           <p>Your contribution makes a real difference in {{cause_area}}.</p>
           <p>Tax-deductible receipt: #{{receipt_number}}</p>
           <p>With gratitude,<br>{{organization_name}}</p>

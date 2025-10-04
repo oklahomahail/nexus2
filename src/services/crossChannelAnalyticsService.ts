@@ -752,7 +752,7 @@ function generateDailyMetrics(
   return dailyMetrics;
 }
 
-function generateAudienceInsights(channelType: ChannelType): {
+function generateAudienceInsights(_channelType: ChannelType): {
   demographics: Record<string, number>;
   geography: Record<string, number>;
   interests: Record<string, number>;

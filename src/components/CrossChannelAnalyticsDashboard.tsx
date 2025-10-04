@@ -61,8 +61,8 @@ export const CrossChannelAnalyticsDashboard: React.FC<
   const [campaignReport, setCampaignReport] = useState<any>(null);
 
   useEffect(() => {
-    loadAnalytics();
-  }, [campaignId, clientId, attributionModel]);
+    void loadAnalytics();
+  }, [campaignId, clientId, attributionModel, loadAnalytics]);
 
   const loadAnalytics = async () => {
     try {

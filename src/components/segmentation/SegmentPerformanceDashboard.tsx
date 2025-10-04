@@ -150,13 +150,13 @@ export const SegmentPerformanceDashboard: React.FC<
 
   // Load initial data
   useEffect(() => {
-    loadDashboardData();
+    void loadDashboardData();
   }, [selectedSegment, dateRange, timeframe]);
 
   // Auto-refresh data
   useEffect(() => {
     const interval = setInterval(() => {
-      loadDashboardData();
+      void loadDashboardData();
     }, refreshInterval);
 
     return () => clearInterval(interval);
@@ -292,7 +292,7 @@ export const SegmentPerformanceDashboard: React.FC<
       performance: SegmentPerformance[],
     ): SegmentComparison[] => {
       return segments.map((segment, index) => {
-        const perf = performance[index] || {};
+        const _perf = performance[index] || {};
         const changePercent = (Math.random() - 0.5) * 40; // -20% to +20%
 
         return {
@@ -314,7 +314,7 @@ export const SegmentPerformanceDashboard: React.FC<
   );
 
   // Get performance metrics for selected segment
-  const selectedSegmentMetrics = useMemo(() => {
+  const _selectedSegmentMetrics = useMemo(() => {
     if (!selectedSegment) return null;
 
     const performance = performanceData.find(

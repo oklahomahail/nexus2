@@ -312,7 +312,7 @@ export const SegmentBuilder: React.FC<SegmentBuilderProps> = ({
   mode = "create",
 }) => {
   // State management
-  const [_segment, _setSegment] = useState<AudienceSegment | null>(initialSegment || null);
+  const [_segment, _setSegment] = useState<AudienceSegment | null>(
     initialSegment || null,
   );
   const [segmentName, setSegmentName] = useState(initialSegment?.name || "");

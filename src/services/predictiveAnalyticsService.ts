@@ -290,17 +290,17 @@ class PredictiveAnalyticsService {
 
   private async executeTraining(
     config: MLModelConfig,
-    trainFeatures: number[][],
-    trainTargets: any[],
-    valFeatures: number[][],
-    valTargets: any[],
+    _trainFeatures: number[][],
+    _trainTargets: number[],
+    _valFeatures: number[][],
+    _valTargets: number[],
   ): Promise<{
     metrics: {
       training: Record<string, number>;
       validation: Record<string, number>;
     };
     featureImportance: Array<{
-      feature: string;
+      _featureName: string;
       importance: number;
       rank: number;
     }>;
@@ -478,13 +478,14 @@ class PredictiveAnalyticsService {
         // Simulate churn probability (0-1)
         return Math.random() * 0.8 + 0.1; // 10% - 90%
 
-      case "next_donation_amount":
+      case "next_donation_amount": {
         // Simulate next donation amount
         const avgFeature =
           featureVector.length > 0
             ? featureVector.reduce((a, b) => a + b, 0) / featureVector.length
             : 100;
         return Math.floor(avgFeature * (random * 0.5 + 0.75)); // 75-125% of average feature
+      }
 
       case "next_donation_timing":
         // Simulate days until next donation

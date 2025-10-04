@@ -76,14 +76,14 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
   const [abTestEnabled, setAbTestEnabled] = useState(false);
 
   useEffect(() => {
-    loadTemplates();
-    loadSegments();
+    void loadSegments();
+    // loadSegments(); // Duplicate call removed
     if (existingEmail) {
       setEmailData(existingEmail);
     }
-  }, [existingEmail, clientId]);
+  }, [existingEmail, clientId, loadSegments]);
 
-  const loadTemplates = () => {
+  const _loadTemplates = () => {
     const availableTemplates = EmailTemplateEngine.getAllTemplates();
     setTemplates(availableTemplates);
   };
@@ -232,7 +232,7 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
     return EmailTemplateEngine.createDragDropTemplate(emailComponents);
   };
 
-  const useTemplate = (template: ChannelTemplate) => {
+  const _useTemplate = (template: ChannelTemplate) => {
     setEmailData((prev) => ({
       ...prev,
       subject: template.content.subject,
@@ -438,7 +438,16 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
                   {template.category}
                 </span>
                 <button
-                  onClick={() => useTemplate(template)}
+                  onClick={() => {
+                    // Apply template content to email data
+                    setEmailData((prev) => ({
+                      ...prev,
+                      subject: template.content?.subject || prev.subject,
+                      htmlContent:
+                        template.content?.htmlContent || prev.htmlContent,
+                      fromName: template.content?.fromName || prev.fromName,
+                    }));
+                  }}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Use Template
@@ -498,7 +507,7 @@ export const EmailCampaignBuilder: React.FC<EmailCampaignBuilderProps> = ({
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {emailComponents.map((component, index) => (
+                  {emailComponents.map((component, _index) => (
                     <div
                       key={component.id}
                       className="border border-gray-200 rounded-lg p-3"

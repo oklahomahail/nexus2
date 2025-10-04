@@ -18,7 +18,6 @@ import {
   searchTemplates,
   getPopularTemplates,
   getTopRatedTemplates,
-  useTemplate,
   customizeTemplate,
   getTemplateStatistics,
   TEMPLATE_CATEGORIES,
@@ -74,7 +73,7 @@ export const ChannelTemplatesLibrary: React.FC<
 
   // Load templates and statistics
   useEffect(() => {
-    loadTemplates();
+    void loadTemplates();
   }, [filters, searchQuery, channelType, clientId]);
 
   const loadTemplates = async () => {
@@ -133,9 +132,9 @@ export const ChannelTemplatesLibrary: React.FC<
   // Event handlers
   const handleTemplateSelect = (template: ChannelTemplate) => {
     if (mode === "select") {
-      const usedTemplate = useTemplate(template.id);
-      if (usedTemplate && onSelectTemplate) {
-        onSelectTemplate(usedTemplate);
+      // Simply pass the template to the parent
+      if (onSelectTemplate) {
+        onSelectTemplate(template);
       }
     } else {
       setSelectedTemplate(template);
@@ -149,9 +148,9 @@ export const ChannelTemplatesLibrary: React.FC<
   };
 
   const handleUseTemplate = (template: ChannelTemplate) => {
-    const usedTemplate = useTemplate(template.id);
-    if (usedTemplate && onSelectTemplate) {
-      onSelectTemplate(usedTemplate);
+    // Simply pass the template to the parent
+    if (onSelectTemplate) {
+      onSelectTemplate(template);
     }
     setShowPreview(false);
   };
@@ -192,7 +191,7 @@ export const ChannelTemplatesLibrary: React.FC<
   };
 
   // Render template card
-  const renderTemplateCard = (template: ChannelTemplate, index: number) => {
+  const renderTemplateCard = (template: ChannelTemplate, _index: number) => {
     const category =
       TEMPLATE_CATEGORIES[template.category as TemplateCategoryKey];
 

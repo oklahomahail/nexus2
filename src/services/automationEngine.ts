@@ -414,7 +414,7 @@ export class AutomationEngine {
 
     // Set up recurring timer
     const executeAndReschedule = () => {
-      this.evaluateRule(rule, {
+      void this.evaluateRule(rule, {
         triggerType: "time_based",
         scheduledTime: new Date(),
       });
@@ -498,7 +498,7 @@ export class AutomationEngine {
     setInterval(
       () => {
         // Simulate email not opened after 48 hours
-        this.triggerEvent("email_not_opened", {
+        void this.triggerEvent("email_not_opened", {
           emailId: "sample_email_id",
           campaignId: "sample_campaign_id",
           donorId: "sample_donor_id",

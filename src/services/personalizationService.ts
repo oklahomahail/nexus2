@@ -222,7 +222,7 @@ class PersonalizationService {
     logger.info(`Building personalization context for donor: ${donor.id}`);
 
     // Get donor's journey stage
-    const journeyStage = await this.getDonorJourneyStage(donor);
+    const _journeyStage = this.identifyJourneyStage(donor);
 
     // Analyze behavioral patterns (mock implementation)
     const behaviorProfile = await this.buildBehaviorProfile(donor);
@@ -532,7 +532,7 @@ class PersonalizationService {
         return context.segments.length;
       case "engagement_score":
         return Math.random() * 100; // Mock engagement score
-      case "days_since_last_donation":
+      case "days_since_last_donation": {
         if (!donor.donations || donor.donations.length === 0) return 9999;
         const lastDonation = donor.donations.sort(
           (a, b) => b.date.getTime() - a.date.getTime(),
@@ -540,6 +540,7 @@ class PersonalizationService {
         return Math.floor(
           (Date.now() - lastDonation.date.getTime()) / (1000 * 60 * 60 * 24),
         );
+      }
       default:
         return (donor as any)[field];
     }
@@ -690,7 +691,7 @@ class PersonalizationService {
     confidence: number;
   } {
     const donations = donor.donations || [];
-    const now = new Date();
+    const _now = new Date();
 
     // Analyze historical donation patterns for timing
     let optimalHour = context.behaviorProfile.preferences.bestContactTime.hour;

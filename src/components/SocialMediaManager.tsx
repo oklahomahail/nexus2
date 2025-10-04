@@ -69,8 +69,8 @@ export const SocialMediaManager: React.FC<SocialMediaManagerProps> = ({
   }>({});
 
   useEffect(() => {
-    loadPosts();
-    loadTrendingHashtags();
+    void loadPosts();
+    void loadTrendingHashtags();
   }, [clientId, campaignId]);
 
   useEffect(() => {

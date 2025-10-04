@@ -211,7 +211,7 @@ class DynamicSegmentationEngine {
     now: Date,
   ): BehavioralPattern | null {
     // Mock engagement data analysis
-    const mockEngagementScore = Math.random() * 100;
+    const _mockEngagementScore = Math.random() * 100;
     const mockActivity = Math.floor(Math.random() * 50) + 10;
 
     return {
@@ -251,7 +251,7 @@ class DynamicSegmentationEngine {
   ): BehavioralPattern | null {
     // Mock channel preference analysis
     const channels = ["email", "direct_mail", "phone", "social_media"];
-    const preferredChannel =
+    const _preferredChannel =
       channels[Math.floor(Math.random() * channels.length)];
 
     return {
@@ -396,13 +396,14 @@ class DynamicSegmentationEngine {
             return donor.donations?.reduce((sum, d) => sum + d.amount, 0) || 0;
           case "donation_count":
             return donor.donations?.length || 0;
-          case "avg_donation_amount":
+          case "avg_donation_amount": {
             const donations = donor.donations || [];
             return donations.length > 0
               ? donations.reduce((sum, d) => sum + d.amount, 0) /
                   donations.length
               : 0;
-          case "days_since_first_donation":
+          }
+          case "days_since_first_donation": {
             if (!donor.donations || donor.donations.length === 0) return 9999;
             const firstDonation = donor.donations.sort(
               (a, b) => a.date.getTime() - b.date.getTime(),
@@ -411,7 +412,8 @@ class DynamicSegmentationEngine {
               (Date.now() - firstDonation.date.getTime()) /
                 (1000 * 60 * 60 * 24),
             );
-          case "days_since_last_donation":
+          }
+          case "days_since_last_donation": {
             if (!donor.donations || donor.donations.length === 0) return 9999;
             const lastDonation = donor.donations.sort(
               (a, b) => b.date.getTime() - a.date.getTime(),
@@ -420,6 +422,7 @@ class DynamicSegmentationEngine {
               (Date.now() - lastDonation.date.getTime()) /
                 (1000 * 60 * 60 * 24),
             );
+          }
           case "engagement_score":
             return Math.random() * 100; // Mock engagement score
           case "age":
@@ -1101,8 +1104,8 @@ class DynamicSegmentationEngine {
   }
 
   private async isDonorInCluster(
-    donorId: string,
-    clusterId: string,
+    _donorId: string,
+    _clusterId: string,
   ): Promise<boolean> {
     // Mock cluster membership check
     return Math.random() > 0.5;
