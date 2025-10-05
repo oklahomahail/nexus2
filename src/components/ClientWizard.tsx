@@ -54,9 +54,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
   if (!open) return null;
 
   const steps = [
-    { number: 1, title: 'Basics', description: 'Organization details' },
-    { number: 2, title: 'Contacts', description: 'Primary contact info' },
-    { number: 3, title: 'Segmentation', description: 'Classification & notes' },
+    { number: 1, title: "Basics", description: "Organization details" },
+    { number: 2, title: "Contacts", description: "Primary contact info" },
+    { number: 3, title: "Segmentation", description: "Classification & notes" },
   ];
 
   const handleNext = () => {
@@ -74,13 +74,15 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
   };
 
   const updateFormData = (updates: Partial<ClientFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
+    setFormData((prev) => ({ ...prev, ...updates }));
   };
 
-  const updateContactData = (updates: Partial<ClientFormData['primaryContact']>) => {
-    setFormData(prev => ({
+  const updateContactData = (
+    updates: Partial<ClientFormData["primaryContact"]>,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      primaryContact: { ...prev.primaryContact, ...updates }
+      primaryContact: { ...prev.primaryContact, ...updates },
     }));
   };
 
@@ -89,7 +91,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
       case 1:
         return !!formData.name;
       case 2:
-        return !!formData.primaryContact.name && !!formData.primaryContact.email;
+        return (
+          !!formData.primaryContact.name && !!formData.primaryContact.email
+        );
       case 3:
         return !!formData.segment;
       default:
@@ -99,7 +103,10 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-bg/80 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-bg/80 backdrop-blur-sm"
+        onClick={onClose}
+      />
       
       <div className="relative w-full max-w-2xl bg-panel border border-border rounded-2xl shadow-md">
         {/* Header with Progress */}
