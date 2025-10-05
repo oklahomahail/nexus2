@@ -33,17 +33,17 @@ function NotFound() {
 
 function NewCampaignPage() {
   const navigate = useNavigate();
-  
+
   const handleClose = () => {
     // Navigate back to campaigns page
-    navigate('/campaigns');
+    navigate("/campaigns");
   };
-  
-  const handleSaved = (campaign: any) => {
+
+  const handleSaved = (_campaign: any) => {
     // Navigate to campaigns page after successful creation
-    navigate('/campaigns');
+    navigate("/campaigns");
   };
-  
+
   return (
     <CampaignCreationWizard
       open={true}
@@ -69,10 +69,22 @@ const App: React.FC = () => {
           <Route path="/analytics" element={<AnalyticsDashboard />} />
 
           {/* Demos */}
-          <Route path="/demo/campaign-overview" element={<CampaignOverviewDemo />} />
-          <Route path="/demo/campaign-builder" element={<CampaignBuilderDemo />} />
-          <Route path="/demo/messaging-framework" element={<MessagingFrameworkDemo />} />
-          <Route path="/demo/form-components" element={<FormComponentsDemo />} />
+          <Route
+            path="/demo/campaign-overview"
+            element={<CampaignOverviewDemo />}
+          />
+          <Route
+            path="/demo/campaign-builder"
+            element={<CampaignBuilderDemo />}
+          />
+          <Route
+            path="/demo/messaging-framework"
+            element={<MessagingFrameworkDemo />}
+          />
+          <Route
+            path="/demo/form-components"
+            element={<FormComponentsDemo />}
+          />
 
           {/* Modals-as-routes */}
           <Route path="/notifications" element={<NotificationsRoute />} />
