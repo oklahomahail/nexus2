@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
 import { ChevronDown, Filter, Grid, List, Plus, Upload } from "lucide-react";
+import { useEffect, useState } from "react";
 
+import ClientModal from "@/components/ClientModal";
+import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import SearchInput from "@/components/ui/SearchInput";
-import Badge from "@/components/ui/Badge";
 import { 
   Table, 
   TableHeader, 
@@ -14,7 +15,6 @@ import {
   TableSkeletonRow,
   TableEmpty
 } from "@/components/ui/Table";
-import ClientModal from "@/components/ClientModal";
 import ConfirmModal from "@/components/ui-kit/ConfirmModal";
 import { listClients, deleteClient, Client } from "@/services/clientService";
 

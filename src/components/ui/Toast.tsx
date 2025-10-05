@@ -1,28 +1,8 @@
 import { clsx } from 'clsx';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { useCallback, ReactNode, useState } from 'react';
 
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
-
-export interface Toast {
-  id: string;
-  type: ToastType;
-  title: string;
-  message?: string;
-  duration?: number;
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-}
-
-interface ToastContextType {
-  toasts: Toast[];
-  addToast: (toast: Omit<Toast, 'id'>) => void;
-  removeToast: (id: string) => void;
-}
-
-export const ToastContext = createContext<ToastContextType | null>(null);
+import { ToastContext, type Toast, type ToastType, type ToastContextType } from '../../contexts/ToastContext';
 
 // Toast Provider Component
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -131,5 +111,8 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   );
 };
 
+
+// Re-export types for convenience
+export type { Toast, ToastType } from '../../contexts/ToastContext';
 
 export default ToastProvider;

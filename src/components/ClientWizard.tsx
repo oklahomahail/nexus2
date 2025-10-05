@@ -15,36 +15,40 @@ interface ClientFormData {
   name: string;
   shortName?: string;
   website?: string;
-  
-  // Step 2: Contacts  
+
+  // Step 2: Contacts
   primaryContact: {
     name: string;
     email: string;
     phone?: string;
     title?: string;
   };
-  
+
   // Step 3: Segmentation
-  segment: 'small-business' | 'enterprise' | 'nonprofit' | 'government' | '';
+  segment: "small-business" | "enterprise" | "nonprofit" | "government" | "";
   budget?: string;
   notes?: string;
 }
 
-const ClientWizard: React.FC<ClientWizardProps> = ({ open, onClose, onComplete }) => {
+const ClientWizard: React.FC<ClientWizardProps> = ({
+  open,
+  onClose,
+  onComplete,
+}) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<ClientFormData>({
-    name: '',
-    shortName: '',
-    website: '',
+    name: "",
+    shortName: "",
+    website: "",
     primaryContact: {
-      name: '',
-      email: '',
-      phone: '',
-      title: '',
+      name: "",
+      email: "",
+      phone: "",
+      title: "",
     },
-    segment: '',
-    budget: '',
-    notes: '',
+    segment: "",
+    budget: "",
+    notes: "",
   });
 
   if (!open) return null;
