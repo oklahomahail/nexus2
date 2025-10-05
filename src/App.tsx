@@ -1,6 +1,6 @@
 // src/App.tsx
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 import CampaignCreationWizard from "./components/CampaignCreationWizard";
 import FormComponentsDemo from "./components/demos/FormComponentsDemo";
@@ -31,6 +31,28 @@ function NotFound() {
   );
 }
 
+function NewCampaignPage() {
+  const navigate = useNavigate();
+  
+  const handleClose = () => {
+    // Navigate back to campaigns page
+    navigate('/campaigns');
+  };
+  
+  const handleSaved = (campaign: any) => {
+    // Navigate to campaigns page after successful creation
+    navigate('/campaigns');
+  };
+  
+  return (
+    <CampaignCreationWizard
+      open={true}
+      onClose={handleClose}
+      onSaved={handleSaved}
+    />
+  );
+}
+
 const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-bg text-text">
@@ -56,14 +78,7 @@ const App: React.FC = () => {
           <Route path="/notifications" element={<NotificationsRoute />} />
           <Route
             path="/campaigns/new"
-            element={
-              <CampaignCreationWizard
-                open={false}
-                onClose={function (): void {
-                  throw new Error("Function not implemented.");
-                }}
-              />
-            }
+            element={<NewCampaignPage />}
           />
 
           {/* Fallback */}
