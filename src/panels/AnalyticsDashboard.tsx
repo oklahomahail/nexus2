@@ -89,20 +89,44 @@ const AnalyticsDashboard: React.FC = () => {
     return (
       <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6 text-center">
         <h3 className="text-lg font-semibold text-white mb-4">
-          Authentication Required
+          🏢 Welcome to Nexus Analytics Demo
         </h3>
         <p className="text-slate-300 mb-4">
-          Please log in to view the analytics dashboard.
+          Experience our nonprofit analytics platform with interactive dashboards, campaign tracking, and donor insights.
         </p>
-        <button
-          onClick={() => {
-            // You can implement a login modal or redirect to login page here
-            console.log('Show login modal or redirect to login');
-          }}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Log In
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              // Create a demo user and log them in
+              const demoUser = {
+                id: "demo-user",
+                email: "demo@nexus.com",
+                firstName: "Demo",
+                lastName: "User",
+                name: "Demo User",
+                role: "admin",
+                roles: ["admin", "user"],
+              };
+              // Directly set the user in localStorage and reload
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem('nexus_auth_user', JSON.stringify(demoUser));
+                window.location.reload();
+              }
+            }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            🚀 Enter Demo Mode
+          </button>
+          <button
+            onClick={() => {
+              // Show info about the demo
+              alert('This is a demo of the Nexus platform. Click "Enter Demo Mode" to explore the dashboard with sample data.');
+            }}
+            className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
+          >
+            ℹ️ About Demo
+          </button>
+        </div>
       </div>
     );
   }
