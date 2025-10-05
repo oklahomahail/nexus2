@@ -52,12 +52,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
         if (storedUser) {
           // Try to fetch fresh user data from backend
-          const freshUser = await fetchCurrentUser();
-          setUser(freshUser || storedUser);
+          try {
+            const freshUser = await fetchCurrentUser();
+            setUser(freshUser || storedUser);
+          } catch (fetchError) {
+            logger.warn("Failed to fetch fresh user data, using stored user", fetchError);
+            setUser(storedUser);
+          }
+        } else if (import.meta.env.DEV) {
+          // In development mode, provide a mock user if no authentication is available
+          logger.info("Development mode: Creating mock user");
+          const mockUser = {
+            id: "dev-user",
+            email: "dev@nexus.com",
+            firstName: "Development",
+            lastName: "User",
+            name: "Development User",
+            role: "admin",
+            roles: ["admin", "user"],
+          };
+          setUser(mockUser);
         }
       } catch (error) {
         logger.error("Failed to initialize auth", error);
-        setUser(null);
+        
+        if (import.meta.env.DEV) {
+          // Fallback to mock user in development
+          logger.info("Development mode fallback: Creating mock user");
+          const mockUser = {
+            id: "dev-user",
+            email: "dev@nexus.com",
+            firstName: "Development",
+            lastName: "User",
+            name: "Development User",
+            role: "admin",
+            roles: ["admin", "user"],
+          };
+          setUser(mockUser);
+        } else {
+          setUser(null);
+        }
       } finally {
         setIsLoading(false);
       }

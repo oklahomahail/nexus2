@@ -25,7 +25,7 @@ type DateRange = { startDate: string; endDate: string };
 type AnalyticsFilters = { dateRange: DateRange };
 
 const AnalyticsDashboard: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const [activeView, setActiveView] = useState<AnalyticsView>("overview");
   const [orgAnalytics, setOrgAnalytics] = useState<ImportedOrgAnalytics | null>(
     null,
@@ -75,11 +75,36 @@ const AnalyticsDashboard: React.FC = () => {
   });
 
   // Early return after all hooks
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-12">
+        <LoadingSpinner size="lg" />
+        <span className="ml-3 text-slate-400">Loading authentication...</span>
+      </div>
+    );
+  }
+
   if (!user) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/";
-    }
-    return null;
+    // Instead of redirecting, show a login prompt or message
+    return (
+      <div className="bg-slate-900/40 border border-slate-800 rounded-lg p-6 text-center">
+        <h3 className="text-lg font-semibold text-white mb-4">
+          Authentication Required
+        </h3>
+        <p className="text-slate-300 mb-4">
+          Please log in to view the analytics dashboard.
+        </p>
+        <button
+          onClick={() => {
+            // You can implement a login modal or redirect to login page here
+            console.log('Show login modal or redirect to login');
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Log In
+        </button>
+      </div>
+    );
   }
 
   // Generate mock activity data
