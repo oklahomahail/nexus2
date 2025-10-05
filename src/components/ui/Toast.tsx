@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 import { clsx } from 'clsx';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -22,19 +22,15 @@ interface ToastContextType {
   removeToast: (id: string) => void;
 }
 
-const ToastContext = createContext<ToastContextType | null>(null);
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
-};
+export const ToastContext = createContext<ToastContextType | null>(null);
 
 // Toast Provider Component
 export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  }, []);
 
   const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -49,11 +45,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         removeToast(id);
       }, duration);
     }
-  }, []);
-
-  const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  }, []);
+  }, [removeToast]);
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
@@ -139,23 +131,5 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   );
 };
 
-// Convenience hooks
-export const useToastActions = () => {
-  const { addToast } = useToast();
-
-  return {
-    success: (title: string, message?: string) => 
-      addToast({ type: 'success', title, message }),
-      
-    error: (title: string, message?: string) => 
-      addToast({ type: 'error', title, message }),
-      
-    warning: (title: string, message?: string) => 
-      addToast({ type: 'warning', title, message }),
-      
-    info: (title: string, message?: string) => 
-      addToast({ type: 'info', title, message }),
-  };
-};
 
 export default ToastProvider;

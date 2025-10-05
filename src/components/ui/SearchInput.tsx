@@ -1,6 +1,6 @@
-import { forwardRef, useState } from 'react';
-import { Search, X } from 'lucide-react';
 import { clsx } from 'clsx';
+import { Search, X } from 'lucide-react';
+import { forwardRef, useState } from 'react';
 
 export interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   onClear?: () => void;
