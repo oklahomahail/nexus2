@@ -5,33 +5,41 @@
 
 /* Tailwind v4 theme tokens mapped from your design variables */
 @theme {
-  /* Color tokens (enable utilities like text-brand-primary, bg-surface-muted, etc.) */
-  --color-brand-primary: rgb(var(--brand-primary));
-  --color-brand-secondary: rgb(var(--brand-secondary));
-  --color-brand-accent: rgb(var(--brand-accent));
-  --color-brand-dark: rgb(var(--text-inverse));
-  --color-brand-muted: rgb(var(--surface-muted));
-
-  --color-bg-primary: rgb(var(--bg-primary));
-  --color-bg-secondary: rgb(var(--bg-secondary));
-  --color-bg-tertiary: rgb(var(--bg-tertiary));
-
-  --color-surface: rgb(var(--surface-primary));
-  --color-surface-elevated: rgb(var(--surface-secondary));
-  --color-surface-muted: rgb(var(--surface-muted));
-
-  --color-border: rgb(var(--border-primary));
-  --color-border-muted: rgb(var(--border-muted));
-
-  --color-text-primary: rgb(var(--text-primary));
-  --color-text-secondary: rgb(var(--text-secondary));
-  --color-text-muted: rgb(var(--text-muted));
-  --color-text-inverse: rgb(var(--text-inverse));
-
-  --color-success: rgb(var(--success));
-  --color-warning: rgb(var(--warning));
+  /* Professional Color System - Track15-Adjacent */
+  --color-bg: rgb(var(--bg));
+  --color-panel: rgb(var(--panel));
+  --color-elevated: rgb(var(--elevated));
+  
+  --color-text: rgb(var(--text));
+  --color-muted: rgb(var(--muted));
+  --color-border: rgb(var(--border));
+  
+  --color-accent: rgb(var(--accent));
+  --color-accent-2: rgb(var(--accent-2));
+  --color-warn: rgb(var(--warn));
   --color-error: rgb(var(--error));
-  --color-info: rgb(var(--info));
+  
+  /* Legacy color mappings for compatibility */
+  --color-bg-primary: rgb(var(--bg));
+  --color-bg-secondary: rgb(var(--panel));
+  --color-bg-tertiary: rgb(var(--elevated));
+  
+  --color-surface: rgb(var(--panel));
+  --color-surface-elevated: rgb(var(--elevated));
+  --color-surface-muted: rgb(var(--muted));
+  
+  --color-text-primary: rgb(var(--text));
+  --color-text-secondary: rgb(var(--muted));
+  --color-text-muted: rgb(var(--muted));
+  --color-text-inverse: rgb(var(--bg));
+  
+  --color-brand-primary: rgb(var(--accent));
+  --color-brand-secondary: rgb(var(--accent-2));
+  --color-brand-accent: rgb(var(--error));
+  
+  --color-success: rgb(34 197 94);
+  --color-warning: rgb(var(--warn));
+  --color-info: rgb(var(--accent));
 
   /* Typography */
   --font-sans:
@@ -51,12 +59,14 @@
   --radius-4xl: 2rem;
   --radius-5xl: 2.5rem;
 
-  /* Shadows (usable via shadow-soft, shadow-medium, shadow-strong) */
-  --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
-  --shadow-medium:
-    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
-  --shadow-strong:
-    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+  /* Shadow System - Use sparingly for depth */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.25); /* UI chrome */
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.25); /* Modals/menus */
+  
+  /* Legacy shadow mappings */
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-medium: 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-strong: 0 8px 24px rgba(0,0,0,0.25);
 
   /* Breakpoints */
   --breakpoint-xs: 475px;
@@ -70,58 +80,69 @@
 }
 
 @layer base {
-  /* CSS Custom Properties for Design System */
+  /* CSS Custom Properties for Design System - Track15-Adjacent Professional Theme */
   :root {
-    /* Brand Colors */
-    --brand-primary: 59 130 246; /* Blue 500 */
-    --brand-secondary: 139 92 246; /* Purple 500 */
-    --brand-accent: 239 68 68; /* Red 500 */
-
-    /* Dark Theme Base */
-    --bg-primary: 15 23 42; /* Slate 900 */
-    --bg-secondary: 30 41 59; /* Slate 800 */
-    --bg-tertiary: 51 65 85; /* Slate 700 */
-
-    /* Surface Colors */
-    --surface-primary: 30 41 59; /* Slate 800 for cards */
-    --surface-secondary: 51 65 85; /* Slate 700 for elevated */
-    --surface-muted: 248 250 252; /* Slate 50 for light accents */
-
-    /* Border Colors */
-    --border-primary: 51 65 85; /* Slate 700 */
-    --border-secondary: 71 85 105; /* Slate 600 */
-    --border-muted: 226 232 240; /* Slate 200 */
-
+    /* Core Layout Colors */
+    --bg: 11 13 18; /* #0B0D12 */
+    --panel: 17 19 24; /* #111318 */
+    --elevated: 22 25 34; /* #161922 */
+    
     /* Text Colors */
-    --text-primary: 248 250 252; /* Slate 50 */
-    --text-secondary: 203 213 225; /* Slate 300 */
-    --text-muted: 100 116 139; /* Slate 500 */
-    --text-inverse: 15 23 42; /* Slate 900 for light backgrounds */
-
-    /* Status Colors */
-    --success: 34 197 94; /* Green 500 */
-    --warning: 245 158 11; /* Amber 500 */
-    --error: 239 68 68; /* Red 500 */
-    --info: 59 130 246; /* Blue 500 */
+    --text: 230 231 234; /* #E6E7EA */
+    --muted: 168 175 191; /* #A8AFBF */
+    --border: 36 40 54; /* #242836 */
+    
+    /* Accent Colors - Use Sparingly */
+    --accent: 91 140 255; /* #5B8CFF - Primary accent */
+    --accent-2: 124 212 179; /* #7CD4B3 - Secondary accent */
+    --warn: 242 184 75; /* #F2B84B */
+    --error: 228 109 109; /* #E46D6D */
+    
+    /* Legacy mappings for backwards compatibility */
+    --bg-primary: var(--bg);
+    --bg-secondary: var(--panel);
+    --bg-tertiary: var(--elevated);
+    
+    --surface-primary: var(--panel);
+    --surface-secondary: var(--elevated);
+    --surface-muted: var(--muted);
+    
+    --border-primary: var(--border);
+    --border-secondary: var(--border);
+    --border-muted: var(--border);
+    
+    --text-primary: var(--text);
+    --text-secondary: var(--muted);
+    --text-muted: var(--muted);
+    --text-inverse: var(--bg);
+    
+    --brand-primary: var(--accent);
+    --brand-secondary: var(--accent-2);
+    --brand-accent: var(--error);
+    
+    --success: 34 197 94;
+    --warning: var(--warn);
+    --info: var(--accent);
   }
 
   /* Base HTML Styles */
   html {
-    background-color: rgb(var(--bg-primary));
-    color: rgb(var(--text-primary));
+    background-color: rgb(var(--bg));
+    color: rgb(var(--text));
     font-family: var(--font-sans);
+    font-size: 15px; /* 15px base for professional look */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    background-color: rgb(var(--bg-primary));
-    color: rgb(var(--text-primary));
-    line-height: 1.6;
+    background-color: rgb(var(--bg));
+    color: rgb(var(--text));
+    line-height: 1.5;
   }
 
   #root {
-    background-color: rgb(var(--bg-primary));
+    background-color: rgb(var(--bg));
     min-height: 100vh;
   }
 }
@@ -308,33 +329,55 @@
     @apply text-blue-400 bg-blue-400/10 border-blue-400/20;
   }
 
-  /* Typography Scale */
+  /* Typography Scale - Inter, 14-15px base, professional spacing */
   .text-display {
     @apply text-5xl font-bold tracking-tight;
+    font-size: 3rem; /* 48px */
+    line-height: 1.1;
   }
   .text-h1 {
     @apply text-4xl font-bold tracking-tight;
+    font-size: 2.25rem; /* 36px */
+    line-height: 1.2;
   }
   .text-h2 {
     @apply text-3xl font-bold tracking-tight;
+    font-size: 1.875rem; /* 30px */
+    line-height: 1.25;
   }
   .text-h3 {
     @apply text-2xl font-semibold tracking-tight;
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.3;
   }
   .text-h4 {
     @apply text-xl font-semibold tracking-tight;
+    font-size: 1.25rem; /* 20px */
+    line-height: 1.4;
   }
   .text-body-lg {
-    @apply text-lg leading-relaxed;
+    font-size: 1rem; /* 16px */
+    line-height: 1.5;
   }
   .text-body {
-    @apply text-base leading-relaxed;
+    font-size: 0.9375rem; /* 15px base */
+    line-height: 1.5;
   }
   .text-body-sm {
-    @apply text-sm leading-relaxed;
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.5;
   }
   .text-caption {
-    @apply text-xs leading-normal;
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+  }
+  .text-label-caps {
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
   }
 
   /* Animation Utilities */

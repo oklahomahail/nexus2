@@ -80,6 +80,14 @@ Nexus is architected as a sophisticated single-page application (SPA) built with
 
 ```typescript
 components/
+├── ui/                       # Professional UI component system
+│   ├── Button.tsx            # Button hierarchy (primary/secondary/ghost) × 3 sizes
+│   ├── Input.tsx             # Quiet inputs with proper focus states
+│   ├── Badge.tsx             # Status indicators with color coding
+│   ├── Table.tsx             # Professional table components
+│   ├── SearchInput.tsx       # Search with clear functionality
+│   ├── Toast.tsx             # Feedback notification system
+│   └── index.ts              # Barrel exports for clean imports
 ├── analytics/                 # Analytics and reporting components
 │   ├── CrossChannelAnalyticsDashboard.tsx
 │   ├── SegmentPerformanceDashboard.tsx
@@ -98,7 +106,8 @@ components/
 │   ├── CommunicationTools.tsx
 │   ├── SocialMediaManager.tsx
 │   └── ChannelTemplatesLibrary.tsx
-└── common/                   # Reusable UI components
+├── ClientWizard.tsx          # 3-step guided client creation flow
+└── common/                   # Legacy reusable components
     ├── LoadingSpinner.tsx
     ├── ErrorBoundary.tsx
     ├── FormComponents.tsx

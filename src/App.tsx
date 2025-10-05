@@ -33,9 +33,9 @@ function NotFound() {
 
 const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-bg text-text">
       <Topbar title="Dashboard" />
-      <main className="p-6">
+      <main className="">
         <Routes>
           {/* Landing page at "/" */}
           <Route path="/" element={<AnalyticsDashboard />} />
