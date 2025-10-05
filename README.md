@@ -10,6 +10,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 ## 🚀 Key Features
 
 ### **Donor Segmentation & Personalization Platform**
+
 - **Advanced Segmentation Engine** - Dynamic donor clustering with ML-powered insights
 - **Personalization Service** - Tailored content and messaging based on donor profiles
 - **Cross-Channel Analytics** - Unified reporting across email, social, direct mail
@@ -17,6 +18,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 - **Campaign Performance Tracking** - Real-time metrics and attribution modeling
 
 ### **Campaign Management Suite**
+
 - **Campaign Creation Wizard** - 5-step guided campaign setup
 - **Email Campaign Builder** - Visual editor with drag-and-drop components
 - **Social Media Manager** - Multi-platform scheduling and engagement tracking
@@ -24,6 +26,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 - **A/B Testing Framework** - Optimize subject lines, content, and timing
 
 ### **Analytics & Reporting**
+
 - **Real-time Dashboard** - Live campaign performance monitoring
 - **Interactive Charts** - Advanced data visualization with Recharts
 - **Custom Report Generation** - Export capabilities and executive summaries
@@ -31,6 +34,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 - **Automated Insights** - AI-powered recommendations and alerts
 
 ### **Professional Design System**
+
 - **Track15-Adjacent Palette** - Professional color scheme with controlled accent usage
 - **Inter Typography** - 15px base with proper scale (12/14/15/16/20/24/30/36px)
 - **Component Hierarchy** - Button, Input, Badge, Table, and Toast components
@@ -38,6 +42,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 - **Accessibility** - WCAG AA contrast, keyboard navigation, screen readers
 
 ### **Enterprise-Grade Architecture**
+
 - **100% TypeScript** - Full type safety and IntelliSense support
 - **Modern React 19** - Latest React features and performance optimizations
 - **Responsive Design** - Mobile-first approach with TailwindCSS v4
@@ -47,6 +52,7 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 ## 🛠️ Quick Setup
 
 ### Prerequisites
+
 - **Node.js**: Version 20.11.0 or higher
 - **Package Manager**: PNPM 10.0.0 (recommended) or NPM
 - **Browser**: Modern browsers with ES2020 support
@@ -126,6 +132,7 @@ src/
 ## 🏗️ Technical Architecture
 
 ### Frontend Stack
+
 - **React 19.1.1** - Modern React with concurrent features
 - **TypeScript 5.9** - 100% type safety across the entire codebase
 - **Vite 7.1** - Lightning-fast build tool and dev server
@@ -135,12 +142,14 @@ src/
 - **Lucide React** - Modern icon library with consistent styling
 
 ### Data & State Management
+
 - **IndexedDB** - Local data persistence with IDB wrapper
 - **React Context** - Global state management
 - **Zod 4.0** - Runtime schema validation
 - **Crypto-js** - Client-side encryption and security
 
 ### Development Tools
+
 - **ESLint 9.33** - Code quality and consistency
 - **Prettier 3.6** - Code formatting
 - **Husky & Lint-staged** - Pre-commit hooks
@@ -171,6 +180,7 @@ src/
 Nexus is configured for deployment on multiple platforms:
 
 ### Vercel (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -180,6 +190,7 @@ vercel --prod
 ```
 
 ### Docker
+
 ```bash
 # Build production image
 docker build -t nexus:prod .
@@ -203,6 +214,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions.
 ## 🔧 API Services Overview
 
 ### Core Services
+
 - **PersonalizationService** - Dynamic content personalization
 - **SegmentationEngine** - Donor clustering and analysis
 - **CrossChannelAnalyticsService** - Multi-channel campaign tracking
@@ -211,6 +223,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions.
 - **DirectMailService** - Print campaign management
 
 ### Data Models
+
 - **Donor Management** - Comprehensive donor profiles
 - **Campaign Types** - Multi-channel campaign support
 - **Analytics Models** - Advanced reporting structures
@@ -245,12 +258,14 @@ pnpm build                  # Verify production build
 ## 🎯 Roadmap
 
 ### Near Term (Q4 2025)
+
 - **Advanced A/B Testing** - Statistical significance testing
 - **Enhanced Personalization** - AI-driven content generation
 - **Mobile App** - React Native companion app
 - **API Integration** - Third-party service connections
 
 ### Long Term (2026)
+
 - **Enterprise SSO** - Single sign-on integration
 - **Advanced Workflows** - Custom automation builder
 - **White Label** - Multi-tenant architecture
@@ -263,6 +278,7 @@ This project is proprietary software developed for internal use.
 ## 🆘 Support
 
 For questions, issues, or feature requests:
+
 - Create an issue in this repository
 - Contact the development team
 - Check the documentation in the `/docs` folder
