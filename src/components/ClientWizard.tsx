@@ -107,7 +107,7 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
         className="absolute inset-0 bg-bg/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       <div className="relative w-full max-w-2xl bg-panel border border-border rounded-2xl shadow-md">
         {/* Header with Progress */}
         <div className="px-6 py-4 border-b border-border">
@@ -120,7 +120,7 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
               ×
             </button>
           </div>
-          
+
           {/* Progress indicator */}
           <div className="flex items-center space-x-4">
             {steps.map((step, index) => (
@@ -129,10 +129,10 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-body-sm font-medium transition-all ${
                       currentStep > step.number
-                        ? 'bg-accent text-white'
+                        ? "bg-accent text-white"
                         : currentStep === step.number
-                        ? 'bg-accent text-white'
-                        : 'bg-elevated border border-border text-muted'
+                          ? "bg-accent text-white"
+                          : "bg-elevated border border-border text-muted"
                     }`}
                   >
                     {currentStep > step.number ? (
@@ -142,8 +142,12 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                     )}
                   </div>
                   <div className="ml-3">
-                    <div className="text-body-sm font-medium text-text">{step.title}</div>
-                    <div className="text-caption text-muted">{step.description}</div>
+                    <div className="text-body-sm font-medium text-text">
+                      {step.title}
+                    </div>
+                    <div className="text-caption text-muted">
+                      {step.description}
+                    </div>
                   </div>
                 </div>
                 {index < steps.length - 1 && (
@@ -219,24 +223,28 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
           {currentStep === 3 && (
             <div className="space-y-4">
               <h3 className="text-h4 text-text mb-4">Classification</h3>
-              
+
               <div className="space-y-3">
-                <label className="text-body-sm font-medium text-text">Organization Type</label>
+                <label className="text-body-sm font-medium text-text">
+                  Organization Type
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { value: 'small-business', label: 'Small Business' },
-                    { value: 'enterprise', label: 'Enterprise' },
-                    { value: 'nonprofit', label: 'Nonprofit' },
-                    { value: 'government', label: 'Government' },
-                  ].map(option => (
+                    { value: "small-business", label: "Small Business" },
+                    { value: "enterprise", label: "Enterprise" },
+                    { value: "nonprofit", label: "Nonprofit" },
+                    { value: "government", label: "Government" },
+                  ].map((option) => (
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() => updateFormData({ segment: option.value as any })}
+                      onClick={() =>
+                        updateFormData({ segment: option.value as any })
+                      }
                       className={`px-3 py-2 rounded-lg border transition-all ${
                         formData.segment === option.value
-                          ? 'bg-accent text-white border-accent'
-                          : 'bg-elevated text-text border-border hover:border-accent/50'
+                          ? "bg-accent text-white border-accent"
+                          : "bg-elevated text-text border-border hover:border-accent/50"
                       }`}
                     >
                       {option.label}
@@ -244,7 +252,7 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                   ))}
                 </div>
               </div>
-              
+
               <Input
                 label="Estimated Budget (Optional)"
                 value={formData.budget}
@@ -252,9 +260,11 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                 placeholder="$10,000 - $50,000"
                 hint="Annual marketing or project budget range"
               />
-              
+
               <div className="space-y-2">
-                <label className="text-body-sm font-medium text-text">Notes (Optional)</label>
+                <label className="text-body-sm font-medium text-text">
+                  Notes (Optional)
+                </label>
                 <textarea
                   value={formData.notes}
                   onChange={(e) => updateFormData({ notes: e.target.value })}
@@ -270,29 +280,20 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              onClick={onClose}
-            >
+            <Button variant="secondary" onClick={onClose}>
               Save & Close
             </Button>
             <span className="text-caption text-muted">Auto-saved</span>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {currentStep > 1 && (
-              <Button
-                variant="ghost"
-                onClick={handleBack}
-              >
+              <Button variant="ghost" onClick={handleBack}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
             )}
-            <Button
-              onClick={handleNext}
-              disabled={!isStepValid(currentStep)}
-            >
+            <Button onClick={handleNext} disabled={!isStepValid(currentStep)}>
               {currentStep === 3 ? (
                 <>
                   <Check className="h-4 w-4 mr-2" />
