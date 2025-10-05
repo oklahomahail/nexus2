@@ -92,7 +92,8 @@ const AnalyticsDashboard: React.FC = () => {
           🏢 Welcome to Nexus Analytics Demo
         </h3>
         <p className="text-slate-300 mb-4">
-          Experience our nonprofit analytics platform with interactive dashboards, campaign tracking, and donor insights.
+          Experience our nonprofit analytics platform with interactive
+          dashboards, campaign tracking, and donor insights.
         </p>
         <div className="flex gap-3">
           <button
@@ -109,7 +110,10 @@ const AnalyticsDashboard: React.FC = () => {
               };
               // Directly set the user in localStorage and reload
               if (typeof window !== "undefined") {
-                window.localStorage.setItem('nexus_auth_user', JSON.stringify(demoUser));
+                window.localStorage.setItem(
+                  "nexus_auth_user",
+                  JSON.stringify(demoUser),
+                );
                 window.location.reload();
               }
             }}
@@ -120,7 +124,9 @@ const AnalyticsDashboard: React.FC = () => {
           <button
             onClick={() => {
               // Show info about the demo
-              alert('This is a demo of the Nexus platform. Click "Enter Demo Mode" to explore the dashboard with sample data.');
+              alert(
+                'This is a demo of the Nexus platform. Click "Enter Demo Mode" to explore the dashboard with sample data.',
+              );
             }}
             className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors"
           >

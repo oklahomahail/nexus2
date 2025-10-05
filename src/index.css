@@ -9,34 +9,34 @@
   --color-bg: rgb(var(--bg));
   --color-panel: rgb(var(--panel));
   --color-elevated: rgb(var(--elevated));
-  
+
   --color-text: rgb(var(--text));
   --color-muted: rgb(var(--muted));
   --color-border: rgb(var(--border));
-  
+
   --color-accent: rgb(var(--accent));
   --color-accent-2: rgb(var(--accent-2));
   --color-warn: rgb(var(--warn));
   --color-error: rgb(var(--error));
-  
+
   /* Legacy color mappings for compatibility */
   --color-bg-primary: rgb(var(--bg));
   --color-bg-secondary: rgb(var(--panel));
   --color-bg-tertiary: rgb(var(--elevated));
-  
+
   --color-surface: rgb(var(--panel));
   --color-surface-elevated: rgb(var(--elevated));
   --color-surface-muted: rgb(var(--muted));
-  
+
   --color-text-primary: rgb(var(--text));
   --color-text-secondary: rgb(var(--muted));
   --color-text-muted: rgb(var(--muted));
   --color-text-inverse: rgb(var(--bg));
-  
+
   --color-brand-primary: rgb(var(--accent));
   --color-brand-secondary: rgb(var(--accent-2));
   --color-brand-accent: rgb(var(--error));
-  
+
   --color-success: rgb(34 197 94);
   --color-warning: rgb(var(--warn));
   --color-info: rgb(var(--accent));
@@ -60,13 +60,13 @@
   --radius-5xl: 2.5rem;
 
   /* Shadow System - Use sparingly for depth */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.25); /* UI chrome */
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.25); /* Modals/menus */
-  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25); /* UI chrome */
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.25); /* Modals/menus */
+
   /* Legacy shadow mappings */
-  --shadow-soft: 0 1px 2px rgba(0,0,0,0.25);
-  --shadow-medium: 0 4px 12px rgba(0,0,0,0.25);
-  --shadow-strong: 0 8px 24px rgba(0,0,0,0.25);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.25);
 
   /* Breakpoints */
   --breakpoint-xs: 475px;
@@ -86,40 +86,40 @@
     --bg: 11 13 18; /* #0B0D12 */
     --panel: 17 19 24; /* #111318 */
     --elevated: 22 25 34; /* #161922 */
-    
+
     /* Text Colors */
     --text: 230 231 234; /* #E6E7EA */
     --muted: 168 175 191; /* #A8AFBF */
     --border: 36 40 54; /* #242836 */
-    
+
     /* Accent Colors - Use Sparingly */
     --accent: 91 140 255; /* #5B8CFF - Primary accent */
     --accent-2: 124 212 179; /* #7CD4B3 - Secondary accent */
     --warn: 242 184 75; /* #F2B84B */
     --error: 228 109 109; /* #E46D6D */
-    
+
     /* Legacy mappings for backwards compatibility */
     --bg-primary: var(--bg);
     --bg-secondary: var(--panel);
     --bg-tertiary: var(--elevated);
-    
+
     --surface-primary: var(--panel);
     --surface-secondary: var(--elevated);
     --surface-muted: var(--muted);
-    
+
     --border-primary: var(--border);
     --border-secondary: var(--border);
     --border-muted: var(--border);
-    
+
     --text-primary: var(--text);
     --text-secondary: var(--muted);
     --text-muted: var(--muted);
     --text-inverse: var(--bg);
-    
+
     --brand-primary: var(--accent);
     --brand-secondary: var(--accent-2);
     --brand-accent: var(--error);
-    
+
     --success: 34 197 94;
     --warning: var(--warn);
     --info: var(--accent);

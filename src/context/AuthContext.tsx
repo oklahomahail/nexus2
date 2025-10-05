@@ -56,7 +56,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             const freshUser = await fetchCurrentUser();
             setUser(freshUser || storedUser);
           } catch (fetchError) {
-            logger.warn("Failed to fetch fresh user data, using stored user", fetchError);
+            logger.warn(
+              "Failed to fetch fresh user data, using stored user",
+              fetchError,
+            );
             setUser(storedUser);
           }
         } else if (import.meta.env.DEV) {
@@ -75,7 +78,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         }
       } catch (error) {
         logger.error("Failed to initialize auth", error);
-        
+
         if (import.meta.env.DEV) {
           // Fallback to mock user in development
           logger.info("Development mode fallback: Creating mock user");

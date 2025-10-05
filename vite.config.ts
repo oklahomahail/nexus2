@@ -44,16 +44,21 @@ export default defineConfig({
         entryFileNames: "js/[name]-[hash].js",
         chunkFileNames: (chunkInfo) => {
           const name =
-            (chunkInfo.name ||
-              chunkInfo.facadeModuleId?.split("/").pop()?.replace(/\.(t|j)sx?$/, "") ||
-              "chunk");
+            chunkInfo.name ||
+            chunkInfo.facadeModuleId
+              ?.split("/")
+              .pop()
+              ?.replace(/\.(t|j)sx?$/, "") ||
+            "chunk";
           return `js/${name}-[hash].js`;
         },
         assetFileNames: ({ name }) => {
           if (!name) return "assets/[name]-[hash][extname]";
           if (/\.(css)$/.test(name)) return "css/[name]-[hash][extname]";
-          if (/\.(png|jpe?g|gif|svg|webp|avif)$/.test(name)) return "img/[name]-[hash][extname]";
-          if (/\.(woff2?|ttf|otf|eot)$/.test(name)) return "fonts/[name]-[hash][extname]";
+          if (/\.(png|jpe?g|gif|svg|webp|avif)$/.test(name))
+            return "img/[name]-[hash][extname]";
+          if (/\.(woff2?|ttf|otf|eot)$/.test(name))
+            return "fonts/[name]-[hash][extname]";
           return "assets/[name]-[hash][extname]";
         },
       },
