@@ -34,9 +34,7 @@ export type {
 } from './Table';
 
 export { 
-  ToastProvider, 
-  useToast, 
-  useToastActions,
+  ToastProvider,
 } from './Toast';
 
 export type { 
