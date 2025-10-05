@@ -36,12 +36,12 @@ function NewCampaignPage() {
 
   const handleClose = () => {
     // Navigate back to campaigns page
-    navigate("/campaigns");
+    void navigate("/campaigns");
   };
 
   const handleSaved = (_campaign: any) => {
     // Navigate to campaigns page after successful creation
-    navigate("/campaigns");
+    void navigate("/campaigns");
   };
 
   return (
@@ -88,10 +88,7 @@ const App: React.FC = () => {
 
           {/* Modals-as-routes */}
           <Route path="/notifications" element={<NotificationsRoute />} />
-          <Route
-            path="/campaigns/new"
-            element={<NewCampaignPage />}
-          />
+          <Route path="/campaigns/new" element={<NewCampaignPage />} />
 
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />

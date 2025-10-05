@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { useState } from "react";
 
-import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
-import Badge from '@/components/ui/Badge';
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 interface ClientWizardProps {
   open: boolean;
