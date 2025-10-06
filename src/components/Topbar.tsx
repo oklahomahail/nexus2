@@ -318,13 +318,15 @@ const Topbar: React.FC<TopbarProps> = ({
                       </span>
                     </button>
 
-                    <button 
+                    <button
                       className="w-full flex items-center space-x-3 px-3 py-2.5 text-left hover:bg-slate-700/50 rounded-lg transition-colors group"
                       onClick={() => {
                         // Import and start tour dynamically
-                        import('@/tours/coreTour').then(({ startCoreTour }) => {
-                          startCoreTour();
-                        });
+                        void import("@/tours/coreTour").then(
+                          ({ startCoreTour }) => {
+                            void startCoreTour();
+                          },
+                        );
                         setShowUserMenu(false);
                       }}
                     >

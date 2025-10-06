@@ -15,15 +15,14 @@ import {
 } from "lucide-react";
 import React, { ComponentType } from "react";
 
+import OnboardingChecklist from "@/components/OnboardingChecklist";
+import WelcomeModal from "@/components/WelcomeModal";
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/useUI";
-import WelcomeModal from "@/components/WelcomeModal";
-import OnboardingChecklist from "@/components/OnboardingChecklist";
-import { 
-  shouldShowWelcomeModal, 
-  markCoreTourCompleted,
+import {
+  shouldShowWelcomeModal,
   dismissCoreTour,
-  getOnboardingProgress 
+  getOnboardingProgress,
 } from "@/utils/onboarding";
 
 /* ---------- Reusable Cards ---------- */
@@ -166,34 +165,34 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
   const { user } = useAuth();
   const { setActiveView } = useUI();
   const [showWelcomeModal, setShowWelcomeModal] = React.useState(false);
-  
+
   // Check if we should show the welcome modal
   React.useEffect(() => {
     if (shouldShowWelcomeModal()) {
       setShowWelcomeModal(true);
     }
   }, []);
-  
+
   const handleStartTour = async () => {
     setShowWelcomeModal(false);
     try {
-      const { startCoreTour } = await import('@/tours/coreTour');
+      const { startCoreTour } = await import("@/tours/coreTour");
       await startCoreTour();
     } catch (error) {
-      console.error('Failed to start core tour:', error);
+      console.error("Failed to start core tour:", error);
     }
   };
-  
+
   const handleRemindLater = () => {
     setShowWelcomeModal(false);
     // Tour will show again on next visit since we don't mark it as completed or dismissed
   };
-  
+
   const handleNeverShow = () => {
     setShowWelcomeModal(false);
     dismissCoreTour();
   };
-  
+
   const progress = getOnboardingProgress();
 
   if (!user) {
@@ -321,22 +320,22 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
               ))}
             </div>
           </div>
-          
+
           {/* Show onboarding checklist if user hasn't completed everything */}
           {progress.percentage < 100 && (
-            <OnboardingChecklist 
+            <OnboardingChecklist
               onStepClick={(step) => {
                 // Navigate to appropriate section based on step
-                switch(step) {
-                  case 'create_campaign':
-                    setActiveView('campaigns');
+                switch (step) {
+                  case "create_campaign":
+                    setActiveView("campaigns");
                     break;
-                  case 'view_analytics':
-                    setActiveView('analytics');
+                  case "view_analytics":
+                    setActiveView("analytics");
                     break;
-                  case 'add_client':
-                  case 'export_report':
-                  case 'complete_profile':
+                  case "add_client":
+                  case "export_report":
+                  case "complete_profile":
                     // These could navigate to specific features when implemented
                     break;
                 }
@@ -405,7 +404,7 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
           </div>
         </div>
       </div>
-      
+
       {/* Welcome Modal for new users */}
       <WelcomeModal
         open={showWelcomeModal}

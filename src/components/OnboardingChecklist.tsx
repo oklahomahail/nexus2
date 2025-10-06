@@ -1,19 +1,30 @@
-import { CheckCircle, Circle, Target, Users, BarChart3, FileDown, User } from "lucide-react";
+import {
+  CheckCircle,
+  Circle,
+  Target,
+  Users,
+  BarChart3,
+  FileDown,
+  User,
+} from "lucide-react";
 import React from "react";
 
-import { 
-  getOnboardingChecklist, 
-  getOnboardingProgress, 
+import {
+  getOnboardingChecklist,
+  getOnboardingProgress,
   OnboardingStep,
-  markOnboardingStepCompleted 
+  markOnboardingStepCompleted,
 } from "@/utils/onboarding";
 
-const stepConfig: Record<OnboardingStep, {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  description: string;
-  color: string;
-}> = {
+const stepConfig: Record<
+  OnboardingStep,
+  {
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    description: string;
+    color: string;
+  }
+> = {
   add_client: {
     icon: Users,
     label: "Add a Client",
@@ -72,14 +83,16 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
 
   if (compact) {
     return (
-      <div className={`bg-slate-800/30 border border-slate-700 rounded-lg p-4 ${className}`}>
+      <div
+        className={`bg-slate-800/30 border border-slate-700 rounded-lg p-4 ${className}`}
+      >
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-white font-medium text-sm">Quick Start</h3>
           <span className="text-slate-400 text-xs">
             {progress.completed}/{progress.total}
           </span>
         </div>
-        
+
         <div className="w-full bg-slate-700 rounded-full h-2 mb-3">
           <div
             className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-500"
@@ -94,10 +107,9 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
           </div>
         ) : (
           <div className="text-slate-400 text-xs text-center">
-            {progress.completed > 0 
+            {progress.completed > 0
               ? `Great progress! ${5 - progress.completed} steps remaining.`
-              : "Complete these tasks to get the most out of Nexus."
-            }
+              : "Complete these tasks to get the most out of Nexus."}
           </div>
         )}
       </div>
@@ -105,7 +117,9 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
   }
 
   return (
-    <div className={`bg-slate-800/30 border border-slate-700 rounded-xl p-6 ${className}`}>
+    <div
+      className={`bg-slate-800/30 border border-slate-700 rounded-xl p-6 ${className}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white font-semibold">Getting Started</h3>
         <div className="text-right">
@@ -136,34 +150,38 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
           return (
             <button
               key={step}
-              onClick={() => handleStepToggle(step as OnboardingStep, isCompleted)}
+              onClick={() =>
+                handleStepToggle(step as OnboardingStep, isCompleted)
+              }
               className="w-full flex items-start space-x-3 p-3 rounded-lg hover:bg-slate-700/30 transition-colors text-left group"
               disabled={isCompleted && !onStepClick}
             >
               <div className="flex-shrink-0 mt-0.5">
-                <CheckIcon 
+                <CheckIcon
                   className={`w-5 h-5 transition-colors ${
-                    isCompleted 
-                      ? "text-green-500" 
+                    isCompleted
+                      ? "text-green-500"
                       : "text-slate-500 group-hover:text-slate-400"
-                  }`} 
+                  }`}
                 />
               </div>
 
               <div className="flex-shrink-0 mt-0.5">
-                <Icon 
+                <Icon
                   className={`w-4 h-4 ${
                     isCompleted ? config.color : "text-slate-500"
-                  }`} 
+                  }`}
                 />
               </div>
 
               <div className="min-w-0 flex-1">
-                <div className={`font-medium text-sm transition-colors ${
-                  isCompleted 
-                    ? "text-white" 
-                    : "text-slate-300 group-hover:text-white"
-                }`}>
+                <div
+                  className={`font-medium text-sm transition-colors ${
+                    isCompleted
+                      ? "text-white"
+                      : "text-slate-300 group-hover:text-white"
+                  }`}
+                >
                   {config.label}
                 </div>
                 <div className="text-slate-400 text-xs mt-0.5">
@@ -171,7 +189,8 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
                 </div>
                 {isCompleted && checklist[step]?.completedAt && (
                   <div className="text-green-400 text-xs mt-1">
-                    ✓ Completed {checklist[step].completedAt?.toLocaleDateString()}
+                    ✓ Completed{" "}
+                    {checklist[step].completedAt?.toLocaleDateString()}
                   </div>
                 )}
               </div>
@@ -187,7 +206,8 @@ const OnboardingChecklist: React.FC<OnboardingChecklistProps> = ({
             <span className="font-medium">Onboarding Complete!</span>
           </div>
           <div className="text-green-300 text-xs mt-1">
-            You've successfully set up your Nexus account and are ready to manage your nonprofit effectively.
+            You've successfully set up your Nexus account and are ready to
+            manage your nonprofit effectively.
           </div>
         </div>
       )}

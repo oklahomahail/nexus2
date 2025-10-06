@@ -19,7 +19,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({
   onNeverShow,
 }) => {
   return (
-    <Modal open={open} onClose={onClose} maxWidth="md">
+    <Modal open={open} onClose={onClose}>
       <div className="relative">
         {/* Close button */}
         <button
@@ -39,11 +39,10 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({
 
           {/* Welcome Message */}
           <div className="space-y-3">
-            <h2 className="text-2xl font-bold text-white">
-              Welcome to Nexus!
-            </h2>
+            <h2 className="text-2xl font-bold text-white">Welcome to Nexus!</h2>
             <p className="text-slate-400 text-base max-w-md mx-auto">
-              Your comprehensive nonprofit management platform. Let's get you started with a quick tour of the key features.
+              Your comprehensive nonprofit management platform. Let's get you
+              started with a quick tour of the key features.
             </p>
           </div>
 

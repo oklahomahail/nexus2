@@ -5,10 +5,10 @@ const CAMPAIGNS_TOUR_COMPLETED_KEY = "nexus.tour.campaigns.completed";
 const ANALYTICS_TOUR_COMPLETED_KEY = "nexus.tour.analytics.completed";
 const ONBOARDING_CHECKLIST_KEY = "nexus.onboarding.checklist";
 
-export type OnboardingStep = 
+export type OnboardingStep =
   | "add_client"
   | "create_campaign"
-  | "view_analytics" 
+  | "view_analytics"
   | "export_report"
   | "complete_profile";
 
@@ -26,7 +26,10 @@ export function hasCompletedCoreTour(): boolean {
 
 export function markCoreTourCompleted(): void {
   localStorage.setItem(CORE_TOUR_COMPLETED_KEY, "1");
-  localStorage.setItem(`${CORE_TOUR_COMPLETED_KEY}.timestamp`, new Date().toISOString());
+  localStorage.setItem(
+    `${CORE_TOUR_COMPLETED_KEY}.timestamp`,
+    new Date().toISOString(),
+  );
 }
 
 export function isCoreTourDismissed(): boolean {
@@ -35,7 +38,10 @@ export function isCoreTourDismissed(): boolean {
 
 export function dismissCoreTour(): void {
   localStorage.setItem(CORE_TOUR_DISMISSED_KEY, "1");
-  localStorage.setItem(`${CORE_TOUR_DISMISSED_KEY}.timestamp`, new Date().toISOString());
+  localStorage.setItem(
+    `${CORE_TOUR_DISMISSED_KEY}.timestamp`,
+    new Date().toISOString(),
+  );
 }
 
 export function resetCoreTourState(): void {
@@ -52,7 +58,10 @@ export function hasCompletedCampaignsTour(): boolean {
 
 export function markCampaignsTourCompleted(): void {
   localStorage.setItem(CAMPAIGNS_TOUR_COMPLETED_KEY, "1");
-  localStorage.setItem(`${CAMPAIGNS_TOUR_COMPLETED_KEY}.timestamp`, new Date().toISOString());
+  localStorage.setItem(
+    `${CAMPAIGNS_TOUR_COMPLETED_KEY}.timestamp`,
+    new Date().toISOString(),
+  );
 }
 
 export function hasCompletedAnalyticsTour(): boolean {
@@ -61,7 +70,10 @@ export function hasCompletedAnalyticsTour(): boolean {
 
 export function markAnalyticsTourCompleted(): void {
   localStorage.setItem(ANALYTICS_TOUR_COMPLETED_KEY, "1");
-  localStorage.setItem(`${ANALYTICS_TOUR_COMPLETED_KEY}.timestamp`, new Date().toISOString());
+  localStorage.setItem(
+    `${ANALYTICS_TOUR_COMPLETED_KEY}.timestamp`,
+    new Date().toISOString(),
+  );
 }
 
 // Onboarding checklist functions
@@ -70,11 +82,11 @@ export function getOnboardingChecklist(): OnboardingChecklist {
   if (!stored) {
     return {};
   }
-  
+
   try {
     const parsed = JSON.parse(stored);
     // Convert completedAt strings back to Date objects
-    Object.keys(parsed).forEach(key => {
+    Object.keys(parsed).forEach((key) => {
       if (parsed[key].completedAt) {
         parsed[key].completedAt = new Date(parsed[key].completedAt);
       }
@@ -100,20 +112,24 @@ export function isOnboardingStepCompleted(step: OnboardingStep): boolean {
   return checklist[step]?.completed ?? false;
 }
 
-export function getOnboardingProgress(): { completed: number; total: number; percentage: number } {
+export function getOnboardingProgress(): {
+  completed: number;
+  total: number;
+  percentage: number;
+} {
   const checklist = getOnboardingChecklist();
   const steps: OnboardingStep[] = [
     "add_client",
-    "create_campaign", 
+    "create_campaign",
     "view_analytics",
     "export_report",
-    "complete_profile"
+    "complete_profile",
   ];
-  
-  const completed = steps.filter(step => checklist[step]?.completed).length;
+
+  const completed = steps.filter((step) => checklist[step]?.completed).length;
   const total = steps.length;
   const percentage = Math.round((completed / total) * 100);
-  
+
   return { completed, total, percentage };
 }
 
@@ -128,13 +144,15 @@ export function shouldShowWelcomeModal(): boolean {
 
 // Check if this is likely a first-time user
 export function isLikelyFirstTimeUser(): boolean {
-  const hasAnyTourCompleted = hasCompletedCoreTour() || 
-                              hasCompletedCampaignsTour() || 
-                              hasCompletedAnalyticsTour();
-  
-  const hasAnyOnboardingProgress = Object.values(getOnboardingChecklist())
-    .some(step => step.completed);
-  
+  const hasAnyTourCompleted =
+    hasCompletedCoreTour() ||
+    hasCompletedCampaignsTour() ||
+    hasCompletedAnalyticsTour();
+
+  const hasAnyOnboardingProgress = Object.values(getOnboardingChecklist()).some(
+    (step) => step.completed,
+  );
+
   return !hasAnyTourCompleted && !hasAnyOnboardingProgress;
 }
 

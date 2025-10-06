@@ -48,19 +48,19 @@ const CampaignsPanel: React.FC = () => {
     if (!user) return;
     void loadStats();
     void loadCampaigns();
-    
+
     // Show campaigns tour if user hasn't seen it and this is first time on campaigns page
     if (!hasCompletedCampaignsTour()) {
       // Small delay to let the page render
       const timer = setTimeout(async () => {
         try {
-          const { startCampaignsTour } = await import('@/tours/campaignsTour');
+          const { startCampaignsTour } = await import("@/tours/campaignsTour");
           await startCampaignsTour();
         } catch (error) {
-          console.error('Failed to start campaigns tour:', error);
+          console.error("Failed to start campaigns tour:", error);
         }
       }, 1000);
-      
+
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -214,8 +214,8 @@ const CampaignsPanel: React.FC = () => {
           </div>
         </div>
 
-        <CampaignDetail 
-          campaign={selectedCampaign} 
+        <CampaignDetail
+          campaign={selectedCampaign}
           onCampaignUpdated={(updatedCampaign) => {
             setSelectedCampaign(updatedCampaign);
             void loadStats();
@@ -244,7 +244,10 @@ const CampaignsPanel: React.FC = () => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-semibold text-white mb-1" data-tour="campaigns-title">
+            <h2
+              className="text-2xl font-semibold text-white mb-1"
+              data-tour="campaigns-title"
+            >
               {getPageTitle()}
             </h2>
             <p className="text-slate-400 text-sm">{getPageDescription()}</p>
@@ -301,7 +304,10 @@ const CampaignsPanel: React.FC = () => {
           ))}
         </div>
       ) : stats ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="campaigns-stats">
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+          data-tour="campaigns-stats"
+        >
           <KPIWidget
             title="Total Campaigns"
             value={stats.totalCampaigns}
@@ -343,7 +349,9 @@ const CampaignsPanel: React.FC = () => {
           />
         ) : (
           <CampaignList
-            onCreateCampaign={hasRole("admin") ? handleCreateCampaign : undefined}
+            onCreateCampaign={
+              hasRole("admin") ? handleCreateCampaign : undefined
+            }
             onViewCampaign={handleViewCampaign}
             clientId={effectiveClientId} // Pass clientId to filter campaigns
           />

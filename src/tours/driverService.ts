@@ -6,7 +6,7 @@ export type TourStep = {
   popover: {
     title: string;
     description: string;
-    position?: "left" | "right" | "top" | "bottom";
+    position?: "left" | "right" | "top" | "bottom" | "center";
   };
 };
 
@@ -18,8 +18,12 @@ export interface TourOptions {
   prevBtnText?: string;
   doneBtnText?: string;
   onDestroyed?: () => void;
-  onHighlightStarted?: (element: Element, step: DriveStep, options: any) => void;
-  onHighlighted?: (element: Element, step: DriveStep, options: any) => void;
+  onHighlightStarted?: (
+    element?: Element,
+    step?: DriveStep,
+    options?: any,
+  ) => void;
+  onHighlighted?: (element?: Element, step?: DriveStep, options?: any) => void;
 }
 
 const defaultOptions: TourOptions = {
@@ -33,7 +37,7 @@ const defaultOptions: TourOptions = {
 
 export function createTour(steps: TourStep[], options: TourOptions = {}) {
   const mergedOptions = { ...defaultOptions, ...options };
-  
+
   return driver({
     showProgress: mergedOptions.showProgress,
     allowClose: mergedOptions.allowClose,
@@ -44,7 +48,7 @@ export function createTour(steps: TourStep[], options: TourOptions = {}) {
     onDestroyed: mergedOptions.onDestroyed,
     onHighlightStarted: mergedOptions.onHighlightStarted,
     onHighlighted: mergedOptions.onHighlighted,
-    steps: steps.map(s => ({
+    steps: steps.map((s) => ({
       element: s.element,
       popover: {
         title: s.popover.title,
@@ -58,30 +62,33 @@ export function createTour(steps: TourStep[], options: TourOptions = {}) {
 // Utility function to check if an element exists before starting a tour
 export function validateTourElements(steps: TourStep[]): boolean {
   const missingElements: string[] = [];
-  
+
   steps.forEach((step, index) => {
     if (step.element && !document.querySelector(step.element)) {
       missingElements.push(`Step ${index + 1}: ${step.element}`);
     }
   });
-  
+
   if (missingElements.length > 0) {
     console.warn("Tour elements not found:", missingElements);
     return false;
   }
-  
+
   return true;
 }
 
 // Utility to wait for elements to be available
-export function waitForElement(selector: string, timeout = 5000): Promise<Element> {
+export function waitForElement(
+  selector: string,
+  timeout = 5000,
+): Promise<Element> {
   return new Promise((resolve, reject) => {
     const element = document.querySelector(selector);
     if (element) {
       resolve(element);
       return;
     }
-    
+
     const observer = new MutationObserver(() => {
       const element = document.querySelector(selector);
       if (element) {
@@ -89,12 +96,12 @@ export function waitForElement(selector: string, timeout = 5000): Promise<Elemen
         resolve(element);
       }
     });
-    
+
     observer.observe(document.body, {
       childList: true,
       subtree: true,
     });
-    
+
     setTimeout(() => {
       observer.disconnect();
       reject(new Error(`Element ${selector} not found within timeout`));
@@ -103,21 +110,24 @@ export function waitForElement(selector: string, timeout = 5000): Promise<Elemen
 }
 
 // Enhanced tour creation with element waiting
-export async function createTourWithValidation(steps: TourStep[], options: TourOptions = {}) {
+export async function createTourWithValidation(
+  steps: TourStep[],
+  options: TourOptions = {},
+) {
   // Wait for critical elements to be available
   const elementsToWait = steps
-    .filter(step => step.element)
-    .map(step => step.element!);
-  
+    .filter((step) => step.element)
+    .map((step) => step.element!);
+
   try {
     // Wait for the first few elements to ensure the page is ready
     if (elementsToWait.length > 0) {
       await Promise.race([
         waitForElement(elementsToWait[0]),
-        new Promise(resolve => setTimeout(resolve, 2000)) // Fallback timeout
+        new Promise((resolve) => setTimeout(resolve, 2000)), // Fallback timeout
       ]);
     }
-    
+
     return createTour(steps, options);
   } catch (error) {
     console.warn("Some tour elements may not be available:", error);
