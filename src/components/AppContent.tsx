@@ -171,6 +171,7 @@ const AppContent: React.FC = () => {
                 return (
                   <button
                     key={item.key}
+                    data-tour={`nav-${item.key}`}
                     onClick={() => {
                       setActiveView(item.key);
                       setSidebarOpen(false); // Close mobile sidebar

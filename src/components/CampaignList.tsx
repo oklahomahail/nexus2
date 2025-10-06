@@ -125,6 +125,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
 
           {onCreateCampaign && (
             <button
+              data-tour="campaigns-new"
               onClick={onCreateCampaign}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
             >
@@ -140,6 +141,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
           <div className="text-gray-500 mb-4">No campaigns found</div>
           {onCreateCampaign && (
             <button
+              data-tour="campaigns-new"
               onClick={onCreateCampaign}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
             >

@@ -185,6 +185,7 @@ const Topbar: React.FC<TopbarProps> = ({
             {showNewCampaignButton && (
               <button
                 type="button"
+                data-tour="new-campaign-button"
                 onClick={handleNewCampaignClick} // ✅ always returns void
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 sm:px-4 rounded-lg font-medium transition-colors text-sm"
               >
@@ -233,6 +234,7 @@ const Topbar: React.FC<TopbarProps> = ({
             {/* User menu */}
             <div className="relative">
               <button
+                data-tour="user-menu"
                 onClick={() => setShowUserMenu((s) => !s)}
                 className="flex items-center space-x-2 sm:space-x-3 p-1.5 sm:p-2 hover:bg-slate-800/50 rounded-xl transition-all duration-200 group"
                 aria-haspopup="menu"
@@ -316,10 +318,19 @@ const Topbar: React.FC<TopbarProps> = ({
                       </span>
                     </button>
 
-                    <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-left hover:bg-slate-700/50 rounded-lg transition-colors group">
+                    <button 
+                      className="w-full flex items-center space-x-3 px-3 py-2.5 text-left hover:bg-slate-700/50 rounded-lg transition-colors group"
+                      onClick={() => {
+                        // Import and start tour dynamically
+                        import('@/tours/coreTour').then(({ startCoreTour }) => {
+                          startCoreTour();
+                        });
+                        setShowUserMenu(false);
+                      }}
+                    >
                       <HelpCircle className="w-4 h-4 text-slate-400 group-hover:text-white" />
                       <span className="text-slate-300 group-hover:text-white text-sm">
-                        Help & Support
+                        Replay Tour
                       </span>
                     </button>
                   </div>

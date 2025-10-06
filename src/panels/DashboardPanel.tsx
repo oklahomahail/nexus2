@@ -17,6 +17,14 @@ import React, { ComponentType } from "react";
 
 import { useAuth } from "@/context/AuthContext";
 import { useUI } from "@/context/useUI";
+import WelcomeModal from "@/components/WelcomeModal";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
+import { 
+  shouldShowWelcomeModal, 
+  markCoreTourCompleted,
+  dismissCoreTour,
+  getOnboardingProgress 
+} from "@/utils/onboarding";
 
 /* ---------- Reusable Cards ---------- */
 
@@ -157,6 +165,36 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
 }) => {
   const { user } = useAuth();
   const { setActiveView } = useUI();
+  const [showWelcomeModal, setShowWelcomeModal] = React.useState(false);
+  
+  // Check if we should show the welcome modal
+  React.useEffect(() => {
+    if (shouldShowWelcomeModal()) {
+      setShowWelcomeModal(true);
+    }
+  }, []);
+  
+  const handleStartTour = async () => {
+    setShowWelcomeModal(false);
+    try {
+      const { startCoreTour } = await import('@/tours/coreTour');
+      await startCoreTour();
+    } catch (error) {
+      console.error('Failed to start core tour:', error);
+    }
+  };
+  
+  const handleRemindLater = () => {
+    setShowWelcomeModal(false);
+    // Tour will show again on next visit since we don't mark it as completed or dismissed
+  };
+  
+  const handleNeverShow = () => {
+    setShowWelcomeModal(false);
+    dismissCoreTour();
+  };
+  
+  const progress = getOnboardingProgress();
 
   if (!user) {
     if (typeof window !== "undefined") {
@@ -272,15 +310,39 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
       {/* Main Grid - Stack on mobile */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
         {/* Quick Actions - Take full width on mobile */}
-        <div className="xl:col-span-2">
-          <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {quickActions.map((action) => (
-              <QuickActionCard key={action.title} {...action} />
-            ))}
+        <div className="xl:col-span-2 space-y-6 sm:space-y-8">
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-white mb-4 sm:mb-6">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {quickActions.map((action) => (
+                <QuickActionCard key={action.title} {...action} />
+              ))}
+            </div>
           </div>
+          
+          {/* Show onboarding checklist if user hasn't completed everything */}
+          {progress.percentage < 100 && (
+            <OnboardingChecklist 
+              onStepClick={(step) => {
+                // Navigate to appropriate section based on step
+                switch(step) {
+                  case 'create_campaign':
+                    setActiveView('campaigns');
+                    break;
+                  case 'view_analytics':
+                    setActiveView('analytics');
+                    break;
+                  case 'add_client':
+                  case 'export_report':
+                  case 'complete_profile':
+                    // These could navigate to specific features when implemented
+                    break;
+                }
+              }}
+            />
+          )}
         </div>
 
         {/* Recent Activity */}
@@ -343,6 +405,15 @@ const DashboardPanel: React.FC<DashboardPanelProps> = ({
           </div>
         </div>
       </div>
+      
+      {/* Welcome Modal for new users */}
+      <WelcomeModal
+        open={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+        onStartTour={handleStartTour}
+        onRemindLater={handleRemindLater}
+        onNeverShow={handleNeverShow}
+      />
     </div>
   );
 };
