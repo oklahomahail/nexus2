@@ -1,3 +1,63 @@
+## [0.2.5] - 2025-12-06
+
+### User Onboarding & Tour System
+
+#### Comprehensive Guided Tour Implementation
+
+- **Driver.js Integration** - Lightweight, accessible tour library with TypeScript support
+- **Core Tour** - 8-step guided walkthrough of main navigation and key features
+- **Feature Tours** - Campaigns-specific tour with contextual triggers
+- **Tour Service** - Element validation, waiting utilities, and error-resilient implementation
+- **Persistent State Management** - localStorage-based tour preferences and progress tracking
+
+#### User Experience Components
+
+- **WelcomeModal** - Interactive introduction for new users with tour options (Start Tour, Remind Later, Skip Forever)
+- **OnboardingChecklist** - 5-step progress tracking widget with visual indicators
+- **Tour Replay** - "Replay Tour" option in Topbar user menu for on-demand access
+- **Smart Integration** - Auto-shows welcome modal for first-time users, contextual tour triggers
+
+#### Tour Anchors & Navigation
+
+- **Navigation Anchors** - `nav-dashboard`, `nav-campaigns`, `nav-analytics`, `nav-donors`
+- **Action Anchors** - `new-campaign-button`, `campaigns-new`, `user-menu`
+- **Content Anchors** - `campaigns-title`, `campaigns-stats`, `campaigns-list`
+- **Mobile Responsive** - Tours adapt to different screen sizes with proper positioning
+
+#### Development Features
+
+- **Lazy Loading** - Tours dynamically imported to optimize bundle size
+- **Error Resilience** - Graceful handling of missing tour elements
+- **Accessibility** - Keyboard navigation (← → arrows), screen reader friendly
+- **Development Tools** - State reset utilities and comprehensive debugging support
+
+### Added
+
+- `src/tours/driverService.ts` - Core tour utilities and validation
+- `src/tours/coreTour.ts` - Main application tour (8 steps)
+- `src/tours/campaignsTour.ts` - Campaigns-specific tour (6 steps)
+- `src/tours/index.ts` - Tour system exports and utilities
+- `src/utils/onboarding.ts` - State management and localStorage utilities
+- `src/components/WelcomeModal.tsx` - New user welcome dialog
+- `src/components/OnboardingChecklist.tsx` - Progress tracking widget
+- `TOUR_SYSTEM.md` - Comprehensive tour system documentation
+- `driver.js` dependency for tour functionality
+
+### Changed
+
+- **AppContent.tsx** - Added `data-tour` attributes to navigation items
+- **Topbar.tsx** - Added tour replay functionality and user menu anchor
+- **CampaignsPanel.tsx** - Added tour integration and content anchors
+- **DashboardPanel.tsx** - Integrated welcome modal and onboarding checklist
+- **CampaignList.tsx** - Added campaign creation tour anchors
+
+### Enhanced
+
+- **User Onboarding Flow** - Progressive disclosure with user control (skip/remind/start)
+- **Feature Discovery** - Contextual tours help users explore capabilities
+- **Progress Tracking** - Visual checklist motivates completion of key tasks
+- **Persistent Experience** - User preferences remembered across sessions
+
 ## [0.2.4] - 2025-12-05
 
 ### Major Polish Implementation
