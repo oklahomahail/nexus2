@@ -198,7 +198,14 @@ const CampaignsPanel: React.FC = () => {
           </div>
         </div>
 
-        <CampaignDetail campaign={selectedCampaign} />
+        <CampaignDetail 
+          campaign={selectedCampaign} 
+          onCampaignUpdated={(updatedCampaign) => {
+            setSelectedCampaign(updatedCampaign);
+            void loadStats();
+            void loadCampaigns();
+          }}
+        />
 
         {showModal && (
           <CampaignModal
