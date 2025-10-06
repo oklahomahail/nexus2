@@ -20,11 +20,7 @@ import { listClients, deleteClient, Client } from "@/services/clientService";
 type ClientStatus = "Active" | "Prospect" | "Inactive";
 type ViewMode = "table" | "grid";
 
-// Mock data for demonstration
-const _mockFilters = {
-  owners: ["John Smith", "Sarah Johnson", "Mike Chen", "Lisa Anderson"],
-  segments: ["Small Business", "Enterprise", "Nonprofit", "Government"],
-};
+// Mock data for demonstration - removed unused _mockFilters
 
 export default function ClientList() {
   const [clients, setClients] = useState<Client[]>([]);
