@@ -33,11 +33,21 @@
       "primaryCta": "I did this"
     },
     {
-      "id": "client-home",
+      "id": "client-dashboard",
       "type": "spotlight",
-      "anchors": ["[data-tutorial-step='client.header']", "[data-tutorial-step='client.campaigns.tab']"],
-      "title": "Client workspace",
-      "body": "You are now inside the client workspace. Each client has its own campaigns, assets, and reports.",
+      "navigateTo": "/clients/regional-food-bank",
+      "anchors": ["[data-tutorial-step='dashboard.page']", "[data-tutorial-step='dashboard.performance']"],
+      "title": "Client dashboard",
+      "body": "You are now in the client dashboard. View performance metrics and navigate to campaigns, analytics, or reports.",
+      "primaryCta": "Next"
+    },
+    {
+      "id": "go-to-campaigns",
+      "type": "spotlight",
+      "navigateTo": "/clients/regional-food-bank/campaigns",
+      "anchors": ["[data-tutorial-step='nav.campaigns']", "[data-tutorial-step='campaigns.page']"],
+      "title": "Open campaigns",
+      "body": "Navigate to the campaigns section to view and create campaigns for this client.",
       "primaryCta": "Next"
     },
     {
@@ -45,7 +55,7 @@
       "type": "spotlight",
       "anchors": ["[data-tutorial-step='campaigns.new']"],
       "title": "Create a campaign",
-      "body": "Click New Campaign. Use these defaults: Name End-of-Year Holiday Campaign, Goal 10000, Type End-of-Year, Dates Nov 15 to Dec 31, Theme Holiday Warmth and Community Generosity.",
+      "body": "Click New Campaign to create your End-of-Year Holiday Campaign. Fill in the details and set your fundraising goal.",
       "primaryCta": "Create Campaign"
     },
     {
@@ -58,38 +68,37 @@
       "primaryCta": "Save and continue"
     },
     {
-      "id": "review",
+      "id": "campaign-list",
       "type": "spotlight",
-      "anchors": ["[data-tutorial-step='campaign.review']"],
-      "title": "Review and launch",
-      "body": "Confirm assets, segments, and the goal 10000. Set launch date to Nov 15. Launch when ready. Nexus begins tracking metrics automatically.",
-      "primaryCta": "Launch Campaign"
+      "anchors": ["[data-tutorial-step='campaigns.list']", "[data-tutorial-step='campaigns.row']"],
+      "title": "View campaigns",
+      "body": "See your campaign in the list. Click on it to edit, or create additional campaigns as needed.",
+      "primaryCta": "Next"
     },
     {
       "id": "monitor",
       "type": "spotlight",
-      "navigateTo": "/dashboard",
-      "anchors": ["[data-tutorial-step='dashboard.performance']"],
+      "navigateTo": "/clients/regional-food-bank/analytics",
+      "anchors": ["[data-tutorial-step='nav.analytics']", "[data-tutorial-step='analytics.page']"],
       "title": "Monitor performance",
-      "body": "Track total raised, donor growth, channel mix, and milestones in real time.",
+      "body": "Track campaign performance, donor demographics, and trends in the Analytics section.",
       "primaryCta": "Next"
     },
     {
       "id": "reports",
       "type": "spotlight",
-      "navigateTo": "/reports",
-      "anchors": ["[data-tutorial-step='reports.panel']"],
-      "title": "Create reports",
-      "body": "Generate share-ready PDFs, export CSVs, or schedule weekly summaries.",
-      "primaryCta": "Generate sample report"
+      "navigateTo": "/clients/regional-food-bank/reports",
+      "anchors": ["[data-tutorial-step='nav.reports']", "[data-tutorial-step='reports.panel']"],
+      "title": "Generate reports",
+      "body": "Create fundraising reports, donor analyses, and campaign performance summaries to share with stakeholders.",
+      "primaryCta": "Next"
     },
     {
-      "id": "optimize",
+      "id": "navigation-tips",
       "type": "spotlight",
-      "navigateTo": "/campaigns",
-      "anchors": ["[data-tutorial-step='campaigns.list']"],
-      "title": "Optimize and repeat",
-      "body": "Duplicate top performers next year and keep iterating.",
+      "anchors": ["[data-tutorial-step='clients.switcher']", "[data-tutorial-step='campaigns.switcher']"],
+      "title": "Pro Navigation Tips",
+      "body": "Use the Client and Campaign switchers in the top bar for quick navigation. The sidebar shows your current client's sections. Try keyboard shortcuts: g+c for clients, g+d for dashboard, g+p for campaigns, g+a for analytics, g+r for reports.",
       "primaryCta": "Finish",
       "secondaryCta": "Restart tour",
       "secondaryAction": "restart"

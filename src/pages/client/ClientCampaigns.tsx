@@ -1,0 +1,74 @@
+import React from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
+export default function ClientCampaigns() {
+  const { clientId } = useParams();
+  const navigate = useNavigate();
+
+  const campaigns = [
+    { 
+      id: "eoy-holiday-2025", 
+      name: "End-of-Year Holiday 2025", 
+      status: "Active",
+      raised: "$45,230",
+      goal: "$75,000"
+    }
+  ];
+
+  return (
+    <div className="p-6" data-tutorial-step="campaigns.page">
+      <div className="flex justify-between mb-4">
+        <h1 className="text-xl font-semibold">Campaigns</h1>
+        <button 
+          className="px-3 py-1.5 border rounded-md bg-white"
+          onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+          data-tutorial-step="campaigns.new"
+        >
+          New Campaign
+        </button>
+      </div>
+      
+      <div className="bg-white rounded-lg border" data-tutorial-step="campaigns.list">
+        <table className="w-full">
+          <thead className="border-b">
+            <tr>
+              <th className="text-left p-4">Name</th>
+              <th className="text-left p-4">Status</th>
+              <th className="text-left p-4">Progress</th>
+              <th className="text-left p-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {campaigns.map(campaign => (
+              <tr key={campaign.id} className="border-b">
+                <td className="p-4">{campaign.name}</td>
+                <td className="p-4">
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {campaign.status}
+                  </span>
+                </td>
+                <td className="p-4">
+                  <div className="text-sm">
+                    <div>{campaign.raised} / {campaign.goal}</div>
+                    <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                      <div className="bg-blue-600 h-2 rounded-full" style={{width: '60%'}}></div>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <button 
+                    className="text-blue-600 hover:text-blue-800"
+                    onClick={() => navigate(`/clients/${clientId}/campaigns/${campaign.id}`)}
+                    data-tutorial-step="campaigns.row"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
