@@ -5,7 +5,7 @@
  * Copy the relevant parts into your actual App.tsx file.
  */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { seedDemoData } from "@/data/demo";
 import {
