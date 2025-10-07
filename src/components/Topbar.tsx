@@ -327,7 +327,7 @@ const Topbar: React.FC<TopbarProps> = ({
                         Object.keys(localStorage)
                           .filter((k) => k.startsWith(baseKey))
                           .forEach((k) => localStorage.removeItem(k));
-                        
+
                         // Reload to trigger autostart
                         window.location.reload();
                       }}
