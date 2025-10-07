@@ -45,7 +45,9 @@ export default function ClientsPage() {
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Clients</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+          Clients
+        </h1>
         <button
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
           data-tutorial-step="clients.add"
@@ -66,7 +68,9 @@ export default function ClientsPage() {
           <tbody className="divide-y divide-slate-200">
             {clients.map((client) => (
               <tr key={client.id} className="bg-white hover:bg-slate-50">
-                <td className="px-6 py-4 text-slate-800 font-medium">{client.name}</td>
+                <td className="px-6 py-4 text-slate-800 font-medium">
+                  {client.name}
+                </td>
                 <td className="px-6 py-4">
                   <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">
                     {client.status}

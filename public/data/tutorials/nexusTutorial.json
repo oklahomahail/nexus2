@@ -17,7 +17,10 @@
       "id": "go-to-clients",
       "type": "spotlight",
       "navigateTo": "/clients",
-      "anchors": ["[data-tutorial-step='nav.clients']", "[data-tutorial-step='clients.page']"],
+      "anchors": [
+        "[data-tutorial-step='nav.clients']",
+        "[data-tutorial-step='clients.page']"
+      ],
       "title": "Open Clients",
       "body": "All work begins here. Click Clients in the sidebar to view or create organizations.",
       "primaryCta": "Next"
@@ -25,7 +28,10 @@
     {
       "id": "create-or-select-client",
       "type": "spotlight",
-      "anchors": ["[data-tutorial-step='clients.add']", "[data-tutorial-step='clients.table.row.regional-food-bank']"],
+      "anchors": [
+        "[data-tutorial-step='clients.add']",
+        "[data-tutorial-step='clients.table.row.regional-food-bank']"
+      ],
       "waitForAnchorMs": 6000,
       "title": "Create or select a client",
       "body": "Option A: Click New Client to create Regional Food Bank. Option B: If Regional Food Bank already exists, click it to open.",
@@ -36,7 +42,10 @@
       "id": "client-dashboard",
       "type": "spotlight",
       "navigateTo": "/clients/regional-food-bank",
-      "anchors": ["[data-tutorial-step='dashboard.page']", "[data-tutorial-step='dashboard.performance']"],
+      "anchors": [
+        "[data-tutorial-step='dashboard.page']",
+        "[data-tutorial-step='dashboard.performance']"
+      ],
       "title": "Client dashboard",
       "body": "You are now in the client dashboard. View performance metrics and navigate to campaigns, analytics, or reports.",
       "primaryCta": "Next"
@@ -45,7 +54,10 @@
       "id": "go-to-campaigns",
       "type": "spotlight",
       "navigateTo": "/clients/regional-food-bank/campaigns",
-      "anchors": ["[data-tutorial-step='nav.campaigns']", "[data-tutorial-step='campaigns.page']"],
+      "anchors": [
+        "[data-tutorial-step='nav.campaigns']",
+        "[data-tutorial-step='campaigns.page']"
+      ],
       "title": "Open campaigns",
       "body": "Navigate to the campaigns section to view and create campaigns for this client.",
       "primaryCta": "Next"
@@ -70,7 +82,10 @@
     {
       "id": "campaign-list",
       "type": "spotlight",
-      "anchors": ["[data-tutorial-step='campaigns.list']", "[data-tutorial-step='campaigns.row']"],
+      "anchors": [
+        "[data-tutorial-step='campaigns.list']",
+        "[data-tutorial-step='campaigns.row']"
+      ],
       "title": "View campaigns",
       "body": "See your campaign in the list. Click on it to edit, or create additional campaigns as needed.",
       "primaryCta": "Next"
@@ -79,7 +94,10 @@
       "id": "monitor",
       "type": "spotlight",
       "navigateTo": "/clients/regional-food-bank/analytics",
-      "anchors": ["[data-tutorial-step='nav.analytics']", "[data-tutorial-step='analytics.page']"],
+      "anchors": [
+        "[data-tutorial-step='nav.analytics']",
+        "[data-tutorial-step='analytics.page']"
+      ],
       "title": "Monitor performance",
       "body": "Track campaign performance, donor demographics, and trends in the Analytics section.",
       "primaryCta": "Next"
@@ -88,7 +106,10 @@
       "id": "reports",
       "type": "spotlight",
       "navigateTo": "/clients/regional-food-bank/reports",
-      "anchors": ["[data-tutorial-step='nav.reports']", "[data-tutorial-step='reports.panel']"],
+      "anchors": [
+        "[data-tutorial-step='nav.reports']",
+        "[data-tutorial-step='reports.panel']"
+      ],
       "title": "Generate reports",
       "body": "Create fundraising reports, donor analyses, and campaign performance summaries to share with stakeholders.",
       "primaryCta": "Next"
@@ -96,7 +117,10 @@
     {
       "id": "navigation-tips",
       "type": "spotlight",
-      "anchors": ["[data-tutorial-step='clients.switcher']", "[data-tutorial-step='campaigns.switcher']"],
+      "anchors": [
+        "[data-tutorial-step='clients.switcher']",
+        "[data-tutorial-step='campaigns.switcher']"
+      ],
       "title": "Pro Navigation Tips",
       "body": "Use the Client and Campaign switchers in the top bar for quick navigation. The sidebar shows your current client's sections. Try keyboard shortcuts: g+c for clients, g+d for dashboard, g+p for campaigns, g+a for analytics, g+r for reports.",
       "primaryCta": "Finish",

@@ -86,7 +86,8 @@ startTutorial("nexus-onboarding");
 ```typescript
 import { useTutorial } from "@/features/tutorials/useTutorial";
 
-const { isComplete, currentStep, tutorialData } = useTutorial("nexus-onboarding");
+const { isComplete, currentStep, tutorialData } =
+  useTutorial("nexus-onboarding");
 
 if (!isComplete) {
   // Show tutorial or prompt
@@ -193,8 +194,8 @@ interface TutorialData {
 interface TutorialStep {
   title: string;
   content: string;
-  anchors: string[];  // Multiple anchor support
-  navigate?: string;  // Optional navigation
+  anchors: string[]; // Multiple anchor support
+  navigate?: string; // Optional navigation
   actions: {
     back?: { text: string; action: string };
     next?: { text: string; action: string };
@@ -209,9 +210,9 @@ interface TutorialStep {
 ```typescript
 // LocalStorage keys for tutorial state
 const TUTORIAL_KEYS = {
-  COMPLETE: 'nexusTutorialComplete',
-  SKIPPED_SESSION: 'nexusTutorialSkippedSession',
-  CURRENT_STEP: 'nexusTutorialCurrentStep'
+  COMPLETE: "nexusTutorialComplete",
+  SKIPPED_SESSION: "nexusTutorialSkippedSession",
+  CURRENT_STEP: "nexusTutorialCurrentStep",
 };
 
 // Tutorial completion states
