@@ -1,152 +1,144 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import type { TutorialConfig, TutorialHookReturn } from "./types";
+type Step = {
+  id: string;
+  type: "modal" | "spotlight";
+  title: string;
+  body: string;
+  anchors?: string[];              // NEW: multiple candidates
+  anchor?: string;                 // backward compatible
+  navigateTo?: string;             // NEW: route to push before step shows
+  primaryCta?: string;
+  secondaryCta?: string;
+  secondaryAction?: "dismiss" | "restart" | string;
+  tip?: string;
+  checklist?: string[];
+  waitForAnchorMs?: number;        // NEW: wait for element
+};
 
-export function useTutorial(
-  config?: TutorialConfig | null,
-): TutorialHookReturn {
+export type TutorialConfig = {
+  id: string;
+  title: string;
+  version: number;
+  completionStorageKey: string;
+  steps: Step[];
+  demoSeeds?: { clientSlug?: string; campaignSlug?: string };
+};
+
+export function useTutorial(config?: TutorialConfig) {
   const [active, setActive] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
-
+  const [index, setIndex] = useState(0);
   const steps = config?.steps ?? [];
-  const currentStep = steps[stepIndex] ?? null;
-  const totalSteps = steps.length;
-  const completionKey =
-    config?.completionStorageKey ?? "nexus.tutorial.default.completed";
+  const step = steps[index];
+  const baseKey = config?.completionStorageKey ?? "tutorialDone";
+  const versionKey = `${baseKey}:v${config?.version ?? 1}`;
+  const navigate = useNavigate();
+  const hasAutoStartedRef = useRef(false);
+  const suppressKey = `${baseKey}:suppressSession`; // prevents re-autostart in same session after skip
 
-  // Check if tutorial is completed
-  const isCompleted = useMemo(() => {
-    if (!config) return false;
-    return localStorage.getItem(completionKey) === "1";
-  }, [completionKey, config]);
+  // Resolve first existing anchor
+  const anchorSelector = useMemo(() => {
+    if (!step) return null;
+    const cands = step.anchors && step.anchors.length ? step.anchors : step.anchor ? [step.anchor] : [];
+    for (const sel of cands) {
+      if (document.querySelector(sel)) return sel;
+    }
+    return cands[0] || null;
+  }, [step]);
 
-  // Find anchor element for spotlight steps
-  const anchorElement = useMemo<HTMLElement | null>(() => {
-    if (!currentStep?.anchor || currentStep.type !== "spotlight") return null;
-    return document.querySelector(currentStep.anchor) as HTMLElement | null;
-  }, [currentStep?.anchor, currentStep?.type]);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  // Tutorial actions
+  useEffect(() => {
+    let cancelled = false;
+    if (!step) return;
+
+    async function resolveAnchor() {
+      if (step.navigateTo) {
+        navigate(step.navigateTo);
+      }
+      const timeout = step.waitForAnchorMs ?? 0;
+      if (!anchorSelector) {
+        setAnchorEl(null);
+        return;
+      }
+      // wait loop
+      let el: Element | null = null;
+      const start = Date.now();
+      while (!cancelled && !(el = document.querySelector(anchorSelector)) && Date.now() - start < timeout) {
+        await new Promise(r => setTimeout(r, 100));
+      }
+      setAnchorEl((el as HTMLElement) || null);
+      if (el) {
+        (el as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+
+    void resolveAnchor();
+    return () => { cancelled = true; };
+  }, [step, anchorSelector, navigate]);
+
   const start = useCallback(() => {
-    if (!config || isCompleted) return;
+    if (!config) return;
     setActive(true);
-    setStepIndex(0);
-  }, [config, isCompleted]);
+    setIndex(0);
+  }, [config]);
 
-  const next = useCallback(() => {
-    if (stepIndex < totalSteps - 1) {
-      setStepIndex((prev) => prev + 1);
-    } else {
-      // Complete the tutorial
-      if (config) {
-        localStorage.setItem(completionKey, "1");
-        localStorage.setItem(
-          `${completionKey}.timestamp`,
-          new Date().toISOString(),
-        );
-      }
-      setActive(false);
-    }
-  }, [stepIndex, totalSteps, completionKey, config]);
-
-  const previous = useCallback(() => {
-    if (stepIndex > 0) {
-      setStepIndex((prev) => prev - 1);
-    }
-  }, [stepIndex]);
-
-  const goToStep = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < totalSteps) {
-        setStepIndex(index);
-      }
-    },
-    [totalSteps],
-  );
+  const markComplete = useCallback(() => {
+    localStorage.setItem(baseKey, "1");
+    localStorage.setItem(versionKey, "1");
+  }, [baseKey, versionKey]);
 
   const dismiss = useCallback(() => {
     setActive(false);
-    if (config) {
-      localStorage.setItem(completionKey, "1");
-      localStorage.setItem(
-        `${completionKey}.timestamp`,
-        new Date().toISOString(),
-      );
-    }
-  }, [completionKey, config]);
+    markComplete();
+    sessionStorage.setItem(suppressKey, "1");
+  }, [markComplete, suppressKey]);
 
-  const complete = useCallback(() => {
-    if (config) {
-      localStorage.setItem(completionKey, "1");
-      localStorage.setItem(
-        `${completionKey}.timestamp`,
-        new Date().toISOString(),
-      );
-    }
-    setActive(false);
-  }, [completionKey, config]);
+  const restart = useCallback(() => {
+    setIndex(0);
+    setActive(true);
+    // do not clear completion keys here, this is a manual restart from the user
+  }, []);
 
-  const reset = useCallback(() => {
-    if (config) {
-      localStorage.removeItem(completionKey);
-      localStorage.removeItem(`${completionKey}.timestamp`);
-    }
-    setActive(false);
-    setStepIndex(0);
-  }, [completionKey, config]);
+  const next = useCallback(() => {
+    if (index < steps.length - 1) setIndex(i => i + 1);
+    else dismiss();
+  }, [index, steps.length, dismiss]);
 
-  // Auto-scroll to anchor element when it changes
+  const prev = useCallback(() => {
+    setIndex(i => Math.max(0, i - 1));
+  }, []);
+
+  const isCompleted = useMemo(() => {
+    return localStorage.getItem(versionKey) === "1";
+  }, [versionKey]);
+
+  // Auto start one time per session when not completed and not suppressed
   useEffect(() => {
-    if (anchorElement && active) {
-      setTimeout(() => {
-        anchorElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "nearest",
-        });
-      }, 100); // Small delay to ensure DOM is ready
+    if (!config) return;
+    if (hasAutoStartedRef.current) return;
+    const forced = new URLSearchParams(window.location.search).get("tour") === "1";
+    const suppressed = sessionStorage.getItem(suppressKey) === "1";
+    if ((forced || !isCompleted) && !suppressed) {
+      hasAutoStartedRef.current = true;
+      setActive(true);
+      setIndex(0);
     }
-  }, [anchorElement, active]);
-
-  // Auto-start tutorial if conditions are met
-  useEffect(() => {
-    if (!config || isCompleted) return;
-
-    // Check if this is a first-time user (integrating with existing onboarding)
-    const hasAnyTourCompleted =
-      localStorage.getItem("nexus.tour.core.completed") === "1" ||
-      localStorage.getItem("nexus.tour.campaigns.completed") === "1" ||
-      localStorage.getItem("nexus.tour.analytics.completed") === "1";
-
-    // Only auto-start if no other tours have been completed
-    if (!hasAnyTourCompleted && !active) {
-      // Small delay to ensure page is fully loaded
-      const timer = setTimeout(() => {
-        start();
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [config, isCompleted, active, start]);
+  }, [config, isCompleted, suppressKey]);
 
   return {
-    // State
     active,
-    currentStep,
-    stepIndex,
-    totalSteps,
-    isCompleted,
-
-    // Actions
+    setActive,
+    step,
+    index,
+    steps,
     start,
     next,
-    previous,
-    goToStep,
+    prev,
     dismiss,
-    complete,
-    reset,
-
-    // Additional data
-    anchorElement,
-    config,
+    restart,
+    anchorEl,
+    isCompleted
   };
 }

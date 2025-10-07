@@ -6,25 +6,29 @@ import { Button } from "@/components/ui-kit/Button";
 import type { TutorialStep } from "./types";
 
 type Props = {
-  step: TutorialStep;
-  anchorElement: HTMLElement | null;
-  stepIndex: number;
-  totalSteps: number;
+  anchorEl: HTMLElement | null;
+  title: string;
+  body: string;
+  tip?: string;
+  checklist?: string[];
+  primaryCta?: string;
+  secondaryCta?: string;
   onPrimary: () => void;
   onSecondary?: () => void;
   onDismiss?: () => void;
-  showProgress?: boolean;
 };
 
 export const TutorialSpotlight: React.FC<Props> = ({
-  step,
-  anchorElement,
-  stepIndex,
-  totalSteps,
+  anchorEl,
+  title,
+  body,
+  tip,
+  checklist,
+  primaryCta,
+  secondaryCta,
   onPrimary,
   onSecondary,
   onDismiss,
-  showProgress = true,
 }) => {
   const [popoverPosition, setPopoverPosition] = useState<{
     top: number;
@@ -38,7 +42,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
 
   // Calculate popover position
   useEffect(() => {
-    if (!anchorElement) {
+    if (!anchorEl) {
       // Center modal for non-spotlight steps
       setPopoverPosition({
         top: window.innerHeight / 2 - 200,
@@ -48,7 +52,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
       return;
     }
 
-    const rect = anchorElement.getBoundingClientRect();
+    const rect = anchorEl.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const popoverWidth = 420;
@@ -94,15 +98,15 @@ export const TutorialSpotlight: React.FC<Props> = ({
     }
 
     setPopoverPosition({ top, left, maxWidth });
-  }, [anchorElement, step]);
+  }, [anchorEl]);
 
-  const haloStyle = anchorElement
+  const haloStyle = anchorEl
     ? {
         position: "fixed" as const,
-        top: anchorElement.getBoundingClientRect().top - 8,
-        left: anchorElement.getBoundingClientRect().left - 8,
-        width: anchorElement.getBoundingClientRect().width + 16,
-        height: anchorElement.getBoundingClientRect().height + 16,
+        top: anchorEl.getBoundingClientRect().top - 8,
+        left: anchorEl.getBoundingClientRect().left - 8,
+        width: anchorEl.getBoundingClientRect().width + 16,
+        height: anchorEl.getBoundingClientRect().height + 16,
         border: "3px solid #3b82f6",
         borderRadius: 12,
         boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
@@ -150,41 +154,21 @@ export const TutorialSpotlight: React.FC<Props> = ({
         aria-labelledby="tutorial-title"
         className="tutorial-popover"
       >
-        {/* Progress indicator */}
-        {showProgress && (
-          <div className="flex items-center justify-between mb-4 text-sm text-slate-500">
-            <span>
-              Step {stepIndex + 1} of {totalSteps}
-            </span>
-            <div className="flex space-x-1">
-              {Array.from({ length: totalSteps }, (_, i) => (
-                <div
-                  key={i}
-                  className={clsx(
-                    "w-2 h-2 rounded-full transition-colors",
-                    i === stepIndex ? "bg-blue-600" : "bg-slate-300",
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Title */}
         <h3
           id="tutorial-title"
           className="text-xl font-semibold text-slate-900 mb-3"
         >
-          {step.title}
+          {title}
         </h3>
 
         {/* Body */}
-        <p className="text-slate-700 mb-4 leading-relaxed">{step.body}</p>
+        <p className="text-slate-700 mb-4 leading-relaxed">{body}</p>
 
         {/* Checklist */}
-        {step.checklist && step.checklist.length > 0 && (
+        {checklist && checklist.length > 0 && (
           <ul className="mb-4 space-y-2">
-            {step.checklist.map((item, index) => (
+            {checklist.map((item, index) => (
               <li key={index} className="flex items-start text-slate-600">
                 <span className="text-green-500 mr-2 mt-0.5">✓</span>
                 <span className="text-sm">{item}</span>
@@ -193,40 +177,12 @@ export const TutorialSpotlight: React.FC<Props> = ({
           </ul>
         )}
 
-        {/* Options */}
-        {step.options && step.options.length > 0 && (
-          <ul className="mb-4 space-y-2">
-            {step.options.map((option, index) => (
-              <li key={index} className="flex items-start text-slate-600">
-                <span className="text-blue-500 mr-2 mt-0.5">•</span>
-                <span className="text-sm">{option}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* Examples */}
-        {step.examples && Object.keys(step.examples).length > 0 && (
-          <div className="mb-4 p-3 bg-slate-50 rounded-lg border">
-            <div className="text-sm text-slate-600 space-y-1">
-              {Object.entries(step.examples).map(([key, value]) => (
-                <div key={key} className="flex justify-between">
-                  <span className="capitalize font-medium">
-                    {key.replace(/([A-Z])/g, " $1").trim()}:
-                  </span>
-                  <span>{String(value)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Tip */}
-        {step.tip && (
+        {tip && (
           <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <div className="flex items-start">
               <span className="text-blue-500 mr-2 mt-0.5">💡</span>
-              <p className="text-sm text-blue-800 italic">{step.tip}</p>
+              <p className="text-sm text-blue-800 italic">{tip}</p>
             </div>
           </div>
         )}
@@ -234,9 +190,9 @@ export const TutorialSpotlight: React.FC<Props> = ({
         {/* Action buttons */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-200">
           <div className="flex space-x-3">
-            {step.secondaryCta && onSecondary && (
+            {secondaryCta && onSecondary && (
               <Button variant="outline" size="sm" onClick={onSecondary}>
-                {step.secondaryCta}
+                {secondaryCta}
               </Button>
             )}
             {onDismiss && (
@@ -257,8 +213,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
             onClick={onPrimary}
             className="ml-auto"
           >
-            {step.primaryCta ||
-              (stepIndex === totalSteps - 1 ? "Complete" : "Next")}
+            {primaryCta || "Next"}
           </Button>
         </div>
       </div>

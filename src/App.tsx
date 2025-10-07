@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 import { TutorialManager } from "@/features/tutorials/TutorialManager";
+import { DemoNavBanner } from "@/features/tutorials/DemoNavBanner";
 import type { TutorialConfig } from "@/features/tutorials/types";
 
 import CampaignCreationWizard from "./components/CampaignCreationWizard";
@@ -134,6 +135,9 @@ const App: React.FC = () => {
         </Routes>
       </main>
 
+      {/* Demo mode banner */}
+      {new URLSearchParams(window.location.search).get("tour") === "1" && <DemoNavBanner />}
+      
       {/* Render the tutorial manager at root so it can spotlight anywhere */}
       <TutorialManager config={versionedConfig} />
     </div>

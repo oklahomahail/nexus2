@@ -1,166 +1,54 @@
-import React, { useCallback, useEffect } from "react";
-
+import React, { useCallback, useEffect, useState } from "react";
+import { useTutorial, type TutorialConfig } from "./useTutorial";
 import { TutorialSpotlight } from "./TutorialSpotlight";
-import { useTutorial } from "./useTutorial";
 
-import type { TutorialConfig } from "./types";
+type Props = { config: TutorialConfig | null; onDismiss?: () => void };
 
-type Props = {
-  config: TutorialConfig | null;
-  onStart?: () => void;
-  onComplete?: () => void;
-  onDismiss?: () => void;
-  autoStart?: boolean;
-};
+export const TutorialManager: React.FC<Props> = ({ config, onDismiss }) => {
+  const { active, step, start, next, prev, dismiss, restart, anchorEl } = useTutorial(config || undefined);
+  const [visible, setVisible] = useState(false);
 
-export const TutorialManager: React.FC<Props> = ({
-  config,
-  onStart,
-  onComplete,
-  onDismiss,
-  autoStart = true,
-}) => {
-  const {
-    active,
-    currentStep,
-    stepIndex,
-    totalSteps,
-    isCompleted,
-    start,
-    next,
-    previous,
-    dismiss,
-    complete,
-    anchorElement,
-  } = useTutorial(config);
+  useEffect(() => {
+    if (!config) return;
+    setVisible(true);
+  }, [config]);
 
-  // Handle primary action (next/complete)
-  const handlePrimary = useCallback(() => {
-    if (stepIndex === totalSteps - 1) {
-      complete();
-      onComplete?.();
-    } else {
-      next();
-    }
-  }, [stepIndex, totalSteps, complete, next, onComplete]);
+  const handlePrimary = useCallback(() => { next(); }, [next]);
 
-  // Handle secondary action
   const handleSecondary = useCallback(() => {
-    if (!currentStep) return;
-
-    if (currentStep.secondaryAction === "dismiss") {
+    if (!step) return;
+    if (step.secondaryAction === "dismiss") {
       dismiss();
+      setVisible(false);
       onDismiss?.();
       return;
     }
-
-    if (currentStep.secondaryAction?.startsWith("goto:")) {
-      const path = currentStep.secondaryAction.slice(5); // Remove "goto:" prefix
-      // Use React Router navigation if available
-      if (window.history && window.history.pushState) {
-        window.history.pushState({}, "", path);
-        // Trigger a popstate event to notify React Router
-        window.dispatchEvent(new PopStateEvent("popstate"));
-      }
+    if (step.secondaryAction === "restart") {
+      restart();
       return;
     }
-
-    // Default behavior - go to next step
-    next();
-  }, [currentStep, dismiss, next, onDismiss]);
-
-  // Handle dismiss
-  const handleDismiss = useCallback(() => {
-    dismiss();
-    onDismiss?.();
-  }, [dismiss, onDismiss]);
-
-  // Auto-start logic (if not disabled and conditions are met)
-  useEffect(() => {
-    if (!config || !autoStart || isCompleted || active) return;
-
-    // Check if this is truly a first-time user
-    const hasCompletedAnyTour = [
-      "nexus.tour.core.completed",
-      "nexus.tour.campaigns.completed",
-      "nexus.tour.analytics.completed",
-      "nexus.tutorial.onboarding.completed",
-    ].some((key) => localStorage.getItem(key) === "1");
-
-    if (!hasCompletedAnyTour) {
-      // Small delay to ensure page is ready
-      const timer = setTimeout(() => {
-        start();
-        onStart?.();
-      }, 1500);
-
-      return () => clearTimeout(timer);
+    if (step.secondaryAction?.startsWith("goto:")) {
+      const path = step.secondaryAction.slice("goto:".length);
+      window.history.pushState({}, "", path);
     }
-  }, [config, autoStart, isCompleted, active, start, onStart]);
+  }, [step, dismiss, restart, onDismiss]);
 
-  // Provide manual start method via global function
-  useEffect(() => {
-    if (!config) return;
+  if (!config || !active || !step || !visible) return null;
 
-    // Expose global function for manual tutorial start
-    const startTutorial = () => {
-      start();
-      onStart?.();
-    };
+  const props = {
+    title: step.title,
+    body: step.body,
+    tip: (step as any).tip,
+    checklist: (step as any).checklist,
+    primaryCta: step.primaryCta || "Next",
+    secondaryCta: step.secondaryCta,
+    onPrimary: handlePrimary,
+    onSecondary: handleSecondary
+  };
 
-    // Attach to window for dev tools / help menu access
-    (window as any).__startNexusTutorial = startTutorial;
-
-    return () => {
-      delete (window as any).__startNexusTutorial;
-    };
-  }, [config, start, onStart]);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    if (!active) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case "Escape":
-          event.preventDefault();
-          handleDismiss();
-          break;
-        case "ArrowRight":
-        case "Enter":
-          if (!event.metaKey && !event.ctrlKey) {
-            event.preventDefault();
-            handlePrimary();
-          }
-          break;
-        case "ArrowLeft":
-          if (!event.metaKey && !event.ctrlKey && stepIndex > 0) {
-            event.preventDefault();
-            previous();
-          }
-          break;
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [active, handlePrimary, handleDismiss, previous, stepIndex]);
-
-  // Don't render if no config, completed, or not active
-  if (!config || !active || !currentStep || isCompleted) {
-    return null;
-  }
-
-  return (
-    <TutorialSpotlight
-      step={currentStep}
-      anchorElement={anchorElement}
-      stepIndex={stepIndex}
-      totalSteps={totalSteps}
-      onPrimary={handlePrimary}
-      onSecondary={currentStep.secondaryCta ? handleSecondary : undefined}
-      onDismiss={handleDismiss}
-      showProgress={totalSteps > 1}
-    />
+  return step.type === "modal" ? (
+    <TutorialSpotlight anchorEl={null} {...props} />
+  ) : (
+    <TutorialSpotlight anchorEl={anchorEl} {...props} />
   );
 };

@@ -1,115 +1,98 @@
 {
   "id": "nexus-onboarding-eoy",
   "title": "Nexus Walkthrough — Regional Food Bank (EOY)",
-  "version": 1,
+  "version": 2,
   "completionStorageKey": "nexusTutorialComplete",
   "steps": [
     {
       "id": "welcome",
       "type": "modal",
       "title": "Welcome to Nexus",
-      "body": "Nexus is your all-in-one fundraising intelligence platform—built to help you manage clients, build campaigns, and measure what matters. Today, we'll walk through how to create a campaign from start to finish using a real-world example.",
+      "body": "This walkthrough will create a real campaign end to end. We will start in Clients, then create or select a client, create a campaign, build it, review, launch, monitor, and report.",
       "primaryCta": "Start Walkthrough",
-      "secondaryCta": "Explore on My Own",
+      "secondaryCta": "Skip tutorial",
       "secondaryAction": "dismiss"
     },
     {
-      "id": "create-client",
+      "id": "go-to-clients",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='clients.add']",
-      "title": "Create Your Client",
-      "body": "Every campaign belongs to a client. Let's create a new one called Regional Food Bank—a community nonprofit that provides meals to families facing food insecurity.",
-      "formDefaults": {
-        "clientName": "Regional Food Bank",
-        "sector": "Food Security",
-        "primaryContact": "Jane Doe"
-      },
-      "primaryCta": "Create Client"
+      "navigateTo": "/clients",
+      "anchors": ["[data-tutorial-step='nav.clients']", "[data-tutorial-step='clients.page']"],
+      "title": "Open Clients",
+      "body": "All work begins here. Click Clients in the sidebar to view or create organizations.",
+      "primaryCta": "Next"
     },
     {
-      "id": "create-campaign",
+      "id": "create-or-select-client",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='campaigns.new']",
-      "title": "Start a New Campaign",
-      "body": "Each campaign lives inside its client workspace. Let's build an End-of-Year Holiday Campaign to raise $10,000 before December 31.",
-      "formDefaults": {
-        "campaignName": "End-of-Year Holiday Campaign",
-        "goal": 10000,
-        "type": "End-of-Year",
-        "startDate": "2025-11-15",
-        "endDate": "2025-12-31",
-        "theme": "Holiday Warmth & Community Generosity"
-      },
+      "anchors": ["[data-tutorial-step='clients.add']", "[data-tutorial-step='clients.table.row.regional-food-bank']"],
+      "waitForAnchorMs": 6000,
+      "title": "Create or select a client",
+      "body": "Option A: Click New Client to create Regional Food Bank. Option B: If Regional Food Bank already exists, click it to open.",
+      "tip": "In demo mode we seed Regional Food Bank so you can select it immediately.",
+      "primaryCta": "I did this"
+    },
+    {
+      "id": "client-home",
+      "type": "spotlight",
+      "anchors": ["[data-tutorial-step='client.header']", "[data-tutorial-step='client.campaigns.tab']"],
+      "title": "Client workspace",
+      "body": "You are now inside the client workspace. Each client has its own campaigns, assets, and reports.",
+      "primaryCta": "Next"
+    },
+    {
+      "id": "new-campaign",
+      "type": "spotlight",
+      "anchors": ["[data-tutorial-step='campaigns.new']"],
+      "title": "Create a campaign",
+      "body": "Click New Campaign. Use these defaults: Name End-of-Year Holiday Campaign, Goal 10000, Type End-of-Year, Dates Nov 15 to Dec 31, Theme Holiday Warmth and Community Generosity.",
       "primaryCta": "Create Campaign"
     },
     {
-      "id": "build-campaign",
+      "id": "builder",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='campaign.builder']",
-      "title": "Build the Campaign Plan",
-      "body": "Now let's define the details—messaging, segments, and creative assets. Campaigns in Nexus connect strategy, storytelling, and performance data in one view.",
-      "checklist": [
-        "Add your campaign overview and key messages",
-        "Upload assets (holiday visuals, letters, social graphics)",
-        "Add audience segments (Current Donors, Lapsed Donors, Volunteers)",
-        "Assign collaborators (optional)"
-      ],
-      "tip": "You can import ready-made Track15 templates to pre-fill messaging calendars and segment tags.",
-      "primaryCta": "Save & Continue"
+      "anchors": ["[data-tutorial-step='campaign.builder']"],
+      "title": "Build the plan",
+      "body": "Add overview, upload assets, add segments Current Donors, Lapsed Donors, Volunteers, assign collaborators if needed.",
+      "tip": "Import your Track15 templates to prefill calendars and tags.",
+      "primaryCta": "Save and continue"
     },
     {
-      "id": "review-launch",
+      "id": "review",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='campaign.review']",
-      "title": "Review Before Launch",
-      "body": "Before launching, review your campaign details. Check your assets, segments, and goal, then schedule your start date.",
-      "checklist": [
-        "Assets uploaded",
-        "Audience segments defined",
-        "Goal confirmed: $10,000",
-        "Launch date: November 15"
-      ],
-      "tip": "When you hit \"Launch Campaign,\" Nexus will begin tracking data automatically—from donations to engagement metrics.",
+      "anchors": ["[data-tutorial-step='campaign.review']"],
+      "title": "Review and launch",
+      "body": "Confirm assets, segments, and the goal 10000. Set launch date to Nov 15. Launch when ready. Nexus begins tracking metrics automatically.",
       "primaryCta": "Launch Campaign"
     },
     {
       "id": "monitor",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='dashboard.performance']",
-      "title": "Watch Your Results Grow",
-      "body": "Once your campaign is live, Nexus visualizes everything in real time. Track total raised, donor growth, channel performance, and milestones as your data syncs.",
-      "examples": {
-        "totalRaised": "$2,450 (24% to goal)",
-        "topChannel": "Email (43% of gifts)",
-        "activeDonors": "Returning givers who also volunteer"
-      },
-      "tip": "Each metric updates as new data comes in—no spreadsheets required.",
-      "primaryCta": "Continue"
+      "navigateTo": "/dashboard",
+      "anchors": ["[data-tutorial-step='dashboard.performance']"],
+      "title": "Monitor performance",
+      "body": "Track total raised, donor growth, channel mix, and milestones in real time.",
+      "primaryCta": "Next"
     },
     {
       "id": "reports",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='reports.panel']",
-      "title": "Create Campaign Reports",
-      "body": "Nexus automatically summarizes your campaign story in data form. Generate reports for clients, boards, or your own records.",
-      "options": [
-        "Generate PDF Report – ready for sharing",
-        "Export CSV – for analytics deep dives",
-        "Schedule Automated Reports – send weekly summaries to your client"
-      ],
-      "tip": "Reports highlight what worked, where to improve, and how to repeat success next year.",
-      "primaryCta": "Generate Sample Report"
+      "navigateTo": "/reports",
+      "anchors": ["[data-tutorial-step='reports.panel']"],
+      "title": "Create reports",
+      "body": "Generate share-ready PDFs, export CSVs, or schedule weekly summaries.",
+      "primaryCta": "Generate sample report"
     },
     {
       "id": "optimize",
       "type": "spotlight",
-      "anchor": "[data-tutorial-step='campaigns.list']",
-      "title": "Learn and Optimize",
-      "body": "Every completed campaign becomes part of your Nexus intelligence library. Compare results, duplicate top performers, and keep refining your strategy.",
-      "tip": "The End-of-Year Holiday Campaign raised 112% of goal—duplicate it next year with one click and start ahead.",
-      "primaryCta": "View My Dashboard",
-      "secondaryCta": "Create a New Campaign",
-      "secondaryAction": "goto:/campaigns/new"
+      "navigateTo": "/campaigns",
+      "anchors": ["[data-tutorial-step='campaigns.list']"],
+      "title": "Optimize and repeat",
+      "body": "Duplicate top performers next year and keep iterating.",
+      "primaryCta": "Finish",
+      "secondaryCta": "Restart tour",
+      "secondaryAction": "restart"
     }
   ],
   "demoSeeds": {

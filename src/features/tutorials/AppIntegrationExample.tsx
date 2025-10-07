@@ -64,10 +64,7 @@ export default function App() {
       {/* Tutorial system overlay - renders on top of everything */}
       <TutorialManager
         config={tutorialConfig}
-        onStart={handleTutorialStart}
-        onComplete={handleTutorialComplete}
         onDismiss={handleTutorialDismiss}
-        autoStart={true} // Auto-start for first-time users
       />
     </>
   );
@@ -103,9 +100,7 @@ export function AppWithConditionalTutorial() {
       {showTutorial && tutorialConfig && (
         <TutorialManager
           config={tutorialConfig}
-          onComplete={() => setShowTutorial(false)}
           onDismiss={() => setShowTutorial(false)}
-          autoStart={false} // Manual control since we're conditionally rendering
         />
       )}
     </>

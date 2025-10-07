@@ -1,197 +1,247 @@
-# Nexus Tour System
+# Nexus Tutorial Walkthrough System
 
-A comprehensive user onboarding and tour system built with driver.js for the Nexus nonprofit management platform.
+A comprehensive tutorial walkthrough system built with React components for the Nexus nonprofit management platform.
 
 ## Overview
 
-The tour system provides:
+The tutorial walkthrough system provides:
 
-- **Welcome Modal**: Introduces new users and offers tour options
-- **Core Tour**: Guided walkthrough of main application features
-- **Feature Tours**: Specific tours for campaigns, analytics, etc.
-- **Onboarding Checklist**: Progress tracking for key user actions
-- **Persistent State**: Remembers user preferences and progress
+- **Interactive Tutorial**: Dynamic step-by-step guided tutorials with navigation controls
+- **Demo Mode Banner**: Visual banner indicating demo/tour mode with helpful instructions
+- **Tutorial Manager**: Central orchestration component handling tutorial lifecycle
+- **Spotlight Overlay**: Custom React-based spotlight for highlighting multiple UI elements
+- **Smart Skip Functionality**: Skip with session-based suppression to prevent repeated prompts
+- **Restart Capability**: Users can restart tutorials at any time
+- **Progress Persistence**: Tutorial completion state saved across browser sessions
 
 ## Architecture
 
 ### Core Components
 
 ```
-src/tours/
-├── driverService.ts      # Core tour utilities using driver.js
-├── coreTour.ts          # Main application tour
-├── campaignsTour.ts     # Campaigns-specific tour
-└── index.ts             # Exports all tour functions
+src/features/tutorials/
+├── TutorialManager.tsx      # Main tutorial orchestration component
+├── TutorialSpotlight.tsx    # Spotlight overlay for highlighting elements
+├── DemoNavBanner.tsx        # Demo mode banner component
+├── useTutorial.ts           # Core tutorial hook with navigation and state
+├── useTutorialManager.ts    # Manager hook for tutorial lifecycle
+└── AppIntegrationExample.tsx # Example integration component
 
-src/utils/
-└── onboarding.ts        # State management and localStorage utilities
+public/data/tutorials/
+└── nexusTutorial.json       # Tutorial steps configuration
 
-src/components/
-├── WelcomeModal.tsx     # New user welcome dialog
-└── OnboardingChecklist.tsx  # Progress tracking widget
+src/
+└── App.tsx                  # Demo banner integration
 ```
 
 ### Data Flow
 
-1. **First Visit**: `shouldShowWelcomeModal()` → `WelcomeModal` → User chooses action
-2. **Tour Execution**: `startCoreTour()` → Driver.js highlights elements → `markCoreTourCompleted()`
-3. **Progress Tracking**: Actions trigger `markOnboardingStepCompleted()` → Updates checklist
-4. **State Persistence**: All preferences stored in `localStorage`
+1. **Tutorial Start**: `TutorialManager` loads tutorial JSON → `useTutorial` hook initializes state
+2. **Step Navigation**: User clicks Next/Back → `useTutorial` updates current step → `TutorialSpotlight` repositions
+3. **Multiple Anchors**: Steps can highlight multiple elements simultaneously using anchor arrays
+4. **Skip Functionality**: User skips → Session suppression prevents re-prompting → State persists
+5. **Demo Mode**: URL parameter `?tour=1` → `DemoNavBanner` shows → Tutorial auto-starts
+6. **Restart**: Reset button clears localStorage → Tutorial restarts from beginning
 
-## Tour Anchors
+## Tutorial Anchors
 
-Elements with `data-tour` attributes for tour targeting:
+Elements with `data-tutorial-anchor` attributes for tutorial targeting:
 
 ```html
 <!-- Navigation -->
-<button data-tour="nav-dashboard">Dashboard</button>
-<button data-tour="nav-campaigns">Campaigns</button>
-<button data-tour="nav-analytics">Analytics</button>
-<button data-tour="nav-donors">Donors</button>
+<button data-tutorial-anchor="nav-dashboard">Dashboard</button>
+<button data-tutorial-anchor="nav-clients">Clients</button>
+<button data-tutorial-anchor="nav-campaigns">Campaigns</button>
+<button data-tutorial-anchor="nav-analytics">Analytics</button>
 
 <!-- Actions -->
-<button data-tour="new-campaign-button">+ New Campaign</button>
-<button data-tour="campaigns-new">Create Campaign</button>
-<button data-tour="user-menu">User Menu</button>
+<button data-tutorial-anchor="new-client-button">+ New Client</button>
+<button data-tutorial-anchor="client-wizard-button">Create New Client</button>
+<button data-tutorial-anchor="existing-client-button">Select Existing</button>
 
 <!-- Content Areas -->
-<h2 data-tour="campaigns-title">Campaigns</h2>
-<div data-tour="campaigns-stats">KPI Widgets</div>
-<div data-tour="campaigns-list">Campaign List</div>
+<div data-tutorial-anchor="client-list">Client List</div>
+<div data-tutorial-anchor="dashboard-stats">Dashboard Statistics</div>
+<div data-tutorial-anchor="campaign-builder">Campaign Builder</div>
 ```
 
 ## Usage
 
-### Starting Tours
+### Starting Tutorials
 
 ```typescript
-import { startCoreTour, startCampaignsTour } from "@/tours";
+import { TutorialManager } from "@/features/tutorials/TutorialManager";
+import { useTutorialManager } from "@/features/tutorials/useTutorialManager";
 
-// Start the main tour
-await startCoreTour();
+// Using the TutorialManager component
+<TutorialManager tutorialId="nexus-onboarding" />
 
-// Start campaigns tour
-await startCampaignsTour();
+// Using the hook programmatically
+const { startTutorial, resetTutorial } = useTutorialManager();
+startTutorial("nexus-onboarding");
 ```
 
-### Checking Tour State
+### Checking Tutorial State
 
 ```typescript
-import { hasCompletedCoreTour, getTourPreferences } from "@/utils/onboarding";
+import { useTutorial } from "@/features/tutorials/useTutorial";
 
-if (!hasCompletedCoreTour()) {
-  // Show welcome modal or tour prompt
+const { isComplete, currentStep, tutorialData } = useTutorial("nexus-onboarding");
+
+if (!isComplete) {
+  // Show tutorial or prompt
 }
 
-const preferences = getTourPreferences();
-// { coreCompleted: false, onboardingProgress: { completed: 2, total: 5 }, ... }
+console.log(`Step ${currentStep + 1} of ${tutorialData?.steps.length}`);
 ```
 
-### Creating Custom Tours
+### Creating Custom Tutorials
 
-```typescript
-import { createTour, TourStep } from "@/tours/driverService";
+Create a JSON file in `public/data/tutorials/`:
 
-const steps: TourStep[] = [
-  {
-    element: '[data-tour="my-element"]',
-    popover: {
-      title: "Feature Title",
-      description: "This explains the feature...",
-      position: "bottom",
+```json
+{
+  "version": 2,
+  "title": "My Custom Tutorial",
+  "steps": [
+    {
+      "title": "Welcome",
+      "content": "Welcome to this feature!",
+      "anchors": ["my-feature-anchor"],
+      "navigate": "/my-feature",
+      "actions": {
+        "next": { "text": "Get Started", "action": "next" }
+      }
     },
-  },
-];
-
-const tour = createTour(steps, {
-  onDestroyed: () => {
-    // Mark tour as completed
-    localStorage.setItem("my-tour-completed", "1");
-  },
-});
-
-tour.drive();
+    {
+      "title": "Key Feature",
+      "content": "This is the main feature.",
+      "anchors": ["primary-button", "secondary-area"],
+      "actions": {
+        "back": { "text": "Back", "action": "back" },
+        "next": { "text": "Continue", "action": "next" }
+      }
+    }
+  ]
+}
 ```
 
-### Managing Onboarding Steps
+### Managing Tutorial Progress
 
 ```typescript
-import {
-  markOnboardingStepCompleted,
-  getOnboardingProgress,
-} from "@/utils/onboarding";
+import { useTutorial } from "@/features/tutorials/useTutorial";
 
-// Mark a step as complete when user performs action
-const handleCampaignCreated = () => {
-  markOnboardingStepCompleted("create_campaign");
-};
+function MyComponent() {
+  const {
+    currentStep,
+    totalSteps,
+    isComplete,
+    nextStep,
+    previousStep,
+    skipTutorial
+  } = useTutorial("nexus-onboarding");
 
-// Check progress
-const progress = getOnboardingProgress();
-console.log(
-  `${progress.completed}/${progress.total} steps completed (${progress.percentage}%)`,
-);
+  const handleNext = () => {
+    if (currentStep < totalSteps - 1) {
+      nextStep();
+    }
+  };
+
+  return (
+    <div>
+      <p>Step {currentStep + 1} of {totalSteps}</p>
+      <button onClick={handleNext} disabled={isComplete}>
+        Next
+      </button>
+    </div>
+  );
+}
 ```
 
 ## Integration Points
 
-### DashboardPanel
+### App.tsx
 
-- Shows `WelcomeModal` for new users
-- Displays `OnboardingChecklist` until completion
-- Automatically triggers core tour on welcome
+- Shows `DemoNavBanner` when URL contains `?tour=1`
+- Provides global tutorial state management
+- Handles demo mode detection
 
-### CampaignsPanel
+### TutorialManager
 
-- Auto-shows campaigns tour for first-time visitors
-- Tour highlights key campaign management features
+- Orchestrates tutorial lifecycle
+- Manages tutorial completion state
+- Handles skip functionality with session suppression
+- Provides restart capability
 
-### Topbar
+### Individual Pages
 
-- "Replay Tour" option in user menu
-- Starts core tour on demand
+- Include `data-tutorial-anchor` attributes on key elements
+- Tutorial automatically highlights relevant UI components
+- Navigation commands in tutorial JSON handle routing
 
 ## Configuration
 
-### Tour Options
+### Tutorial JSON Structure
 
 ```typescript
-const tourOptions: TourOptions = {
-  showProgress: true, // Show step counter
-  allowClose: true, // Allow closing tour
-  overlayOpacity: 0.4, // Background overlay
-  nextBtnText: "Next", // Button labels
-  prevBtnText: "Back",
-  doneBtnText: "Done",
-  onDestroyed: () => {
-    // Completion callback
-    markCoreTourCompleted();
-  },
-};
+interface TutorialData {
+  version: number;
+  title: string;
+  steps: TutorialStep[];
+}
+
+interface TutorialStep {
+  title: string;
+  content: string;
+  anchors: string[];  // Multiple anchor support
+  navigate?: string;  // Optional navigation
+  actions: {
+    back?: { text: string; action: string };
+    next?: { text: string; action: string };
+    skip?: { text: string; action: string };
+    dismiss?: { text: string; action: string };
+  };
+}
 ```
 
-### Onboarding Steps
+### Tutorial State Management
 
 ```typescript
-type OnboardingStep =
-  | "add_client" // Create first client
-  | "create_campaign" // Launch first campaign
-  | "view_analytics" // Visit analytics section
-  | "export_report" // Generate first report
-  | "complete_profile"; // Fill out profile
+// LocalStorage keys for tutorial state
+const TUTORIAL_KEYS = {
+  COMPLETE: 'nexusTutorialComplete',
+  SKIPPED_SESSION: 'nexusTutorialSkippedSession',
+  CURRENT_STEP: 'nexusTutorialCurrentStep'
+};
+
+// Tutorial completion states
+interface TutorialState {
+  isComplete: boolean;
+  isSkippedForSession: boolean;
+  currentStep: number;
+  totalSteps: number;
+}
 ```
 
 ## Styling
 
-The tour system uses driver.js default styles with custom CSS:
+The tutorial system uses custom React components with Tailwind CSS:
 
 ```css
-/* Included automatically */
-@import "driver.js/dist/driver.css";
+/* TutorialSpotlight component styling */
+.tutorial-spotlight-overlay {
+  @apply fixed inset-0 bg-black/50 z-50 pointer-events-none;
+}
 
-/* Custom styling in components */
-.driver-popover {
-  /* Tour popover styling is handled by driver.js */
+.tutorial-spotlight-content {
+  @apply bg-white rounded-lg shadow-lg p-6 max-w-md;
+  @apply border border-gray-200;
+}
+
+/* DemoNavBanner component styling */
+.demo-banner {
+  @apply bg-blue-50 border-b border-blue-200 px-4 py-2;
+  @apply text-sm text-blue-800;
 }
 ```
 
@@ -199,87 +249,101 @@ The tour system uses driver.js default styles with custom CSS:
 
 ### Development Mode
 
-- Use browser dev tools to clear `localStorage`
-- Reload page to see welcome modal again
-- Test tour flows and state persistence
+- Add `?tour=1` to URL to activate demo mode and banner
+- Use browser dev tools to clear `localStorage` keys starting with `nexusTutorial`
+- Test tutorial flows and state persistence
+- Verify skip functionality and session suppression
 
-### Testing Tours
+### Testing Tutorials
 
 ```typescript
-import { resetAllOnboardingState } from "@/utils/onboarding";
+import { useTutorialManager } from "@/features/tutorials/useTutorialManager";
 
-// Reset all tour state (dev mode only)
-if (process.env.NODE_ENV === "development") {
-  resetAllOnboardingState();
+// Reset tutorial state programmatically
+const { resetTutorial } = useTutorialManager();
+
+// For development testing
+if (import.meta.env.DEV) {
+  resetTutorial("nexus-onboarding");
 }
 ```
 
 ## Accessibility
 
-- Tours are keyboard navigable (← → arrow keys)
-- Elements have proper ARIA attributes
-- High contrast tour overlays
-- Screen reader friendly popover content
+- Tutorials are fully keyboard navigable (Tab, Enter, Escape)
+- Tutorial content has proper ARIA labels and roles
+- High contrast spotlight overlays for visibility
+- Screen reader friendly tutorial content and announcements
+- Focus management during tutorial navigation
 
 ## Performance
 
-- Tours are lazy-loaded using dynamic imports
-- Driver.js is lightweight (~10KB gzipped)
-- State management uses efficient localStorage operations
-- Tour validation prevents errors with missing elements
+- Tutorial data is loaded on-demand via fetch
+- Custom React components are lightweight and efficient
+- State management uses optimized localStorage operations
+- Tutorial validation prevents errors with missing anchor elements
+- Spotlight positioning uses efficient DOM queries
 
 ## Extending the System
 
-### Adding New Tours
+### Adding New Tutorials
 
-1. Create tour file: `src/tours/myFeatureTour.ts`
-2. Define steps with `data-tour` selectors
-3. Export start function and mark completion
-4. Add to `src/tours/index.ts`
-5. Integrate trigger in relevant component
+1. Create tutorial JSON file: `public/data/tutorials/myTutorial.json`
+2. Define steps with `anchors` array and navigation
+3. Add `data-tutorial-anchor` attributes to target elements
+4. Integrate `TutorialManager` component with new tutorial ID
+5. Test tutorial flow and anchor targeting
 
-### Adding Tour Anchors
+### Adding Tutorial Anchors
 
-1. Add `data-tour="unique-name"` to target elements
+1. Add `data-tutorial-anchor="unique-name"` to target elements
 2. Use descriptive, kebab-case naming
 3. Ensure elements are stable (always rendered)
-4. Test tour step targeting
+4. Support multiple anchors per step for complex highlighting
+5. Test anchor targeting and spotlight positioning
 
-### Custom Onboarding Steps
+### Custom Tutorial Actions
 
-1. Add step to `OnboardingStep` type in `onboarding.ts`
-2. Add configuration in `OnboardingChecklist.tsx`
-3. Trigger completion with `markOnboardingStepCompleted()`
-4. Update checklist display logic
+1. Add new action types to tutorial JSON step actions
+2. Implement action handlers in `useTutorial` hook
+3. Update `TutorialSpotlight` component to handle new actions
+4. Test action execution and state updates
 
 ## Best Practices
 
-1. **Stable Selectors**: Use `data-tour` attributes on container elements that don't change
-2. **Progressive Disclosure**: Start with core tour, then feature-specific tours
-3. **Contextual Timing**: Show feature tours when users first visit sections
-4. **Graceful Degradation**: Tours work even if some elements are missing
-5. **User Control**: Always allow skipping/dismissing tours
-6. **Mobile Friendly**: Tours adapt to different screen sizes
+1. **Stable Anchors**: Use `data-tutorial-anchor` attributes on container elements that don't change
+2. **Progressive Disclosure**: Start with essential features, then advanced functionality
+3. **Multiple Anchors**: Use anchor arrays to highlight related UI elements simultaneously
+4. **Clear Navigation**: Include explicit navigate commands for multi-page tutorials
+5. **Graceful Degradation**: Tutorials work even if some anchor elements are missing
+6. **User Control**: Always provide skip and dismiss options with session suppression
+7. **Mobile Friendly**: Tutorials adapt to different screen sizes and touch interactions
 
 ## Troubleshooting
 
-### Tour Not Starting
+### Tutorial Not Starting
 
-- Check if `data-tour` elements exist in DOM
-- Verify imports are correct
-- Check console for errors
-- Ensure tour state allows showing
+- Check if tutorial JSON file exists and is valid
+- Verify `TutorialManager` is properly integrated
+- Check browser console for fetch or parsing errors
+- Ensure tutorial completion state allows showing
 
-### Elements Not Highlighted
+### Anchors Not Highlighting
 
-- Verify `data-tour` attribute spelling
-- Check if element is visible when tour starts
+- Verify `data-tutorial-anchor` attribute spelling
+- Check if elements exist in DOM when tutorial starts
 - Use browser inspector to confirm element presence
-- Try `waitForElement()` for dynamic content
+- Ensure anchor names match tutorial JSON exactly
+
+### Navigation Issues
+
+- Check `navigate` commands in tutorial JSON steps
+- Verify routing is set up correctly for navigation
+- Ensure target routes render anchor elements
 
 ### State Issues
 
-- Clear localStorage to reset all state
-- Check for typos in localStorage keys
-- Verify state functions are imported correctly
-- Use `getTourPreferences()` to debug state
+- Clear localStorage keys starting with `nexusTutorial`
+- Check for typos in tutorial ID or localStorage keys
+- Verify `useTutorial` hook is imported correctly
+- Use browser dev tools to inspect localStorage state

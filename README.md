@@ -33,13 +33,15 @@ Nexus is a sophisticated, full-stack nonprofit consulting platform designed to r
 - **Comparative Analysis** - Campaign performance across time periods
 - **Automated Insights** - AI-powered recommendations and alerts
 
-### **User Onboarding & Tour System**
+### **Tutorial Walkthrough System**
 
-- **Welcome Modal** - Interactive introduction for new users with tour options
-- **Guided Tours** - Step-by-step walkthroughs using driver.js integration
-- **Progress Tracking** - 5-step onboarding checklist with visual progress indicators
-- **Feature Discovery** - Contextual tours for campaigns, analytics, and core features
-- **Persistent State** - User preferences and progress saved across sessions
+- **Interactive Tutorial** - Dynamic step-by-step guided tutorial with navigation controls
+- **Demo Mode Banner** - Visual banner indicating demo/tour mode with helpful instructions
+- **Smart Tutorial Management** - Skip functionality with session-based suppression
+- **Multiple Anchor Support** - Tutorial steps can highlight multiple UI elements simultaneously
+- **Restart Capability** - Users can restart tutorials at any time
+- **Progress Persistence** - Tutorial completion state saved across browser sessions
+- **Client Onboarding** - Guided client creation and selection flow within tutorial
 
 ### **Professional Design System**
 
@@ -133,15 +135,21 @@ src/
 │   ├── donor.ts           # Donor-related types
 │   ├── campaign.ts        # Campaign and channel types
 │   └── analytics.ts       # Analytics and reporting types
-├── tours/                 # User onboarding and guided tours
-│   ├── driverService.ts   # Core tour utilities using driver.js
-│   ├── coreTour.ts        # Main application tour definition
-│   ├── campaignsTour.ts   # Campaigns-specific tour
-│   └── index.ts           # Tour system exports
+├── features/
+│   └── tutorials/         # Tutorial walkthrough system
+│       ├── TutorialManager.tsx      # Main tutorial orchestration component
+│       ├── TutorialSpotlight.tsx    # Spotlight overlay for highlighting elements
+│       ├── DemoNavBanner.tsx        # Demo mode banner component
+│       ├── useTutorial.ts           # Core tutorial hook with navigation and state
+│       ├── useTutorialManager.ts    # Manager hook for tutorial lifecycle
+│       └── AppIntegrationExample.tsx # Example integration component
 ├── context/               # React Context providers
 ├── hooks/                 # Custom React hooks
 ├── utils/                 # Utility functions and helpers
-│   └── onboarding.ts      # Tour state management and localStorage utilities
+└── public/
+    └── data/
+        └── tutorials/     # Tutorial configuration files
+            └── nexusTutorial.json # Main tutorial steps and navigation
 └── charts/                # Chart components and adapters
 ```
 
@@ -155,7 +163,7 @@ src/
 - **TailwindCSS 4.1** - Utility-first CSS with CSS custom properties
 - **React Router 7.8** - Client-side routing with data loading
 - **Recharts 3.1** - Composable charting library
-- **Driver.js 1.3** - Lightweight tour and onboarding library
+- **Custom Tutorial System** - Built-in tutorial engine with React-based spotlight overlays
 - **Lucide React** - Modern icon library with consistent styling
 
 ### Data & State Management
@@ -220,7 +228,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions.
 
 ## 📈 Recent Achievements
 
-- **User Onboarding & Tour System** - Comprehensive guided tours with driver.js, welcome modals, and progress tracking
+- **Tutorial Walkthrough System** - Built custom React-based tutorial engine with navigation, spotlight overlays, and demo mode
 - **Professional Design System** - Implemented Track15-adjacent color palette with premium UI
 - **Component Architecture** - Built professional Button, Input, Badge, Table, Search, and Toast components
 - **Polished Client Management** - Redesigned Clients page with advanced filtering, bulk actions, and guided flows
@@ -267,7 +275,7 @@ pnpm build                  # Verify production build
 ## 📚 Documentation
 
 - [Platform Overview](./PLATFORM_OVERVIEW.md) - Comprehensive feature documentation
-- [Tour System Guide](./TOUR_SYSTEM.md) - User onboarding and guided tour implementation
+- [Tutorial System Guide](./TOUR_SYSTEM.md) - Tutorial walkthrough system implementation and usage
 - [Polish Implementation](./POLISH_IMPLEMENTATION.md) - Design system and component documentation
 - [Deployment Guide](./DEPLOYMENT.md) - Deployment instructions for all platforms
 - [Changelog](./CHANGELOG.md) - Version history and updates
