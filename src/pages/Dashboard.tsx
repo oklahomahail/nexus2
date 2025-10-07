@@ -9,7 +9,6 @@ import {
   BarChart3,
   PlusCircle,
 } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
