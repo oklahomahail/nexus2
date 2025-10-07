@@ -1,0 +1,119 @@
+{
+  "id": "nexus-onboarding-eoy",
+  "title": "Nexus Walkthrough — Regional Food Bank (EOY)",
+  "version": 1,
+  "completionStorageKey": "nexus.tutorial.onboarding.completed",
+  "steps": [
+    {
+      "id": "welcome",
+      "type": "modal",
+      "title": "Welcome to Nexus",
+      "body": "Nexus is your all-in-one fundraising intelligence platform—built to help you manage clients, build campaigns, and measure what matters. Today, we'll walk through how to create a campaign from start to finish using a real-world example.",
+      "primaryCta": "Start Walkthrough",
+      "secondaryCta": "Explore on My Own",
+      "secondaryAction": "dismiss"
+    },
+    {
+      "id": "create-client",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='clients.add']",
+      "title": "Create Your Client",
+      "body": "Every campaign belongs to a client. Let's create a new one called Regional Food Bank—a community nonprofit that provides meals to families facing food insecurity.",
+      "formDefaults": {
+        "clientName": "Regional Food Bank",
+        "sector": "Food Security",
+        "primaryContact": "Jane Doe"
+      },
+      "primaryCta": "Create Client"
+    },
+    {
+      "id": "create-campaign",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='campaigns.new']",
+      "title": "Start a New Campaign",
+      "body": "Each campaign lives inside its client workspace. Let's build an End-of-Year Holiday Campaign to raise $10,000 before December 31.",
+      "formDefaults": {
+        "campaignName": "End-of-Year Holiday Campaign",
+        "goal": 10000,
+        "type": "End-of-Year",
+        "startDate": "2025-11-15",
+        "endDate": "2025-12-31",
+        "theme": "Holiday Warmth & Community Generosity"
+      },
+      "primaryCta": "Create Campaign"
+    },
+    {
+      "id": "build-campaign",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='campaign.builder']",
+      "title": "Build the Campaign Plan",
+      "body": "Now let's define the details—messaging, segments, and creative assets. Campaigns in Nexus connect strategy, storytelling, and performance data in one view.",
+      "checklist": [
+        "Add your campaign overview and key messages",
+        "Upload assets (holiday visuals, letters, social graphics)",
+        "Add audience segments (Current Donors, Lapsed Donors, Volunteers)",
+        "Assign collaborators (optional)"
+      ],
+      "tip": "You can import ready-made Track15 templates to pre-fill messaging calendars and segment tags.",
+      "primaryCta": "Save & Continue"
+    },
+    {
+      "id": "review-launch",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='campaign.review']",
+      "title": "Review Before Launch",
+      "body": "Before launching, review your campaign details. Check your assets, segments, and goal, then schedule your start date.",
+      "checklist": [
+        "Assets uploaded",
+        "Audience segments defined", 
+        "Goal confirmed: $10,000",
+        "Launch date: November 15"
+      ],
+      "tip": "When you hit \"Launch Campaign,\" Nexus will begin tracking data automatically—from donations to engagement metrics.",
+      "primaryCta": "Launch Campaign"
+    },
+    {
+      "id": "monitor",
+      "type": "spotlight", 
+      "anchor": "[data-tutorial-step='dashboard.performance']",
+      "title": "Watch Your Results Grow",
+      "body": "Once your campaign is live, Nexus visualizes everything in real time. Track total raised, donor growth, channel performance, and milestones as your data syncs.",
+      "examples": {
+        "totalRaised": "$2,450 (24% to goal)",
+        "topChannel": "Email (43% of gifts)",
+        "activeDonors": "Returning givers who also volunteer"
+      },
+      "tip": "Each metric updates as new data comes in—no spreadsheets required.",
+      "primaryCta": "Continue"
+    },
+    {
+      "id": "reports",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='reports.panel']",
+      "title": "Create Campaign Reports",
+      "body": "Nexus automatically summarizes your campaign story in data form. Generate reports for clients, boards, or your own records.",
+      "options": [
+        "Generate PDF Report – ready for sharing",
+        "Export CSV – for analytics deep dives", 
+        "Schedule Automated Reports – send weekly summaries to your client"
+      ],
+      "tip": "Reports highlight what worked, where to improve, and how to repeat success next year.",
+      "primaryCta": "Generate Sample Report"
+    },
+    {
+      "id": "optimize",
+      "type": "spotlight",
+      "anchor": "[data-tutorial-step='campaigns.list']",
+      "title": "Learn and Optimize",
+      "body": "Every completed campaign becomes part of your Nexus intelligence library. Compare results, duplicate top performers, and keep refining your strategy.",
+      "tip": "The End-of-Year Holiday Campaign raised 112% of goal—duplicate it next year with one click and start ahead.",
+      "primaryCta": "View My Dashboard",
+      "secondaryCta": "Create a New Campaign",
+      "secondaryAction": "goto:/campaigns/new"
+    }
+  ],
+  "demoSeeds": {
+    "clientSlug": "regional-food-bank",
+    "campaignSlug": "eoy-holiday-2025"
+  }
+}

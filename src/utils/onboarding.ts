@@ -3,6 +3,7 @@ const CORE_TOUR_COMPLETED_KEY = "nexus.tour.core.completed";
 const CORE_TOUR_DISMISSED_KEY = "nexus.tour.core.dismissed";
 const CAMPAIGNS_TOUR_COMPLETED_KEY = "nexus.tour.campaigns.completed";
 const ANALYTICS_TOUR_COMPLETED_KEY = "nexus.tour.analytics.completed";
+const TUTORIAL_ONBOARDING_COMPLETED_KEY = "nexus.tutorial.onboarding.completed";
 const ONBOARDING_CHECKLIST_KEY = "nexus.onboarding.checklist";
 
 export type OnboardingStep =
@@ -72,6 +73,19 @@ export function markAnalyticsTourCompleted(): void {
   localStorage.setItem(ANALYTICS_TOUR_COMPLETED_KEY, "1");
   localStorage.setItem(
     `${ANALYTICS_TOUR_COMPLETED_KEY}.timestamp`,
+    new Date().toISOString(),
+  );
+}
+
+// New tutorial system functions
+export function hasCompletedTutorialOnboarding(): boolean {
+  return localStorage.getItem(TUTORIAL_ONBOARDING_COMPLETED_KEY) === "1";
+}
+
+export function markTutorialOnboardingCompleted(): void {
+  localStorage.setItem(TUTORIAL_ONBOARDING_COMPLETED_KEY, "1");
+  localStorage.setItem(
+    `${TUTORIAL_ONBOARDING_COMPLETED_KEY}.timestamp`,
     new Date().toISOString(),
   );
 }
@@ -147,7 +161,8 @@ export function isLikelyFirstTimeUser(): boolean {
   const hasAnyTourCompleted =
     hasCompletedCoreTour() ||
     hasCompletedCampaignsTour() ||
-    hasCompletedAnalyticsTour();
+    hasCompletedAnalyticsTour() ||
+    hasCompletedTutorialOnboarding();
 
   const hasAnyOnboardingProgress = Object.values(getOnboardingChecklist()).some(
     (step) => step.completed,
@@ -163,6 +178,7 @@ export function getTourPreferences() {
     coreDismissed: isCoreTourDismissed(),
     campaignsCompleted: hasCompletedCampaignsTour(),
     analyticsCompleted: hasCompletedAnalyticsTour(),
+    tutorialOnboardingCompleted: hasCompletedTutorialOnboarding(),
     onboardingProgress: getOnboardingProgress(),
     isFirstTime: isLikelyFirstTimeUser(),
     shouldShowWelcome: shouldShowWelcomeModal(),
@@ -174,7 +190,9 @@ export function resetAllOnboardingState(): void {
   resetCoreTourState();
   localStorage.removeItem(CAMPAIGNS_TOUR_COMPLETED_KEY);
   localStorage.removeItem(ANALYTICS_TOUR_COMPLETED_KEY);
+  localStorage.removeItem(TUTORIAL_ONBOARDING_COMPLETED_KEY);
   localStorage.removeItem(`${CAMPAIGNS_TOUR_COMPLETED_KEY}.timestamp`);
   localStorage.removeItem(`${ANALYTICS_TOUR_COMPLETED_KEY}.timestamp`);
+  localStorage.removeItem(`${TUTORIAL_ONBOARDING_COMPLETED_KEY}.timestamp`);
   resetOnboardingChecklist();
 }
