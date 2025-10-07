@@ -1,7 +1,8 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 
-import { AppShell } from "@/components/layout/AppShell";
+import AppLayout from "@/layouts/AppLayout";
+import ClientLayout from "@/layouts/ClientLayout";
 import ClientsPage from "@/pages/ClientsPage";
 import Dashboard from "@/pages/Dashboard";
 
@@ -22,11 +23,16 @@ const PageLoader = () => (
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route element={<AppShell />}>
+      {/* Global layout routes */}
+      <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="/clients" element={<ClientsPage />} />
+        <Route path="clients" element={<ClientsPage />} />
+      </Route>
+
+      {/* Client-specific layout routes */}
+      <Route path="clients/:clientId" element={<ClientLayout />}>
         <Route
-          path="/clients/:clientId"
+          index
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientDashboard />
@@ -34,7 +40,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/clients/:clientId/campaigns"
+          path="campaigns"
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientCampaigns />
@@ -42,7 +48,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/clients/:clientId/campaigns/new"
+          path="campaigns/new"
           element={
             <Suspense fallback={<PageLoader />}>
               <CampaignBuilder />
@@ -50,7 +56,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/clients/:clientId/campaigns/:campaignId"
+          path="campaigns/:campaignId"
           element={
             <Suspense fallback={<PageLoader />}>
               <CampaignBuilder />
@@ -58,7 +64,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/clients/:clientId/analytics"
+          path="analytics"
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientAnalytics />
@@ -66,7 +72,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/clients/:clientId/reports"
+          path="reports"
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientReports />
