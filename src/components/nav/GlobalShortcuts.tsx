@@ -6,8 +6,13 @@ export default function GlobalShortcuts() {
   const { clientId } = useParams();
 
   useEffect(() => {
+    const isTypingTarget = (el: EventTarget | null) =>
+      el instanceof HTMLElement &&
+      (el.closest("input, textarea, [contenteditable=''], [contenteditable='true']") !== null);
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) return;
+      if (isTypingTarget(e.target)) return; // bail out if typing
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === "g") {
         const next = (k: string) => {
           if (k === "c") navigate("/clients");

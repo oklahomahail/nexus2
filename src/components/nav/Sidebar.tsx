@@ -1,8 +1,10 @@
 import React from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams, useLocation } from "react-router-dom";
+import { analytics } from "@/utils/analytics";
 
 export const Sidebar: React.FC = () => {
   const { clientId } = useParams();
+  const location = useLocation();
 
   const link = (to: string, label: string, testId?: string) => (
     <NavLink
@@ -12,6 +14,7 @@ export const Sidebar: React.FC = () => {
         (isActive ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
       }
       data-tutorial-step={testId}
+      onClick={() => analytics.navigation(to, location.pathname)}
     >
       {label}
     </NavLink>

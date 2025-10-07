@@ -15,6 +15,40 @@ export default function ClientCampaigns() {
     }
   ];
 
+  // Show empty state when no campaigns (for demo purposes, you can set campaigns = [])
+  if (campaigns.length === 0) {
+    return (
+      <div className="p-6" data-tutorial-step="campaigns.page">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-xl font-semibold">Campaigns</h1>
+          <button 
+            className="px-3 py-1.5 border rounded-md bg-white"
+            onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+            data-tutorial-step="campaigns.new"
+          >
+            New Campaign
+          </button>
+        </div>
+        
+        <div className="text-center py-12">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h2>
+            <p className="text-gray-600 mb-6">
+              Create your first campaign to start tracking performance and engaging donors.
+            </p>
+            <button 
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+              data-tutorial-step="campaigns.new"
+            >
+              Create Your First Campaign
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6" data-tutorial-step="campaigns.page">
       <div className="flex justify-between mb-4">

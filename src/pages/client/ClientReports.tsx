@@ -10,6 +10,35 @@ export default function ClientReports() {
     { id: 3, name: "Campaign Performance Report", date: "2025-03-05", type: "Campaign" },
   ];
 
+  // Show empty state when no reports (for demo purposes, you can set reports = [])
+  if (reports.length === 0) {
+    return (
+      <div className="p-6" data-tutorial-step="reports.panel">
+        <div className="flex justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-semibold mb-2">Reports</h1>
+            <p className="text-gray-600">Generate and download detailed reports</p>
+          </div>
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            Generate New Report
+          </button>
+        </div>
+        
+        <div className="text-center py-12">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">No reports yet</h2>
+            <p className="text-gray-600 mb-6">
+              Generate your first report to track fundraising performance and donor insights.
+            </p>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+              Generate Your First Report
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6" data-tutorial-step="reports.panel">
       <div className="flex justify-between mb-6">

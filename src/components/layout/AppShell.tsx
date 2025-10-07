@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "@/components/nav/Sidebar";
 import { Topbar } from "@/components/nav/Topbar";
+import { LastLocationRedirector } from "@/components/nav/LastLocationRedirector";
 import GlobalShortcuts from "@/components/nav/GlobalShortcuts";
 import DemoBanner from "@/components/nav/DemoBanner";
 
@@ -17,6 +18,7 @@ export const AppShell: React.FC = () => {
       <main className="overflow-auto bg-zinc-50">
         <Outlet />
       </main>
+      <LastLocationRedirector />
       <GlobalShortcuts />
       <DemoBanner />
     </div>

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { analytics } from "@/utils/analytics";
 
 type Props = { clientId: string };
 
@@ -22,23 +23,34 @@ export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
       <button 
         className="px-3 py-1.5 border rounded-md bg-white text-sm" 
         onClick={() => setOpen(v => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls="campaign-switcher-menu"
       >
         Campaigns
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-80 border bg-white rounded-md shadow z-50 p-2">
+        <div 
+          className="absolute right-0 mt-2 w-80 border bg-white rounded-md shadow z-50 p-2"
+          id="campaign-switcher-menu"
+          role="dialog"
+          aria-label="Select campaign"
+        >
           <input
             className="w-full border rounded-md px-2 py-1 mb-2 text-sm"
             placeholder="Search campaigns"
             value={query}
             onChange={e => setQuery(e.target.value)}
+            aria-label="Search campaigns"
+            autoFocus
           />
-          <ul className="max-h-64 overflow-auto">
+          <ul className="max-h-64 overflow-auto" role="listbox" tabIndex={-1}>
             {campaigns.map(c => (
-              <li key={c.id}>
+              <li key={c.id} role="option">
                 <button
                   className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                   onClick={() => {
+                    analytics.campaignSwitch(c.id, clientId);
                     navigate(`/clients/${clientId}/campaigns/${c.id}`);
                     setOpen(false);
                   }}
@@ -48,7 +60,7 @@ export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
                 </button>
               </li>
             ))}
-            <li className="mt-2 border-t pt-2">
+            <li className="mt-2 border-t pt-2" role="option">
               <button
                 className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                 onClick={() => {
