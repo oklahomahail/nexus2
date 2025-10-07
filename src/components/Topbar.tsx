@@ -321,18 +321,20 @@ const Topbar: React.FC<TopbarProps> = ({
                     <button
                       className="w-full flex items-center space-x-3 px-3 py-2.5 text-left hover:bg-slate-700/50 rounded-lg transition-colors group"
                       onClick={() => {
-                        // Import and start tour dynamically
-                        void import("@/tours/coreTour").then(
-                          ({ startCoreTour }) => {
-                            void startCoreTour();
-                          },
-                        );
-                        setShowUserMenu(false);
+                        // Reset the new tutorial system
+                        const baseKey = "nexusTutorialComplete";
+                        // Clear all versions of the tutorial completion key
+                        Object.keys(localStorage)
+                          .filter((k) => k.startsWith(baseKey))
+                          .forEach((k) => localStorage.removeItem(k));
+                        
+                        // Reload to trigger autostart
+                        window.location.reload();
                       }}
                     >
                       <HelpCircle className="w-4 h-4 text-slate-400 group-hover:text-white" />
                       <span className="text-slate-300 group-hover:text-white text-sm">
-                        Replay Tour
+                        Reset Walkthrough
                       </span>
                     </button>
                   </div>
