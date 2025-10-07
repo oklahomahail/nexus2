@@ -1,6 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useMemo, useState } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 
 import AppRoutes from "@/app/AppRoutes";
 import { ClientProvider } from "@/contexts/ClientContext";
@@ -45,12 +44,10 @@ const App: React.FC = () => {
   }, [versionedConfig]);
 
   return (
-    <BrowserRouter>
-      <ClientProvider>
-        <AppRoutes />
-        <TutorialManager config={versionedConfig} />
-      </ClientProvider>
-    </BrowserRouter>
+    <ClientProvider>
+      <AppRoutes />
+      <TutorialManager config={versionedConfig} />
+    </ClientProvider>
   );
 };
 
