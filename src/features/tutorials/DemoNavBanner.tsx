@@ -1,5 +1,3 @@
-import React from "react";
-
 export function DemoNavBanner() {
   if (sessionStorage.getItem("demoBannerDismissed") === "1") return null;
   return (

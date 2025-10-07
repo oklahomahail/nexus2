@@ -29,6 +29,7 @@ export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({
   return <ClientCtx.Provider value={value}>{children}</ClientCtx.Provider>;
 };
 
+/* eslint-disable react-refresh/only-export-components */
 export function useClientCtx() {
   const ctx = useContext(ClientCtx);
   if (!ctx) throw new Error("useClientCtx must be used within ClientProvider");

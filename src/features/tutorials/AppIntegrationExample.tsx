@@ -7,7 +7,6 @@
 
 import { useEffect, useState } from "react";
 
-import { seedDemoData } from "@/data/demo";
 import {
   TutorialManager,
   loadTutorialConfig,
@@ -40,16 +39,7 @@ export default function App() {
     void initTutorial();
   }, []);
 
-  // Handle tutorial events
-  const _handleTutorialStart = () => {
-    console.log("Tutorial started - seeding demo data");
-    seedDemoData(); // Load demo data for realistic tutorial experience
-  };
-
-  const _handleTutorialComplete = () => {
-    console.log("Tutorial completed! User is now onboarded.");
-    // Optionally trigger analytics, show completion celebration, etc.
-  };
+  // Handle tutorial events removed - unused locals
 
   const handleTutorialDismiss = () => {
     console.log("Tutorial dismissed by user");

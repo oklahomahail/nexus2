@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function DemoBanner() {
   const show = new URLSearchParams(location.search).get("tour") === "1";
 
