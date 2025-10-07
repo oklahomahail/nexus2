@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import { AppShell } from "@/components/layout/AppShell";
 import ClientsPage from "@/pages/ClientsPage";
+import Dashboard from "@/pages/Dashboard";
 
 // Lazy load heavy pages
 const ClientDashboard = lazy(() => import("@/pages/client/ClientDashboard"));
@@ -22,7 +23,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route element={<AppShell />}>
-        <Route path="/" element={<Navigate to="/clients" replace />} />
+        <Route index element={<Dashboard />} />
         <Route path="/clients" element={<ClientsPage />} />
         <Route
           path="/clients/:clientId"

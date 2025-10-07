@@ -7,9 +7,10 @@ export const Sidebar: React.FC = () => {
   const { clientId } = useParams();
   const location = useLocation();
 
-  const link = (to: string, label: string, testId?: string) => (
+  const link = (to: string, label: string, testId?: string, end?: boolean) => (
     <NavLink
       to={to}
+      end={end}
       className={({ isActive }) =>
         "block px-4 py-2 rounded-md " +
         (isActive
@@ -28,6 +29,7 @@ export const Sidebar: React.FC = () => {
       <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
         Navigation
       </div>
+      {link("/", "Dashboard", "nav.dashboard.main", true)}
       {link("/clients", "Clients", "nav.clients")}
       {clientId && (
         <>
