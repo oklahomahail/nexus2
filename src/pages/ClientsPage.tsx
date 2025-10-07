@@ -43,38 +43,38 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="p-6" data-tutorial-step="clients.page">
-      <div className="flex justify-between mb-4">
-        <h1 className="text-xl font-semibold">Clients</h1>
+    <div className="space-y-6">
+      <header className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Clients</h1>
         <button
-          className="px-3 py-1.5 border rounded-md bg-white"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
           data-tutorial-step="clients.add"
         >
           New Client
         </button>
-      </div>
+      </header>
 
-      <div className="bg-white rounded-lg border">
-        <table className="w-full">
-          <thead className="border-b">
-            <tr>
-              <th className="text-left p-4">Name</th>
-              <th className="text-left p-4">Status</th>
-              <th className="text-left p-4">Actions</th>
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
+        <table className="w-full text-left">
+          <thead className="text-sm text-slate-600 bg-slate-50">
+            <tr className="border-b border-slate-200">
+              <th className="px-6 py-4 font-semibold">Name</th>
+              <th className="px-6 py-4 font-semibold">Status</th>
+              <th className="px-6 py-4 font-semibold">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-200">
             {clients.map((client) => (
-              <tr key={client.id} className="border-b">
-                <td className="p-4">{client.name}</td>
-                <td className="p-4">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <tr key={client.id} className="bg-white hover:bg-slate-50">
+                <td className="px-6 py-4 text-slate-800 font-medium">{client.name}</td>
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 ring-1 ring-inset ring-emerald-200">
                     {client.status}
                   </span>
                 </td>
-                <td className="p-4">
+                <td className="px-6 py-4">
                   <button
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-blue-600 hover:text-blue-800 font-medium"
                     onClick={() => {
                       localStorage.setItem("nexus:lastClientId", client.id);
                       void navigate(`/clients/${client.id}`);
