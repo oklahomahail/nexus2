@@ -6,13 +6,13 @@ export default function ClientCampaigns() {
   const navigate = useNavigate();
 
   const campaigns = [
-    { 
-      id: "eoy-holiday-2025", 
-      name: "End-of-Year Holiday 2025", 
+    {
+      id: "eoy-holiday-2025",
+      name: "End-of-Year Holiday 2025",
       status: "Active",
       raised: "$45,230",
-      goal: "$75,000"
-    }
+      goal: "$75,000",
+    },
   ];
 
   // Show empty state when no campaigns (for demo purposes, you can set campaigns = [])
@@ -21,7 +21,7 @@ export default function ClientCampaigns() {
       <div className="p-6" data-tutorial-step="campaigns.page">
         <div className="flex justify-between mb-4">
           <h1 className="text-xl font-semibold">Campaigns</h1>
-          <button 
+          <button
             className="px-3 py-1.5 border rounded-md bg-white"
             onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
             data-tutorial-step="campaigns.new"
@@ -29,14 +29,17 @@ export default function ClientCampaigns() {
             New Campaign
           </button>
         </div>
-        
+
         <div className="text-center py-12">
           <div className="max-w-md mx-auto">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">No campaigns yet</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              No campaigns yet
+            </h2>
             <p className="text-gray-600 mb-6">
-              Create your first campaign to start tracking performance and engaging donors.
+              Create your first campaign to start tracking performance and
+              engaging donors.
             </p>
-            <button 
+            <button
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
               data-tutorial-step="campaigns.new"
@@ -53,7 +56,7 @@ export default function ClientCampaigns() {
     <div className="p-6" data-tutorial-step="campaigns.page">
       <div className="flex justify-between mb-4">
         <h1 className="text-xl font-semibold">Campaigns</h1>
-        <button 
+        <button
           className="px-3 py-1.5 border rounded-md bg-white"
           onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
           data-tutorial-step="campaigns.new"
@@ -61,8 +64,11 @@ export default function ClientCampaigns() {
           New Campaign
         </button>
       </div>
-      
-      <div className="bg-white rounded-lg border" data-tutorial-step="campaigns.list">
+
+      <div
+        className="bg-white rounded-lg border"
+        data-tutorial-step="campaigns.list"
+      >
         <table className="w-full">
           <thead className="border-b">
             <tr>
@@ -73,7 +79,7 @@ export default function ClientCampaigns() {
             </tr>
           </thead>
           <tbody>
-            {campaigns.map(campaign => (
+            {campaigns.map((campaign) => (
               <tr key={campaign.id} className="border-b">
                 <td className="p-4">{campaign.name}</td>
                 <td className="p-4">
@@ -83,16 +89,23 @@ export default function ClientCampaigns() {
                 </td>
                 <td className="p-4">
                   <div className="text-sm">
-                    <div>{campaign.raised} / {campaign.goal}</div>
+                    <div>
+                      {campaign.raised} / {campaign.goal}
+                    </div>
                     <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{width: '60%'}}></div>
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{ width: "60%" }}
+                      ></div>
                     </div>
                   </div>
                 </td>
                 <td className="p-4">
-                  <button 
+                  <button
                     className="text-blue-600 hover:text-blue-800"
-                    onClick={() => navigate(`/clients/${clientId}/campaigns/${campaign.id}`)}
+                    onClick={() =>
+                      navigate(`/clients/${clientId}/campaigns/${campaign.id}`)
+                    }
                     data-tutorial-step="campaigns.row"
                   >
                     Edit

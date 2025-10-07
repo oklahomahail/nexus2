@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function CampaignBuilder() {
-  const { clientId, campaignId } = useParams();
+  const { clientId: _clientId, campaignId } = useParams();
   const isEdit = !!campaignId;
   const [hasChanges, setHasChanges] = useState(false);
   const dirtyRef = useRef(false);
@@ -34,10 +34,12 @@ export default function CampaignBuilder() {
     <div className="p-6" data-tutorial-step="campaign.builder">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold mb-2">
-          {isEdit ? 'Edit Campaign' : 'Create New Campaign'}
+          {isEdit ? "Edit Campaign" : "Create New Campaign"}
         </h1>
         <p className="text-gray-600">
-          {isEdit ? 'Update your campaign details' : 'Build a new campaign for your organization'}
+          {isEdit
+            ? "Update your campaign details"
+            : "Build a new campaign for your organization"}
         </p>
       </div>
 
@@ -77,7 +79,11 @@ export default function CampaignBuilder() {
               <textarea
                 className="w-full border rounded-md px-3 py-2 h-24"
                 placeholder="Describe your campaign..."
-                defaultValue={isEdit ? "Help us raise funds for our holiday food distribution program." : ""}
+                defaultValue={
+                  isEdit
+                    ? "Help us raise funds for our holiday food distribution program."
+                    : ""
+                }
                 onChange={handleInputChange}
               />
             </div>
@@ -86,7 +92,10 @@ export default function CampaignBuilder() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Campaign Type
               </label>
-              <select className="w-full border rounded-md px-3 py-2" onChange={handleInputChange}>
+              <select
+                className="w-full border rounded-md px-3 py-2"
+                onChange={handleInputChange}
+              >
                 <option value="fundraising">Fundraising</option>
                 <option value="awareness">Awareness</option>
                 <option value="volunteer">Volunteer Recruitment</option>
@@ -94,12 +103,12 @@ export default function CampaignBuilder() {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <button 
+              <button
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 onClick={handleSave}
               >
-                {isEdit ? 'Update Campaign' : 'Create Campaign'}
-                {hasChanges && ' *'}
+                {isEdit ? "Update Campaign" : "Create Campaign"}
+                {hasChanges && " *"}
               </button>
               <button className="px-4 py-2 border rounded-md hover:bg-gray-50">
                 Cancel

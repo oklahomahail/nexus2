@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import { analytics } from "@/utils/analytics";
 
 const DEMO_CLIENTS: { id: string; name: string }[] = [
-  { id: "regional-food-bank", name: "Regional Food Bank" }
+  { id: "regional-food-bank", name: "Regional Food Bank" },
   // add real clients here
 ];
 
@@ -14,11 +15,16 @@ export const ClientSwitcher: React.FC = () => {
   const navigate = useNavigate();
 
   const results = useMemo(
-    () => DEMO_CLIENTS.filter(c => c.name.toLowerCase().includes(query.toLowerCase())),
-    [query]
+    () =>
+      DEMO_CLIENTS.filter((c) =>
+        c.name.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [query],
   );
 
-  const currentClient = clientId ? DEMO_CLIENTS.find(c => c.id === clientId) : null;
+  const currentClient = clientId
+    ? DEMO_CLIENTS.find((c) => c.id === clientId)
+    : null;
 
   return (
     <div className="relative" data-tutorial-step="clients.switcher">
@@ -33,7 +39,7 @@ export const ClientSwitcher: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div 
+        <div
           className="absolute right-0 mt-2 w-72 border bg-white rounded-md shadow z-50 p-2"
           id="client-switcher-menu"
           role="dialog"
@@ -43,23 +49,27 @@ export const ClientSwitcher: React.FC = () => {
             className="w-full border rounded-md px-2 py-1 mb-2 text-sm"
             placeholder="Search clients"
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             data-tutorial-step="clients.search"
             aria-label="Search clients"
             autoFocus
           />
           <ul className="max-h-64 overflow-auto" role="listbox" tabIndex={-1}>
-            {results.map(c => (
+            {results.map((c) => (
               <li key={c.id} role="option" aria-selected={clientId === c.id}>
                 <button
                   className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                   onClick={() => {
                     localStorage.setItem("nexus:lastClientId", c.id);
                     analytics.clientSwitch(c.id);
-                    navigate(`/clients/${c.id}`);
+                    void navigate(`/clients/${c.id}`);
                     setIsOpen(false);
                   }}
-                  data-tutorial-step={c.id === "regional-food-bank" ? "clients.table.row.regional-food-bank" : undefined}
+                  data-tutorial-step={
+                    c.id === "regional-food-bank"
+                      ? "clients.table.row.regional-food-bank"
+                      : undefined
+                  }
                 >
                   {c.name}
                 </button>
@@ -69,7 +79,7 @@ export const ClientSwitcher: React.FC = () => {
               <button
                 className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                 onClick={() => {
-                  navigate("/clients");
+                  void navigate("/clients");
                   setIsOpen(false);
                 }}
                 data-tutorial-step="clients.add"

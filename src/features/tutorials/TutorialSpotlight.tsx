@@ -1,9 +1,6 @@
-import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui-kit/Button";
-
-import type { TutorialStep } from "./types";
 
 type Props = {
   anchorEl: HTMLElement | null;

@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 export default function ClientAnalytics() {
-  const { clientId } = useParams();
+  const { clientId: _clientId } = useParams();
 
   return (
     <div className="p-6" data-tutorial-step="analytics.page">
@@ -41,7 +41,10 @@ export default function ClientAnalytics() {
               <span className="text-sm">Age 25-34</span>
               <div className="flex items-center gap-2">
                 <div className="w-20 bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{width: '35%'}}></div>
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{ width: "35%" }}
+                  ></div>
                 </div>
                 <span className="text-sm text-gray-600">35%</span>
               </div>
@@ -50,7 +53,10 @@ export default function ClientAnalytics() {
               <span className="text-sm">Age 35-44</span>
               <div className="flex items-center gap-2">
                 <div className="w-20 bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{width: '28%'}}></div>
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{ width: "28%" }}
+                  ></div>
                 </div>
                 <span className="text-sm text-gray-600">28%</span>
               </div>
@@ -59,7 +65,10 @@ export default function ClientAnalytics() {
               <span className="text-sm">Age 45-54</span>
               <div className="flex items-center gap-2">
                 <div className="w-20 bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{width: '22%'}}></div>
+                  <div
+                    className="bg-blue-600 h-2 rounded-full"
+                    style={{ width: "22%" }}
+                  ></div>
                 </div>
                 <span className="text-sm text-gray-600">22%</span>
               </div>
@@ -68,7 +77,9 @@ export default function ClientAnalytics() {
         </div>
 
         <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-lg font-semibold mb-4">Top Performing Campaigns</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            Top Performing Campaigns
+          </h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-sm">End-of-Year Holiday 2025</span>
@@ -89,7 +100,9 @@ export default function ClientAnalytics() {
           <h3 className="text-lg font-semibold mb-4">Monthly Trends</h3>
           <div className="text-center text-gray-500 py-8">
             <p>Chart visualization would go here</p>
-            <p className="text-sm">(Line chart showing donation trends over time)</p>
+            <p className="text-sm">
+              (Line chart showing donation trends over time)
+            </p>
           </div>
         </div>
       </div>

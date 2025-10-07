@@ -8,23 +8,25 @@ export default function GlobalShortcuts() {
   useEffect(() => {
     const isTypingTarget = (el: EventTarget | null) =>
       el instanceof HTMLElement &&
-      (el.closest("input, textarea, [contenteditable=''], [contenteditable='true']") !== null);
+      el.closest(
+        "input, textarea, [contenteditable=''], [contenteditable='true']",
+      ) !== null;
 
     const onKey = (e: KeyboardEvent) => {
       if (isTypingTarget(e.target)) return; // bail out if typing
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === "g") {
         const next = (k: string) => {
-          if (k === "c") navigate("/clients");
+          if (k === "c") void navigate("/clients");
           if (!clientId) return;
-          if (k === "d") navigate(`/clients/${clientId}`);
-          if (k === "p") navigate(`/clients/${clientId}/campaigns`);
-          if (k === "a") navigate(`/clients/${clientId}/analytics`);
-          if (k === "r") navigate(`/clients/${clientId}/reports`);
+          if (k === "d") void navigate(`/clients/${clientId}`);
+          if (k === "p") void navigate(`/clients/${clientId}/campaigns`);
+          if (k === "a") void navigate(`/clients/${clientId}/analytics`);
+          if (k === "r") void navigate(`/clients/${clientId}/reports`);
         };
-        const fn = (ev: KeyboardEvent) => { 
-          window.removeEventListener("keydown", fn, true); 
-          next(ev.key); 
+        const fn = (ev: KeyboardEvent) => {
+          window.removeEventListener("keydown", fn, true);
+          next(ev.key);
         };
         window.addEventListener("keydown", fn, true);
       }

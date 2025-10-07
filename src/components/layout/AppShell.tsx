@@ -1,10 +1,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+
+import DemoBanner from "@/components/nav/DemoBanner";
+import GlobalShortcuts from "@/components/nav/GlobalShortcuts";
+import { LastLocationRedirector } from "@/components/nav/LastLocationRedirector";
 import { Sidebar } from "@/components/nav/Sidebar";
 import { Topbar } from "@/components/nav/Topbar";
-import { LastLocationRedirector } from "@/components/nav/LastLocationRedirector";
-import GlobalShortcuts from "@/components/nav/GlobalShortcuts";
-import DemoBanner from "@/components/nav/DemoBanner";
 
 export const AppShell: React.FC = () => {
   return (

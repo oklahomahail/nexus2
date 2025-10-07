@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 export type Client = { id: string; name: string; slug?: string };
-export type Campaign = { id: string; name: string; clientId: string; status?: string };
+export type Campaign = {
+  id: string;
+  name: string;
+  clientId: string;
+  status?: string;
+};
 
 type Ctx = {
   currentClient: Client | null;
@@ -12,10 +17,15 @@ type Ctx = {
 
 const ClientCtx = createContext<Ctx | null>(null);
 
-export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ClientProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [currentClient, setCurrentClient] = useState<Client | null>(null);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const value = useMemo(() => ({ currentClient, setCurrentClient, campaigns, setCampaigns }), [currentClient, campaigns]);
+  const value = useMemo(
+    () => ({ currentClient, setCurrentClient, campaigns, setCampaigns }),
+    [currentClient, campaigns],
+  );
   return <ClientCtx.Provider value={value}>{children}</ClientCtx.Provider>;
 };
 

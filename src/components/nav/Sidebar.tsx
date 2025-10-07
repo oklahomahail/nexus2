@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, useParams, useLocation } from "react-router-dom";
+
 import { analytics } from "@/utils/analytics";
 
 export const Sidebar: React.FC = () => {
@@ -11,7 +12,9 @@ export const Sidebar: React.FC = () => {
       to={to}
       className={({ isActive }) =>
         "block px-4 py-2 rounded-md " +
-        (isActive ? "bg-zinc-800 text-white" : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
+        (isActive
+          ? "bg-zinc-800 text-white"
+          : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
       }
       data-tutorial-step={testId}
       onClick={() => analytics.navigation(to, location.pathname)}
@@ -22,7 +25,9 @@ export const Sidebar: React.FC = () => {
 
   return (
     <nav className="p-3 space-y-2">
-      <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">Navigation</div>
+      <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
+        Navigation
+      </div>
       {link("/clients", "Clients", "nav.clients")}
       {clientId && (
         <>

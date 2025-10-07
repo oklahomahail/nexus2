@@ -10,7 +10,7 @@ export function LastLocationRedirector() {
     if (location.pathname === "/" || location.pathname === "/clients") {
       const lastClientId = localStorage.getItem("nexus:lastClientId");
       if (lastClientId) {
-        navigate(`/clients/${lastClientId}`, { replace: true });
+        void navigate(`/clients/${lastClientId}`, { replace: true });
       }
     }
   }, [location.pathname, navigate]);

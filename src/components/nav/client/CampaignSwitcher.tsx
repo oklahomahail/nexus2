@@ -1,28 +1,38 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { analytics } from "@/utils/analytics";
 
 type Props = { clientId: string };
 
 const DEMO_CAMPAIGNS = [
-  { id: "eoy-holiday-2025", name: "End-of-Year Holiday 2025", clientId: "regional-food-bank" }
+  {
+    id: "eoy-holiday-2025",
+    name: "End-of-Year Holiday 2025",
+    clientId: "regional-food-bank",
+  },
 ];
 
 export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
-  
+
   const campaigns = useMemo(
-    () => DEMO_CAMPAIGNS.filter(c => c.clientId === clientId && c.name.toLowerCase().includes(query.toLowerCase())),
-    [clientId, query]
+    () =>
+      DEMO_CAMPAIGNS.filter(
+        (c) =>
+          c.clientId === clientId &&
+          c.name.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [clientId, query],
   );
 
   return (
     <div className="relative" data-tutorial-step="campaigns.switcher">
-      <button 
-        className="px-3 py-1.5 border rounded-md bg-white text-sm" 
-        onClick={() => setOpen(v => !v)}
+      <button
+        className="px-3 py-1.5 border rounded-md bg-white text-sm"
+        onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls="campaign-switcher-menu"
@@ -30,7 +40,7 @@ export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
         Campaigns
       </button>
       {open && (
-        <div 
+        <div
           className="absolute right-0 mt-2 w-80 border bg-white rounded-md shadow z-50 p-2"
           id="campaign-switcher-menu"
           role="dialog"
@@ -40,18 +50,18 @@ export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
             className="w-full border rounded-md px-2 py-1 mb-2 text-sm"
             placeholder="Search campaigns"
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             aria-label="Search campaigns"
             autoFocus
           />
           <ul className="max-h-64 overflow-auto" role="listbox" tabIndex={-1}>
-            {campaigns.map(c => (
+            {campaigns.map((c) => (
               <li key={c.id} role="option">
                 <button
                   className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                   onClick={() => {
                     analytics.campaignSwitch(c.id, clientId);
-                    navigate(`/clients/${clientId}/campaigns/${c.id}`);
+                    void navigate(`/clients/${clientId}/campaigns/${c.id}`);
                     setOpen(false);
                   }}
                   data-tutorial-step="campaigns.row"
@@ -64,7 +74,7 @@ export const CampaignSwitcher: React.FC<Props> = ({ clientId }) => {
               <button
                 className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                 onClick={() => {
-                  navigate(`/clients/${clientId}/campaigns/new`);
+                  void navigate(`/clients/${clientId}/campaigns/new`);
                   setOpen(false);
                 }}
                 data-tutorial-step="campaigns.new"

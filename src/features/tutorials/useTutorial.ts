@@ -6,15 +6,15 @@ type Step = {
   type: "modal" | "spotlight";
   title: string;
   body: string;
-  anchors?: string[];              // NEW: multiple candidates
-  anchor?: string;                 // backward compatible
-  navigateTo?: string;             // NEW: route to push before step shows
+  anchors?: string[]; // NEW: multiple candidates
+  anchor?: string; // backward compatible
+  navigateTo?: string; // NEW: route to push before step shows
   primaryCta?: string;
   secondaryCta?: string;
   secondaryAction?: "dismiss" | "restart" | string;
   tip?: string;
   checklist?: string[];
-  waitForAnchorMs?: number;        // NEW: wait for element
+  waitForAnchorMs?: number; // NEW: wait for element
 };
 
 export type TutorialConfig = {
@@ -40,7 +40,12 @@ export function useTutorial(config?: TutorialConfig) {
   // Resolve first existing anchor
   const anchorSelector = useMemo(() => {
     if (!step) return null;
-    const cands = step.anchors && step.anchors.length ? step.anchors : step.anchor ? [step.anchor] : [];
+    const cands =
+      step.anchors && step.anchors.length
+        ? step.anchors
+        : step.anchor
+          ? [step.anchor]
+          : [];
     for (const sel of cands) {
       if (document.querySelector(sel)) return sel;
     }
@@ -55,7 +60,7 @@ export function useTutorial(config?: TutorialConfig) {
 
     async function resolveAnchor() {
       if (step.navigateTo) {
-        navigate(step.navigateTo);
+        void navigate(step.navigateTo);
       }
       const timeout = step.waitForAnchorMs ?? 0;
       if (!anchorSelector) {
@@ -65,17 +70,26 @@ export function useTutorial(config?: TutorialConfig) {
       // wait loop
       let el: Element | null = null;
       const start = Date.now();
-      while (!cancelled && !(el = document.querySelector(anchorSelector)) && Date.now() - start < timeout) {
-        await new Promise(r => setTimeout(r, 100));
+      while (
+        !cancelled &&
+        !(el = document.querySelector(anchorSelector)) &&
+        Date.now() - start < timeout
+      ) {
+        await new Promise((r) => setTimeout(r, 100));
       }
       setAnchorEl((el as HTMLElement) || null);
       if (el) {
-        (el as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
+        (el as HTMLElement).scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       }
     }
 
     void resolveAnchor();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [step, anchorSelector, navigate]);
 
   const start = useCallback(() => {
@@ -102,12 +116,12 @@ export function useTutorial(config?: TutorialConfig) {
   }, []);
 
   const next = useCallback(() => {
-    if (index < steps.length - 1) setIndex(i => i + 1);
+    if (index < steps.length - 1) setIndex((i) => i + 1);
     else dismiss();
   }, [index, steps.length, dismiss]);
 
   const prev = useCallback(() => {
-    setIndex(i => Math.max(0, i - 1));
+    setIndex((i) => Math.max(0, i - 1));
   }, []);
 
   const isCompleted = useMemo(() => {
@@ -118,7 +132,8 @@ export function useTutorial(config?: TutorialConfig) {
   useEffect(() => {
     if (!config) return;
     if (hasAutoStartedRef.current) return;
-    const forced = new URLSearchParams(window.location.search).get("tour") === "1";
+    const forced =
+      new URLSearchParams(window.location.search).get("tour") === "1";
     const suppressed = sessionStorage.getItem(suppressKey) === "1";
     if ((forced || !isCompleted) && !suppressed) {
       hasAutoStartedRef.current = true;
@@ -139,6 +154,6 @@ export function useTutorial(config?: TutorialConfig) {
     dismiss,
     restart,
     anchorEl,
-    isCompleted
+    isCompleted,
   };
 }

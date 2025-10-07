@@ -11,13 +11,20 @@ export default function ClientDashboard() {
         <p className="text-gray-600">Welcome to {clientId} dashboard</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" data-tutorial-step="dashboard.performance">
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+        data-tutorial-step="dashboard.performance"
+      >
         <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Total Raised</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">
+            Total Raised
+          </h3>
           <p className="text-2xl font-bold text-green-600">$127,450</p>
         </div>
         <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Active Campaigns</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">
+            Active Campaigns
+          </h3>
           <p className="text-2xl font-bold">3</p>
         </div>
         <div className="bg-white p-6 rounded-lg border">
@@ -25,7 +32,9 @@ export default function ClientDashboard() {
           <p className="text-2xl font-bold">1,248</p>
         </div>
         <div className="bg-white p-6 rounded-lg border">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">Conversion Rate</h3>
+          <h3 className="text-sm font-medium text-gray-600 mb-2">
+            Conversion Rate
+          </h3>
           <p className="text-2xl font-bold text-blue-600">3.2%</p>
         </div>
       </div>

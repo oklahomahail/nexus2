@@ -41,12 +41,12 @@ export default function App() {
   }, []);
 
   // Handle tutorial events
-  const handleTutorialStart = () => {
+  const _handleTutorialStart = () => {
     console.log("Tutorial started - seeding demo data");
     seedDemoData(); // Load demo data for realistic tutorial experience
   };
 
-  const handleTutorialComplete = () => {
+  const _handleTutorialComplete = () => {
     console.log("Tutorial completed! User is now onboarded.");
     // Optionally trigger analytics, show completion celebration, etc.
   };

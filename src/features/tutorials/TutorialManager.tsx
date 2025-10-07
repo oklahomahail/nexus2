@@ -1,11 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useTutorial, type TutorialConfig } from "./useTutorial";
+
 import { TutorialSpotlight } from "./TutorialSpotlight";
+import { useTutorial, type TutorialConfig } from "./useTutorial";
 
 type Props = { config: TutorialConfig | null; onDismiss?: () => void };
 
 export const TutorialManager: React.FC<Props> = ({ config, onDismiss }) => {
-  const { active, step, start, next, prev, dismiss, restart, anchorEl } = useTutorial(config || undefined);
+  const {
+    active,
+    step,
+    start: _start,
+    next,
+    prev: _prev,
+    dismiss,
+    restart,
+    anchorEl,
+  } = useTutorial(config || undefined);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -13,7 +23,9 @@ export const TutorialManager: React.FC<Props> = ({ config, onDismiss }) => {
     setVisible(true);
   }, [config]);
 
-  const handlePrimary = useCallback(() => { next(); }, [next]);
+  const handlePrimary = useCallback(() => {
+    next();
+  }, [next]);
 
   const handleSecondary = useCallback(() => {
     if (!step) return;
@@ -43,7 +55,7 @@ export const TutorialManager: React.FC<Props> = ({ config, onDismiss }) => {
     primaryCta: step.primaryCta || "Next",
     secondaryCta: step.secondaryCta,
     onPrimary: handlePrimary,
-    onSecondary: handleSecondary
+    onSecondary: handleSecondary,
   };
 
   return step.type === "modal" ? (

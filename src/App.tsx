@@ -2,10 +2,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 
+import AppRoutes from "@/app/AppRoutes";
 import { ClientProvider } from "@/contexts/ClientContext";
 import { TutorialManager } from "@/features/tutorials/TutorialManager";
 import { type TutorialConfig } from "@/features/tutorials/useTutorial";
-import AppRoutes from "@/app/AppRoutes";
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<TutorialConfig | null>(null);
