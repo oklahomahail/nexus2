@@ -46,7 +46,8 @@ export type TutorialActions = {
   reset: () => void;
 };
 
-export type TutorialHookReturn = TutorialState & TutorialActions & {
-  anchorElement: HTMLElement | null;
-  config: TutorialConfig | null | undefined;
-};
+export type TutorialHookReturn = TutorialState &
+  TutorialActions & {
+    anchorElement: HTMLElement | null;
+    config: TutorialConfig | null | undefined;
+  };

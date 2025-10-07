@@ -6,7 +6,9 @@ export { TutorialManager } from "./TutorialManager";
 export { useTutorialManager } from "./useTutorialManager";
 
 // Tutorial configuration loader
-export const loadTutorialConfig = async (): Promise<import("./types").TutorialConfig | null> => {
+export const loadTutorialConfig = async (): Promise<
+  import("./types").TutorialConfig | null
+> => {
   try {
     // Import the JSON directly as ES module in Vite
     const config = await import("@/data/tutorials/nexusTutorial.json");
