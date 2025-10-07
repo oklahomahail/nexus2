@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect } from "react";
-import { useTutorial } from "./useTutorial";
+
 import { TutorialSpotlight } from "./TutorialSpotlight";
+import { useTutorial } from "./useTutorial";
+
 import type { TutorialConfig } from "./types";
 
 type Props = {
@@ -45,13 +47,13 @@ export const TutorialManager: React.FC<Props> = ({
   // Handle secondary action
   const handleSecondary = useCallback(() => {
     if (!currentStep) return;
-    
+
     if (currentStep.secondaryAction === "dismiss") {
       dismiss();
       onDismiss?.();
       return;
     }
-    
+
     if (currentStep.secondaryAction?.startsWith("goto:")) {
       const path = currentStep.secondaryAction.slice(5); // Remove "goto:" prefix
       // Use React Router navigation if available
@@ -76,14 +78,14 @@ export const TutorialManager: React.FC<Props> = ({
   // Auto-start logic (if not disabled and conditions are met)
   useEffect(() => {
     if (!config || !autoStart || isCompleted || active) return;
-    
+
     // Check if this is truly a first-time user
     const hasCompletedAnyTour = [
       "nexus.tour.core.completed",
-      "nexus.tour.campaigns.completed", 
+      "nexus.tour.campaigns.completed",
       "nexus.tour.analytics.completed",
-      "nexus.tutorial.onboarding.completed"
-    ].some(key => localStorage.getItem(key) === "1");
+      "nexus.tutorial.onboarding.completed",
+    ].some((key) => localStorage.getItem(key) === "1");
 
     if (!hasCompletedAnyTour) {
       // Small delay to ensure page is ready
@@ -91,7 +93,7 @@ export const TutorialManager: React.FC<Props> = ({
         start();
         onStart?.();
       }, 1500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [config, autoStart, isCompleted, active, start, onStart]);
@@ -99,16 +101,16 @@ export const TutorialManager: React.FC<Props> = ({
   // Provide manual start method via global function
   useEffect(() => {
     if (!config) return;
-    
+
     // Expose global function for manual tutorial start
     const startTutorial = () => {
       start();
       onStart?.();
     };
-    
+
     // Attach to window for dev tools / help menu access
     (window as any).__startNexusTutorial = startTutorial;
-    
+
     return () => {
       delete (window as any).__startNexusTutorial;
     };
@@ -117,7 +119,7 @@ export const TutorialManager: React.FC<Props> = ({
   // Handle keyboard navigation
   useEffect(() => {
     if (!active) return;
-    
+
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.key) {
         case "Escape":
@@ -161,17 +163,4 @@ export const TutorialManager: React.FC<Props> = ({
       showProgress={totalSteps > 1}
     />
   );
-};
-
-// Export a hook for imperative control
-export const useTutorialManager = (config: TutorialConfig | null) => {
-  const tutorial = useTutorial(config);
-  
-  return {
-    ...tutorial,
-    startTutorial: tutorial.start,
-    resetTutorial: tutorial.reset,
-    isTutorialActive: tutorial.active,
-    canStartTutorial: !!config && !tutorial.isCompleted,
-  };
 };

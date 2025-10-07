@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
 import clsx from "clsx";
+import React, { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui-kit/Button";
+
 import type { TutorialStep } from "./types";
 
 type Props = {
@@ -24,7 +26,11 @@ export const TutorialSpotlight: React.FC<Props> = ({
   onDismiss,
   showProgress = true,
 }) => {
-  const [popoverPosition, setPopoverPosition] = useState<{ top: number; left: number; maxWidth: number }>({
+  const [popoverPosition, setPopoverPosition] = useState<{
+    top: number;
+    left: number;
+    maxWidth: number;
+  }>({
     top: 0,
     left: 0,
     maxWidth: 420,
@@ -47,7 +53,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
     const viewportHeight = window.innerHeight;
     const popoverWidth = 420;
     const popoverHeight = 300; // estimated
-    
+
     let top = rect.bottom + 16;
     let left = rect.left;
     let maxWidth = popoverWidth;
@@ -69,9 +75,12 @@ export const TutorialSpotlight: React.FC<Props> = ({
         top = topPosition;
       } else {
         // Position to the side if neither top nor bottom works
-        top = Math.max(20, Math.min(rect.top, viewportHeight - popoverHeight - 20));
+        top = Math.max(
+          20,
+          Math.min(rect.top, viewportHeight - popoverHeight - 20),
+        );
         left = rect.right + 16;
-        
+
         // If positioning to the right doesn't work, try left
         if (left + popoverWidth > viewportWidth - 20) {
           left = rect.left - popoverWidth - 16;
@@ -87,19 +96,21 @@ export const TutorialSpotlight: React.FC<Props> = ({
     setPopoverPosition({ top, left, maxWidth });
   }, [anchorElement, step]);
 
-  const haloStyle = anchorElement ? {
-    position: "fixed" as const,
-    top: anchorElement.getBoundingClientRect().top - 8,
-    left: anchorElement.getBoundingClientRect().left - 8,
-    width: anchorElement.getBoundingClientRect().width + 16,
-    height: anchorElement.getBoundingClientRect().height + 16,
-    border: "3px solid #3b82f6",
-    borderRadius: 12,
-    boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
-    pointerEvents: "none" as const,
-    zIndex: 9998,
-    animation: "tutorial-pulse 2s ease-in-out infinite",
-  } : undefined;
+  const haloStyle = anchorElement
+    ? {
+        position: "fixed" as const,
+        top: anchorElement.getBoundingClientRect().top - 8,
+        left: anchorElement.getBoundingClientRect().left - 8,
+        width: anchorElement.getBoundingClientRect().width + 16,
+        height: anchorElement.getBoundingClientRect().height + 16,
+        border: "3px solid #3b82f6",
+        borderRadius: 12,
+        boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)",
+        pointerEvents: "none" as const,
+        zIndex: 9998,
+        animation: "tutorial-pulse 2s ease-in-out infinite",
+      }
+    : undefined;
 
   const popoverStyle: React.CSSProperties = {
     position: "fixed",
@@ -110,7 +121,8 @@ export const TutorialSpotlight: React.FC<Props> = ({
     borderRadius: 16,
     padding: 24,
     zIndex: 9999,
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
+    boxShadow:
+      "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.05)",
     border: "1px solid #e5e7eb",
   };
 
@@ -123,18 +135,15 @@ export const TutorialSpotlight: React.FC<Props> = ({
           50% { opacity: 0.8; transform: scale(1.02); }
         }
       `}</style>
-      
+
       {/* Backdrop overlay */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-[9997]"
-        onClick={onDismiss}
-      />
-      
+      <div className="fixed inset-0 bg-black/50 z-[9997]" onClick={onDismiss} />
+
       {/* Halo effect around target element */}
       {haloStyle && <div style={haloStyle} />}
-      
+
       {/* Tutorial popover */}
-      <div 
+      <div
         style={popoverStyle}
         role="dialog"
         aria-modal="true"
@@ -144,14 +153,16 @@ export const TutorialSpotlight: React.FC<Props> = ({
         {/* Progress indicator */}
         {showProgress && (
           <div className="flex items-center justify-between mb-4 text-sm text-slate-500">
-            <span>Step {stepIndex + 1} of {totalSteps}</span>
+            <span>
+              Step {stepIndex + 1} of {totalSteps}
+            </span>
             <div className="flex space-x-1">
               {Array.from({ length: totalSteps }, (_, i) => (
                 <div
                   key={i}
                   className={clsx(
                     "w-2 h-2 rounded-full transition-colors",
-                    i === stepIndex ? "bg-blue-600" : "bg-slate-300"
+                    i === stepIndex ? "bg-blue-600" : "bg-slate-300",
                   )}
                 />
               ))}
@@ -160,7 +171,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
         )}
 
         {/* Title */}
-        <h3 
+        <h3
           id="tutorial-title"
           className="text-xl font-semibold text-slate-900 mb-3"
         >
@@ -168,9 +179,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
         </h3>
 
         {/* Body */}
-        <p className="text-slate-700 mb-4 leading-relaxed">
-          {step.body}
-        </p>
+        <p className="text-slate-700 mb-4 leading-relaxed">{step.body}</p>
 
         {/* Checklist */}
         {step.checklist && step.checklist.length > 0 && (
@@ -202,7 +211,9 @@ export const TutorialSpotlight: React.FC<Props> = ({
             <div className="text-sm text-slate-600 space-y-1">
               {Object.entries(step.examples).map(([key, value]) => (
                 <div key={key} className="flex justify-between">
-                  <span className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
+                  <span className="capitalize font-medium">
+                    {key.replace(/([A-Z])/g, " $1").trim()}:
+                  </span>
                   <span>{String(value)}</span>
                 </div>
               ))}
@@ -224,11 +235,7 @@ export const TutorialSpotlight: React.FC<Props> = ({
         <div className="flex items-center justify-between pt-4 border-t border-slate-200">
           <div className="flex space-x-3">
             {step.secondaryCta && onSecondary && (
-              <Button
-                variant="outline" 
-                size="sm"
-                onClick={onSecondary}
-              >
+              <Button variant="outline" size="sm" onClick={onSecondary}>
                 {step.secondaryCta}
               </Button>
             )}
@@ -243,14 +250,15 @@ export const TutorialSpotlight: React.FC<Props> = ({
               </Button>
             )}
           </div>
-          
+
           <Button
             variant="primary"
             size="sm"
             onClick={onPrimary}
             className="ml-auto"
           >
-            {step.primaryCta || (stepIndex === totalSteps - 1 ? "Complete" : "Next")}
+            {step.primaryCta ||
+              (stepIndex === totalSteps - 1 ? "Complete" : "Next")}
           </Button>
         </div>
       </div>

@@ -1,18 +1,25 @@
 /**
  * Example integration of the Tutorial system into the main App component
- * 
+ *
  * This file shows how to integrate the TutorialManager into your existing App.tsx
  * Copy the relevant parts into your actual App.tsx file.
  */
 
 import React, { useEffect, useState } from "react";
-import { TutorialManager, loadTutorialConfig, addGlobalTutorialControls } from "@/features/tutorials";
-import type { TutorialConfig } from "@/features/tutorials";
+
 import { seedDemoData } from "@/data/demo";
+import {
+  TutorialManager,
+  loadTutorialConfig,
+  addGlobalTutorialControls,
+} from "@/features/tutorials";
+import type { TutorialConfig } from "@/features/tutorials";
 
 // Your existing App component with tutorial integration
 export default function App() {
-  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(null);
+  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(
+    null,
+  );
 
   // Load tutorial configuration on app startup
   useEffect(() => {
@@ -20,9 +27,9 @@ export default function App() {
       try {
         const config = await loadTutorialConfig();
         setTutorialConfig(config);
-        
+
         // Add global tutorial controls for development
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           addGlobalTutorialControls();
         }
       } catch (error) {
@@ -30,7 +37,7 @@ export default function App() {
       }
     };
 
-    initTutorial();
+    void initTutorial();
   }, []);
 
   // Handle tutorial events
@@ -52,9 +59,7 @@ export default function App() {
   return (
     <>
       {/* Your existing app structure */}
-      <div id="app">
-        {/* Header, Navigation, Main Content, etc. */}
-      </div>
+      <div id="app">{/* Header, Navigation, Main Content, etc. */}</div>
 
       {/* Tutorial system overlay - renders on top of everything */}
       <TutorialManager
@@ -73,24 +78,26 @@ export default function App() {
  * This approach gives you more control over when the tutorial appears
  */
 export function AppWithConditionalTutorial() {
-  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(null);
+  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(
+    null,
+  );
   const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
-    loadTutorialConfig().then((config) => {
+    void loadTutorialConfig().then((config) => {
       setTutorialConfig(config);
-      
+
       // Custom logic to determine when to show tutorial
-      const shouldShow = !localStorage.getItem("nexus.tutorial.onboarding.completed");
+      const shouldShow = !localStorage.getItem(
+        "nexus.tutorial.onboarding.completed",
+      );
       setShowTutorial(shouldShow);
     });
   }, []);
 
   return (
     <>
-      <div id="app">
-        {/* Your app content */}
-      </div>
+      <div id="app">{/* Your app content */}</div>
 
       {/* Conditionally render tutorial */}
       {showTutorial && tutorialConfig && (
@@ -114,7 +121,7 @@ export function HelpMenuWithTutorial() {
     // Reset tutorial completion state
     localStorage.removeItem("nexus.tutorial.onboarding.completed");
     localStorage.removeItem("nexus.tutorial.onboarding.completed.timestamp");
-    
+
     // Reload page to restart tutorial
     window.location.reload();
   };
@@ -124,7 +131,7 @@ export function HelpMenuWithTutorial() {
       <h3>Help & Support</h3>
       <ul>
         <li>
-          <button 
+          <button
             onClick={handleRestartTutorial}
             className="text-blue-600 hover:text-blue-800"
           >

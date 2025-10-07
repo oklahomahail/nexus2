@@ -2,14 +2,15 @@
 export type { TutorialConfig, TutorialStep, TutorialHookReturn } from "./types";
 export { useTutorial } from "./useTutorial";
 export { TutorialSpotlight } from "./TutorialSpotlight";
-export { TutorialManager, useTutorialManager } from "./TutorialManager";
+export { TutorialManager } from "./TutorialManager";
+export { useTutorialManager } from "./useTutorialManager";
 
 // Tutorial configuration loader
-export const loadTutorialConfig = async (): Promise<TutorialConfig | null> => {
+export const loadTutorialConfig = async (): Promise<import("./types").TutorialConfig | null> => {
   try {
     // Import the JSON directly as ES module in Vite
     const config = await import("@/data/tutorials/nexusTutorial.json");
-    return config.default || config;
+    return (config.default || config) as import("./types").TutorialConfig;
   } catch (error) {
     console.warn("Failed to load tutorial configuration:", error);
     return null;
@@ -23,7 +24,10 @@ export const hasCompletedNexusTutorial = (): boolean => {
 
 export const markNexusTutorialCompleted = (): void => {
   localStorage.setItem("nexus.tutorial.onboarding.completed", "1");
-  localStorage.setItem("nexus.tutorial.onboarding.completed.timestamp", new Date().toISOString());
+  localStorage.setItem(
+    "nexus.tutorial.onboarding.completed.timestamp",
+    new Date().toISOString(),
+  );
 };
 
 export const resetNexusTutorial = (): void => {
@@ -40,7 +44,7 @@ export const addGlobalTutorialControls = () => {
       start: () => {
         resetNexusTutorial();
         window.location.reload();
-      }
+      },
     };
   }
 };
@@ -55,9 +59,9 @@ export const shouldShowNexusTutorial = (): boolean => {
   // Don't show if other tours are completed (they're experienced users)
   const hasOtherTours = [
     "nexus.tour.core.completed",
-    "nexus.tour.campaigns.completed", 
-    "nexus.tour.analytics.completed"
-  ].some(key => localStorage.getItem(key) === "1");
+    "nexus.tour.campaigns.completed",
+    "nexus.tour.analytics.completed",
+  ].some((key) => localStorage.getItem(key) === "1");
 
   return !hasOtherTours;
 };

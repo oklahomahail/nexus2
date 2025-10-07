@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { TutorialConfig, TutorialHookReturn, TutorialStep } from "./types";
 
-export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn {
+import type { TutorialConfig, TutorialHookReturn } from "./types";
+
+export function useTutorial(
+  config?: TutorialConfig | null,
+): TutorialHookReturn {
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
-  
+
   const steps = config?.steps ?? [];
   const currentStep = steps[stepIndex] ?? null;
   const totalSteps = steps.length;
-  const completionKey = config?.completionStorageKey ?? "nexus.tutorial.default.completed";
+  const completionKey =
+    config?.completionStorageKey ?? "nexus.tutorial.default.completed";
 
   // Check if tutorial is completed
   const isCompleted = useMemo(() => {
@@ -31,12 +35,15 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
 
   const next = useCallback(() => {
     if (stepIndex < totalSteps - 1) {
-      setStepIndex(prev => prev + 1);
+      setStepIndex((prev) => prev + 1);
     } else {
       // Complete the tutorial
       if (config) {
         localStorage.setItem(completionKey, "1");
-        localStorage.setItem(`${completionKey}.timestamp`, new Date().toISOString());
+        localStorage.setItem(
+          `${completionKey}.timestamp`,
+          new Date().toISOString(),
+        );
       }
       setActive(false);
     }
@@ -44,28 +51,37 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
 
   const previous = useCallback(() => {
     if (stepIndex > 0) {
-      setStepIndex(prev => prev - 1);
+      setStepIndex((prev) => prev - 1);
     }
   }, [stepIndex]);
 
-  const goToStep = useCallback((index: number) => {
-    if (index >= 0 && index < totalSteps) {
-      setStepIndex(index);
-    }
-  }, [totalSteps]);
+  const goToStep = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < totalSteps) {
+        setStepIndex(index);
+      }
+    },
+    [totalSteps],
+  );
 
   const dismiss = useCallback(() => {
     setActive(false);
     if (config) {
       localStorage.setItem(completionKey, "1");
-      localStorage.setItem(`${completionKey}.timestamp`, new Date().toISOString());
+      localStorage.setItem(
+        `${completionKey}.timestamp`,
+        new Date().toISOString(),
+      );
     }
   }, [completionKey, config]);
 
   const complete = useCallback(() => {
     if (config) {
       localStorage.setItem(completionKey, "1");
-      localStorage.setItem(`${completionKey}.timestamp`, new Date().toISOString());
+      localStorage.setItem(
+        `${completionKey}.timestamp`,
+        new Date().toISOString(),
+      );
     }
     setActive(false);
   }, [completionKey, config]);
@@ -83,10 +99,10 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
   useEffect(() => {
     if (anchorElement && active) {
       setTimeout(() => {
-        anchorElement.scrollIntoView({ 
-          behavior: "smooth", 
+        anchorElement.scrollIntoView({
+          behavior: "smooth",
           block: "center",
-          inline: "nearest"
+          inline: "nearest",
         });
       }, 100); // Small delay to ensure DOM is ready
     }
@@ -95,9 +111,9 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
   // Auto-start tutorial if conditions are met
   useEffect(() => {
     if (!config || isCompleted) return;
-    
+
     // Check if this is a first-time user (integrating with existing onboarding)
-    const hasAnyTourCompleted = 
+    const hasAnyTourCompleted =
       localStorage.getItem("nexus.tour.core.completed") === "1" ||
       localStorage.getItem("nexus.tour.campaigns.completed") === "1" ||
       localStorage.getItem("nexus.tour.analytics.completed") === "1";
@@ -119,7 +135,7 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
     stepIndex,
     totalSteps,
     isCompleted,
-    
+
     // Actions
     start,
     next,
@@ -128,9 +144,9 @@ export function useTutorial(config?: TutorialConfig | null): TutorialHookReturn 
     dismiss,
     complete,
     reset,
-    
+
     // Additional data
     anchorElement,
-    config
+    config,
   };
 }

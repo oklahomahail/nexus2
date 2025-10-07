@@ -5,6 +5,7 @@ A comprehensive onboarding tutorial system for Nexus that guides new users throu
 ## Overview
 
 This tutorial system provides:
+
 - **Interactive walkthrough** using the "Regional Food Bank – End-of-Year Holiday Campaign" example
 - **Smart spotlight system** with smooth positioning and halo effects
 - **Integration** with existing onboarding utilities
@@ -25,7 +26,9 @@ import { TutorialManager, loadTutorialConfig } from "@/features/tutorials";
 import type { TutorialConfig } from "@/features/tutorials";
 
 export default function App() {
-  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(null);
+  const [tutorialConfig, setTutorialConfig] = useState<TutorialConfig | null>(
+    null,
+  );
 
   useEffect(() => {
     loadTutorialConfig().then(setTutorialConfig);
@@ -34,9 +37,9 @@ export default function App() {
   return (
     <>
       {/* Your existing app content */}
-      
+
       {/* Tutorial system overlay */}
-      <TutorialManager 
+      <TutorialManager
         config={tutorialConfig}
         onComplete={() => console.log("Tutorial completed!")}
         onDismiss={() => console.log("Tutorial dismissed")}
@@ -52,7 +55,7 @@ Add `data-tutorial-step` attributes to the UI components referenced in the tutor
 
 ```tsx
 // Add Client Button
-<button 
+<button
   data-tutorial-step="clients.add"
   onClick={handleAddClient}
 >
@@ -60,7 +63,7 @@ Add `data-tutorial-step` attributes to the UI components referenced in the tutor
 </button>
 
 // New Campaign Button (within client workspace)
-<button 
+<button
   data-tutorial-step="campaigns.new"
   onClick={handleNewCampaign}
 >
@@ -127,8 +130,8 @@ const helpMenuItems = [
     action: () => {
       resetNexusTutorial();
       window.location.reload();
-    }
-  }
+    },
+  },
 ];
 ```
 
@@ -137,9 +140,11 @@ const helpMenuItems = [
 ### Components
 
 #### `<TutorialManager>`
+
 Main component that orchestrates the tutorial flow.
 
 **Props:**
+
 - `config: TutorialConfig | null` - Tutorial configuration object
 - `onStart?: () => void` - Called when tutorial starts
 - `onComplete?: () => void` - Called when tutorial completes
@@ -147,14 +152,17 @@ Main component that orchestrates the tutorial flow.
 - `autoStart?: boolean` - Whether to auto-start for new users (default: true)
 
 #### `<TutorialSpotlight>`
+
 Individual step spotlight component (used internally by TutorialManager).
 
 ### Hooks
 
 #### `useTutorial(config)`
+
 Core tutorial state management hook.
 
 **Returns:**
+
 - `active: boolean` - Whether tutorial is currently active
 - `currentStep: TutorialStep | null` - Current tutorial step
 - `stepIndex: number` - Current step index
@@ -168,20 +176,24 @@ Core tutorial state management hook.
 - `reset()` - Reset tutorial state
 
 #### `useTutorialManager(config)`
+
 Higher-level tutorial management hook with additional utilities.
 
 ### Utilities
 
 #### Tutorial State
+
 - `hasCompletedNexusTutorial(): boolean`
 - `markNexusTutorialCompleted(): void`
 - `resetNexusTutorial(): void`
 - `shouldShowNexusTutorial(): boolean`
 
 #### Configuration
+
 - `loadTutorialConfig(): Promise<TutorialConfig | null>`
 
 #### Demo Data
+
 - `seedDemoData()` - Load demo data into sessionStorage
 - `getDemoData()` - Get all demo data objects
 
@@ -201,18 +213,20 @@ The tutorial walks users through these steps:
 ## Development
 
 ### Global Controls
+
 In development, you can access tutorial controls via browser console:
 
 ```javascript
 // Reset tutorial and restart
-nexusTutorialControls.reset()
-nexusTutorialControls.start()
+nexusTutorialControls.reset();
+nexusTutorialControls.start();
 
 // Check completion status
-nexusTutorialControls.checkCompleted()
+nexusTutorialControls.checkCompleted();
 ```
 
 ### Keyboard Navigation
+
 - **→ / Enter**: Next step
 - **←**: Previous step
 - **Escape**: Dismiss tutorial
@@ -220,15 +234,19 @@ nexusTutorialControls.checkCompleted()
 ### Customization
 
 #### Adding New Steps
+
 Edit `/src/data/tutorials/nexusTutorial.json` to add or modify tutorial steps.
 
 #### Styling
+
 The tutorial uses Tailwind CSS classes and can be customized via:
+
 - CSS custom properties for colors
 - Tailwind utility classes in components
 - Custom CSS for animations
 
 #### Analytics Integration
+
 The tutorial integrates with the existing onboarding system and can be tracked alongside other user tours.
 
 ## Best Practices
@@ -242,16 +260,19 @@ The tutorial integrates with the existing onboarding system and can be tracked a
 ## Troubleshooting
 
 ### Tutorial Not Starting
+
 - Check that tutorial config loaded successfully
 - Verify user hasn't already completed tutorial
 - Ensure auto-start conditions are met
 
 ### Spotlight Not Positioned Correctly
+
 - Verify target element exists in DOM
 - Check element visibility and positioning
 - Test across different viewport sizes
 
 ### Demo Data Not Loading
+
 - Check sessionStorage for `nexus.tutorial.demoData`
 - Verify demo data import paths are correct
 - Ensure data structures match your app's types

@@ -65,7 +65,7 @@
       "body": "Before launching, review your campaign details. Check your assets, segments, and goal, then schedule your start date.",
       "checklist": [
         "Assets uploaded",
-        "Audience segments defined", 
+        "Audience segments defined",
         "Goal confirmed: $10,000",
         "Launch date: November 15"
       ],
@@ -74,7 +74,7 @@
     },
     {
       "id": "monitor",
-      "type": "spotlight", 
+      "type": "spotlight",
       "anchor": "[data-tutorial-step='dashboard.performance']",
       "title": "Watch Your Results Grow",
       "body": "Once your campaign is live, Nexus visualizes everything in real time. Track total raised, donor growth, channel performance, and milestones as your data syncs.",
@@ -94,7 +94,7 @@
       "body": "Nexus automatically summarizes your campaign story in data form. Generate reports for clients, boards, or your own records.",
       "options": [
         "Generate PDF Report – ready for sharing",
-        "Export CSV – for analytics deep dives", 
+        "Export CSV – for analytics deep dives",
         "Schedule Automated Reports – send weekly summaries to your client"
       ],
       "tip": "Reports highlight what worked, where to improve, and how to repeat success next year.",

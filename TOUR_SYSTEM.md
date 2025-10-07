@@ -5,8 +5,9 @@ A comprehensive user onboarding and tour system built with driver.js for the Nex
 ## Overview
 
 The tour system provides:
+
 - **Welcome Modal**: Introduces new users and offers tour options
-- **Core Tour**: Guided walkthrough of main application features  
+- **Core Tour**: Guided walkthrough of main application features
 - **Feature Tours**: Specific tours for campaigns, analytics, etc.
 - **Onboarding Checklist**: Progress tracking for key user actions
 - **Persistent State**: Remembers user preferences and progress
@@ -64,7 +65,7 @@ Elements with `data-tour` attributes for tour targeting:
 ### Starting Tours
 
 ```typescript
-import { startCoreTour, startCampaignsTour } from '@/tours';
+import { startCoreTour, startCampaignsTour } from "@/tours";
 
 // Start the main tour
 await startCoreTour();
@@ -76,7 +77,7 @@ await startCampaignsTour();
 ### Checking Tour State
 
 ```typescript
-import { hasCompletedCoreTour, getTourPreferences } from '@/utils/onboarding';
+import { hasCompletedCoreTour, getTourPreferences } from "@/utils/onboarding";
 
 if (!hasCompletedCoreTour()) {
   // Show welcome modal or tour prompt
@@ -89,24 +90,24 @@ const preferences = getTourPreferences();
 ### Creating Custom Tours
 
 ```typescript
-import { createTour, TourStep } from '@/tours/driverService';
+import { createTour, TourStep } from "@/tours/driverService";
 
 const steps: TourStep[] = [
   {
     element: '[data-tour="my-element"]',
     popover: {
-      title: 'Feature Title',
-      description: 'This explains the feature...',
-      position: 'bottom'
-    }
-  }
+      title: "Feature Title",
+      description: "This explains the feature...",
+      position: "bottom",
+    },
+  },
 ];
 
 const tour = createTour(steps, {
   onDestroyed: () => {
     // Mark tour as completed
-    localStorage.setItem('my-tour-completed', '1');
-  }
+    localStorage.setItem("my-tour-completed", "1");
+  },
 });
 
 tour.drive();
@@ -115,30 +116,38 @@ tour.drive();
 ### Managing Onboarding Steps
 
 ```typescript
-import { markOnboardingStepCompleted, getOnboardingProgress } from '@/utils/onboarding';
+import {
+  markOnboardingStepCompleted,
+  getOnboardingProgress,
+} from "@/utils/onboarding";
 
 // Mark a step as complete when user performs action
 const handleCampaignCreated = () => {
-  markOnboardingStepCompleted('create_campaign');
+  markOnboardingStepCompleted("create_campaign");
 };
 
 // Check progress
 const progress = getOnboardingProgress();
-console.log(`${progress.completed}/${progress.total} steps completed (${progress.percentage}%)`);
+console.log(
+  `${progress.completed}/${progress.total} steps completed (${progress.percentage}%)`,
+);
 ```
 
 ## Integration Points
 
 ### DashboardPanel
+
 - Shows `WelcomeModal` for new users
 - Displays `OnboardingChecklist` until completion
 - Automatically triggers core tour on welcome
 
-### CampaignsPanel  
+### CampaignsPanel
+
 - Auto-shows campaigns tour for first-time visitors
 - Tour highlights key campaign management features
 
 ### Topbar
+
 - "Replay Tour" option in user menu
 - Starts core tour on demand
 
@@ -148,27 +157,28 @@ console.log(`${progress.completed}/${progress.total} steps completed (${progress
 
 ```typescript
 const tourOptions: TourOptions = {
-  showProgress: true,           // Show step counter
-  allowClose: true,            // Allow closing tour
-  overlayOpacity: 0.4,         // Background overlay
-  nextBtnText: "Next",         // Button labels
+  showProgress: true, // Show step counter
+  allowClose: true, // Allow closing tour
+  overlayOpacity: 0.4, // Background overlay
+  nextBtnText: "Next", // Button labels
   prevBtnText: "Back",
   doneBtnText: "Done",
-  onDestroyed: () => {         // Completion callback
+  onDestroyed: () => {
+    // Completion callback
     markCoreTourCompleted();
-  }
+  },
 };
 ```
 
 ### Onboarding Steps
 
 ```typescript
-type OnboardingStep = 
-  | "add_client"           // Create first client
-  | "create_campaign"      // Launch first campaign  
-  | "view_analytics"       // Visit analytics section
-  | "export_report"        // Generate first report
-  | "complete_profile";    // Fill out profile
+type OnboardingStep =
+  | "add_client" // Create first client
+  | "create_campaign" // Launch first campaign
+  | "view_analytics" // Visit analytics section
+  | "export_report" // Generate first report
+  | "complete_profile"; // Fill out profile
 ```
 
 ## Styling
@@ -188,16 +198,18 @@ The tour system uses driver.js default styles with custom CSS:
 ## Testing
 
 ### Development Mode
-- Use browser dev tools to clear `localStorage` 
+
+- Use browser dev tools to clear `localStorage`
 - Reload page to see welcome modal again
 - Test tour flows and state persistence
 
 ### Testing Tours
+
 ```typescript
-import { resetAllOnboardingState } from '@/utils/onboarding';
+import { resetAllOnboardingState } from "@/utils/onboarding";
 
 // Reset all tour state (dev mode only)
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   resetAllOnboardingState();
 }
 ```
@@ -252,18 +264,21 @@ if (process.env.NODE_ENV === 'development') {
 ## Troubleshooting
 
 ### Tour Not Starting
+
 - Check if `data-tour` elements exist in DOM
 - Verify imports are correct
 - Check console for errors
 - Ensure tour state allows showing
 
-### Elements Not Highlighted  
+### Elements Not Highlighted
+
 - Verify `data-tour` attribute spelling
 - Check if element is visible when tour starts
 - Use browser inspector to confirm element presence
 - Try `waitForElement()` for dynamic content
 
 ### State Issues
+
 - Clear localStorage to reset all state
 - Check for typos in localStorage keys
 - Verify state functions are imported correctly
