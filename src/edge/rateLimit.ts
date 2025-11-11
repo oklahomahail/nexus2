@@ -116,11 +116,16 @@ export function createRateLimitMiddleware(config: {
   getId?: (req: Request) => string;
   getKV?: () => {
     get: (key: string) => Promise<string | null>;
-    set: (key: string, value: string, opts: { expirationTtl: number }) => Promise<void>;
+    set: (
+      key: string,
+      value: string,
+      opts: { expirationTtl: number },
+    ) => Promise<void>;
   };
 }) {
   return async (req: Request): Promise<Response | null> => {
-    const id = config.getId?.(req) ?? req.headers.get('x-forwarded-for') ?? 'anon';
+    const id =
+      config.getId?.(req) ?? req.headers.get("x-forwarded-for") ?? "anon";
     const kv = config.getKV?.();
 
     const result = await rateLimit({
@@ -128,28 +133,26 @@ export function createRateLimitMiddleware(config: {
       limit: config.limit,
       windowMs: config.windowMs,
       get: kv ? (k) => kv.get(k) : undefined,
-      set: kv
-        ? (k, v, ttl) => kv.set(k, v, { expirationTtl: ttl })
-        : undefined,
+      set: kv ? (k, v, ttl) => kv.set(k, v, { expirationTtl: ttl }) : undefined,
     });
 
     if (!result.allowed) {
       return new Response(
         JSON.stringify({
-          error: 'Too Many Requests',
+          error: "Too Many Requests",
           limit: result.limit,
           resetInMs: result.resetInMs,
         }),
         {
           status: 429,
           headers: {
-            'Content-Type': 'application/json',
-            'X-RateLimit-Limit': String(result.limit),
-            'X-RateLimit-Remaining': String(result.remaining),
-            'X-RateLimit-Reset': String(Math.ceil(result.resetInMs / 1000)),
-            'Retry-After': String(Math.ceil(result.resetInMs / 1000)),
+            "Content-Type": "application/json",
+            "X-RateLimit-Limit": String(result.limit),
+            "X-RateLimit-Remaining": String(result.remaining),
+            "X-RateLimit-Reset": String(Math.ceil(result.resetInMs / 1000)),
+            "Retry-After": String(Math.ceil(result.resetInMs / 1000)),
           },
-        }
+        },
       );
     }
 

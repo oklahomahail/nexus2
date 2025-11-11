@@ -89,6 +89,7 @@ export default function ClientSwitcher({ className }: Props) {
                     >
                       <div className="flex items-center space-x-3 min-w-0">
                         {/* TODO: Add brand property to Client type */}
+                        {/* eslint-disable-next-line no-constant-condition */}
                         {false ? (
                           <img
                             src=""

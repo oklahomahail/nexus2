@@ -181,14 +181,14 @@ export default function BrandCorpusManager({
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery) {
-        handleSearch();
+        void handleSearch();
       } else {
         setSearchResults([]);
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, handleSearch]);
 
   // ========== RENDER ==========
 

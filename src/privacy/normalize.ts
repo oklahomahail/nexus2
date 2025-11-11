@@ -18,12 +18,12 @@ export function htmlToText(html: string): string {
   let text = html;
 
   // Replace block-level elements with line breaks
-  text = text.replace(/<\/?(p|div|br|hr|h[1-6])[^>]*>/gi, '\n');
-  text = text.replace(/<\/li>/gi, '\n');
-  text = text.replace(/<li[^>]*>/gi, '\n• ');
+  text = text.replace(/<\/?(p|div|br|hr|h[1-6])[^>]*>/gi, "\n");
+  text = text.replace(/<\/li>/gi, "\n");
+  text = text.replace(/<li[^>]*>/gi, "\n• ");
 
   // Remove all remaining HTML tags
-  text = text.replace(/<[^>]+>/g, '');
+  text = text.replace(/<[^>]+>/g, "");
 
   // Decode HTML entities
   text = decodeHTMLEntities(text);
@@ -39,30 +39,32 @@ export function htmlToText(html: string): string {
  */
 export function decodeHTMLEntities(text: string): string {
   const entities: Record<string, string> = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&nbsp;': ' ',
-    '&mdash;': '—',
-    '&ndash;': '–',
-    '&hellip;': '...',
-    '&rsquo;': "'",
-    '&lsquo;': "'",
-    '&rdquo;': '"',
-    '&ldquo;': '"',
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&quot;": '"',
+    "&#39;": "'",
+    "&nbsp;": " ",
+    "&mdash;": "—",
+    "&ndash;": "–",
+    "&hellip;": "...",
+    "&rsquo;": "'",
+    "&lsquo;": "'",
+    "&rdquo;": '"',
+    "&ldquo;": '"',
   };
 
   let decoded = text;
   Object.entries(entities).forEach(([entity, char]) => {
-    decoded = decoded.replace(new RegExp(entity, 'g'), char);
+    decoded = decoded.replace(new RegExp(entity, "g"), char);
   });
 
   // Decode numeric entities (&#123; or &#x7B;)
-  decoded = decoded.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+  decoded = decoded.replace(/&#(\d+);/g, (_, code) =>
+    String.fromCharCode(parseInt(code, 10)),
+  );
   decoded = decoded.replace(/&#x([0-9A-Fa-f]+);/g, (_, code) =>
-    String.fromCharCode(parseInt(code, 16))
+    String.fromCharCode(parseInt(code, 16)),
   );
 
   return decoded;
@@ -79,16 +81,16 @@ export function collapseWhitespace(text: string): string {
   let normalized = text;
 
   // Replace multiple spaces with single space
-  normalized = normalized.replace(/ {2,}/g, ' ');
+  normalized = normalized.replace(/ {2,}/g, " ");
 
   // Replace multiple newlines with double newline (paragraph break)
-  normalized = normalized.replace(/\n{3,}/g, '\n\n');
+  normalized = normalized.replace(/\n{3,}/g, "\n\n");
 
   // Trim lines
   normalized = normalized
-    .split('\n')
+    .split("\n")
     .map((line) => line.trim())
-    .join('\n');
+    .join("\n");
 
   // Remove leading/trailing whitespace
   normalized = normalized.trim();
@@ -114,18 +116,20 @@ export function truncateToTokenBudget(text: string, maxTokens = 4000): string {
 
   // Try to truncate at sentence boundary
   const truncated = text.substring(0, maxChars);
-  const lastPeriod = truncated.lastIndexOf('.');
-  const lastNewline = truncated.lastIndexOf('\n');
+  const lastPeriod = truncated.lastIndexOf(".");
+  const lastNewline = truncated.lastIndexOf("\n");
 
   const cutPoint = Math.max(lastPeriod, lastNewline);
 
   if (cutPoint > maxChars * 0.8) {
     // If we can cut at a sentence/paragraph and keep 80%+ of content
-    return truncated.substring(0, cutPoint + 1).trim() + '\n\n[Content truncated]';
+    return (
+      truncated.substring(0, cutPoint + 1).trim() + "\n\n[Content truncated]"
+    );
   }
 
   // Otherwise just hard truncate
-  return truncated.trim() + '... [truncated]';
+  return truncated.trim() + "... [truncated]";
 }
 
 /**
@@ -136,7 +140,7 @@ export function truncateToTokenBudget(text: string, maxTokens = 4000): string {
  * @returns Text with duplicates removed
  */
 export function removeDuplicateLines(text: string): string {
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const seen = new Set<string>();
   const unique: string[] = [];
 
@@ -148,7 +152,7 @@ export function removeDuplicateLines(text: string): string {
     }
   });
 
-  return unique.join('\n');
+  return unique.join("\n");
 }
 
 /**
@@ -166,7 +170,7 @@ export function normalizeContent(
     collapseWhitespace?: boolean;
     removeDuplicates?: boolean;
     maxTokens?: number;
-  } = {}
+  } = {},
 ): {
   normalized: string;
   metadata: {
@@ -231,30 +235,30 @@ export function markdownToText(markdown: string): string {
   let text = markdown;
 
   // Remove code blocks
-  text = text.replace(/```[\s\S]*?```/g, '');
-  text = text.replace(/`[^`]+`/g, '');
+  text = text.replace(/```[\s\S]*?```/g, "");
+  text = text.replace(/`[^`]+`/g, "");
 
   // Remove images
-  text = text.replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1');
+  text = text.replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1");
 
   // Remove links but keep text
-  text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+  text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1");
 
   // Remove headers
-  text = text.replace(/^#+\s+/gm, '');
+  text = text.replace(/^#+\s+/gm, "");
 
   // Remove bold/italic
-  text = text.replace(/[*_]{1,3}([^*_]+)[*_]{1,3}/g, '$1');
+  text = text.replace(/[*_]{1,3}([^*_]+)[*_]{1,3}/g, "$1");
 
   // Remove horizontal rules
-  text = text.replace(/^[-*_]{3,}$/gm, '');
+  text = text.replace(/^[-*_]{3,}$/gm, "");
 
   // Remove blockquotes
-  text = text.replace(/^>\s+/gm, '');
+  text = text.replace(/^>\s+/gm, "");
 
   // Clean up list markers
-  text = text.replace(/^[-*+]\s+/gm, '• ');
-  text = text.replace(/^\d+\.\s+/gm, '');
+  text = text.replace(/^[-*+]\s+/gm, "• ");
+  text = text.replace(/^\d+\.\s+/gm, "");
 
   return collapseWhitespace(text);
 }

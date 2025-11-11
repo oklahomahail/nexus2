@@ -315,7 +315,7 @@ export function useBrandProfile(clientId: string): UseBrandProfileReturn {
         const checksum =
           input.checksum || (await generateChecksum(input.content));
 
-        const corpusEntry = await upsertCorpusChunk({
+        await upsertCorpusChunk({
           ...input,
           checksum,
           client_id: clientId,
@@ -389,17 +389,18 @@ export function useBrandProfile(clientId: string): UseBrandProfileReturn {
   // Load profile on mount or clientId change
   useEffect(() => {
     if (clientId) {
-      loadProfile();
+      void loadProfile();
     }
   }, [clientId, loadProfile]);
 
   // Load assets when profile changes
   useEffect(() => {
     if (profile) {
-      loadAssets();
-      loadCorpus();
+      void loadAssets();
+      void loadCorpus();
     }
-  }, [profile?.id]); // Only depend on profile ID to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id, loadAssets, loadCorpus]); // Only depend on profile ID to avoid infinite loops
 
   // ========== RETURN ==========
 

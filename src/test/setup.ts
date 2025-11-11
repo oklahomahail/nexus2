@@ -7,6 +7,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
+
 import { server } from "./msw/server";
 
 // Start MSW server before all tests
@@ -25,7 +26,10 @@ afterAll(() => server.close());
 if (!("AbortSignal" in globalThis) || !(AbortSignal as any).timeout) {
   (AbortSignal as any).timeout = (ms: number) => {
     const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(new DOMException("TimeoutError", "AbortError")), ms);
+    setTimeout(
+      () => ctrl.abort(new DOMException("TimeoutError", "AbortError")),
+      ms,
+    );
     return ctrl.signal;
   };
 }

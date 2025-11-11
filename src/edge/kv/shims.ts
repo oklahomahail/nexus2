@@ -6,7 +6,11 @@
  */
 
 export type KVGet = (key: string) => Promise<string | null>;
-export type KVSet = (key: string, value: string, ttlSec: number) => Promise<void>;
+export type KVSet = (
+  key: string,
+  value: string,
+  ttlSec: number,
+) => Promise<void>;
 
 export interface KVAdapter {
   get: KVGet;
@@ -21,7 +25,9 @@ export interface KVAdapter {
  * await kv.set('key', 'value', 60);
  * const value = await kv.get('key');
  */
-export function createMemoryKV(): KVAdapter & { _store: Map<string, { value: string; expiresAt: number }> } {
+export function createMemoryKV(): KVAdapter & {
+  _store: Map<string, { value: string; expiresAt: number }>;
+} {
   const store = new Map<string, { value: string; expiresAt: number }>();
   const now = () => Date.now();
 
@@ -75,11 +81,16 @@ export function vercelKV(client: {
  */
 export function cloudflareKV(namespace: {
   get: (key: string) => Promise<string | null>;
-  put: (key: string, value: string, opts: { expirationTtl: number }) => Promise<void>;
+  put: (
+    key: string,
+    value: string,
+    opts: { expirationTtl: number },
+  ) => Promise<void>;
 }): KVAdapter {
   return {
     get: (key) => namespace.get(key),
-    set: (key, value, ttlSec) => namespace.put(key, value, { expirationTtl: ttlSec }),
+    set: (key, value, ttlSec) =>
+      namespace.put(key, value, { expirationTtl: ttlSec }),
   };
 }
 

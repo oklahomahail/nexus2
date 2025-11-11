@@ -158,7 +158,7 @@ export function validateImportUrl(url: string): {
     }
 
     return { valid: true };
-  } catch (err) {
+  } catch {
     return { valid: false, error: "Invalid URL format" };
   }
 }

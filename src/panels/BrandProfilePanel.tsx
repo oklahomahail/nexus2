@@ -83,7 +83,7 @@ export default function BrandProfilePanel() {
       }
 
       setTimeout(() => setSaveMessage(null), 3000);
-    } catch (err) {
+    } catch {
       setSaveMessage("Failed to save brand profile");
     } finally {
       setIsSaving(false);

@@ -23,7 +23,7 @@ const EMAIL_RE = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
 const PHONE_RE =
   /\b(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{2,3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}\b/;
 const ADDRESS_HINT_RE =
-  /\b(\d{1,6}\s+[A-Za-z0-9.'\-]+\s+(Ave|Ave\.|Street|St\.|Rd|Road|Blvd|Boulevard|Lane|Ln|Dr|Drive|Ct|Court|Way|Circle|Cir|Pkwy|Parkway))\b/i;
+  /\b(\d{1,6}\s+[A-Za-z0-9.'-]+\s+(Ave|Ave\.|Street|St\.|Rd|Road|Blvd|Boulevard|Lane|Ln|Dr|Drive|Ct|Court|Way|Circle|Cir|Pkwy|Parkway))\b/i;
 const SSN_RE = /\b\d{3}-\d{2}-\d{4}\b/;
 const CREDIT_CARD_RE = /\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/;
 

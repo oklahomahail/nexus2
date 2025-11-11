@@ -78,7 +78,7 @@ export class AppErrorBoundary extends Component<Props, State> {
 
     // Report error in production
     if (import.meta.env.MODE === "production") {
-      this.reportError(error, errorInfo);
+      void this.reportError(error, errorInfo);
     }
 
     // Log to performance API for monitoring

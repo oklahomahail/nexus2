@@ -235,7 +235,7 @@ function RetentionView({
     useRetainedDonors(clientId);
 
   const handleFetch = () => {
-    fetch(numYears);
+    void fetch(numYears);
   };
 
   const summary = data ? summarizeRetention(data) : null;
@@ -375,8 +375,7 @@ function UpgradeView({
   onYearToChange,
 }: UpgradeViewProps) {
   const toast = useToast();
-  const { data, isLoading, error, privacyEnforced, fetch } =
-    useYoyUpgrade(clientId);
+  const { data, isLoading, error, fetch } = useYoyUpgrade(clientId);
 
   const handleFetch = () => {
     if (yearFrom >= yearTo) {
@@ -386,7 +385,7 @@ function UpgradeView({
       );
       return;
     }
-    fetch(yearFrom, yearTo);
+    void fetch(yearFrom, yearTo);
   };
 
   const top10 = data?.slice(0, 10);
@@ -597,7 +596,7 @@ function VelocityView({ clientId }: VelocityViewProps) {
                 }}
               />
               <Tooltip
-                formatter={(value: number, name: string, props: any) => [
+                formatter={(value: number) => [
                   `${value.toFixed(0)} days`,
                   "Median Days",
                 ]}
@@ -632,7 +631,7 @@ function SeasonalityView({
   const { data, isLoading, error, fetch } = useSeasonality(clientId);
 
   const handleFetch = () => {
-    fetch(year);
+    void fetch(year);
   };
 
   return (

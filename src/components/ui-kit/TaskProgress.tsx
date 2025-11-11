@@ -7,7 +7,7 @@
  * Based on Inkwell's task progress pattern
  */
 
-import { X } from 'lucide-react';
+import { X } from "lucide-react";
 
 export interface TaskProgressProps {
   /**
@@ -38,7 +38,7 @@ export interface TaskProgressProps {
   /**
    * Visual variant
    */
-  variant?: 'default' | 'success' | 'warning' | 'error';
+  variant?: "default" | "success" | "warning" | "error";
 }
 
 export function TaskProgress({
@@ -47,15 +47,15 @@ export function TaskProgress({
   cancellable = false,
   onCancel,
   status,
-  variant = 'default',
+  variant = "default",
 }: TaskProgressProps) {
-  const isDeterminate = typeof progress === 'number';
+  const isDeterminate = typeof progress === "number";
 
   const variantStyles = {
-    default: 'bg-blue-500',
-    success: 'bg-green-500',
-    warning: 'bg-yellow-500',
-    error: 'bg-red-500',
+    default: "bg-blue-500",
+    success: "bg-green-500",
+    warning: "bg-yellow-500",
+    error: "bg-red-500",
   };
 
   const bgColor = variantStyles[variant];
@@ -64,7 +64,9 @@ export function TaskProgress({
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <span className="font-medium text-gray-900 dark:text-white">{label}</span>
+        <span className="font-medium text-gray-900 dark:text-white">
+          {label}
+        </span>
         {cancellable && onCancel && (
           <button
             onClick={onCancel}
@@ -128,8 +130,8 @@ export function TaskProgressInline({
   progress,
   cancellable = false,
   onCancel,
-}: Omit<TaskProgressProps, 'status' | 'variant'>) {
-  const isDeterminate = typeof progress === 'number';
+}: Omit<TaskProgressProps, "status" | "variant">) {
+  const isDeterminate = typeof progress === "number";
 
   return (
     <div className="flex items-center gap-3">

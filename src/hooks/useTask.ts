@@ -7,7 +7,7 @@
  * Based on Inkwell's task management pattern
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export interface TaskState<T = unknown> {
   /** Whether task is currently running */
@@ -109,8 +109,11 @@ export function useTask<T = unknown>(options: UseTaskOptions = {}) {
     async (
       task: (
         signal: AbortSignal,
-        controls: { updateProgress: typeof updateProgress; updateStatus: typeof updateStatus }
-      ) => Promise<T>
+        controls: {
+          updateProgress: typeof updateProgress;
+          updateStatus: typeof updateStatus;
+        },
+      ) => Promise<T>,
     ) => {
       // Create new abort controller
       abortControllerRef.current = new AbortController();
@@ -137,23 +140,23 @@ export function useTask<T = unknown>(options: UseTaskOptions = {}) {
             progress: 100,
             result,
             error: undefined,
-            status: 'Completed',
+            status: "Completed",
           });
           onComplete?.();
         }
 
         return result;
       } catch (error) {
-        const err = error instanceof Error ? error : new Error('Unknown error');
+        const err = error instanceof Error ? error : new Error("Unknown error");
 
         // Check if error is due to cancellation
-        if (err.name === 'AbortError' || err.message === 'Cancelled') {
+        if (err.name === "AbortError" || err.message === "Cancelled") {
           setState({
             isRunning: false,
             progress: undefined,
             result: undefined,
             error: undefined,
-            status: 'Cancelled',
+            status: "Cancelled",
           });
           onCancel?.();
         } else {
@@ -162,7 +165,7 @@ export function useTask<T = unknown>(options: UseTaskOptions = {}) {
             progress: undefined,
             result: undefined,
             error: err,
-            status: 'Failed',
+            status: "Failed",
           });
           onError?.(err);
         }
@@ -170,7 +173,14 @@ export function useTask<T = unknown>(options: UseTaskOptions = {}) {
         throw error;
       }
     },
-    [updateProgress, updateStatus, initialStatus, onComplete, onError, onCancel]
+    [
+      updateProgress,
+      updateStatus,
+      initialStatus,
+      onComplete,
+      onError,
+      onCancel,
+    ],
   );
 
   /**
@@ -183,7 +193,7 @@ export function useTask<T = unknown>(options: UseTaskOptions = {}) {
       setState((prev) => ({
         ...prev,
         isRunning: false,
-        status: 'Cancelled',
+        status: "Cancelled",
       }));
       onCancel?.();
     }

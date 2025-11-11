@@ -13,15 +13,44 @@ export type SanitizeOptions = {
 
 const DANGEROUS_TAGS = new Set([
   // scriptable / remote content
-  "script","iframe","object","embed","applet","link","meta",
+  "script",
+  "iframe",
+  "object",
+  "embed",
+  "applet",
+  "link",
+  "meta",
   // svg & tricky containers
-  "svg","foreignObject","math","template","slot",
+  "svg",
+  "foreignObject",
+  "math",
+  "template",
+  "slot",
   // execution or navigation vectors
-  "form","input","select","button","textarea","noscript","style",
+  "form",
+  "input",
+  "select",
+  "button",
+  "textarea",
+  "noscript",
+  "style",
 ]);
 
 const VOID_OR_SELF_CLOSING = new Set([
-  "area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr",
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr",
 ]);
 
 // Simple URI guard for href/src/xlink:href
@@ -41,7 +70,7 @@ function sanitizeUri(value: string): string | null {
 function cleanseStyle(value: string): string | null {
   const v = value.toLowerCase();
   if (/expression\s*\(/.test(v)) return null;
-  if (/url\s*\(\s*['\"]?javascript:/.test(v)) return null;
+  if (/url\s*\(\s*['"]?javascript:/.test(v)) return null;
   // Optionally strip background* altogether to be conservative
   const withoutBg = v.replace(/background[^:]*:[^;]+;?/g, "");
   return withoutBg.trim() ? withoutBg : null;
@@ -84,7 +113,8 @@ export function redactPII(text: string): string {
 
 function neutralizePromptInjection(text: string): string {
   let out = text;
-  for (const rx of PROMPT_INJECTION_RX) out = out.replace(rx, "[user instruction redacted]");
+  for (const rx of PROMPT_INJECTION_RX)
+    out = out.replace(rx, "[user instruction redacted]");
   return out;
 }
 
@@ -98,7 +128,10 @@ function stripMalformedScript(input: string): string {
 /**
  * sanitizeHtml: strips dangerous HTML, attributes, and PII; optionally returns plain text.
  */
-export function sanitizeHtml(input: string, opts: SanitizeOptions = {}): string {
+export function sanitizeHtml(
+  input: string,
+  opts: SanitizeOptions = {},
+): string {
   const { stripHtml = true, stripAllStyles = true, maxLen } = opts;
   const pre = stripMalformedScript(String(input ?? ""));
 
@@ -109,7 +142,10 @@ export function sanitizeHtml(input: string, opts: SanitizeOptions = {}): string 
     doc = parser.parseFromString(pre, "text/html");
   } catch {
     // extremely defensive: fall back to text-only
-    return truncate(neutralizePromptInjection(redactPII(pre.replace(/<[^>]*>/g, " ").trim())), maxLen);
+    return truncate(
+      neutralizePromptInjection(redactPII(pre.replace(/<[^>]*>/g, " ").trim())),
+      maxLen,
+    );
   }
 
   const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, null);
@@ -117,20 +153,24 @@ export function sanitizeHtml(input: string, opts: SanitizeOptions = {}): string 
   while (walker.nextNode()) {
     const el = walker.currentNode as Element;
     const tag = el.tagName.toLowerCase();
-    if (DANGEROUS_TAGS.has(tag)) { toRemove.push(el); continue; }
+    if (DANGEROUS_TAGS.has(tag)) {
+      toRemove.push(el);
+      continue;
+    }
 
     // Remove event handlers
-    [...el.attributes].forEach(attr => {
+    [...el.attributes].forEach((attr) => {
       const name = attr.name.toLowerCase();
       if (name.startsWith("on")) el.removeAttribute(attr.name);
     });
 
     // Sanitize URLs
-    ["href","src","xlink:href"].forEach(n => {
+    ["href", "src", "xlink:href"].forEach((n) => {
       if (!el.hasAttribute(n)) return;
       const val = el.getAttribute(n) ?? "";
       const safe = sanitizeUri(val);
-      if (safe === null) el.removeAttribute(n); else el.setAttribute(n, safe);
+      if (safe === null) el.removeAttribute(n);
+      else el.setAttribute(n, safe);
     });
 
     // Style cleansing
@@ -139,20 +179,23 @@ export function sanitizeHtml(input: string, opts: SanitizeOptions = {}): string 
       else {
         const v = el.getAttribute("style") ?? "";
         const safe = cleanseStyle(v);
-        if (safe === null) el.removeAttribute("style"); else el.setAttribute("style", safe);
+        if (safe === null) el.removeAttribute("style");
+        else el.setAttribute("style", safe);
       }
     }
   }
-  toRemove.forEach(n => n.remove());
+  toRemove.forEach((n) => n.remove());
 
   // Remove void/self-closing dangerous tags that may have slipped in raw HTML
   for (const tag of VOID_OR_SELF_CLOSING) {
     if (DANGEROUS_TAGS.has(tag)) {
-      doc.querySelectorAll(tag).forEach(n => n.remove());
+      doc.querySelectorAll(tag).forEach((n) => n.remove());
     }
   }
 
-  let out = stripHtml ? (doc.body.textContent ?? "").trim() : (doc.body.innerHTML ?? "").trim();
+  let out = stripHtml
+    ? (doc.body.textContent ?? "").trim()
+    : (doc.body.innerHTML ?? "").trim();
   out = neutralizePromptInjection(redactPII(out));
   return truncate(out, maxLen);
 }
@@ -163,7 +206,10 @@ function truncate(s: string, maxLen?: number): string {
 }
 
 // Convenience: pipeline-safe helper that ensures stripHtml first
-export function sanitizeToPlainText(input: string, opts?: Omit<SanitizeOptions, "stripHtml">): string {
+export function sanitizeToPlainText(
+  input: string,
+  opts?: Omit<SanitizeOptions, "stripHtml">,
+): string {
   return sanitizeHtml(input, { ...(opts ?? {}), stripHtml: true });
 }
 
@@ -189,7 +235,7 @@ export function sanitizeContent(
     stripHTML?: boolean;
     checkInjection?: boolean;
     redactPII?: boolean;
-  } = {}
+  } = {},
 ): {
   content: string;
   metadata: {
@@ -199,7 +245,11 @@ export function sanitizeContent(
     piiRedacted: boolean;
   };
 } {
-  const { stripHTML = true, checkInjection = true, redactPII: shouldRedactPII = true } = options;
+  const {
+    stripHTML = true,
+    checkInjection = true,
+    redactPII: shouldRedactPII = true,
+  } = options;
 
   let sanitized = content;
   let injectionDetected = false;
@@ -208,12 +258,18 @@ export function sanitizeContent(
   // Step 1: HTML sanitization (strip HTML only, no PII/injection yet)
   if (stripHTML) {
     // Simple regex-based HTML stripping
-    sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-    sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+    sanitized = sanitized.replace(
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      "",
+    );
+    sanitized = sanitized.replace(
+      /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi,
+      "",
+    );
     // Remove any unclosed script tags at end
-    sanitized = sanitized.replace(/<script[^>]*$/gi, '');
-    sanitized = sanitized.replace(/<[^>]+>/g, ' ');
-    sanitized = sanitized.replace(/\s+/g, ' ').trim();
+    sanitized = sanitized.replace(/<script[^>]*$/gi, "");
+    sanitized = sanitized.replace(/<[^>]+>/g, " ");
+    sanitized = sanitized.replace(/\s+/g, " ").trim();
   }
 
   // Step 2: PII redaction
@@ -242,7 +298,7 @@ export function sanitizeContent(
 
 export function validateContentLength(
   content: string,
-  maxChars = 100000
+  maxChars = 100000,
 ): {
   valid: boolean;
   length: number;
@@ -256,6 +312,8 @@ export function validateContentLength(
     valid,
     length,
     maxLength: maxChars,
-    truncated: valid ? undefined : content.substring(0, maxChars) + '... [truncated]',
+    truncated: valid
+      ? undefined
+      : content.substring(0, maxChars) + "... [truncated]",
   };
 }
