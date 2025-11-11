@@ -1,0 +1,16 @@
+# Code Owners for Nexus
+# Security-critical areas require review from designated owners
+
+# Content safety and privacy utilities
+/src/privacy/**          @oklahomahail
+/docs/security.md        @oklahomahail
+
+# Edge infrastructure (rate limiting, errors, CORS)
+/src/edge/**             @oklahomahail
+
+# CI/CD and quality gates
+/.github/workflows/**    @oklahomahail
+
+# Deployment and infrastructure
+/vercel.json             @oklahomahail
+/supabase/**             @oklahomahail
