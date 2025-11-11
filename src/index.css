@@ -80,23 +80,24 @@
 }
 
 @layer base {
-  /* CSS Custom Properties for Design System - Track15-Adjacent Professional Theme */
+  /* CSS Custom Properties for Design System - Nexus 2025 Brand */
   :root {
-    /* Core Layout Colors */
-    --bg: 11 13 18; /* #0B0D12 */
-    --panel: 17 19 24; /* #111318 */
-    --elevated: 22 25 34; /* #161922 */
+    /* Core Layout Colors - Nexus Night Theme */
+    --bg: 13 13 18; /* #0D0D12 - Nexus Night */
+    --panel: 26 26 34; /* #1A1A22 - Slate Layer */
+    --elevated: 29 31 42; /* #1D1F2A - Elevated Surface */
 
     /* Text Colors */
-    --text: 230 231 234; /* #E6E7EA */
-    --muted: 168 175 191; /* #A8AFBF */
-    --border: 36 40 54; /* #242836 */
+    --text: 255 255 255; /* #FFFFFF - White */
+    --muted: 160 163 177; /* #A0A3B1 - Zinc Gray */
+    --border: 45 45 58; /* #2D2D3A - Border */
 
-    /* Accent Colors - Use Sparingly */
-    --accent: 91 140 255; /* #5B8CFF - Primary accent */
-    --accent-2: 124 212 179; /* #7CD4B3 - Secondary accent */
-    --warn: 242 184 75; /* #F2B84B */
-    --error: 228 109 109; /* #E46D6D */
+    /* Brand Accent Colors - Nexus Glow System */
+    --accent: 59 54 244; /* #3B36F4 - Indigo Nexus (Primary) */
+    --accent-2: 114 228 252; /* #72E4FC - Electric Cyan (Secondary) */
+    --accent-3: 107 77 255; /* #6B4DFF - Deep Violet (Accent) */
+    --warn: 250 204 21; /* #FACC15 - Insight Amber */
+    --error: 248 113 113; /* #F87171 - Privacy Red */
 
     /* Legacy mappings for backwards compatibility */
     --bg-primary: var(--bg);
@@ -120,9 +121,21 @@
     --brand-secondary: var(--accent-2);
     --brand-accent: var(--error);
 
-    --success: 34 197 94;
+    --success: 74 222 128; /* #4ADE80 - Growth Green */
     --warning: var(--warn);
     --info: var(--accent);
+  }
+
+  /* Nexus Glow Gradient */
+  .nexus-glow {
+    background: linear-gradient(135deg, rgb(59 54 244) 0%, rgb(114 228 252) 100%);
+  }
+
+  .nexus-glow-text {
+    background: linear-gradient(135deg, rgb(59 54 244) 0%, rgb(114 228 252) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   /* Base HTML Styles */
@@ -418,6 +431,48 @@
       opacity: 1;
       transform: scale(1);
     }
+  }
+
+  /* Nexus Brand Animations */
+  @keyframes nexusPulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes nexusGlow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(59, 54, 244, 0.3), 0 0 40px rgba(114, 228, 252, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(59, 54, 244, 0.5), 0 0 60px rgba(114, 228, 252, 0.4);
+    }
+  }
+
+  @keyframes nexusOrbit {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-nexus-pulse {
+    animation: nexusPulse 3s ease-in-out infinite;
+  }
+
+  .animate-nexus-glow {
+    animation: nexusGlow 3s ease-in-out infinite;
+  }
+
+  .animate-nexus-orbit {
+    animation: nexusOrbit 20s linear infinite;
   }
 
   /* Responsive Layout Helpers */
