@@ -9,24 +9,24 @@
 
 export interface ClientTheme {
   /** Client primary color (optional) */
-  clientPrimary?: string
+  clientPrimary?: string;
   /** Client accent color (optional) */
-  clientAccent?: string
+  clientAccent?: string;
   /** Client logo URL (optional) */
-  clientLogo?: string
+  clientLogo?: string;
   /** Client name */
-  clientName: string
+  clientName: string;
 }
 
 export interface ThemeColors {
   /** Nexus primary brand color */
-  brandPrimary: string
+  brandPrimary: string;
   /** Nexus secondary accent */
-  brandSecondary: string
+  brandSecondary: string;
   /** Client accent color (falls back to Nexus cyan if not provided) */
-  clientAccent: string
+  clientAccent: string;
   /** Mixed gradient combining Nexus + client colors */
-  mixedGradient: string
+  mixedGradient: string;
 }
 
 /**
@@ -34,19 +34,19 @@ export interface ThemeColors {
  * Combines Nexus core brand with client-specific colors
  */
 export function getClientTheme(client?: ClientTheme): ThemeColors {
-  const brandPrimary = '#3B36F4' // Indigo Nexus
-  const brandSecondary = '#72E4FC' // Electric Cyan
-  const clientAccent = client?.clientAccent || brandSecondary
+  const brandPrimary = "#3B36F4"; // Indigo Nexus
+  const brandSecondary = "#72E4FC"; // Electric Cyan
+  const clientAccent = client?.clientAccent || brandSecondary;
 
   // Create mixed gradient: Nexus indigo → client accent
-  const mixedGradient = `linear-gradient(135deg, ${brandPrimary} 0%, ${clientAccent} 100%)`
+  const mixedGradient = `linear-gradient(135deg, ${brandPrimary} 0%, ${clientAccent} 100%)`;
 
   return {
     brandPrimary,
     brandSecondary,
     clientAccent,
     mixedGradient,
-  }
+  };
 }
 
 /**
@@ -54,16 +54,16 @@ export function getClientTheme(client?: ClientTheme): ThemeColors {
  * Updates CSS custom properties with client colors
  */
 export function applyClientTheme(client?: ClientTheme): void {
-  const theme = getClientTheme(client)
-  const root = document.documentElement
+  const theme = getClientTheme(client);
+  const root = document.documentElement;
 
   // Set CSS custom properties
-  root.style.setProperty('--client-accent', theme.clientAccent)
-  root.style.setProperty('--mixed-gradient', theme.mixedGradient)
+  root.style.setProperty("--client-accent", theme.clientAccent);
+  root.style.setProperty("--mixed-gradient", theme.mixedGradient);
 
   // Optional: Store client name in data attribute for debugging
   if (client?.clientName) {
-    root.dataset.clientTheme = client.clientName
+    root.dataset.clientTheme = client.clientName;
   }
 }
 
@@ -71,20 +71,22 @@ export function applyClientTheme(client?: ClientTheme): void {
  * Get contrasting text color for a background color
  * Ensures WCAG AA accessibility (4.5:1 contrast ratio)
  */
-export function getContrastColor(backgroundColor: string): '#FFFFFF' | '#000000' {
+export function getContrastColor(
+  backgroundColor: string,
+): "#FFFFFF" | "#000000" {
   // Remove # if present
-  const hex = backgroundColor.replace('#', '')
+  const hex = backgroundColor.replace("#", "");
 
   // Convert to RGB
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
 
   // Calculate relative luminance (WCAG formula)
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
   // Return white for dark backgrounds, black for light backgrounds
-  return luminance > 0.5 ? '#000000' : '#FFFFFF'
+  return luminance > 0.5 ? "#000000" : "#FFFFFF";
 }
 
 /**
@@ -92,15 +94,15 @@ export function getContrastColor(backgroundColor: string): '#FFFFFF' | '#000000'
  * Nexus requires dark backgrounds to preserve logo glow
  */
 export function isValidBrandBackground(color: string): boolean {
-  const hex = color.replace('#', '')
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
+  const hex = color.replace("#", "");
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
 
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
   // Background must be dark (luminance < 0.2)
-  return luminance < 0.2
+  return luminance < 0.2;
 }
 
 /**
@@ -109,21 +111,21 @@ export function isValidBrandBackground(color: string): boolean {
  */
 export const EXAMPLE_CLIENT_THEMES: Record<string, ClientTheme> = {
   track15: {
-    clientName: 'Track15',
-    clientAccent: '#FF8C42', // Track15 orange
-    clientLogo: '/clients/track15/logo.svg',
+    clientName: "Track15",
+    clientAccent: "#FF8C42", // Track15 orange
+    clientLogo: "/clients/track15/logo.svg",
   },
   hopeFoundation: {
-    clientName: 'Hope Foundation',
-    clientAccent: '#7CD4B3', // Mint green
-    clientLogo: '/clients/hope/logo.svg',
+    clientName: "Hope Foundation",
+    clientAccent: "#7CD4B3", // Mint green
+    clientLogo: "/clients/hope/logo.svg",
   },
   unitedWay: {
-    clientName: 'United Way',
-    clientAccent: '#E74C3C', // United Way red
-    clientLogo: '/clients/unitedway/logo.svg',
+    clientName: "United Way",
+    clientAccent: "#E74C3C", // United Way red
+    clientLogo: "/clients/unitedway/logo.svg",
   },
-}
+};
 
 /**
  * React hook for client theming
@@ -149,9 +151,9 @@ export const EXAMPLE_CLIENT_THEMES: Record<string, ClientTheme> = {
  */
 export function useClientTheme(client?: ClientTheme): ThemeColors {
   // Apply theme on mount
-  if (typeof window !== 'undefined') {
-    applyClientTheme(client)
+  if (typeof window !== "undefined") {
+    applyClientTheme(client);
   }
 
-  return getClientTheme(client)
+  return getClientTheme(client);
 }

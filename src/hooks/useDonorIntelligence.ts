@@ -5,7 +5,8 @@
  * Provides loading states, error handling, and data caching
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from "react";
+
 import {
   type MetricType,
   type MetricFilters,
@@ -14,7 +15,7 @@ import {
   type GiftVelocityResult,
   type SeasonalityResult,
   computeMetric,
-} from '@/services/donorIntelService'
+} from "@/services/donorIntelService";
 
 // ============================================================================
 // TYPES
@@ -22,25 +23,27 @@ import {
 
 interface UseDonorIntelligenceReturn {
   // State
-  data: unknown
-  isLoading: boolean
-  error: string | null
-  privacyEnforced: boolean
+  data: unknown;
+  isLoading: boolean;
+  error: string | null;
+  privacyEnforced: boolean;
 
   // Actions
-  fetchMetric: (metric: MetricType, filters?: MetricFilters) => Promise<void>
-  clearData: () => void
+  fetchMetric: (metric: MetricType, filters?: MetricFilters) => Promise<void>;
+  clearData: () => void;
 }
 
 // ============================================================================
 // HOOK
 // ============================================================================
 
-export function useDonorIntelligence(clientId: string): UseDonorIntelligenceReturn {
-  const [data, setData] = useState<unknown>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [privacyEnforced, setPrivacyEnforced] = useState(false)
+export function useDonorIntelligence(
+  clientId: string,
+): UseDonorIntelligenceReturn {
+  const [data, setData] = useState<unknown>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [privacyEnforced, setPrivacyEnforced] = useState(false);
 
   /**
    * Fetch a donor intelligence metric
@@ -48,49 +51,50 @@ export function useDonorIntelligence(clientId: string): UseDonorIntelligenceRetu
   const fetchMetric = useCallback(
     async (metric: MetricType, filters?: MetricFilters) => {
       if (!clientId) {
-        setError('No client selected')
-        return
+        setError("No client selected");
+        return;
       }
 
-      setIsLoading(true)
-      setError(null)
-      setPrivacyEnforced(false)
+      setIsLoading(true);
+      setError(null);
+      setPrivacyEnforced(false);
 
       try {
         const response = await computeMetric({
           metric,
           filters,
           client_id: clientId,
-        })
+        });
 
         if (!response.ok) {
-          setError(response.error || 'Failed to fetch metric')
-          setPrivacyEnforced(response.privacy_enforced || false)
-          setData(null)
-          return
+          setError(response.error || "Failed to fetch metric");
+          setPrivacyEnforced(response.privacy_enforced || false);
+          setData(null);
+          return;
         }
 
-        setData(response.data || null)
-        setPrivacyEnforced(response.privacy_enforced || false)
+        setData(response.data || null);
+        setPrivacyEnforced(response.privacy_enforced || false);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to fetch metric'
-        setError(message)
-        setData(null)
+        const message =
+          err instanceof Error ? err.message : "Failed to fetch metric";
+        setError(message);
+        setData(null);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     },
-    [clientId]
-  )
+    [clientId],
+  );
 
   /**
    * Clear current data and error state
    */
   const clearData = useCallback(() => {
-    setData(null)
-    setError(null)
-    setPrivacyEnforced(false)
-  }, [])
+    setData(null);
+    setError(null);
+    setPrivacyEnforced(false);
+  }, []);
 
   return {
     data,
@@ -99,7 +103,7 @@ export function useDonorIntelligence(clientId: string): UseDonorIntelligenceRetu
     privacyEnforced,
     fetchMetric,
     clearData,
-  }
+  };
 }
 
 // ============================================================================
@@ -111,14 +115,14 @@ export function useDonorIntelligence(clientId: string): UseDonorIntelligenceRetu
  */
 export function useRetainedDonors(clientId: string) {
   const { data, isLoading, error, privacyEnforced, fetchMetric, clearData } =
-    useDonorIntelligence(clientId)
+    useDonorIntelligence(clientId);
 
   const fetch = useCallback(
     (numYears: number = 5) => {
-      return fetchMetric('retained_donors', { num_years: numYears })
+      return fetchMetric("retained_donors", { num_years: numYears });
     },
-    [fetchMetric]
-  )
+    [fetchMetric],
+  );
 
   return {
     data: data as RetainedDonorsResult | null,
@@ -127,7 +131,7 @@ export function useRetainedDonors(clientId: string) {
     privacyEnforced,
     fetch,
     clearData,
-  }
+  };
 }
 
 /**
@@ -135,14 +139,17 @@ export function useRetainedDonors(clientId: string) {
  */
 export function useYoyUpgrade(clientId: string) {
   const { data, isLoading, error, privacyEnforced, fetchMetric, clearData } =
-    useDonorIntelligence(clientId)
+    useDonorIntelligence(clientId);
 
   const fetch = useCallback(
     (yearFrom: number, yearTo: number) => {
-      return fetchMetric('yoy_upgrade', { year_from: yearFrom, year_to: yearTo })
+      return fetchMetric("yoy_upgrade", {
+        year_from: yearFrom,
+        year_to: yearTo,
+      });
     },
-    [fetchMetric]
-  )
+    [fetchMetric],
+  );
 
   return {
     data: data as YoyUpgradeResult | null,
@@ -151,7 +158,7 @@ export function useYoyUpgrade(clientId: string) {
     privacyEnforced,
     fetch,
     clearData,
-  }
+  };
 }
 
 /**
@@ -159,11 +166,11 @@ export function useYoyUpgrade(clientId: string) {
  */
 export function useGiftVelocity(clientId: string) {
   const { data, isLoading, error, privacyEnforced, fetchMetric, clearData } =
-    useDonorIntelligence(clientId)
+    useDonorIntelligence(clientId);
 
   const fetch = useCallback(() => {
-    return fetchMetric('gift_velocity')
-  }, [fetchMetric])
+    return fetchMetric("gift_velocity");
+  }, [fetchMetric]);
 
   return {
     data: data as GiftVelocityResult | null,
@@ -172,7 +179,7 @@ export function useGiftVelocity(clientId: string) {
     privacyEnforced,
     fetch,
     clearData,
-  }
+  };
 }
 
 /**
@@ -180,14 +187,14 @@ export function useGiftVelocity(clientId: string) {
  */
 export function useSeasonality(clientId: string) {
   const { data, isLoading, error, privacyEnforced, fetchMetric, clearData } =
-    useDonorIntelligence(clientId)
+    useDonorIntelligence(clientId);
 
   const fetch = useCallback(
     (year?: number) => {
-      return fetchMetric('seasonality', year ? { year } : undefined)
+      return fetchMetric("seasonality", year ? { year } : undefined);
     },
-    [fetchMetric]
-  )
+    [fetchMetric],
+  );
 
   return {
     data: data as SeasonalityResult | null,
@@ -196,5 +203,5 @@ export function useSeasonality(clientId: string) {
     privacyEnforced,
     fetch,
     clearData,
-  }
+  };
 }

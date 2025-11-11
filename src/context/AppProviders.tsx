@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 

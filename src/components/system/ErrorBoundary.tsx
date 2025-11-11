@@ -1,14 +1,14 @@
 // Nexus Error Boundary System
 // Adapted from Inkwell's battle-tested pattern
-import { AlertTriangle, RefreshCw, Bug, Mail, Copy } from 'lucide-react';
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw, Bug, Mail, Copy } from "lucide-react";
+import React, { Component, ErrorInfo, ReactNode } from "react";
 
-import { NexusLogo } from '@/components/brand/NexusLogo';
+import { NexusLogo } from "@/components/brand/NexusLogo";
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode | undefined;
-  level?: 'app' | 'feature' | 'component' | undefined;
+  level?: "app" | "feature" | "component" | undefined;
   featureName?: string | undefined;
 }
 
@@ -71,24 +71,24 @@ export class AppErrorBoundary extends Component<Props, State> {
     });
 
     // Log error for debugging in development
-    if (import.meta.env.MODE === 'development') {
-      console.error('🚨 Error boundary caught an error:', error);
-      console.error('Component stack:', errorInfo.componentStack);
+    if (import.meta.env.MODE === "development") {
+      console.error("🚨 Error boundary caught an error:", error);
+      console.error("Component stack:", errorInfo.componentStack);
     }
 
     // Report error in production
-    if (import.meta.env.MODE === 'production') {
+    if (import.meta.env.MODE === "production") {
       this.reportError(error, errorInfo);
     }
 
     // Log to performance API for monitoring
-    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
-      performance.mark(`error-boundary-${this.props.level || 'unknown'}`);
+    if (typeof window !== "undefined" && "PerformanceObserver" in window) {
+      performance.mark(`error-boundary-${this.props.level || "unknown"}`);
     }
   }
 
   private generateErrorReport(error: Error, errorInfo: ErrorInfo): ErrorReport {
-    const errorId = this.state.errorId || 'unknown';
+    const errorId = this.state.errorId || "unknown";
 
     return {
       errorId,
@@ -96,7 +96,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       userAgent: navigator.userAgent,
       url: window.location.href,
       featureName: this.props.featureName,
-      level: this.props.level || 'component',
+      level: this.props.level || "component",
       error: {
         message: error.message,
         stack: error.stack,
@@ -104,8 +104,8 @@ export class AppErrorBoundary extends Component<Props, State> {
       },
       componentStack: errorInfo.componentStack || undefined,
       buildInfo: {
-        version: import.meta.env.VITE_APP_VERSION || 'unknown',
-        environment: import.meta.env.MODE || 'unknown',
+        version: import.meta.env.VITE_APP_VERSION || "unknown",
+        environment: import.meta.env.MODE || "unknown",
       },
     };
   }
@@ -115,7 +115,10 @@ export class AppErrorBoundary extends Component<Props, State> {
       const errorReport = this.generateErrorReport(error, errorInfo);
 
       // Store error locally for user to report
-      localStorage.setItem(`nexus_error_${errorReport.errorId}`, JSON.stringify(errorReport));
+      localStorage.setItem(
+        `nexus_error_${errorReport.errorId}`,
+        JSON.stringify(errorReport),
+      );
 
       // TODO: Send to error reporting service when implemented
       // await fetch('/api/errors', {
@@ -124,7 +127,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       //   body: JSON.stringify(errorReport),
       // });
     } catch (reportingError) {
-      console.error('Failed to report error:', reportingError);
+      console.error("Failed to report error:", reportingError);
     }
   }
 
@@ -153,7 +156,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       const subject = `Nexus Error Report: ${errorReport.errorId}`;
       const body = `Error ID: ${errorReport.errorId}
 Timestamp: ${errorReport.timestamp}
-Feature: ${errorReport.featureName || 'Unknown'}
+Feature: ${errorReport.featureName || "Unknown"}
 Level: ${errorReport.level}
 
 Error Message: ${errorReport.error.message}
@@ -177,12 +180,14 @@ ${JSON.stringify(errorReport, null, 2)}`;
 
     if (errorReport) {
       try {
-        await navigator.clipboard.writeText(JSON.stringify(errorReport, null, 2));
+        await navigator.clipboard.writeText(
+          JSON.stringify(errorReport, null, 2),
+        );
         // Simple feedback without alert since ErrorBoundary can't use hooks
         this.setState({ copySuccess: true });
         setTimeout(() => this.setState({ copySuccess: false }), 2000);
       } catch (err) {
-        console.error('Failed to copy to clipboard:', err);
+        console.error("Failed to copy to clipboard:", err);
       }
     }
   };
@@ -194,22 +199,22 @@ ${JSON.stringify(errorReport, null, 2)}`;
         return this.props.fallback;
       }
 
-      const { level = 'component', featureName } = this.props;
+      const { level = "component", featureName } = this.props;
       const { error, errorId, showDetails } = this.state;
 
       // Feature-level error UI
-      if (level === 'feature') {
+      if (level === "feature") {
         return (
           <div className="min-h-[400px] flex items-center justify-center p-8 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200 dark:border-red-800 rounded-lg">
             <div className="text-center max-w-md">
               <div className="mb-6">
                 <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
-                  {featureName || 'Feature'} Error
+                  {featureName || "Feature"} Error
                 </h3>
                 <p className="text-red-700 dark:text-red-300 text-sm">
-                  This feature encountered an error and couldn't load. You can try again or continue
-                  using other parts of Nexus.
+                  This feature encountered an error and couldn't load. You can
+                  try again or continue using other parts of Nexus.
                 </p>
               </div>
 
@@ -248,22 +253,35 @@ ${JSON.stringify(errorReport, null, 2)}`;
               <div className="relative mb-6">
                 <div className="absolute inset-0 bg-red-500/20 rounded-full blur-xl" />
                 <div className="relative">
-                  <NexusLogo size={64} showWordmark={false} className="mx-auto mb-4" />
+                  <NexusLogo
+                    size={64}
+                    showWordmark={false}
+                    className="mx-auto mb-4"
+                  />
                 </div>
               </div>
               <h1 className="text-2xl font-bold text-white mb-2">
                 Something went wrong
               </h1>
               <p className="text-gray-400">
-                Nexus encountered an unexpected error. We apologize for the inconvenience.
+                Nexus encountered an unexpected error. We apologize for the
+                inconvenience.
               </p>
             </div>
 
             {error && (
               <div className="mb-6 p-4 bg-gray-900 rounded-lg">
-                <div className="text-sm font-medium text-gray-300 mb-1">Error Message:</div>
-                <div className="text-sm text-white font-mono">{error.message}</div>
-                {errorId && <div className="mt-2 text-xs text-gray-500">ID: {errorId}</div>}
+                <div className="text-sm font-medium text-gray-300 mb-1">
+                  Error Message:
+                </div>
+                <div className="text-sm text-white font-mono">
+                  {error.message}
+                </div>
+                {errorId && (
+                  <div className="mt-2 text-xs text-gray-500">
+                    ID: {errorId}
+                  </div>
+                )}
               </div>
             )}
 
@@ -296,23 +314,25 @@ ${JSON.stringify(errorReport, null, 2)}`;
                 onClick={() => this.setState({ showDetails: !showDetails })}
                 className="text-sm text-gray-500 hover:text-gray-300 transition-colors"
               >
-                {showDetails ? 'Hide' : 'Show'} Technical Details
+                {showDetails ? "Hide" : "Show"} Technical Details
               </button>
 
               {showDetails && (
                 <div className="mt-4 p-4 bg-gray-900 rounded-lg text-left">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-300">Technical Details</span>
+                    <span className="text-sm font-medium text-gray-300">
+                      Technical Details
+                    </span>
                     <button
                       onClick={this.handleCopyDetails}
                       className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300"
                     >
                       <Copy className="w-3 h-3" />
-                      {this.state.copySuccess ? 'Copied!' : 'Copy'}
+                      {this.state.copySuccess ? "Copied!" : "Copy"}
                     </button>
                   </div>
                   <pre className="text-xs text-gray-400 overflow-auto max-h-40 whitespace-pre-wrap">
-                    {error?.stack || 'No stack trace available'}
+                    {error?.stack || "No stack trace available"}
                   </pre>
                 </div>
               )}
@@ -320,8 +340,11 @@ ${JSON.stringify(errorReport, null, 2)}`;
 
             <div className="mt-6 pt-6 border-t border-gray-800 text-center">
               <p className="text-xs text-gray-500">
-                Need help? Contact{' '}
-                <a href="mailto:support@nexusapp.com" className="text-cyan-400 hover:text-cyan-300">
+                Need help? Contact{" "}
+                <a
+                  href="mailto:support@nexusapp.com"
+                  className="text-cyan-400 hover:text-cyan-300"
+                >
                   support@nexusapp.com
                 </a>
               </p>
@@ -338,7 +361,7 @@ ${JSON.stringify(errorReport, null, 2)}`;
 // Convenience HOC for wrapping components with error boundaries
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<Props, 'children'>,
+  errorBoundaryProps?: Omit<Props, "children">,
 ) {
   const WrappedComponent: React.FC<P> = (props) => (
     <AppErrorBoundary {...errorBoundaryProps}>
@@ -357,7 +380,11 @@ export const FeatureErrorBoundary: React.FC<{
   featureName: string;
   fallback?: ReactNode;
 }> = ({ children, featureName, fallback }) => (
-  <AppErrorBoundary level="feature" featureName={featureName} fallback={fallback}>
+  <AppErrorBoundary
+    level="feature"
+    featureName={featureName}
+    fallback={fallback}
+  >
     {children}
   </AppErrorBoundary>
 );

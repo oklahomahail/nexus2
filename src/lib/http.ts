@@ -26,7 +26,7 @@ const jitter = (n: number) => Math.round(n * (0.8 + Math.random() * 0.4));
 export async function fetchJSON<T>(
   url: string,
   init: RequestInit = {},
-  opts: RetryOptions = {}
+  opts: RetryOptions = {},
 ): Promise<T> {
   const { retries = 3, baseMs = 250, maxMs = 2000, timeoutMs = 15000 } = opts;
   let lastErr: any;
@@ -67,7 +67,7 @@ export async function fetchJSON<T>(
  */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  opts: RetryOptions = {}
+  opts: RetryOptions = {},
 ): Promise<T> {
   const { retries = 3, baseMs = 250, maxMs = 2000, timeoutMs = 15000 } = opts;
   let lastErr: any;
@@ -80,9 +80,9 @@ export async function withRetry<T>(
       const result = await Promise.race([
         fn(),
         new Promise<never>((_, reject) =>
-          ctrl.signal.addEventListener('abort', () =>
-            reject(new Error('Request timeout'))
-          )
+          ctrl.signal.addEventListener("abort", () =>
+            reject(new Error("Request timeout")),
+          ),
         ),
       ]);
 
@@ -111,12 +111,12 @@ export async function withRetry<T>(
  */
 export async function withTimeout<T>(
   promise: Promise<T>,
-  timeoutMs: number
+  timeoutMs: number,
 ): Promise<T> {
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+      setTimeout(() => reject(new Error("Request timeout")), timeoutMs),
     ),
   ]);
 }
@@ -131,15 +131,15 @@ export async function invokeFn<T = unknown>(
   supabase: any, // Type from @supabase/supabase-js when installed
   name: string,
   body: any,
-  opts: RetryOptions = {}
+  opts: RetryOptions = {},
 ): Promise<T> {
   return withRetry(
     async () => {
       const { data, error } = await supabase.functions.invoke(name, { body });
       if (error) throw error;
-      if (!data) throw new Error('No data returned from Edge Function');
+      if (!data) throw new Error("No data returned from Edge Function");
       return data as T;
     },
-    { retries: 2, baseMs: 300, maxMs: 1200, timeoutMs: 15000, ...opts }
+    { retries: 2, baseMs: 300, maxMs: 1200, timeoutMs: 15000, ...opts },
   );
 }

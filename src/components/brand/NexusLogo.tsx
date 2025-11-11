@@ -7,28 +7,33 @@
 
 interface NexusLogoProps {
   /** Size in pixels (defaults to 48) */
-  size?: number
+  size?: number;
   /** Show wordmark alongside symbol */
-  showWordmark?: boolean
+  showWordmark?: boolean;
   /** Enable pulsing animation */
-  animated?: boolean
+  animated?: boolean;
   /** Class name for custom styling */
-  className?: string
+  className?: string;
 }
 
-export function NexusLogo({ size = 48, showWordmark = false, animated = false, className = '' }: NexusLogoProps) {
-  const nodeRadius = size * 0.08
-  const coreRadius = size * 0.12
-  const orbitRadius = size * 0.35
+export function NexusLogo({
+  size = 48,
+  showWordmark = false,
+  animated = false,
+  className = "",
+}: NexusLogoProps) {
+  const nodeRadius = size * 0.08;
+  const coreRadius = size * 0.12;
+  const orbitRadius = size * 0.35;
 
   // Calculate positions for 6 nodes in a circle
   const nodes = Array.from({ length: 6 }, (_, i) => {
-    const angle = (i * Math.PI * 2) / 6 - Math.PI / 2 // Start from top
+    const angle = (i * Math.PI * 2) / 6 - Math.PI / 2; // Start from top
     return {
       x: size / 2 + Math.cos(angle) * orbitRadius,
       y: size / 2 + Math.sin(angle) * orbitRadius,
-    }
-  })
+    };
+  });
 
   return (
     <div className={`inline-flex items-center gap-3 ${className}`}>
@@ -38,11 +43,17 @@ export function NexusLogo({ size = 48, showWordmark = false, animated = false, c
         viewBox={`0 0 ${size} ${size}`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className={animated ? 'animate-nexus-pulse' : ''}
+        className={animated ? "animate-nexus-pulse" : ""}
       >
         <defs>
           {/* Gradient for nodes */}
-          <linearGradient id="nexus-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="nexus-gradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#3B36F4" />
             <stop offset="100%" stopColor="#72E4FC" />
           </linearGradient>
@@ -108,13 +119,13 @@ export function NexusLogo({ size = 48, showWordmark = false, animated = false, c
           className="font-semibold tracking-tight"
           style={{
             fontSize: size * 0.4,
-            fontFamily: 'Inter Tight, Inter, sans-serif',
-            color: '#FFFFFF',
+            fontFamily: "Inter Tight, Inter, sans-serif",
+            color: "#FFFFFF",
           }}
         >
           Nexus
         </span>
       )}
     </div>
-  )
+  );
 }

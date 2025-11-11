@@ -5,75 +5,79 @@
  * Provides type-safe access to donor analytics with privacy enforcement
  */
 
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-export type MetricType = 'retained_donors' | 'yoy_upgrade' | 'gift_velocity' | 'seasonality'
+export type MetricType =
+  | "retained_donors"
+  | "yoy_upgrade"
+  | "gift_velocity"
+  | "seasonality";
 
 export interface MetricFilters {
-  num_years?: number
-  year_from?: number
-  year_to?: number
-  year?: number
+  num_years?: number;
+  year_from?: number;
+  year_to?: number;
+  year?: number;
 }
 
 export interface MetricRequest {
-  metric: MetricType
-  filters?: MetricFilters
-  client_id?: string
+  metric: MetricType;
+  filters?: MetricFilters;
+  client_id?: string;
 }
 
 export interface MetricResponse<T = unknown> {
-  ok: boolean
-  metric: string
-  data?: T
-  error?: string
-  privacy_enforced?: boolean
+  ok: boolean;
+  metric: string;
+  data?: T;
+  error?: string;
+  privacy_enforced?: boolean;
 }
 
 // ========== RETAINED DONORS ==========
 
 export interface RetainedDonorRow {
-  consecutive_years: number
-  donor_count: number
+  consecutive_years: number;
+  donor_count: number;
 }
 
-export type RetainedDonorsResult = RetainedDonorRow[]
+export type RetainedDonorsResult = RetainedDonorRow[];
 
 // ========== YOY UPGRADE ==========
 
 export interface YoyUpgradeRow {
-  anon_id: string
-  amount_from: number
-  amount_to: number
-  pct_change: number
+  anon_id: string;
+  amount_from: number;
+  amount_to: number;
+  pct_change: number;
 }
 
-export type YoyUpgradeResult = YoyUpgradeRow[]
+export type YoyUpgradeResult = YoyUpgradeRow[];
 
 // ========== GIFT VELOCITY ==========
 
 export interface GiftVelocityRow {
-  anon_id: string
-  gift_count: number
-  median_days_between: number
+  anon_id: string;
+  gift_count: number;
+  median_days_between: number;
 }
 
-export type GiftVelocityResult = GiftVelocityRow[]
+export type GiftVelocityResult = GiftVelocityRow[];
 
 // ========== SEASONALITY ==========
 
 export interface SeasonalityRow {
-  year: number
-  quarter: number
-  gift_count: number
-  total_amount: number
+  year: number;
+  quarter: number;
+  gift_count: number;
+  total_amount: number;
 }
 
-export type SeasonalityResult = SeasonalityRow[]
+export type SeasonalityResult = SeasonalityRow[];
 
 // ============================================================================
 // MAIN FUNCTION
@@ -92,30 +96,32 @@ export type SeasonalityResult = SeasonalityRow[]
  * @throws Error if invocation fails
  */
 export async function computeMetric<T = unknown>(
-  request: MetricRequest
+  request: MetricRequest,
 ): Promise<MetricResponse<T>> {
   try {
     // @ts-expect-error - Supabase not yet installed
     const { data, error } = await supabase.functions.invoke<MetricResponse<T>>(
-      'analyze-donor-data',
+      "analyze-donor-data",
       {
         body: request,
-      }
-    )
+      },
+    );
 
     if (error) {
-      console.error('Donor intelligence error:', error)
-      throw new Error(error.message || 'Failed to compute metric')
+      console.error("Donor intelligence error:", error);
+      throw new Error(error.message || "Failed to compute metric");
     }
 
     if (!data) {
-      throw new Error('No response from analytics function')
+      throw new Error("No response from analytics function");
     }
 
-    return data
+    return data;
   } catch (err) {
-    console.error('Donor intelligence exception:', err)
-    throw err instanceof Error ? err : new Error('An unexpected error occurred')
+    console.error("Donor intelligence exception:", err);
+    throw err instanceof Error
+      ? err
+      : new Error("An unexpected error occurred");
   }
 }
 
@@ -133,19 +139,19 @@ export async function computeMetric<T = unknown>(
  */
 export async function getRetainedDonors(
   clientId: string,
-  numYears: number = 5
+  numYears: number = 5,
 ): Promise<RetainedDonorsResult> {
   const response = await computeMetric<RetainedDonorsResult>({
-    metric: 'retained_donors',
+    metric: "retained_donors",
     filters: { num_years: numYears },
     client_id: clientId,
-  })
+  });
 
   if (!response.ok || !response.data) {
-    throw new Error(response.error || 'Failed to get retained donors')
+    throw new Error(response.error || "Failed to get retained donors");
   }
 
-  return response.data
+  return response.data;
 }
 
 /**
@@ -160,19 +166,19 @@ export async function getRetainedDonors(
 export async function getYoyUpgrade(
   clientId: string,
   yearFrom: number,
-  yearTo: number
+  yearTo: number,
 ): Promise<YoyUpgradeResult> {
   const response = await computeMetric<YoyUpgradeResult>({
-    metric: 'yoy_upgrade',
+    metric: "yoy_upgrade",
     filters: { year_from: yearFrom, year_to: yearTo },
     client_id: clientId,
-  })
+  });
 
   if (!response.ok || !response.data) {
-    throw new Error(response.error || 'Failed to get upgrade data')
+    throw new Error(response.error || "Failed to get upgrade data");
   }
 
-  return response.data
+  return response.data;
 }
 
 /**
@@ -182,17 +188,19 @@ export async function getYoyUpgrade(
  * @param clientId - Client UUID
  * @returns Array of {anon_id, gift_count, median_days_between}
  */
-export async function getGiftVelocity(clientId: string): Promise<GiftVelocityResult> {
+export async function getGiftVelocity(
+  clientId: string,
+): Promise<GiftVelocityResult> {
   const response = await computeMetric<GiftVelocityResult>({
-    metric: 'gift_velocity',
+    metric: "gift_velocity",
     client_id: clientId,
-  })
+  });
 
   if (!response.ok || !response.data) {
-    throw new Error(response.error || 'Failed to get gift velocity')
+    throw new Error(response.error || "Failed to get gift velocity");
   }
 
-  return response.data
+  return response.data;
 }
 
 /**
@@ -205,19 +213,19 @@ export async function getGiftVelocity(clientId: string): Promise<GiftVelocityRes
  */
 export async function getSeasonality(
   clientId: string,
-  year?: number
+  year?: number,
 ): Promise<SeasonalityResult> {
   const response = await computeMetric<SeasonalityResult>({
-    metric: 'seasonality',
+    metric: "seasonality",
     filters: year ? { year } : undefined,
     client_id: clientId,
-  })
+  });
 
   if (!response.ok || !response.data) {
-    throw new Error(response.error || 'Failed to get seasonality data')
+    throw new Error(response.error || "Failed to get seasonality data");
   }
 
-  return response.data
+  return response.data;
 }
 
 // ============================================================================
@@ -228,91 +236,108 @@ export async function getSeasonality(
  * Format currency for display
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount)
+  }).format(amount);
 }
 
 /**
  * Format percentage for display
  */
 export function formatPercent(value: number, decimals: number = 1): string {
-  return `${value.toFixed(decimals)}%`
+  return `${value.toFixed(decimals)}%`;
 }
 
 /**
  * Calculate summary statistics from retained donors data
  */
 export function summarizeRetention(data: RetainedDonorsResult): {
-  total_donors: number
-  avg_consecutive_years: number
-  max_consecutive_years: number
+  total_donors: number;
+  avg_consecutive_years: number;
+  max_consecutive_years: number;
 } {
   if (data.length === 0) {
-    return { total_donors: 0, avg_consecutive_years: 0, max_consecutive_years: 0 }
+    return {
+      total_donors: 0,
+      avg_consecutive_years: 0,
+      max_consecutive_years: 0,
+    };
   }
 
-  const total_donors = data.reduce((sum, row) => sum + row.donor_count, 0)
+  const total_donors = data.reduce((sum, row) => sum + row.donor_count, 0);
   const weighted_sum = data.reduce(
     (sum, row) => sum + row.consecutive_years * row.donor_count,
-    0
-  )
-  const avg_consecutive_years = weighted_sum / total_donors
-  const max_consecutive_years = Math.max(...data.map((row) => row.consecutive_years))
+    0,
+  );
+  const avg_consecutive_years = weighted_sum / total_donors;
+  const max_consecutive_years = Math.max(
+    ...data.map((row) => row.consecutive_years),
+  );
 
   return {
     total_donors,
     avg_consecutive_years: Math.round(avg_consecutive_years * 10) / 10,
     max_consecutive_years,
-  }
+  };
 }
 
 /**
  * Calculate summary statistics from gift velocity data
  */
 export function summarizeVelocity(data: GiftVelocityResult): {
-  total_repeat_donors: number
-  avg_days_between: number
-  median_days_between: number
+  total_repeat_donors: number;
+  avg_days_between: number;
+  median_days_between: number;
 } {
   if (data.length === 0) {
-    return { total_repeat_donors: 0, avg_days_between: 0, median_days_between: 0 }
+    return {
+      total_repeat_donors: 0,
+      avg_days_between: 0,
+      median_days_between: 0,
+    };
   }
 
-  const total_repeat_donors = data.length
+  const total_repeat_donors = data.length;
   const avg_days_between =
-    data.reduce((sum, row) => sum + row.median_days_between, 0) / total_repeat_donors
+    data.reduce((sum, row) => sum + row.median_days_between, 0) /
+    total_repeat_donors;
 
   // Calculate median of medians
-  const sorted = [...data].sort((a, b) => a.median_days_between - b.median_days_between)
-  const mid = Math.floor(sorted.length / 2)
+  const sorted = [...data].sort(
+    (a, b) => a.median_days_between - b.median_days_between,
+  );
+  const mid = Math.floor(sorted.length / 2);
   const median_days_between =
     sorted.length % 2 === 0
-      ? (sorted[mid - 1].median_days_between + sorted[mid].median_days_between) / 2
-      : sorted[mid].median_days_between
+      ? (sorted[mid - 1].median_days_between +
+          sorted[mid].median_days_between) /
+        2
+      : sorted[mid].median_days_between;
 
   return {
     total_repeat_donors,
     avg_days_between: Math.round(avg_days_between),
     median_days_between: Math.round(median_days_between),
-  }
+  };
 }
 
 /**
  * Group seasonality data by year
  */
-export function groupSeasonalityByYear(data: SeasonalityResult): Map<number, SeasonalityRow[]> {
-  const grouped = new Map<number, SeasonalityRow[]>()
+export function groupSeasonalityByYear(
+  data: SeasonalityResult,
+): Map<number, SeasonalityRow[]> {
+  const grouped = new Map<number, SeasonalityRow[]>();
 
   for (const row of data) {
     if (!grouped.has(row.year)) {
-      grouped.set(row.year, [])
+      grouped.set(row.year, []);
     }
-    grouped.get(row.year)!.push(row)
+    grouped.get(row.year)!.push(row);
   }
 
-  return grouped
+  return grouped;
 }

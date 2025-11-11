@@ -5,7 +5,7 @@
  * Integrates brand context for consistent, on-brand content
  */
 
-import type { BrandProfile } from './brandService'
+import type { BrandProfile } from "./brandService";
 
 // ============================================================================
 // SYSTEM PROMPTS
@@ -33,7 +33,7 @@ OUTPUT REQUIREMENTS:
 - Use Track15 style: warm but professional, evidence-based, donor-respectful
 - All monetary amounts should use merge fields: {{GiftAmount}}, {{AverageGift}}
 - Keep sentences under 25 words; paragraphs under 5 sentences
-- Use active voice and present tense where possible`
+- Use active voice and present tense where possible`;
 
 // ============================================================================
 // BRAND CONTEXT TEMPLATE
@@ -44,30 +44,30 @@ OUTPUT REQUIREMENTS:
  */
 export function buildBrandContextPrompt(
   profile: BrandProfile,
-  corpusSnippets: Array<{ source: string; snippet: string }>
+  corpusSnippets: Array<{ source: string; snippet: string }>,
 ): string {
   return `
 BRAND CONTEXT:
 Organization: ${profile.name}
-Mission: ${profile.mission_statement || 'Not provided'}
+Mission: ${profile.mission_statement || "Not provided"}
 
 TONE & VOICE:
-- Tone: ${profile.tone_of_voice || 'warm, professional, donor-respectful'}
-- Personality: ${profile.brand_personality || 'impact-focused, evidence-based'}
-- Style Keywords: ${profile.style_keywords?.join(', ') || 'impact, community, transparency'}
+- Tone: ${profile.tone_of_voice || "warm, professional, donor-respectful"}
+- Personality: ${profile.brand_personality || "impact-focused, evidence-based"}
+- Style Keywords: ${profile.style_keywords?.join(", ") || "impact, community, transparency"}
 
 VISUAL IDENTITY:
-- Primary Colors: ${profile.primary_colors?.join(', ') || 'Not specified'}
-- Typography: ${profile.typography ? `Headings: ${(profile.typography as any).headings || 'Sans-serif'}, Body: ${(profile.typography as any).body || 'Serif'}` : 'Not specified'}
+- Primary Colors: ${profile.primary_colors?.join(", ") || "Not specified"}
+- Typography: ${profile.typography ? `Headings: ${(profile.typography as any).headings || "Sans-serif"}, Body: ${(profile.typography as any).body || "Serif"}` : "Not specified"}
 
 BRAND VOICE EXAMPLES:
-${corpusSnippets.map((s, i) => `${i + 1}. [${s.source}]\n${s.snippet}\n`).join('\n')}
+${corpusSnippets.map((s, i) => `${i + 1}. [${s.source}]\n${s.snippet}\n`).join("\n")}
 
 COMPLIANCE CONSTRAINTS:
 - Use nonprofit-safe language (avoid promises, guarantees, or claims of specific outcomes)
 - Never invent donor names or specific stories - use placeholders only
 - Respect donor privacy in all examples and templates
-`.trim()
+`.trim();
 }
 
 // ============================================================================
@@ -75,27 +75,27 @@ COMPLIANCE CONSTRAINTS:
 // ============================================================================
 
 export interface CampaignBlueprintInput {
-  campaignType: 'appeal' | 'event' | 'program_launch' | 'capital' | 'endowment'
-  season?: 'spring' | 'summer' | 'fall' | 'year_end'
-  targetAudience: string // e.g., "lapsed donors 6-12 months", "major gift prospects"
-  goal: string // e.g., "$50,000 to fund summer meals program"
-  tone: 'urgent' | 'inspiring' | 'reflective' | 'celebratory'
-  channels: Array<'direct_mail' | 'email' | 'social'>
+  campaignType: "appeal" | "event" | "program_launch" | "capital" | "endowment";
+  season?: "spring" | "summer" | "fall" | "year_end";
+  targetAudience: string; // e.g., "lapsed donors 6-12 months", "major gift prospects"
+  goal: string; // e.g., "$50,000 to fund summer meals program"
+  tone: "urgent" | "inspiring" | "reflective" | "celebratory";
+  channels: Array<"direct_mail" | "email" | "social">;
 }
 
 export function buildCampaignBlueprintPrompt(
   brandContext: string,
-  input: CampaignBlueprintInput
+  input: CampaignBlueprintInput,
 ): string {
   return `${brandContext}
 
 CAMPAIGN PARAMETERS:
 - Type: ${input.campaignType}
-- Season: ${input.season || 'Not specified'}
+- Season: ${input.season || "Not specified"}
 - Target Audience: ${input.targetAudience}
 - Goal: ${input.goal}
 - Tone: ${input.tone}
-- Channels: ${input.channels.join(', ')}
+- Channels: ${input.channels.join(", ")}
 
 TASK:
 Create a comprehensive campaign blueprint aligned to the BRAND CONTEXT above.
@@ -128,7 +128,7 @@ OUTPUT FORMAT (JSON):
 }
 \`\`\`
 
-Then provide a prose overview (150-250 words) that summarizes the campaign strategy, narrative approach, and key tactics.`
+Then provide a prose overview (150-250 words) that summarizes the campaign strategy, narrative approach, and key tactics.`;
 }
 
 // ============================================================================
@@ -136,20 +136,20 @@ Then provide a prose overview (150-250 words) that summarizes the campaign strat
 // ============================================================================
 
 export interface DirectMailInput {
-  campaignTheme: string
-  narrativeArc: { setup: string; tension: string; resolution: string }
-  keyProofPoints: string[]
-  targetWordCount: number // 450-600 for letter, 40-70 for postcard
+  campaignTheme: string;
+  narrativeArc: { setup: string; tension: string; resolution: string };
+  keyProofPoints: string[];
+  targetWordCount: number; // 450-600 for letter, 40-70 for postcard
 }
 
 export function buildDirectMailPrompt(
   brandContext: string,
   blueprint: DirectMailInput,
-  format: 'letter' | 'postcard'
+  format: "letter" | "postcard",
 ): string {
-  const wordCount = format === 'letter' ? '450-600 words' : '40-70 words'
+  const wordCount = format === "letter" ? "450-600 words" : "40-70 words";
   const additionalGuidance =
-    format === 'letter'
+    format === "letter"
       ? `
 LETTER STRUCTURE:
 1. Salutation: Dear {{FirstName}},
@@ -173,14 +173,14 @@ POSTCARD STRUCTURE:
 4. Reply mechanism: QR code or short URL
 
 Keep punchy and visual. Every word must earn its place.
-`
+`;
 
   return `${brandContext}
 
 CAMPAIGN BLUEPRINT:
 - Theme: ${blueprint.campaignTheme}
 - Narrative Arc: ${JSON.stringify(blueprint.narrativeArc, null, 2)}
-- Key Proof Points: ${blueprint.keyProofPoints.join('; ')}
+- Key Proof Points: ${blueprint.keyProofPoints.join("; ")}
 
 TASK:
 Create a ${format} (${wordCount}) aligned to BRAND CONTEXT and CAMPAIGN BLUEPRINT.
@@ -194,7 +194,7 @@ MERGE FIELDS TO USE:
 - {{ReplyByDate}}, {{CampaignDeadline}}
 
 OUTPUT:
-Provide the complete ${format} content in Markdown with clear section headings.`
+Provide the complete ${format} content in Markdown with clear section headings.`;
 }
 
 // ============================================================================
@@ -202,24 +202,24 @@ Provide the complete ${format} content in Markdown with clear section headings.`
 // ============================================================================
 
 export interface DigitalSequenceInput {
-  campaignTheme: string
-  narrativeArc: { setup: string; tension: string; resolution: string }
-  keyProofPoints: string[]
-  emailCount: number // 10-12
-  socialCount: number // 10-12
-  duration: number // weeks
+  campaignTheme: string;
+  narrativeArc: { setup: string; tension: string; resolution: string };
+  keyProofPoints: string[];
+  emailCount: number; // 10-12
+  socialCount: number; // 10-12
+  duration: number; // weeks
 }
 
 export function buildDigitalSequencePrompt(
   brandContext: string,
-  blueprint: DigitalSequenceInput
+  blueprint: DigitalSequenceInput,
 ): string {
   return `${brandContext}
 
 CAMPAIGN BLUEPRINT:
 - Theme: ${blueprint.campaignTheme}
 - Narrative Arc: ${JSON.stringify(blueprint.narrativeArc, null, 2)}
-- Key Proof Points: ${blueprint.keyProofPoints.join('; ')}
+- Key Proof Points: ${blueprint.keyProofPoints.join("; ")}
 - Duration: ${blueprint.duration} weeks
 
 TASK:
@@ -263,7 +263,7 @@ OUTPUT FORMAT (JSON):
 }
 \`\`\`
 
-Then include clean human-readable versions for immediate copy/paste.`
+Then include clean human-readable versions for immediate copy/paste.`;
 }
 
 // ============================================================================
@@ -271,19 +271,21 @@ Then include clean human-readable versions for immediate copy/paste.`
 // ============================================================================
 
 export interface CostSummaryInput {
-  mailFormat: 'postcard' | 'letter' | 'flat_6x11'
-  mailClass: 'nonprofit' | 'first_class'
-  quantity: number
-  unitPostage: number
-  totalPostage: number
-  estimatedPrinting?: number
-  estimatedProduction?: number
+  mailFormat: "postcard" | "letter" | "flat_6x11";
+  mailClass: "nonprofit" | "first_class";
+  quantity: number;
+  unitPostage: number;
+  totalPostage: number;
+  estimatedPrinting?: number;
+  estimatedProduction?: number;
 }
 
 export function buildCostSummaryPrompt(costs: CostSummaryInput): string {
   const total =
-    costs.totalPostage + (costs.estimatedPrinting || 0) + (costs.estimatedProduction || 0)
-  const costPerPiece = Math.round((total / costs.quantity) * 100) / 100
+    costs.totalPostage +
+    (costs.estimatedPrinting || 0) +
+    (costs.estimatedProduction || 0);
+  const costPerPiece = Math.round((total / costs.quantity) * 100) / 100;
 
   return `
 DIRECT MAIL COST ESTIMATE:
@@ -294,20 +296,20 @@ Quantity: ${costs.quantity.toLocaleString()}
 
 COST BREAKDOWN:
 - Postage (@ $${costs.unitPostage.toFixed(3)}/piece): $${costs.totalPostage.toFixed(2)}
-${costs.estimatedPrinting ? `- Printing: $${costs.estimatedPrinting.toFixed(2)}` : ''}
-${costs.estimatedProduction ? `- Production (folding/inserting): $${costs.estimatedProduction.toFixed(2)}` : ''}
+${costs.estimatedPrinting ? `- Printing: $${costs.estimatedPrinting.toFixed(2)}` : ""}
+${costs.estimatedProduction ? `- Production (folding/inserting): $${costs.estimatedProduction.toFixed(2)}` : ""}
 
 TOTAL COST: $${total.toFixed(2)}
 Cost per Piece: $${costPerPiece.toFixed(2)}
 
-${costs.mailClass === 'nonprofit' ? `\nNOTE: Using nonprofit presort rates. Requires valid nonprofit mail permit and minimum quantity (usually 200-500 pieces).` : ''}
+${costs.mailClass === "nonprofit" ? `\nNOTE: Using nonprofit presort rates. Requires valid nonprofit mail permit and minimum quantity (usually 200-500 pieces).` : ""}
 
 ASSUMPTIONS:
 - Costs are estimates and may vary by vendor, volume, and specifications
 - Postage rates current as of 2024; verify with USPS for latest rates
 - Printing costs assume standard paper stock and 4-color process
 - Production costs assume automated inserting; hand assembly will increase costs
-`.trim()
+`.trim();
 }
 
 // ============================================================================
@@ -315,62 +317,70 @@ ASSUMPTIONS:
 // ============================================================================
 
 export interface FullCampaignGenerationInput {
-  brandContext: string
-  blueprintInput: CampaignBlueprintInput
-  mailFormat: 'letter' | 'postcard'
-  emailCount?: number
-  socialCount?: number
-  duration?: number
+  brandContext: string;
+  blueprintInput: CampaignBlueprintInput;
+  mailFormat: "letter" | "postcard";
+  emailCount?: number;
+  socialCount?: number;
+  duration?: number;
 }
 
 /**
  * Generate a complete multi-prompt campaign generation plan
  * Returns array of prompts to send sequentially to Claude
  */
-export function buildFullCampaignPrompts(input: FullCampaignGenerationInput): Array<{
-  step: string
-  prompt: string
-  expectedOutput: string
+export function buildFullCampaignPrompts(
+  input: FullCampaignGenerationInput,
+): Array<{
+  step: string;
+  prompt: string;
+  expectedOutput: string;
 }> {
   return [
     {
-      step: '1_blueprint',
-      prompt: buildCampaignBlueprintPrompt(input.brandContext, input.blueprintInput),
-      expectedOutput: 'JSON blueprint + prose overview',
+      step: "1_blueprint",
+      prompt: buildCampaignBlueprintPrompt(
+        input.brandContext,
+        input.blueprintInput,
+      ),
+      expectedOutput: "JSON blueprint + prose overview",
     },
     {
-      step: '2_direct_mail',
+      step: "2_direct_mail",
       prompt: `Using the campaign blueprint from Step 1, ${buildDirectMailPrompt(
         input.brandContext,
         {
-          campaignTheme: '{{THEME_FROM_STEP_1}}',
+          campaignTheme: "{{THEME_FROM_STEP_1}}",
           narrativeArc: {
-            setup: '{{SETUP_FROM_STEP_1}}',
-            tension: '{{TENSION_FROM_STEP_1}}',
-            resolution: '{{RESOLUTION_FROM_STEP_1}}',
+            setup: "{{SETUP_FROM_STEP_1}}",
+            tension: "{{TENSION_FROM_STEP_1}}",
+            resolution: "{{RESOLUTION_FROM_STEP_1}}",
           },
           keyProofPoints: [],
-          targetWordCount: input.mailFormat === 'letter' ? 500 : 60,
+          targetWordCount: input.mailFormat === "letter" ? 500 : 60,
         },
-        input.mailFormat
+        input.mailFormat,
       )}`,
       expectedOutput: `${input.mailFormat} content (letter or postcard)`,
     },
     {
-      step: '3_digital_sequence',
-      prompt: `Using the campaign blueprint from Step 1, ${buildDigitalSequencePrompt(input.brandContext, {
-        campaignTheme: '{{THEME_FROM_STEP_1}}',
-        narrativeArc: {
-          setup: '{{SETUP_FROM_STEP_1}}',
-          tension: '{{TENSION_FROM_STEP_1}}',
-          resolution: '{{RESOLUTION_FROM_STEP_1}}',
+      step: "3_digital_sequence",
+      prompt: `Using the campaign blueprint from Step 1, ${buildDigitalSequencePrompt(
+        input.brandContext,
+        {
+          campaignTheme: "{{THEME_FROM_STEP_1}}",
+          narrativeArc: {
+            setup: "{{SETUP_FROM_STEP_1}}",
+            tension: "{{TENSION_FROM_STEP_1}}",
+            resolution: "{{RESOLUTION_FROM_STEP_1}}",
+          },
+          keyProofPoints: [],
+          emailCount: input.emailCount || 10,
+          socialCount: input.socialCount || 10,
+          duration: input.duration || 4,
         },
-        keyProofPoints: [],
-        emailCount: input.emailCount || 10,
-        socialCount: input.socialCount || 10,
-        duration: input.duration || 4,
-      })}`,
-      expectedOutput: 'JSON with emails + social posts',
+      )}`,
+      expectedOutput: "JSON with emails + social posts",
     },
-  ]
+  ];
 }

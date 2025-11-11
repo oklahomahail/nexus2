@@ -17,6 +17,7 @@ export default [
       ".vscode",
       "pnpm-lock.yaml",
       "src/deprecated/**",
+      "src/_archive/**",
       "backend/**",
       "scripts/**",
       "eslint.config.mjs",

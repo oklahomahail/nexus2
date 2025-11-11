@@ -1,7 +1,7 @@
 // AsyncBoundary - Combines Suspense + ErrorBoundary for async data loading
-import { Suspense, type ReactNode } from 'react';
+import { Suspense, type ReactNode } from "react";
 
-import { ComponentErrorBoundary } from './ErrorBoundary';
+import { ComponentErrorBoundary } from "./ErrorBoundary";
 
 interface AsyncBoundaryProps {
   fallback?: ReactNode;

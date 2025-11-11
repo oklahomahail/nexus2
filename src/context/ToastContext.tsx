@@ -1,7 +1,12 @@
 // src/context/ToastContext.tsx
 // Context for managing toast notifications
 
-import React, { createContext, useState, useCallback, type ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
 
 import ToastContainer from "@/components/ui-kit/ToastContainer";
 import type { Toast } from "@/types/toast";
@@ -11,21 +16,39 @@ export interface ToastContextValue {
   addToast: (toast: Omit<Toast, "id">) => string;
   removeToast: (id: string) => void;
   clearToasts: () => void;
-  success: (title: string, description?: string, options?: Partial<Toast>) => string;
-  error: (title: string, description?: string, options?: Partial<Toast>) => string;
-  warning: (title: string, description?: string, options?: Partial<Toast>) => string;
-  info: (title: string, description?: string, options?: Partial<Toast>) => string;
+  success: (
+    title: string,
+    description?: string,
+    options?: Partial<Toast>,
+  ) => string;
+  error: (
+    title: string,
+    description?: string,
+    options?: Partial<Toast>,
+  ) => string;
+  warning: (
+    title: string,
+    description?: string,
+    options?: Partial<Toast>,
+  ) => string;
+  info: (
+    title: string,
+    description?: string,
+    options?: Partial<Toast>,
+  ) => string;
   promise: <T>(
     fn: Promise<T>,
     messages: {
       loading: string;
       success: string | ((data: T) => string);
       error: string | ((err: any) => string);
-    }
+    },
   ) => Promise<T>;
 }
 
-export const ToastContext = createContext<ToastContextValue | undefined>(undefined);
+export const ToastContext = createContext<ToastContextValue | undefined>(
+  undefined,
+);
 
 interface ToastProviderProps {
   children: ReactNode;
@@ -119,7 +142,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         loading: string;
         success: string | ((data: T) => string);
         error: string | ((err: any) => string);
-      }
+      },
     ): Promise<T> => {
       const loadingId = addToast({
         type: "info",
@@ -142,7 +165,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
         removeToast(loadingId);
 
         const errorMsg =
-          typeof messages.error === "function" ? messages.error(err) : messages.error;
+          typeof messages.error === "function"
+            ? messages.error(err)
+            : messages.error;
         error(errorMsg);
 
         throw err;

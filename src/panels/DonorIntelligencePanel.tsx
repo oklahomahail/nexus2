@@ -5,8 +5,15 @@
  * Supports natural language queries with privacy enforcement (N ≥ 50)
  */
 
-import { useState } from 'react'
-import { BarChart, Activity, TrendingUp, Clock, Calendar, Download } from 'lucide-react'
+import {
+  BarChart,
+  Activity,
+  TrendingUp,
+  Clock,
+  Calendar,
+  Download,
+} from "lucide-react";
+import { useState } from "react";
 import {
   BarChart as RechartsBarChart,
   Bar,
@@ -17,63 +24,61 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
-} from 'recharts'
+} from "recharts";
 
-import { useClient } from '@/context/ClientContext'
-import { useToast } from '@/hooks/useToast'
+import { useClient } from "@/context/ClientContext";
 import {
-  useDonorIntelligence,
   useRetainedDonors,
   useYoyUpgrade,
   useGiftVelocity,
   useSeasonality,
-} from '@/hooks/useDonorIntelligence'
+} from "@/hooks/useDonorIntelligence";
+import { useToast } from "@/hooks/useToast";
 import {
-  type RetainedDonorsResult,
-  type YoyUpgradeResult,
-  type GiftVelocityResult,
   type SeasonalityResult,
   formatCurrency,
   formatPercent,
   summarizeRetention,
   summarizeVelocity,
-} from '@/services/donorIntelService'
+} from "@/services/donorIntelService";
 import {
   downloadCsv,
   exportRetentionData,
   exportUpgradeData,
   exportGiftVelocityData,
   exportSeasonalityData,
-} from '@/utils/export'
+} from "@/utils/export";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type MetricView = 'retention' | 'upgrade' | 'velocity' | 'seasonality' | null
+type MetricView = "retention" | "upgrade" | "velocity" | "seasonality" | null;
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
 export default function DonorIntelligencePanel() {
-  const { currentClient } = useClient()
-  const clientId = currentClient?.id
+  const { currentClient } = useClient();
+  const clientId = currentClient?.id;
 
-  const [activeView, setActiveView] = useState<MetricView>(null)
+  const [activeView, setActiveView] = useState<MetricView>(null);
 
   // Metric-specific state
-  const [retentionYears, setRetentionYears] = useState(5)
-  const [upgradeYearFrom, setUpgradeYearFrom] = useState(2023)
-  const [upgradeYearTo, setUpgradeYearTo] = useState(2024)
-  const [seasonalityYear, setSeasonalityYear] = useState<number | undefined>(undefined)
+  const [retentionYears, setRetentionYears] = useState(5);
+  const [upgradeYearFrom, setUpgradeYearFrom] = useState(2023);
+  const [upgradeYearTo, setUpgradeYearTo] = useState(2024);
+  const [seasonalityYear, setSeasonalityYear] = useState<number | undefined>(
+    undefined,
+  );
 
   if (!clientId) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500">
         <p>No client selected</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -84,7 +89,8 @@ export default function DonorIntelligencePanel() {
           Donor Intelligence
         </h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          AI-powered analysis of anonymized donor behavior (privacy-safe, N ≥ 50)
+          AI-powered analysis of anonymized donor behavior (privacy-safe, N ≥
+          50)
         </p>
       </div>
 
@@ -95,29 +101,29 @@ export default function DonorIntelligencePanel() {
             icon={Activity}
             label="Retention"
             description="Consecutive giving years"
-            active={activeView === 'retention'}
-            onClick={() => setActiveView('retention')}
+            active={activeView === "retention"}
+            onClick={() => setActiveView("retention")}
           />
           <MetricCard
             icon={TrendingUp}
             label="Upgrade Velocity"
             description="Year-over-year growth"
-            active={activeView === 'upgrade'}
-            onClick={() => setActiveView('upgrade')}
+            active={activeView === "upgrade"}
+            onClick={() => setActiveView("upgrade")}
           />
           <MetricCard
             icon={Clock}
             label="Gift Velocity"
             description="Time between gifts"
-            active={activeView === 'velocity'}
-            onClick={() => setActiveView('velocity')}
+            active={activeView === "velocity"}
+            onClick={() => setActiveView("velocity")}
           />
           <MetricCard
             icon={Calendar}
             label="Seasonality"
             description="Quarterly trends"
-            active={activeView === 'seasonality'}
-            onClick={() => setActiveView('seasonality')}
+            active={activeView === "seasonality"}
+            onClick={() => setActiveView("seasonality")}
           />
         </div>
       </div>
@@ -136,7 +142,7 @@ export default function DonorIntelligencePanel() {
           </div>
         )}
 
-        {activeView === 'retention' && (
+        {activeView === "retention" && (
           <RetentionView
             clientId={clientId}
             numYears={retentionYears}
@@ -144,7 +150,7 @@ export default function DonorIntelligencePanel() {
           />
         )}
 
-        {activeView === 'upgrade' && (
+        {activeView === "upgrade" && (
           <UpgradeView
             clientId={clientId}
             yearFrom={upgradeYearFrom}
@@ -154,9 +160,9 @@ export default function DonorIntelligencePanel() {
           />
         )}
 
-        {activeView === 'velocity' && <VelocityView clientId={clientId} />}
+        {activeView === "velocity" && <VelocityView clientId={clientId} />}
 
-        {activeView === 'seasonality' && (
+        {activeView === "seasonality" && (
           <SeasonalityView
             clientId={clientId}
             year={seasonalityYear}
@@ -165,7 +171,7 @@ export default function DonorIntelligencePanel() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -173,14 +179,20 @@ export default function DonorIntelligencePanel() {
 // ============================================================================
 
 interface MetricCardProps {
-  icon: React.ElementType
-  label: string
-  description: string
-  active: boolean
-  onClick: () => void
+  icon: React.ElementType;
+  label: string;
+  description: string;
+  active: boolean;
+  onClick: () => void;
 }
 
-function MetricCard({ icon: Icon, label, description, active, onClick }: MetricCardProps) {
+function MetricCard({
+  icon: Icon,
+  label,
+  description,
+  active,
+  onClick,
+}: MetricCardProps) {
   return (
     <button
       onClick={onClick}
@@ -188,16 +200,20 @@ function MetricCard({ icon: Icon, label, description, active, onClick }: MetricC
         p-4 rounded-lg border-2 text-left transition-all
         ${
           active
-            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+            : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
         }
       `}
     >
-      <Icon className={`w-6 h-6 mb-2 ${active ? 'text-blue-600' : 'text-gray-500'}`} />
+      <Icon
+        className={`w-6 h-6 mb-2 ${active ? "text-blue-600" : "text-gray-500"}`}
+      />
       <div className="font-semibold text-gray-900 dark:text-white">{label}</div>
-      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">{description}</div>
+      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+        {description}
+      </div>
     </button>
-  )
+  );
 }
 
 // ============================================================================
@@ -205,19 +221,24 @@ function MetricCard({ icon: Icon, label, description, active, onClick }: MetricC
 // ============================================================================
 
 interface RetentionViewProps {
-  clientId: string
-  numYears: number
-  onYearsChange: (years: number) => void
+  clientId: string;
+  numYears: number;
+  onYearsChange: (years: number) => void;
 }
 
-function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps) {
-  const { data, isLoading, error, privacyEnforced, fetch } = useRetainedDonors(clientId)
+function RetentionView({
+  clientId,
+  numYears,
+  onYearsChange,
+}: RetentionViewProps) {
+  const { data, isLoading, error, privacyEnforced, fetch } =
+    useRetainedDonors(clientId);
 
   const handleFetch = () => {
-    fetch(numYears)
-  }
+    fetch(numYears);
+  };
 
-  const summary = data ? summarizeRetention(data) : null
+  const summary = data ? summarizeRetention(data) : null;
 
   return (
     <div className="space-y-6">
@@ -241,7 +262,7 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
           disabled={isLoading}
           className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Loading...' : 'Analyze'}
+          {isLoading ? "Loading..." : "Analyze"}
         </button>
       </div>
 
@@ -261,17 +282,21 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
       {summary && (
         <>
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Summary</h4>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Summary
+            </h4>
             <div className="flex gap-2">
               <button
-                onClick={() => data && downloadCsv('retention_data', data)}
+                onClick={() => data && downloadCsv("retention_data", data)}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
                 CSV
               </button>
               <button
-                onClick={() => data && summary && exportRetentionData(data, summary)}
+                onClick={() =>
+                  data && summary && exportRetentionData(data, summary)
+                }
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
@@ -280,12 +305,18 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <StatCard label="Total Donors" value={summary.total_donors.toLocaleString()} />
+            <StatCard
+              label="Total Donors"
+              value={summary.total_donors.toLocaleString()}
+            />
             <StatCard
               label="Avg Consecutive Years"
               value={summary.avg_consecutive_years.toFixed(1)}
             />
-            <StatCard label="Max Streak" value={`${summary.max_consecutive_years} years`} />
+            <StatCard
+              label="Max Streak"
+              value={`${summary.max_consecutive_years} years`}
+            />
           </div>
         </>
       )}
@@ -301,9 +332,19 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="consecutive_years"
-                label={{ value: 'Consecutive Years', position: 'insideBottom', offset: -5 }}
+                label={{
+                  value: "Consecutive Years",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
               />
-              <YAxis label={{ value: 'Donor Count', angle: -90, position: 'insideLeft' }} />
+              <YAxis
+                label={{
+                  value: "Donor Count",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
               <Tooltip />
               <Bar dataKey="donor_count" fill="#3b82f6" />
             </RechartsBarChart>
@@ -311,7 +352,7 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -319,11 +360,11 @@ function RetentionView({ clientId, numYears, onYearsChange }: RetentionViewProps
 // ============================================================================
 
 interface UpgradeViewProps {
-  clientId: string
-  yearFrom: number
-  yearTo: number
-  onYearFromChange: (year: number) => void
-  onYearToChange: (year: number) => void
+  clientId: string;
+  yearFrom: number;
+  yearTo: number;
+  onYearFromChange: (year: number) => void;
+  onYearToChange: (year: number) => void;
 }
 
 function UpgradeView({
@@ -333,18 +374,22 @@ function UpgradeView({
   onYearFromChange,
   onYearToChange,
 }: UpgradeViewProps) {
-  const toast = useToast()
-  const { data, isLoading, error, privacyEnforced, fetch } = useYoyUpgrade(clientId)
+  const toast = useToast();
+  const { data, isLoading, error, privacyEnforced, fetch } =
+    useYoyUpgrade(clientId);
 
   const handleFetch = () => {
     if (yearFrom >= yearTo) {
-      toast.warning('Invalid Year Range', 'Year From must be less than Year To')
-      return
+      toast.warning(
+        "Invalid Year Range",
+        "Year From must be less than Year To",
+      );
+      return;
     }
-    fetch(yearFrom, yearTo)
-  }
+    fetch(yearFrom, yearTo);
+  };
 
-  const top10 = data?.slice(0, 10)
+  const top10 = data?.slice(0, 10);
 
   return (
     <div className="space-y-6">
@@ -381,7 +426,7 @@ function UpgradeView({
           disabled={isLoading}
           className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Loading...' : 'Analyze'}
+          {isLoading ? "Loading..." : "Analyze"}
         </button>
       </div>
 
@@ -401,14 +446,19 @@ function UpgradeView({
             </h3>
             <div className="flex gap-2">
               <button
-                onClick={() => data && downloadCsv(`upgrade_leaderboard_${yearFrom}_${yearTo}`, data)}
+                onClick={() =>
+                  data &&
+                  downloadCsv(`upgrade_leaderboard_${yearFrom}_${yearTo}`, data)
+                }
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
                 CSV
               </button>
               <button
-                onClick={() => data && exportUpgradeData(data, yearFrom, yearTo)}
+                onClick={() =>
+                  data && exportUpgradeData(data, yearFrom, yearTo)
+                }
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
@@ -431,16 +481,17 @@ function UpgradeView({
                       {row.anon_id.slice(0, 16)}...
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatCurrency(row.amount_from)} → {formatCurrency(row.amount_to)}
+                      {formatCurrency(row.amount_from)} →{" "}
+                      {formatCurrency(row.amount_to)}
                     </div>
                   </div>
                 </div>
                 <div
                   className={`text-lg font-bold ${
-                    row.pct_change >= 0 ? 'text-green-600' : 'text-red-600'
+                    row.pct_change >= 0 ? "text-green-600" : "text-red-600"
                   }`}
                 >
-                  {row.pct_change >= 0 ? '+' : ''}
+                  {row.pct_change >= 0 ? "+" : ""}
                   {formatPercent(row.pct_change, 1)}
                 </div>
               </div>
@@ -449,7 +500,7 @@ function UpgradeView({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -457,13 +508,13 @@ function UpgradeView({
 // ============================================================================
 
 interface VelocityViewProps {
-  clientId: string
+  clientId: string;
 }
 
 function VelocityView({ clientId }: VelocityViewProps) {
-  const { data, isLoading, error, fetch } = useGiftVelocity(clientId)
+  const { data, isLoading, error, fetch } = useGiftVelocity(clientId);
 
-  const summary = data ? summarizeVelocity(data) : null
+  const summary = data ? summarizeVelocity(data) : null;
 
   return (
     <div className="space-y-6">
@@ -474,7 +525,7 @@ function VelocityView({ clientId }: VelocityViewProps) {
           disabled={isLoading}
           className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Loading...' : 'Analyze Gift Velocity'}
+          {isLoading ? "Loading..." : "Analyze Gift Velocity"}
         </button>
       </div>
 
@@ -489,17 +540,21 @@ function VelocityView({ clientId }: VelocityViewProps) {
       {summary && (
         <>
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Summary</h4>
+            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Summary
+            </h4>
             <div className="flex gap-2">
               <button
-                onClick={() => data && downloadCsv('gift_velocity', data)}
+                onClick={() => data && downloadCsv("gift_velocity", data)}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
                 CSV
               </button>
               <button
-                onClick={() => data && summary && exportGiftVelocityData(data, summary)}
+                onClick={() =>
+                  data && summary && exportGiftVelocityData(data, summary)
+                }
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
@@ -512,7 +567,10 @@ function VelocityView({ clientId }: VelocityViewProps) {
               label="Repeat Donors"
               value={summary.total_repeat_donors.toLocaleString()}
             />
-            <StatCard label="Avg Days Between Gifts" value={`${summary.avg_days_between} days`} />
+            <StatCard
+              label="Avg Days Between Gifts"
+              value={`${summary.avg_days_between} days`}
+            />
             <StatCard
               label="Median Days Between Gifts"
               value={`${summary.median_days_between} days`}
@@ -531,13 +589,21 @@ function VelocityView({ clientId }: VelocityViewProps) {
             <RechartsBarChart data={data.slice(0, 50)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="anon_id" hide />
-              <YAxis label={{ value: 'Days Between Gifts', angle: -90, position: 'insideLeft' }} />
+              <YAxis
+                label={{
+                  value: "Days Between Gifts",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
               <Tooltip
                 formatter={(value: number, name: string, props: any) => [
                   `${value.toFixed(0)} days`,
-                  'Median Days',
+                  "Median Days",
                 ]}
-                labelFormatter={(label: string) => `Donor: ${label.slice(0, 16)}...`}
+                labelFormatter={(label: string) =>
+                  `Donor: ${label.slice(0, 16)}...`
+                }
               />
               <Bar dataKey="median_days_between" fill="#10b981" />
             </RechartsBarChart>
@@ -545,7 +611,7 @@ function VelocityView({ clientId }: VelocityViewProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -553,17 +619,21 @@ function VelocityView({ clientId }: VelocityViewProps) {
 // ============================================================================
 
 interface SeasonalityViewProps {
-  clientId: string
-  year?: number
-  onYearChange: (year: number | undefined) => void
+  clientId: string;
+  year?: number;
+  onYearChange: (year: number | undefined) => void;
 }
 
-function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps) {
-  const { data, isLoading, error, fetch } = useSeasonality(clientId)
+function SeasonalityView({
+  clientId,
+  year,
+  onYearChange,
+}: SeasonalityViewProps) {
+  const { data, isLoading, error, fetch } = useSeasonality(clientId);
 
   const handleFetch = () => {
-    fetch(year)
-  }
+    fetch(year);
+  };
 
   return (
     <div className="space-y-6">
@@ -577,9 +647,13 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
             type="number"
             min={2000}
             max={2030}
-            value={year || ''}
+            value={year || ""}
             placeholder="All years"
-            onChange={(e) => onYearChange(e.target.value ? parseInt(e.target.value) : undefined)}
+            onChange={(e) =>
+              onYearChange(
+                e.target.value ? parseInt(e.target.value) : undefined,
+              )
+            }
             className="border border-gray-300 dark:border-gray-600 rounded px-3 py-2 w-32 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           />
         </div>
@@ -588,7 +662,7 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
           disabled={isLoading}
           className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading ? 'Loading...' : 'Analyze'}
+          {isLoading ? "Loading..." : "Analyze"}
         </button>
       </div>
 
@@ -608,7 +682,13 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
             </h3>
             <div className="flex gap-2">
               <button
-                onClick={() => data && downloadCsv(year ? `seasonality_${year}` : 'seasonality_all', data)}
+                onClick={() =>
+                  data &&
+                  downloadCsv(
+                    year ? `seasonality_${year}` : "seasonality_all",
+                    data,
+                  )
+                }
                 className="flex items-center gap-2 px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
               >
                 <Download className="w-4 h-4" />
@@ -627,19 +707,37 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey={(row: SeasonalityResult[number]) => `${row.year} Q${row.quarter}`}
-                label={{ value: 'Quarter', position: 'insideBottom', offset: -5 }}
+                dataKey={(row: SeasonalityResult[number]) =>
+                  `${row.year} Q${row.quarter}`
+                }
+                label={{
+                  value: "Quarter",
+                  position: "insideBottom",
+                  offset: -5,
+                }}
               />
-              <YAxis yAxisId="left" label={{ value: 'Gift Count', angle: -90, position: 'insideLeft' }} />
+              <YAxis
+                yAxisId="left"
+                label={{
+                  value: "Gift Count",
+                  angle: -90,
+                  position: "insideLeft",
+                }}
+              />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                label={{ value: 'Total Amount ($)', angle: 90, position: 'insideRight' }}
+                label={{
+                  value: "Total Amount ($)",
+                  angle: 90,
+                  position: "insideRight",
+                }}
               />
               <Tooltip
                 formatter={(value: number, name: string) => {
-                  if (name === 'gift_count') return [value.toLocaleString(), 'Gifts']
-                  return [formatCurrency(value), 'Amount']
+                  if (name === "gift_count")
+                    return [value.toLocaleString(), "Gifts"];
+                  return [formatCurrency(value), "Amount"];
                 }}
               />
               <Line
@@ -663,7 +761,7 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // ============================================================================
@@ -671,15 +769,17 @@ function SeasonalityView({ clientId, year, onYearChange }: SeasonalityViewProps)
 // ============================================================================
 
 interface StatCardProps {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 function StatCard({ label, value }: StatCardProps) {
   return (
     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
       <div className="text-sm text-gray-600 dark:text-gray-400">{label}</div>
-      <div className="text-2xl font-bold text-gray-900 dark:text-white mt-1">{value}</div>
+      <div className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+        {value}
+      </div>
     </div>
-  )
+  );
 }
