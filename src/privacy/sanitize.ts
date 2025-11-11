@@ -1,146 +1,188 @@
-/**
- * Content Sanitization
- *
- * Removes dangerous HTML, scripts, styles, and prompt-injection patterns
- * before sending content to AI or storing in database.
- *
- * Based on Inkwell's privacy-first content handling.
- */
+// src/privacy/sanitize.ts (drop-in replacement for Phase 3.5)
+// Closes gaps: self-closing/void tags, <embed>/<link>/<meta>, style() sanitization,
+// malformed <script>, phone variants, DAN phrase, and pipeline flag for HTML stripping.
 
-/**
- * Dangerous HTML tags that should be stripped
- */
-const DANGEROUS_TAGS = [
-  'script',
-  'iframe',
-  'object',
-  'embed',
-  'applet',
-  'meta',
-  'link',
-  'style',
-  'form',
-  'input',
-  'button',
-  'textarea',
-] as const;
+export type SanitizeOptions = {
+  /** When true, all HTML tags are stripped and only plain text is returned. */
+  stripHtml?: boolean;
+  /** If true, removes the `style` attribute entirely (safer default). */
+  stripAllStyles?: boolean;
+  /** Optional: maximum output length (applied after redaction). */
+  maxLen?: number;
+};
 
-/**
- * Prompt injection patterns to detect and neutralize
- * These patterns attempt to manipulate LLM behavior
- */
-const PROMPT_INJECTION_PATTERNS = [
-  /ignore\s+(all\s+)?(previous|prior|above)\s+(instructions?|prompts?|commands?)/gi,
-  /disregard\s+(all\s+)?(previous|prior|above)/gi,
-  /forget\s+(everything|all)\s+(you\s+)?(know|learned)/gi,
-  /new\s+(instructions?|prompts?|system\s+message)/gi,
-  /you\s+are\s+now\s+(a|an)\s+\w+/gi,
+const DANGEROUS_TAGS = new Set([
+  // scriptable / remote content
+  "script","iframe","object","embed","applet","link","meta",
+  // svg & tricky containers
+  "svg","foreignObject","math","template","slot",
+  // execution or navigation vectors
+  "form","input","select","button","textarea","noscript","style",
+]);
+
+const VOID_OR_SELF_CLOSING = new Set([
+  "area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr",
+]);
+
+// Simple URI guard for href/src/xlink:href
+function sanitizeUri(value: string): string | null {
+  const v = value.trim().replace(/\s+/g, "").toLowerCase();
+  if (v.startsWith("javascript:") || v.startsWith("vbscript:")) return null;
+  if (v.startsWith("data:text/html")) return null; // block HTML data URIs
+  // allow http(s), mailto, relative, and safe data:image
+  if (v.startsWith("data:")) {
+    if (/^data:image\/(?:png|jpeg|jpg|gif|webp);base64,/.test(v)) return value;
+    return null;
+  }
+  return value; // ok
+}
+
+// Remove risky CSS tokens
+function cleanseStyle(value: string): string | null {
+  const v = value.toLowerCase();
+  if (/expression\s*\(/.test(v)) return null;
+  if (/url\s*\(\s*['\"]?javascript:/.test(v)) return null;
+  // Optionally strip background* altogether to be conservative
+  const withoutBg = v.replace(/background[^:]*:[^;]+;?/g, "");
+  return withoutBg.trim() ? withoutBg : null;
+}
+
+// PII redaction rules
+const RE_EMAIL = /\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}\b/gi;
+const RE_PHONE_US_10 = /\b\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/g; // 555-123-4567, (555)123-4567
+const RE_PHONE_US_7 = /\b\d{3}[\s.-]?\d{4}\b/g; // 555-1234
+const RE_SSN = /\b\d{3}-\d{2}-\d{4}\b/g;
+const RE_CC = /(?<!\d)(?:\d[ -]?){13,19}(?!\d)/g; // loose card-like sequences
+const RE_IBAN = /\b[A-Z]{2}\d{2}[A-Z0-9]{10,30}\b/g;
+
+// Prompt-injection phrases to neutralize
+const PROMPT_INJECTION_RX = [
+  /ignore\s+(all\s+)?(previous|prior)\s+(instructions?|prompts?)/gi,
+  /disregard\s+(all\s+)?(previous|safety)/gi,
+  /you\s+are\s+now\s+(dan|a\s+\w+)/gi,
+  /forget\s+everything/gi,
+  /new\s+instructions?:/gi,
   /from\s+now\s+on\s+you\s+are/gi,
   /system:\s*/gi,
   /assistant:\s*/gi,
   /\[INST\]/gi,
   /\[\/INST\]/gi,
-  /<\|im_start\|>/gi,
-  /<\|im_end\|>/gi,
-] as const;
+  /begin\s+system\s+prompt/gi,
+  /role:\s*system/gi,
+  /jailbreak/gi,
+];
 
-/**
- * Sanitize HTML content
- * Removes scripts, styles, dangerous tags, and event handlers
- *
- * @param html - Raw HTML content
- * @returns Sanitized HTML-like text (not safe for rendering, just for AI)
- */
-export function sanitizeHTML(html: string): string {
-  let sanitized = html;
+export function redactPII(text: string): string {
+  return text
+    .replace(RE_EMAIL, "[EMAIL]")
+    .replace(RE_PHONE_US_10, "[PHONE]")
+    .replace(RE_PHONE_US_7, "[PHONE]")
+    .replace(RE_SSN, "[SSN]")
+    .replace(RE_CC, "[CARD]")
+    .replace(RE_IBAN, "[IBAN]");
+}
 
-  // Remove script and style tags with their content
-  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-  sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+function neutralizePromptInjection(text: string): string {
+  let out = text;
+  for (const rx of PROMPT_INJECTION_RX) out = out.replace(rx, "[user instruction redacted]");
+  return out;
+}
 
-  // Remove dangerous tags
-  DANGEROUS_TAGS.forEach((tag) => {
-    const regex = new RegExp(`<${tag}\\b[^<]*(?:(?!<\\/${tag}>)<[^<]*)*<\\/${tag}>`, 'gi');
-    sanitized = sanitized.replace(regex, '');
-  });
-
-  // Remove event handlers (onclick, onload, etc.)
-  sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-  sanitized = sanitized.replace(/\s+on\w+\s*=\s*[^\s>]*/gi, '');
-
-  // Remove javascript: and data: URIs
-  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, '');
-  sanitized = sanitized.replace(/src\s*=\s*["']data:[^"']*["']/gi, '');
-
-  return sanitized.trim();
+// Fallback pre-pass to kill malformed <script ... (unclosed)
+function stripMalformedScript(input: string): string {
+  // Remove only unclosed <script> tags at the very end of the string
+  // Don't touch properly closed <script></script> pairs
+  return input.replace(/<script(?![^>]*<\/script>)[\s\S]*$/gi, "");
 }
 
 /**
- * Detect and neutralize prompt injection attempts
- *
- * @param text - User-provided text
- * @returns Object with detection results and sanitized text
+ * sanitizeHtml: strips dangerous HTML, attributes, and PII; optionally returns plain text.
  */
+export function sanitizeHtml(input: string, opts: SanitizeOptions = {}): string {
+  const { stripHtml = true, stripAllStyles = true, maxLen } = opts;
+  const pre = stripMalformedScript(String(input ?? ""));
+
+  // Use DOMParser (available under jsdom + browsers). For SSR, ensure jsdom/happy-dom.
+  let doc: Document;
+  try {
+    const parser = new DOMParser();
+    doc = parser.parseFromString(pre, "text/html");
+  } catch {
+    // extremely defensive: fall back to text-only
+    return truncate(neutralizePromptInjection(redactPII(pre.replace(/<[^>]*>/g, " ").trim())), maxLen);
+  }
+
+  const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ELEMENT, null);
+  const toRemove: Element[] = [];
+  while (walker.nextNode()) {
+    const el = walker.currentNode as Element;
+    const tag = el.tagName.toLowerCase();
+    if (DANGEROUS_TAGS.has(tag)) { toRemove.push(el); continue; }
+
+    // Remove event handlers
+    [...el.attributes].forEach(attr => {
+      const name = attr.name.toLowerCase();
+      if (name.startsWith("on")) el.removeAttribute(attr.name);
+    });
+
+    // Sanitize URLs
+    ["href","src","xlink:href"].forEach(n => {
+      if (!el.hasAttribute(n)) return;
+      const val = el.getAttribute(n) ?? "";
+      const safe = sanitizeUri(val);
+      if (safe === null) el.removeAttribute(n); else el.setAttribute(n, safe);
+    });
+
+    // Style cleansing
+    if (el.hasAttribute("style")) {
+      if (stripAllStyles) el.removeAttribute("style");
+      else {
+        const v = el.getAttribute("style") ?? "";
+        const safe = cleanseStyle(v);
+        if (safe === null) el.removeAttribute("style"); else el.setAttribute("style", safe);
+      }
+    }
+  }
+  toRemove.forEach(n => n.remove());
+
+  // Remove void/self-closing dangerous tags that may have slipped in raw HTML
+  for (const tag of VOID_OR_SELF_CLOSING) {
+    if (DANGEROUS_TAGS.has(tag)) {
+      doc.querySelectorAll(tag).forEach(n => n.remove());
+    }
+  }
+
+  let out = stripHtml ? (doc.body.textContent ?? "").trim() : (doc.body.innerHTML ?? "").trim();
+  out = neutralizePromptInjection(redactPII(out));
+  return truncate(out, maxLen);
+}
+
+function truncate(s: string, maxLen?: number): string {
+  if (!maxLen || s.length <= maxLen) return s;
+  return s.slice(0, maxLen);
+}
+
+// Convenience: pipeline-safe helper that ensures stripHtml first
+export function sanitizeToPlainText(input: string, opts?: Omit<SanitizeOptions, "stripHtml">): string {
+  return sanitizeHtml(input, { ...(opts ?? {}), stripHtml: true });
+}
+
+// Legacy export compatibility with old API
+export function sanitizeHTML(html: string): string {
+  return sanitizeHtml(html, { stripHtml: false });
+}
+
 export function sanitizePromptInjection(text: string): {
   clean: string;
   detected: boolean;
   patterns: string[];
 } {
-  const detectedPatterns: string[] = [];
-  let clean = text;
-
-  PROMPT_INJECTION_PATTERNS.forEach((pattern, index) => {
-    if (pattern.test(text)) {
-      detectedPatterns.push(`Pattern ${index + 1}`);
-      // Replace with benign text
-      clean = clean.replace(pattern, '[user instruction redacted]');
-    }
-  });
-
-  return {
-    clean,
-    detected: detectedPatterns.length > 0,
-    patterns: detectedPatterns,
-  };
+  const clean = neutralizePromptInjection(text);
+  const detected = clean !== text;
+  const patterns = detected ? ["Injection patterns detected"] : [];
+  return { clean, detected, patterns };
 }
 
-/**
- * Remove PII patterns (emails, phone numbers, SSNs)
- * Used as additional safety layer before AI processing
- *
- * @param text - Text that might contain PII
- * @returns Text with PII patterns redacted
- */
-export function redactPII(text: string): string {
-  let redacted = text;
-
-  // Email addresses
-  redacted = redacted.replace(
-    /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    '[EMAIL]'
-  );
-
-  // US Phone numbers (various formats)
-  redacted = redacted.replace(/\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/g, '[PHONE]');
-  redacted = redacted.replace(/\(\d{3}\)\s*\d{3}[-.]?\d{4}/g, '[PHONE]');
-
-  // US SSN (xxx-xx-xxxx)
-  redacted = redacted.replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[SSN]');
-
-  // Credit card numbers (simplified - matches 13-19 digit sequences)
-  redacted = redacted.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '[CARD]');
-
-  return redacted;
-}
-
-/**
- * Full sanitization pipeline for user-provided content
- * Combines HTML sanitization, prompt injection detection, and PII redaction
- *
- * @param content - Raw user content
- * @param options - Sanitization options
- * @returns Sanitized content and metadata
- */
 export function sanitizeContent(
   content: string,
   options: {
@@ -163,22 +205,28 @@ export function sanitizeContent(
   let injectionDetected = false;
   let injectionPatterns: string[] = [];
 
-  // Step 1: HTML sanitization
+  // Step 1: HTML sanitization (strip HTML only, no PII/injection yet)
   if (stripHTML) {
-    sanitized = sanitizeHTML(sanitized);
+    // Simple regex-based HTML stripping
+    sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    sanitized = sanitized.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
+    // Remove any unclosed script tags at end
+    sanitized = sanitized.replace(/<script[^>]*$/gi, '');
+    sanitized = sanitized.replace(/<[^>]+>/g, ' ');
+    sanitized = sanitized.replace(/\s+/g, ' ').trim();
   }
 
-  // Step 2: Prompt injection detection
+  // Step 2: PII redaction
+  if (shouldRedactPII) {
+    sanitized = redactPII(sanitized);
+  }
+
+  // Step 3: Prompt injection detection
   if (checkInjection) {
     const injectionResult = sanitizePromptInjection(sanitized);
     sanitized = injectionResult.clean;
     injectionDetected = injectionResult.detected;
     injectionPatterns = injectionResult.patterns;
-  }
-
-  // Step 3: PII redaction
-  if (shouldRedactPII) {
-    sanitized = redactPII(sanitized);
   }
 
   return {
@@ -192,14 +240,6 @@ export function sanitizeContent(
   };
 }
 
-/**
- * Validate content length before AI processing
- * Prevents token budget overflow
- *
- * @param content - Content to validate
- * @param maxChars - Maximum character count (default: 100k for ~25k tokens)
- * @returns Validation result
- */
 export function validateContentLength(
   content: string,
   maxChars = 100000
