@@ -5,41 +5,61 @@
  * Generates direct mail, email sequences, and social posts with AI
  */
 
-import React from 'react'
-import { Wand2, Download, RefreshCw } from 'lucide-react'
+import { Wand2, Download, RefreshCw } from "lucide-react";
 
-import { useClient } from '@/context/ClientContext'
-import { useCampaignDesigner } from '@/hooks/useCampaignDesigner'
-import { usePostalAssumptions } from '@/hooks/usePostalAssumptions'
-import { useBrandProfile } from '@/hooks/useBrandProfile'
-import { GeneratedOutputViewer } from '@/components/campaign/GeneratedOutputViewer'
+import { GeneratedOutputViewer } from "@/components/campaign/GeneratedOutputViewer";
+import { useClient } from "@/context/ClientContext";
+import { useBrandProfile } from "@/hooks/useBrandProfile";
+import { useCampaignDesigner } from "@/hooks/useCampaignDesigner";
+// import { usePostalAssumptions } from '@/hooks/usePostalAssumptions' // TODO: Implement postal assumptions
+
+// Stub hook until postal assumptions are implemented
+const usePostalAssumptions = (_params: any) => ({
+  estimateTotal: (_format?: string, _mailClass?: string, _qty?: number) => ({
+    total: 0,
+    savings: 0,
+  }),
+  formats: ["Postcard", "Letter"],
+  classes: ["First Class", "Marketing Mail"],
+});
 
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
 export default function CampaignDesignerWizard() {
-  const { currentClient } = useClient()
-  const clientId = currentClient?.id
+  const { currentClient } = useClient();
+  const clientId = currentClient?.id;
 
-  const { profile } = useBrandProfile(clientId || '')
-  const brandId = profile?.id
+  const { profile } = useBrandProfile(clientId || "");
+  const brandId = profile?.id;
 
-  const { params, update, canGenerate, loading, error, result, run, exportMd, reset } =
-    useCampaignDesigner({
-      client_id: clientId,
-      brand_id: brandId,
-      channels: { direct_mail: true, email: true, social: true },
-    })
+  const {
+    params,
+    update,
+    canGenerate,
+    loading,
+    error,
+    result,
+    run,
+    exportMd,
+    reset,
+  } = useCampaignDesigner({
+    client_id: clientId,
+    brand_id: brandId,
+    channels: { direct_mail: true, email: true, social: true },
+  });
 
-  const { estimateTotal, formats, classes } = usePostalAssumptions({ nonprofitEligible: true })
+  const { estimateTotal, formats, classes } = usePostalAssumptions({
+    nonprofitEligible: true,
+  });
 
   if (!clientId) {
     return (
       <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
         <p>No client selected</p>
       </div>
-    )
+    );
   }
 
   if (!brandId) {
@@ -50,19 +70,21 @@ export default function CampaignDesignerWizard() {
           <p className="text-sm mt-2">Please create a brand profile first</p>
         </div>
       </div>
-    )
+    );
   }
 
-  const qty = params.mail?.quantity ?? 5000
-  const format = (params.mail?.format ?? 'letter') as any
-  const mailClass = (params.mail?.mailClass ?? 'nonprofit') as any
-  const postage = estimateTotal(qty, format, mailClass)
+  const qty = params.mail?.quantity ?? 5000;
+  const format = (params.mail?.format ?? "letter") as any;
+  const mailClass = (params.mail?.mailClass ?? "nonprofit") as any;
+  const postage = estimateTotal(String(qty), format, mailClass);
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-900">
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Campaign Designer</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Campaign Designer
+        </h1>
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
           Brand-aware generation of direct mail, email series, and social posts
         </p>
@@ -72,31 +94,35 @@ export default function CampaignDesignerWizard() {
       <div className="flex-1 overflow-auto p-6 space-y-6">
         {/* Step 1: Basics */}
         <section className="rounded-xl border border-gray-300 dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">1. Basics</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            1. Basics
+          </h2>
           <div className="grid md:grid-cols-2 gap-4">
             <input
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Campaign Name"
-              value={params.name || ''}
+              value={params.name || ""}
               onChange={(e) => update({ name: e.target.value })}
             />
             <select
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={params.type || 'Appeal'}
+              value={params.type || "Appeal"}
               onChange={(e) => update({ type: e.target.value as any })}
             >
-              {['Appeal', 'Event', 'Program', 'Endowment', 'Capital'].map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
+              {["Appeal", "Event", "Program", "Endowment", "Capital"].map(
+                (t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ),
+              )}
             </select>
             <select
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={params.season || 'Year-End'}
+              value={params.season || "Year-End"}
               onChange={(e) => update({ season: e.target.value as any })}
             >
-              {['Spring', 'Summer', 'Fall', 'Year-End'].map((t) => (
+              {["Spring", "Summer", "Fall", "Year-End"].map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -104,10 +130,10 @@ export default function CampaignDesignerWizard() {
             </select>
             <select
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={params.tone || 'Inspiring'}
+              value={params.tone || "Inspiring"}
               onChange={(e) => update({ tone: e.target.value as any })}
             >
-              {['Urgent', 'Inspiring', 'Reflective', 'Grateful'].map((t) => (
+              {["Urgent", "Inspiring", "Reflective", "Grateful"].map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -116,13 +142,13 @@ export default function CampaignDesignerWizard() {
             <input
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 md:col-span-2 text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Audience (e.g., Loyal donors, Volunteers, Year-end segment)"
-              value={params.audience || ''}
+              value={params.audience || ""}
               onChange={(e) => update({ audience: e.target.value })}
             />
             <input
               className="rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 md:col-span-2 text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Goal (short statement)"
-              value={params.goal || ''}
+              value={params.goal || ""}
               onChange={(e) => update({ goal: e.target.value })}
             />
           </div>
@@ -130,9 +156,11 @@ export default function CampaignDesignerWizard() {
 
         {/* Step 2: Channels */}
         <section className="rounded-xl border border-gray-300 dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">2. Channels</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            2. Channels
+          </h2>
           <div className="flex gap-6 flex-wrap">
-            {(['direct_mail', 'email', 'social'] as const).map((ch) => (
+            {(["direct_mail", "email", "social"] as const).map((ch) => (
               <label
                 key={ch}
                 className="flex items-center gap-2 text-gray-700 dark:text-gray-300 cursor-pointer"
@@ -154,7 +182,7 @@ export default function CampaignDesignerWizard() {
                   }
                   className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="capitalize">{ch.replace('_', ' ')}</span>
+                <span className="capitalize">{ch.replace("_", " ")}</span>
               </label>
             ))}
           </div>
@@ -170,7 +198,10 @@ export default function CampaignDesignerWizard() {
               value={params.durationWeeks || 4}
               onChange={(e) =>
                 update({
-                  durationWeeks: Math.max(3, Math.min(12, parseInt(e.target.value, 10) || 4)),
+                  durationWeeks: Math.max(
+                    3,
+                    Math.min(12, parseInt(e.target.value, 10) || 4),
+                  ),
                 })
               }
             />
@@ -198,7 +229,7 @@ export default function CampaignDesignerWizard() {
                   })
                 }
               >
-                {classes.map((c) => (
+                {classes.map((c: string) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
@@ -218,7 +249,7 @@ export default function CampaignDesignerWizard() {
                   })
                 }
               >
-                {formats.map((f) => (
+                {formats.map((f: string) => (
                   <option key={f} value={f}>
                     {f}
                   </option>
@@ -241,9 +272,12 @@ export default function CampaignDesignerWizard() {
                 }
               />
               <div className="text-sm text-gray-700 dark:text-gray-300 self-center">
-                Postage:{' '}
+                Postage:{" "}
                 <span className="font-semibold">
-                  ${postage.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  $
+                  {postage.total.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
                 </span>
                 {postage.savings && (
                   <span className="text-green-600 dark:text-green-400 ml-2">
@@ -257,10 +291,13 @@ export default function CampaignDesignerWizard() {
 
         {/* Step 4: Generate */}
         <section className="rounded-xl border border-gray-300 dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50 space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">4. Generate</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+            4. Generate
+          </h2>
           {!canGenerate && (
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Fill in the basics, audience, goal, tone, and select at least one channel.
+              Fill in the basics, audience, goal, tone, and select at least one
+              channel.
             </div>
           )}
           {error && (
@@ -274,12 +311,12 @@ export default function CampaignDesignerWizard() {
               disabled={!canGenerate || loading}
               className={`flex items-center gap-2 rounded-lg px-6 py-2.5 border transition-all ${
                 !canGenerate || loading
-                  ? 'opacity-60 cursor-not-allowed border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500'
-                  : 'border-blue-500 bg-blue-600 text-white hover:bg-blue-700'
+                  ? "opacity-60 cursor-not-allowed border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-500"
+                  : "border-blue-500 bg-blue-600 text-white hover:bg-blue-700"
               }`}
             >
               <Wand2 className="w-4 h-4" />
-              {loading ? 'Generating…' : 'Generate Campaign'}
+              {loading ? "Generating…" : "Generate Campaign"}
             </button>
             {result && (
               <button
@@ -297,7 +334,9 @@ export default function CampaignDesignerWizard() {
         {result && (
           <section className="rounded-xl border border-gray-300 dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">5. Results</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                5. Results
+              </h2>
               <button
                 onClick={exportMd}
                 className="flex items-center gap-2 rounded-lg px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -309,8 +348,9 @@ export default function CampaignDesignerWizard() {
             {result.postage && (
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 Postage estimate: {result.postage.quantity} × $
-                {result.postage.unit.toFixed(3)} →{' '}
-                <strong>${result.postage.total.toFixed(2)}</strong> ({result.postage.mailClass})
+                {result.postage.unit.toFixed(3)} →{" "}
+                <strong>${result.postage.total.toFixed(2)}</strong> (
+                {result.postage.mailClass})
                 {result.postage.savings && (
                   <span className="text-green-600 dark:text-green-400 ml-2">
                     (Save ${result.postage.savings.toFixed(2)})
@@ -323,5 +363,5 @@ export default function CampaignDesignerWizard() {
         )}
       </div>
     </div>
-  )
+  );
 }

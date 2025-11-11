@@ -35,16 +35,17 @@ Handles test vs production environments gracefully. Single singleton instance.
 
 ### 2. Schema Design (Table Structure)
 
-| Table | Purpose | Key Features |
-|-------|---------|--------------|
-| `profiles` | User metadata | Auto-created on signup via trigger |
-| `projects` | Org equivalent | Ownership model, soft deletes |
-| `project_members` | User access control | Owner/Editor/Viewer roles |
-| `chapters` | Content storage | Timestamps, revision tracking |
-| `characters` | Entity metadata | JSONB for flexible fields |
-| `notes` | Generic storage | Array types, soft deletes |
+| Table             | Purpose             | Key Features                       |
+| ----------------- | ------------------- | ---------------------------------- |
+| `profiles`        | User metadata       | Auto-created on signup via trigger |
+| `projects`        | Org equivalent      | Ownership model, soft deletes      |
+| `project_members` | User access control | Owner/Editor/Viewer roles          |
+| `chapters`        | Content storage     | Timestamps, revision tracking      |
+| `characters`      | Entity metadata     | JSONB for flexible fields          |
+| `notes`           | Generic storage     | Array types, soft deletes          |
 
 **Pattern:** Every table has:
+
 - UUID primary key (gen_random_uuid)
 - created_at, updated_at (timestamptz)
 - deleted_at (timestamptz) for soft deletes
@@ -59,11 +60,13 @@ Handles test vs production environments gracefully. Single singleton instance.
 **Two-tier approach:**
 
 **Read Access (can_access_project)**
+
 - Owner has full access
 - Members via project_members table
 - Used in all SELECT policies
 
 **Write Access (can_write_project)**
+
 - Only owners and editors
 - Prevents viewers from modifying
 - Stricter than read access
@@ -79,11 +82,11 @@ Handles test vs production environments gracefully. Single singleton instance.
 **Pattern: Subscribe → Listen → Update Local Cache**
 
 ```typescript
-channel.on('postgres_changes', { event: '*' }, (payload) => {
-  if (eventType === 'DELETE') removeLocal();
-  else if (eventType === 'INSERT' || 'UPDATE') upsertLocal();
+channel.on("postgres_changes", { event: "*" }, (payload) => {
+  if (eventType === "DELETE") removeLocal();
+  else if (eventType === "INSERT" || "UPDATE") upsertLocal();
   onChange(id); // Trigger UI refresh
-})
+});
 ```
 
 Automatically syncs remote changes to IndexedDB.
@@ -103,12 +106,14 @@ Local Time > Remote Time ? Push : Pull
 Simple, deterministic, no user prompts.
 
 **Push Pattern:**
+
 1. Fetch local items
 2. For each: check remote updated_at
 3. If local newer: UPSERT
 4. If remote newer: skip
 
 **Pull Pattern:**
+
 1. Fetch remote items
 2. For each: check local updated_at
 3. If remote newer: update local
@@ -122,19 +127,21 @@ Simple, deterministic, no user prompts.
 
 **Three-Context Architecture:**
 
-| Context | Purpose | Updates | Persistence |
-|---------|---------|---------|-------------|
-| `AuthContext` | User/session state | Real-time (auth events) | Browser session |
-| `AppContext` | Projects, current selection | Manual actions | localStorage |
-| `ChaptersContext` | Chapter metadata per project | Reducers | localStorage |
+| Context           | Purpose                      | Updates                 | Persistence     |
+| ----------------- | ---------------------------- | ----------------------- | --------------- |
+| `AuthContext`     | User/session state           | Real-time (auth events) | Browser session |
+| `AppContext`      | Projects, current selection  | Manual actions          | localStorage    |
+| `ChaptersContext` | Chapter metadata per project | Reducers                | localStorage    |
 
 **Pattern:**
+
 - Contexts hold UI state only
 - Sync service handles cloud operations separately
 - Optimistic updates to context, async sync to cloud
 - No direct Supabase calls from context
 
 **References:**
+
 - `/Users/davehail/Developer/inkwell/src/context/AuthContext.tsx`
 - `/Users/davehail/Developer/inkwell/src/context/AppContext.tsx`
 - `/Users/davehail/Developer/inkwell/src/context/ChaptersContext.tsx`
@@ -148,7 +155,7 @@ Simple, deterministic, no user prompts.
 ```
 auth.users (Supabase managed)
     └─ profiles (auto-created)
-    
+
 projects (organization equivalent)
     ├─ owner_id (user)
     └─ project_members (shared access)
@@ -161,6 +168,7 @@ projects (organization equivalent)
 When user signs up → immediately create profile with same ID.
 
 **Sign-In Methods:**
+
 - Magic link (OTP via email)
 - Password-based
 - Secure redirect handling
@@ -171,12 +179,12 @@ When user signs up → immediately create profile with same ID.
 
 ### 8. Hooks for Common Tasks
 
-| Hook | Purpose | Source |
-|------|---------|--------|
-| `useAuth()` | Access user, session, auth methods | Custom wrapper |
-| `useSync()` | Track online status, pending syncs | connectivityService |
-| `useChapters()` | Get chapters for project | ChaptersContext |
-| `useProject()` | Get current project and methods | AppContext |
+| Hook            | Purpose                            | Source              |
+| --------------- | ---------------------------------- | ------------------- |
+| `useAuth()`     | Access user, session, auth methods | Custom wrapper      |
+| `useSync()`     | Track online status, pending syncs | connectivityService |
+| `useChapters()` | Get chapters for project           | ChaptersContext     |
+| `useProject()`  | Get current project and methods    | AppContext          |
 
 **Reference:** `/Users/davehail/Developer/inkwell/src/hooks/`
 
@@ -259,42 +267,49 @@ interface Project {
 ## Implementation Checklist
 
 ### Phase 1: Foundation (30 minutes)
+
 - [ ] Create supabaseClient.ts
 - [ ] Update .env.example
 - [ ] Install @supabase/supabase-js
 - [ ] Test client initialization
 
 ### Phase 2: Schema (15 minutes)
+
 - [ ] Create migration files in supabase/migrations/
 - [ ] Apply migrations locally
 - [ ] Verify tables in Supabase Dashboard
 - [ ] Enable RLS on all tables
 
 ### Phase 3: Auth (45 minutes)
+
 - [ ] Create AuthContext.tsx
 - [ ] Implement sign-up/sign-in/sign-out
 - [ ] Update auth redirects
 - [ ] Test login flow end-to-end
 
 ### Phase 4: Sync Service (1 hour)
+
 - [ ] Create syncService.ts
 - [ ] Implement pushLocalChanges()
 - [ ] Implement pullRemoteChanges()
 - [ ] Set up realtime subscriptions
 
 ### Phase 5: Hooks (30 minutes)
+
 - [ ] Create useAuth() hook
 - [ ] Create useSync() hook
 - [ ] Create entity-specific hooks
 - [ ] Test hooks in components
 
 ### Phase 6: Integration (1 hour)
+
 - [ ] Wrap app with AuthProvider
 - [ ] Add sync service initialization
 - [ ] Implement optimistic updates
 - [ ] Test end-to-end workflow
 
 ### Phase 7: Testing & Hardening (1.5 hours)
+
 - [ ] Test RLS policies
 - [ ] Test offline/online transitions
 - [ ] Test conflict resolution
@@ -308,25 +323,30 @@ interface Project {
 ## File Locations in Inkwell (Reference)
 
 ### Client & Config
+
 - `/Users/davehail/Developer/inkwell/src/lib/supabaseClient.ts`
 - `/Users/davehail/Developer/inkwell/.env.example`
 
 ### Contexts
+
 - `/Users/davehail/Developer/inkwell/src/context/AuthContext.tsx`
 - `/Users/davehail/Developer/inkwell/src/context/AppContext.tsx`
 - `/Users/davehail/Developer/inkwell/src/context/ChaptersContext.tsx`
 
 ### Services
+
 - `/Users/davehail/Developer/inkwell/src/services/chaptersSyncService.ts`
 - `/Users/davehail/Developer/inkwell/src/services/supabaseSync.ts`
 - `/Users/davehail/Developer/inkwell/src/services/connectivityService.ts`
 
 ### Hooks
+
 - `/Users/davehail/Developer/inkwell/src/hooks/useAuth.ts`
 - `/Users/davehail/Developer/inkwell/src/hooks/useSync.ts`
 - `/Users/davehail/Developer/inkwell/src/hooks/useChapters.ts`
 
 ### Migrations
+
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250128000000_inkwell_schema.sql`
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250119000000_auto_create_profiles.sql`
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250128000004_roles_write_guard.sql`

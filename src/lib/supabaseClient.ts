@@ -9,22 +9,25 @@
  * - VITE_SUPABASE_ANON_KEY
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '../types/database.types'
+import { createClient } from "@supabase/supabase-js";
+
+import type { Database } from "../types/database.types";
+
+type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
 // Supabase configuration from environment
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Validate required environment variables
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables')
-  console.error('Required: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY')
-  console.error('Please check your .env file')
+  console.error("Missing Supabase environment variables");
+  console.error("Required: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY");
+  console.error("Please check your .env file");
 }
 
 // Singleton client instance
-let supabaseInstance: SupabaseClient<Database> | null = null
+let supabaseInstance: SupabaseClient | null = null;
 
 /**
  * Get or create Supabase client instance
@@ -32,12 +35,12 @@ let supabaseInstance: SupabaseClient<Database> | null = null
  * Uses singleton pattern to ensure only one client exists
  * Includes error handling for missing environment variables
  */
-export function getSupabaseClient(): SupabaseClient<Database> {
+export function getSupabaseClient(): SupabaseClient {
   if (!supabaseInstance) {
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error(
-        'Supabase configuration missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.'
-      )
+        "Supabase configuration missing. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.",
+      );
     }
 
     supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -46,7 +49,7 @@ export function getSupabaseClient(): SupabaseClient<Database> {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storage: window.localStorage,
-        storageKey: 'nexus-auth-token',
+        storageKey: "nexus-auth-token",
       },
       // Realtime settings (can be disabled if not needed)
       realtime: {
@@ -54,10 +57,10 @@ export function getSupabaseClient(): SupabaseClient<Database> {
           eventsPerSecond: 10,
         },
       },
-    })
+    });
   }
 
-  return supabaseInstance
+  return supabaseInstance!;
 }
 
 /**
@@ -67,7 +70,7 @@ export function getSupabaseClient(): SupabaseClient<Database> {
  * import { supabase } from '@/lib/supabaseClient'
  * const { data, error } = await supabase.from('clients').select('*')
  */
-export const supabase = getSupabaseClient()
+export const supabase = getSupabaseClient();
 
 /**
  * Check if Supabase is properly configured
@@ -75,7 +78,7 @@ export const supabase = getSupabaseClient()
  * Useful for conditional features or error boundaries
  */
 export function isSupabaseConfigured(): boolean {
-  return !!(supabaseUrl && supabaseAnonKey)
+  return !!(supabaseUrl && supabaseAnonKey);
 }
 
 /**
@@ -86,20 +89,20 @@ export function isSupabaseConfigured(): boolean {
  * type ClientInsert = TablesInsert<'clients'>
  * type ClientUpdate = TablesUpdate<'clients'>
  */
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row']
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
 
-export type TablesInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert']
+export type TablesInsert<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"];
 
-export type TablesUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update']
+export type TablesUpdate<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"];
 
 /**
  * Type helper for Supabase enums
  */
-export type Enums<T extends keyof Database['public']['Enums']> =
-  Database['public']['Enums'][T]
+export type Enums<T extends keyof Database["public"]["Enums"]> =
+  Database["public"]["Enums"][T];
 
 /**
  * Error handling helper for Supabase operations
@@ -110,20 +113,20 @@ export type Enums<T extends keyof Database['public']['Enums']> =
  * )
  */
 export async function handleSupabaseError<T>(
-  promise: Promise<{ data: T | null; error: any }>
+  promise: Promise<{ data: T | null; error: any }>,
 ): Promise<T> {
-  const { data, error } = await promise
+  const { data, error } = await promise;
 
   if (error) {
-    console.error('Supabase error:', error)
-    throw new Error(error.message || 'An unexpected error occurred')
+    console.error("Supabase error:", error);
+    throw new Error(error.message || "An unexpected error occurred");
   }
 
   if (!data) {
-    throw new Error('No data returned from Supabase')
+    throw new Error("No data returned from Supabase");
   }
 
-  return data
+  return data;
 }
 
 /**
@@ -139,30 +142,30 @@ export async function handleSupabaseError<T>(
 export async function batchOperation<T>(
   items: T[],
   batchSize: number,
-  operation: (batch: T[]) => Promise<any>
+  operation: (batch: T[]) => Promise<any>,
 ): Promise<void> {
-  const batches: T[][] = []
+  const batches: T[][] = [];
 
   for (let i = 0; i < items.length; i += batchSize) {
-    batches.push(items.slice(i, i + batchSize))
+    batches.push(items.slice(i, i + batchSize));
   }
 
   // Execute batches in parallel (Supabase can handle this)
-  await Promise.all(batches.map((batch) => operation(batch)))
+  await Promise.all(batches.map((batch) => operation(batch)));
 }
 
 /**
  * Utility: Convert Supabase timestamp to Date object
  */
 export function parseSupabaseTimestamp(timestamp: string | null): Date | null {
-  return timestamp ? new Date(timestamp) : null
+  return timestamp ? new Date(timestamp) : null;
 }
 
 /**
  * Utility: Format Date for Supabase timestamp
  */
 export function formatSupabaseTimestamp(date: Date | null): string | null {
-  return date ? date.toISOString() : null
+  return date ? date.toISOString() : null;
 }
 
-export default supabase
+export default supabase;

@@ -5,40 +5,40 @@
  * Handles authentication and error handling
  */
 
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 export interface BrandImportSource {
-  source_type: 'website' | 'pdf' | 'doc' | 'social' | 'manual'
-  url?: string
-  title?: string
-  content?: string
+  source_type: "website" | "pdf" | "doc" | "social" | "manual";
+  url?: string;
+  title?: string;
+  content?: string;
 }
 
 export interface BrandImportParams {
-  client_id: string
-  brand_id: string
-  sources: BrandImportSource[]
+  client_id: string;
+  brand_id: string;
+  sources: BrandImportSource[];
 }
 
 export interface BrandImportResult {
-  url?: string
-  title?: string
-  status: 'upserted' | 'skipped_small' | 'error'
-  note?: string
-  error?: string
+  url?: string;
+  title?: string;
+  status: "upserted" | "skipped_small" | "error";
+  note?: string;
+  error?: string;
 }
 
 export interface BrandImportResponse {
-  ok: boolean
-  client_id?: string
-  brand_id?: string
-  processed?: number
-  results: BrandImportResult[]
-  error?: string
+  ok: boolean;
+  client_id?: string;
+  brand_id?: string;
+  processed?: number;
+  results: BrandImportResult[];
+  error?: string;
 }
 
 // ============================================================================
@@ -55,30 +55,33 @@ export interface BrandImportResponse {
  * @returns Import results with status per source
  * @throws Error if invocation fails
  */
-export async function importBrandSources(params: BrandImportParams): Promise<BrandImportResponse> {
+export async function importBrandSources(
+  params: BrandImportParams,
+): Promise<BrandImportResponse> {
   try {
-    const { data, error } = await supabase.functions.invoke<BrandImportResponse>(
-      'scheduled-import-brand-corpus',
-      {
-        body: params,
-      }
-    )
+    const { data, error } =
+      await supabase.functions.invoke<BrandImportResponse>(
+        "scheduled-import-brand-corpus",
+        {
+          body: params,
+        },
+      );
 
     if (error) {
-      console.error('Brand import error:', error)
-      throw new Error(error.message || 'Failed to import brand sources')
+      console.error("Brand import error:", error);
+      throw new Error(error.message || "Failed to import brand sources");
     }
 
     if (!data) {
-      throw new Error('No response from import function')
+      throw new Error("No response from import function");
     }
 
-    return data
+    return data;
   } catch (err) {
-    console.error('Brand import exception:', err)
+    console.error("Brand import exception:", err);
     throw err instanceof Error
       ? err
-      : new Error('An unexpected error occurred during import')
+      : new Error("An unexpected error occurred during import");
   }
 }
 
@@ -90,19 +93,19 @@ export async function importSingleUrl(
   clientId: string,
   brandId: string,
   url: string,
-  sourceType: BrandImportSource['source_type'] = 'website'
+  sourceType: BrandImportSource["source_type"] = "website",
 ): Promise<BrandImportResult> {
   const response = await importBrandSources({
     client_id: clientId,
     brand_id: brandId,
     sources: [{ source_type: sourceType, url }],
-  })
+  });
 
   if (!response.ok || response.results.length === 0) {
-    throw new Error('Import failed')
+    throw new Error("Import failed");
   }
 
-  return response.results[0]
+  return response.results[0];
 }
 
 /**
@@ -112,44 +115,50 @@ export async function importSingleUrl(
 export async function importMultipleUrls(
   clientId: string,
   brandId: string,
-  urls: Array<{ url: string; sourceType?: BrandImportSource['source_type'] }>
+  urls: Array<{ url: string; sourceType?: BrandImportSource["source_type"] }>,
 ): Promise<BrandImportResponse> {
   return importBrandSources({
     client_id: clientId,
     brand_id: brandId,
-    sources: urls.map(({ url, sourceType = 'website' }) => ({
+    sources: urls.map(({ url, sourceType = "website" }) => ({
       source_type: sourceType,
       url,
     })),
-  })
+  });
 }
 
 /**
  * Validate URL before import
  * Basic client-side validation to catch obvious issues
  */
-export function validateImportUrl(url: string): { valid: boolean; error?: string } {
+export function validateImportUrl(url: string): {
+  valid: boolean;
+  error?: string;
+} {
   try {
-    const parsed = new URL(url)
+    const parsed = new URL(url);
 
     // Check protocol
-    if (!['http:', 'https:'].includes(parsed.protocol)) {
-      return { valid: false, error: 'URL must use HTTP or HTTPS protocol' }
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return { valid: false, error: "URL must use HTTP or HTTPS protocol" };
     }
 
     // Check for localhost/private IPs (optional security check)
     if (
-      parsed.hostname === 'localhost' ||
-      parsed.hostname.startsWith('127.') ||
-      parsed.hostname.startsWith('192.168.') ||
-      parsed.hostname.startsWith('10.')
+      parsed.hostname === "localhost" ||
+      parsed.hostname.startsWith("127.") ||
+      parsed.hostname.startsWith("192.168.") ||
+      parsed.hostname.startsWith("10.")
     ) {
-      return { valid: false, error: 'Cannot import from localhost or private IPs' }
+      return {
+        valid: false,
+        error: "Cannot import from localhost or private IPs",
+      };
     }
 
-    return { valid: true }
-  } catch (err) {
-    return { valid: false, error: 'Invalid URL format' }
+    return { valid: true };
+  } catch {
+    return { valid: false, error: "Invalid URL format" };
   }
 }
 
@@ -158,6 +167,6 @@ export function validateImportUrl(url: string): { valid: boolean; error?: string
  * Rough approximation: words * 1.3
  */
 export function estimateTokens(content: string): number {
-  const words = content.trim().split(/\s+/).length
-  return Math.ceil(words * 1.3)
+  const words = content.trim().split(/\s+/).length;
+  return Math.ceil(words * 1.3);
 }

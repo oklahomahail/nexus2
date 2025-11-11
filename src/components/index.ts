@@ -1,13 +1,6 @@
 // src/components/index.ts
 // Core components that are used frequently - keep these
-export { default as Sidebar } from "./Sidebar";
-export { default as Topbar } from "./Topbar";
 export { default as LoadingSpinner } from "./LoadingSpinner";
-
-// Lightweight components
-export { default as IconButton } from "./IconButton";
-export { default as IconBadge } from "./IconBadge";
-export { default as LoginForm } from "./LoginForm";
 
 // UI kit components - frequently used
 export { Card, Input, Panel } from "./ui-kit";

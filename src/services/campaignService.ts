@@ -1,3 +1,7 @@
 // src/services/campaignService.ts
-// Re-export from real backend service
-export * from "./realCampaignService";
+// Campaign service - Supabase-first implementation
+
+// Placeholder service - implement with Supabase calls
+export const campaignService = {
+  // TODO: Implement with Supabase
+};

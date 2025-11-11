@@ -11,24 +11,26 @@ A comprehensive guide to Inkwell's production-grade Supabase integration pattern
 **File:** `/Users/davehail/Developer/inkwell/src/lib/supabaseClient.ts`
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-const isTest = import.meta.env.MODE === 'test';
+const isTest = import.meta.env.MODE === "test";
 
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ?? (isTest ? 'http://127.0.0.1:54321' : undefined);
+  import.meta.env.VITE_SUPABASE_URL ??
+  (isTest ? "http://127.0.0.1:54321" : undefined);
 const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ?? (isTest ? 'test-anon-key' : undefined);
+  import.meta.env.VITE_SUPABASE_ANON_KEY ??
+  (isTest ? "test-anon-key" : undefined);
 
 if (!isTest && (!supabaseUrl || !supabaseAnonKey)) {
   throw new Error(
-    'Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.',
+    "Missing Supabase environment variables. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.",
   );
 }
 
 // Use safe defaults for testing environment
-const finalSupabaseUrl = supabaseUrl || 'http://localhost:54321';
-const finalSupabaseAnonKey = supabaseAnonKey || 'test-anon-key';
+const finalSupabaseUrl = supabaseUrl || "http://localhost:54321";
+const finalSupabaseAnonKey = supabaseAnonKey || "test-anon-key";
 
 export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey);
 ```
@@ -48,7 +50,8 @@ VITE_SENTRY_DSN=https://your-sentry-dsn@sentry.io/project-id
 ```
 
 **Key Points:**
-- Uses VITE_ prefix for client-side env vars
+
+- Uses VITE\_ prefix for client-side env vars
 - Graceful handling of missing credentials in non-test environments
 - Test environment defaults to local Supabase instance (port 54321)
 - Single exported `supabase` instance (singleton pattern)
@@ -147,8 +150,8 @@ create table if not exists public.notes (
 - **IDs:** uuid with gen_random_uuid() default
 - **Timestamps:** created_at, updated_at (timestamptz)
 - **Soft deletes:** deleted_at field (not primary deletion)
-- **Foreign keys:** {table}_id pattern (project_id, user_id)
-- **Indexes:** idx_{table}_{fields} pattern
+- **Foreign keys:** {table}\_id pattern (project_id, user_id)
+- **Indexes:** idx*{table}*{fields} pattern
 
 ### 2.3 Indexing Strategy
 
@@ -160,6 +163,7 @@ create index if not exists idx_notes_project_updated on public.notes (project_id
 ```
 
 **Strategy:**
+
 - Composite indexes on (user/project, updated_at DESC) for listing/sorting queries
 - Optimizes common queries: "fetch all items for user/project, sorted by recency"
 - Avoids N+1 queries when loading project contents
@@ -175,6 +179,7 @@ client_hash text,  -- hash of content for conflict detection
 ```
 
 **Usage Pattern:**
+
 1. Client increments client_rev on every local edit
 2. On sync, compares client_rev with server version
 3. If conflict: uses timestamp-based resolution (newer wins)
@@ -274,6 +279,7 @@ for update using ( public.can_write_project(project_id) );
 ```
 
 **Role Hierarchy:**
+
 - owner: Full control (read, write, manage members)
 - editor: Read & write content, but can't modify members
 - viewer: Read-only access
@@ -299,11 +305,11 @@ export function subscribeToChapterChanges(
   const channel = supabase
     .channel(`chapters:${projectId}`)
     .on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: '*', // Listen to INSERT, UPDATE, DELETE
-        schema: 'public',
-        table: 'chapters',
+        event: "*", // Listen to INSERT, UPDATE, DELETE
+        schema: "public",
+        table: "chapters",
         filter: `project_id=eq.${projectId}`,
       },
       async (payload: any) => {
@@ -312,26 +318,26 @@ export function subscribeToChapterChanges(
           new: newRow,
           old: oldRow,
         } = payload as {
-          eventType: 'INSERT' | 'UPDATE' | 'DELETE';
+          eventType: "INSERT" | "UPDATE" | "DELETE";
           new: any;
           old: any;
         };
 
         try {
-          if (eventType === 'DELETE' && oldRow?.id) {
+          if (eventType === "DELETE" && oldRow?.id) {
             // Remote deletion - remove from local IndexedDB
             await Chapters.remove(oldRow.id);
-          } else if (eventType === 'INSERT' || eventType === 'UPDATE') {
+          } else if (eventType === "INSERT" || eventType === "UPDATE") {
             // Remote insert/update - upsert to local IndexedDB
             if (newRow) {
               const input: CreateChapterInput = {
                 id: newRow.id,
                 projectId: projectId,
                 title: newRow.title,
-                content: newRow.content || '',
+                content: newRow.content || "",
                 summary: newRow.summary,
                 index: newRow.order_index,
-                status: newRow.status || 'draft',
+                status: newRow.status || "draft",
               };
               await Chapters.create(input);
             }
@@ -340,7 +346,7 @@ export function subscribeToChapterChanges(
           // Notify UI of change
           onChange(newRow?.id || oldRow?.id);
         } catch (error) {
-          console.error('[Realtime] Failed to process change:', error);
+          console.error("[Realtime] Failed to process change:", error);
         }
       },
     )
@@ -370,7 +376,7 @@ useEffect(() => {
 ```typescript
 export function isRealtimeConnected(): boolean {
   const channels = supabase.getChannels();
-  return channels.some((ch: any) => ch.state === 'joined');
+  return channels.some((ch: any) => ch.state === "joined");
 }
 ```
 
@@ -396,9 +402,9 @@ export async function pushLocalChanges(projectId: string): Promise<void> {
 
       // Check if remote exists and compare timestamps
       const { data: remote } = await supabase
-        .from('chapters')
-        .select('updated_at')
-        .eq('id', ch.id)
+        .from("chapters")
+        .select("updated_at")
+        .eq("id", ch.id)
         .maybeSingle();
 
       const localTime = new Date(ch.updatedAt).getTime();
@@ -406,7 +412,7 @@ export async function pushLocalChanges(projectId: string): Promise<void> {
 
       // Only push if local is newer (Last-Write-Wins conflict resolution)
       if (localTime > remoteTime) {
-        const { error } = await supabase.from('chapters').upsert({
+        const { error } = await supabase.from("chapters").upsert({
           id: ch.id,
           project_id: projectId,
           title: ch.title,
@@ -419,17 +425,18 @@ export async function pushLocalChanges(projectId: string): Promise<void> {
         });
 
         if (error) {
-          console.error('[Sync] Failed to push chapter:', ch.id, error);
+          console.error("[Sync] Failed to push chapter:", ch.id, error);
         }
       }
     } catch (error) {
-      console.error('[Sync] Error pushing chapter:', ch.id, error);
+      console.error("[Sync] Error pushing chapter:", ch.id, error);
     }
   }
 }
 ```
 
 **Key Pattern:**
+
 - Uses `upsert` (UPSERT operation)
 - Timestamp comparison for conflict resolution
 - Skips pushing if remote is already newer
@@ -438,12 +445,14 @@ export async function pushLocalChanges(projectId: string): Promise<void> {
 #### Pull (Download) Pattern
 
 ```typescript
-export async function pullRemoteChanges(projectId: string): Promise<ChapterMeta[]> {
+export async function pullRemoteChanges(
+  projectId: string,
+): Promise<ChapterMeta[]> {
   const { data: remote, error } = await supabase
-    .from('chapters')
-    .select('*')
-    .eq('project_id', projectId)
-    .order('order_index');
+    .from("chapters")
+    .select("*")
+    .eq("project_id", projectId)
+    .order("order_index");
 
   if (error) throw error;
   if (!remote?.length) return [];
@@ -462,10 +471,10 @@ export async function pullRemoteChanges(projectId: string): Promise<ChapterMeta[
           id: r.id,
           projectId: projectId,
           title: r.title,
-          content: r.content || '',
+          content: r.content || "",
           summary: r.summary,
           index: r.order_index,
-          status: r.status as 'draft' | 'revising' | 'final',
+          status: r.status as "draft" | "revising" | "final",
         };
 
         await Chapters.create(input);
@@ -483,7 +492,7 @@ export async function pullRemoteChanges(projectId: string): Promise<ChapterMeta[
         });
       }
     } catch (error) {
-      console.error('[Sync] Error pulling chapter:', r.id, error);
+      console.error("[Sync] Error pulling chapter:", r.id, error);
     }
   }
 
@@ -495,7 +504,7 @@ export async function pullRemoteChanges(projectId: string): Promise<ChapterMeta[
 
 ```typescript
 export async function syncChapters(projectId: string): Promise<void> {
-  await pushLocalChanges(projectId);  // Upload first
+  await pushLocalChanges(projectId); // Upload first
   await pullRemoteChanges(projectId); // Then download
 }
 ```
@@ -503,12 +512,14 @@ export async function syncChapters(projectId: string): Promise<void> {
 ### 5.3 Conflict Resolution Strategy
 
 **Strategy: Last-Write-Wins (LWW)**
+
 1. Compare timestamps: `local.updated_at` vs `remote.updated_at`
 2. Newer timestamp always wins
 3. No user prompts required
 4. Deterministic and repeatable
 
 **Suitable for:**
+
 - Document editing with clear causality
 - Single-device workflows
 - Content where simple overwrites are acceptable
@@ -585,6 +596,7 @@ export const useAuth = () => {
 ```
 
 **Key Patterns:**
+
 - Single `useAuth()` hook for all auth operations
 - Initializes session on mount
 - Subscribes to auth state changes
@@ -627,7 +639,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const contextValue: AppContextValue = {
     state,
     dispatch,
-    currentProject: useMemo(() => 
+    currentProject: useMemo(() =>
       state.projects.find(p => p.id === state.currentProjectId) || null,
       [state.projects, state.currentProjectId]
     ),
@@ -643,6 +655,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 ```
 
 **Integration with Supabase:**
+
 - Uses localStorage for persistence (works offline)
 - Syncs with Supabase via separate sync service
 - Optimistic updates: update local state immediately, sync in background
@@ -688,6 +701,7 @@ export function useActiveChapter(): ChapterMeta | undefined {
 ```
 
 **Pattern:**
+
 - Normalized state (byId + byProject)
 - Selector hooks for common queries
 - Persists active chapter to localStorage
@@ -756,6 +770,7 @@ create trigger on_auth_user_created
 ```
 
 **Effect:**
+
 - When user signs up, profile automatically created
 - Profile ID = auth user ID (foreign key)
 - No gaps in data model
@@ -797,7 +812,7 @@ const signInWithPassword = async (email: string, password: string) => {
 
 const signUpWithPassword = async (email: string, password: string) => {
   const origin = window.location.origin;
-  const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent('/dashboard')}&tour=1`;
+  const callbackUrl = `${origin}/auth/callback?next=${encodeURIComponent("/dashboard")}&tour=1`;
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -812,6 +827,7 @@ const signUpWithPassword = async (email: string, password: string) => {
 ```
 
 **Security Notes:**
+
 - Validates redirect URLs (prevents open redirects)
 - Uses HTTPS-only in production
 - Callback URL must be whitelisted in Supabase Dashboard
@@ -896,6 +912,7 @@ private async decryptChapterIfNeeded(
 ```
 
 **Pattern:**
+
 - Optional encryption (can turn on/off per project)
 - DEK (Data Encryption Key) managed separately
 - Encrypted content stored in JSONB field

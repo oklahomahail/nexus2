@@ -5,14 +5,15 @@
  * Provides form state, validation, AI generation, and export
  */
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from "react";
+
 import {
   type CampaignParams,
   type CampaignGenerationResult,
   downloadText,
   generateCampaign,
   toMarkdownBundle,
-} from '@/services/campaignDesignService'
+} from "@/services/campaignDesignService";
 
 // ============================================================================
 // TYPES
@@ -20,19 +21,19 @@ import {
 
 interface UseCampaignDesignerReturn {
   // State
-  params: Partial<CampaignParams>
-  loading: boolean
-  error: string | null
-  result: CampaignGenerationResult | null
+  params: Partial<CampaignParams>;
+  loading: boolean;
+  error: string | null;
+  result: CampaignGenerationResult | null;
 
   // Validation
-  canGenerate: boolean
+  canGenerate: boolean;
 
   // Actions
-  update: (patch: Partial<CampaignParams>) => void
-  run: () => Promise<void>
-  exportMd: () => void
-  reset: () => void
+  update: (patch: Partial<CampaignParams>) => void;
+  run: () => Promise<void>;
+  exportMd: () => void;
+  reset: () => void;
 }
 
 // ============================================================================
@@ -40,16 +41,16 @@ interface UseCampaignDesignerReturn {
 // ============================================================================
 
 export function useCampaignDesigner(
-  initial?: Partial<CampaignParams>
+  initial?: Partial<CampaignParams>,
 ): UseCampaignDesignerReturn {
   const [params, setParams] = useState<Partial<CampaignParams>>({
     durationWeeks: 4,
     channels: { direct_mail: true, email: true, social: true },
     ...initial,
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<CampaignGenerationResult | null>(null)
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<CampaignGenerationResult | null>(null);
 
   /**
    * Check if all required fields are filled
@@ -67,57 +68,59 @@ export function useCampaignDesigner(
           params.tone &&
           params.durationWeeks &&
           params.channels &&
-          (params.channels.direct_mail || params.channels.email || params.channels.social)
+          (params.channels.direct_mail ||
+            params.channels.email ||
+            params.channels.social),
       ),
-    [params]
-  )
+    [params],
+  );
 
   /**
    * Update campaign parameters
    */
   const update = useCallback((patch: Partial<CampaignParams>) => {
-    setParams((p) => ({ ...p, ...patch }))
-  }, [])
+    setParams((p) => ({ ...p, ...patch }));
+  }, []);
 
   /**
    * Generate campaign via AI
    */
   const run = useCallback(async () => {
     if (!canGenerate) {
-      setError('Please fill in all required fields')
-      return
+      setError("Please fill in all required fields");
+      return;
     }
 
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
 
     try {
-      const full = await generateCampaign(params as CampaignParams)
-      setResult(full)
+      const full = await generateCampaign(params as CampaignParams);
+      setResult(full);
     } catch (e: any) {
-      const message = e instanceof Error ? e.message : 'Generation failed'
-      setError(message)
-      console.error('Campaign generation error:', e)
+      const message = e instanceof Error ? e.message : "Generation failed";
+      setError(message);
+      console.error("Campaign generation error:", e);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [canGenerate, params])
+  }, [canGenerate, params]);
 
   /**
    * Export result as Markdown file
    */
   const exportMd = useCallback(() => {
     if (!result) {
-      console.warn('No result to export')
-      return
+      console.warn("No result to export");
+      return;
     }
 
-    const md = toMarkdownBundle(result)
-    const safeName = (params.name || 'campaign')
-      .replace(/[^a-z0-9_-]+/gi, '-')
-      .toLowerCase()
-    downloadText(`${safeName}.md`, md)
-  }, [result, params])
+    const md = toMarkdownBundle(result);
+    const safeName = (params.name || "campaign")
+      .replace(/[^a-z0-9_-]+/gi, "-")
+      .toLowerCase();
+    downloadText(`${safeName}.md`, md);
+  }, [result, params]);
 
   /**
    * Reset form and result
@@ -127,10 +130,10 @@ export function useCampaignDesigner(
       durationWeeks: 4,
       channels: { direct_mail: true, email: true, social: true },
       ...initial,
-    })
-    setResult(null)
-    setError(null)
-  }, [initial])
+    });
+    setResult(null);
+    setError(null);
+  }, [initial]);
 
   return {
     params,
@@ -142,5 +145,5 @@ export function useCampaignDesigner(
     run,
     exportMd,
     reset,
-  }
+  };
 }

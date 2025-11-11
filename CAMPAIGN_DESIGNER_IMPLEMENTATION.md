@@ -48,15 +48,15 @@ Cost Estimates & Schedule
 
 ### Files Created
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `supabase/migrations/20250110000003_brand_bible.sql` | Schema for brand profiles, assets, corpus | ✅ Complete |
-| `src/services/brandService.ts` | CRUD operations for brand data | ✅ Complete |
-| `src/services/postageEstimator.ts` | Static rate table + cost calculations | ✅ Complete |
-| `src/services/campaignDesignerPrompts.ts` | Claude prompt templates | ✅ Complete |
-| `src/hooks/usePostalAssumptions.ts` | React hook for postage estimates | ✅ Complete |
-| `supabase/functions/scheduled-import-brand-corpus/` | Edge Function for importing web/PDF content | ✅ Complete |
-| `src/types/database.types.ts` | Updated with Brand Bible types | ✅ Complete |
+| File                                                 | Purpose                                     | Status      |
+| ---------------------------------------------------- | ------------------------------------------- | ----------- |
+| `supabase/migrations/20250110000003_brand_bible.sql` | Schema for brand profiles, assets, corpus   | ✅ Complete |
+| `src/services/brandService.ts`                       | CRUD operations for brand data              | ✅ Complete |
+| `src/services/postageEstimator.ts`                   | Static rate table + cost calculations       | ✅ Complete |
+| `src/services/campaignDesignerPrompts.ts`            | Claude prompt templates                     | ✅ Complete |
+| `src/hooks/usePostalAssumptions.ts`                  | React hook for postage estimates            | ✅ Complete |
+| `supabase/functions/scheduled-import-brand-corpus/`  | Edge Function for importing web/PDF content | ✅ Complete |
+| `src/types/database.types.ts`                        | Updated with Brand Bible types              | ✅ Complete |
 
 ### Database Schema
 
@@ -94,9 +94,10 @@ Cost Estimates & Schedule
 **Hooks**: `useBrandProfile.ts`
 
 ```typescript
-import { useBrandProfile } from '@/hooks/useBrandProfile'
+import { useBrandProfile } from "@/hooks/useBrandProfile";
 
-const { profile, assets, updateProfile, uploadAsset } = useBrandProfile(clientId)
+const { profile, assets, updateProfile, uploadAsset } =
+  useBrandProfile(clientId);
 ```
 
 **Estimated Time**: 4 hours
@@ -122,26 +123,29 @@ const { profile, assets, updateProfile, uploadAsset } = useBrandProfile(clientId
 await upsertCorpusChunk({
   client_id,
   brand_id,
-  source_type: 'manual',
-  title: 'Newsletter Excerpt',
+  source_type: "manual",
+  title: "Newsletter Excerpt",
   checksum: await generateChecksum(content),
   content,
   tokens: estimateTokens(content),
-})
+});
 
 // Import from URL (calls Edge Function)
-const response = await fetch(`${SUPABASE_URL}/functions/v1/scheduled-import-brand-corpus`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'X-Brand-Import-Secret': WEBHOOK_SECRET,
+const response = await fetch(
+  `${SUPABASE_URL}/functions/v1/scheduled-import-brand-corpus`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Brand-Import-Secret": WEBHOOK_SECRET,
+    },
+    body: JSON.stringify({
+      client_id,
+      brand_id,
+      sources: [{ source_type: "website", url: "https://track15.org/about" }],
+    }),
   },
-  body: JSON.stringify({
-    client_id,
-    brand_id,
-    sources: [{ source_type: 'website', url: 'https://track15.org/about' }],
-  }),
-})
+);
 ```
 
 **Estimated Time**: 6 hours
@@ -190,24 +194,24 @@ const response = await fetch(`${SUPABASE_URL}/functions/v1/scheduled-import-bran
 **Hooks**: `useCampaignDesigner.ts`
 
 ```typescript
-import { useCampaignDesigner } from '@/hooks/useCampaignDesigner'
+import { useCampaignDesigner } from "@/hooks/useCampaignDesigner";
 
 const { generateCampaign, isGenerating, results } = useCampaignDesigner({
   clientId,
   brandId,
-})
+});
 
 // Generate campaign
 const campaign = await generateCampaign({
-  campaignType: 'appeal',
-  season: 'year_end',
-  targetAudience: 'lapsed donors 6-12 months',
-  goal: '$75,000 for winter meals program',
-  tone: 'urgent',
-  channels: ['direct_mail', 'email', 'social'],
-  mailFormat: 'letter',
+  campaignType: "appeal",
+  season: "year_end",
+  targetAudience: "lapsed donors 6-12 months",
+  goal: "$75,000 for winter meals program",
+  tone: "urgent",
+  channels: ["direct_mail", "email", "social"],
+  mailFormat: "letter",
   quantity: 5000,
-})
+});
 ```
 
 **Estimated Time**: 12 hours
@@ -230,42 +234,51 @@ const campaign = await generateCampaign({
 **Pseudo-code**:
 
 ```typescript
-export function useCampaignDesigner({ clientId, brandId }: { clientId: string; brandId: string }) {
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [results, setResults] = useState<CampaignResults | null>(null)
-  const [error, setError] = useState<string | null>(null)
+export function useCampaignDesigner({
+  clientId,
+  brandId,
+}: {
+  clientId: string;
+  brandId: string;
+}) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [results, setResults] = useState<CampaignResults | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const generateCampaign = async (params: CampaignParams) => {
-    setIsGenerating(true)
-    setError(null)
+    setIsGenerating(true);
+    setError(null);
 
     try {
       // 1. Load brand context
-      const { profile, snippets, context } = await buildBrandContext(clientId, brandId)
+      const { profile, snippets, context } = await buildBrandContext(
+        clientId,
+        brandId,
+      );
 
       // 2. Build prompts
       const prompts = buildFullCampaignPrompts({
         brandContext: context,
         blueprintInput: params,
         mailFormat: params.mailFormat,
-      })
+      });
 
       // 3. Call Claude sequentially for each step
-      const blueprintResponse = await callClaude(prompts[0].prompt)
-      const directMailResponse = await callClaude(prompts[1].prompt) // Inject blueprint results
-      const digitalResponse = await callClaude(prompts[2].prompt) // Inject blueprint results
+      const blueprintResponse = await callClaude(prompts[0].prompt);
+      const directMailResponse = await callClaude(prompts[1].prompt); // Inject blueprint results
+      const digitalResponse = await callClaude(prompts[2].prompt); // Inject blueprint results
 
       // 4. Parse responses
-      const blueprint = parseBlueprint(blueprintResponse)
-      const directMail = parseDirectMail(directMailResponse)
-      const digital = parseDigitalSequence(digitalResponse)
+      const blueprint = parseBlueprint(blueprintResponse);
+      const directMail = parseDirectMail(directMailResponse);
+      const digital = parseDigitalSequence(digitalResponse);
 
       // 5. Calculate costs
       const postageEstimate = estimatePostage({
         mailClass: params.mailClass,
         format: params.mailFormat,
         quantity: params.quantity,
-      })
+      });
 
       // 6. Return results
       setResults({
@@ -273,15 +286,15 @@ export function useCampaignDesigner({ clientId, brandId }: { clientId: string; b
         directMail,
         digital,
         costs: postageEstimate,
-      })
+      });
     } catch (err) {
-      setError(err.message)
+      setError(err.message);
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
-  return { generateCampaign, isGenerating, results, error }
+  return { generateCampaign, isGenerating, results, error };
 }
 ```
 
@@ -303,18 +316,18 @@ Nexus already has `/src/context/ClaudeProvider.tsx` (from Inkwell pattern).
 Use Anthropic SDK directly in `useCampaignDesigner`:
 
 ```typescript
-import Anthropic from '@anthropic-ai/sdk'
+import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic({
   apiKey: import.meta.env.VITE_CLAUDE_API_KEY,
-})
+});
 
 const message = await anthropic.messages.create({
-  model: 'claude-3-5-sonnet-20241022',
+  model: "claude-3-5-sonnet-20241022",
   max_tokens: 4096,
   system: CAMPAIGN_DESIGNER_SYSTEM_PROMPT,
-  messages: [{ role: 'user', content: blueprintPrompt }],
-})
+  messages: [{ role: "user", content: blueprintPrompt }],
+});
 ```
 
 **Recommendation**: Start with Option B for simplicity, migrate to ClaudeProvider later if needed for streaming UI.
@@ -388,21 +401,21 @@ ${campaign.blueprint.prose}
 ${campaign.directMail.content}
 
 ## Email Sequence
-${campaign.digital.emails.map((e) => `### Email ${e.id}: ${e.subject}\n${e.body}`).join('\n\n')}
+${campaign.digital.emails.map((e) => `### Email ${e.id}: ${e.subject}\n${e.body}`).join("\n\n")}
 
 ## Social Posts
-${campaign.digital.social.map((s) => `### Post ${s.id}\n${s.long}`).join('\n\n')}
+${campaign.digital.social.map((s) => `### Post ${s.id}\n${s.long}`).join("\n\n")}
 
 ## Cost Estimate
 ${buildCostSummaryPrompt(campaign.costs)}
-  `.trim()
+  `.trim();
 }
 
 // CSV export (emails)
 function exportEmailsCSV(emails: EmailItem[]): string {
-  const headers = ['ID', 'Subject', 'Preheader', 'Body', 'CTA']
-  const rows = emails.map((e) => [e.id, e.subject, e.preheader, e.body, e.cta])
-  return [headers, ...rows].map((r) => r.map(escapeCsv).join(',')).join('\n')
+  const headers = ["ID", "Subject", "Preheader", "Body", "CTA"];
+  const rows = emails.map((e) => [e.id, e.subject, e.preheader, e.body, e.cta]);
+  return [headers, ...rows].map((r) => r.map(escapeCsv).join(",")).join("\n");
 }
 ```
 
@@ -453,15 +466,15 @@ OUTPUT:
 
 ## Implementation Timeline
 
-| Phase | Tasks | Hours | Priority |
-|-------|-------|-------|----------|
-| **1. Foundation** | Schema, services, prompts, hook scaffolds | 6 | ✅ Complete |
-| **2. UI** | Brand Profile Panel, Corpus Manager, Campaign Designer Wizard | 22 | 🔥 High |
-| **3. Claude Integration** | API calls, response parsing, error handling | 4 | 🔥 High |
-| **4. Postage Display** | Cost cards, comparisons, ROI calculator | 3 | 🔥 High |
-| **5. Export** | Markdown, CSV, PDF, JSON downloads | 4 | 🟡 Medium |
-| **6. Consistency Guardian** | Brand check pass, feedback UI | 6 | 🟢 Low (nice-to-have) |
-| **TOTAL** | | **45 hours** | |
+| Phase                       | Tasks                                                         | Hours        | Priority              |
+| --------------------------- | ------------------------------------------------------------- | ------------ | --------------------- |
+| **1. Foundation**           | Schema, services, prompts, hook scaffolds                     | 6            | ✅ Complete           |
+| **2. UI**                   | Brand Profile Panel, Corpus Manager, Campaign Designer Wizard | 22           | 🔥 High               |
+| **3. Claude Integration**   | API calls, response parsing, error handling                   | 4            | 🔥 High               |
+| **4. Postage Display**      | Cost cards, comparisons, ROI calculator                       | 3            | 🔥 High               |
+| **5. Export**               | Markdown, CSV, PDF, JSON downloads                            | 4            | 🟡 Medium             |
+| **6. Consistency Guardian** | Brand check pass, feedback UI                                 | 6            | 🟢 Low (nice-to-have) |
+| **TOTAL**                   |                                                               | **45 hours** |                       |
 
 **Recommended Sprint**: Phases 2-4 (29 hours) → MVP Campaign Designer ready
 
@@ -498,21 +511,25 @@ OUTPUT:
 
 ```typescript
 // brandService.ts
-test('upsertBrandProfile creates profile with client scoping', async () => {
+test("upsertBrandProfile creates profile with client scoping", async () => {
   const profile = await upsertBrandProfile({
     client_id: testClientId,
-    name: 'Test Brand',
-    tone_of_voice: 'warm, professional',
-  })
-  expect(profile.client_id).toBe(testClientId)
-})
+    name: "Test Brand",
+    tone_of_voice: "warm, professional",
+  });
+  expect(profile.client_id).toBe(testClientId);
+});
 
 // postageEstimator.ts
-test('estimatePostage calculates nonprofit savings correctly', () => {
-  const estimate = estimatePostage({ mailClass: 'nonprofit', format: 'letter', quantity: 1000 })
-  expect(estimate.total).toBe(190) // $0.19 * 1000
-  expect(estimate.savings).toBeGreaterThan(0)
-})
+test("estimatePostage calculates nonprofit savings correctly", () => {
+  const estimate = estimatePostage({
+    mailClass: "nonprofit",
+    format: "letter",
+    quantity: 1000,
+  });
+  expect(estimate.total).toBe(190); // $0.19 * 1000
+  expect(estimate.savings).toBeGreaterThan(0);
+});
 ```
 
 ### Integration Tests
@@ -617,11 +634,13 @@ test('estimatePostage calculates nonprofit savings correctly', () => {
 ## Next Actions
 
 1. **Deploy Brand Bible migration**:
+
    ```bash
    supabase db push --migration-name 20250110000003_brand_bible
    ```
 
 2. **Deploy Edge Function**:
+
    ```bash
    cd supabase/functions
    supabase functions deploy scheduled-import-brand-corpus

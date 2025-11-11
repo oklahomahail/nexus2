@@ -13,12 +13,15 @@
  * Convert array of objects to CSV string
  */
 export function rowsToCsv(rows: Record<string, any>[]): string {
-  if (!rows?.length) return ''
+  if (!rows?.length) return "";
 
-  const cols = Object.keys(rows[0])
-  const esc = (v: any) => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const cols = Object.keys(rows[0]);
+  const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
 
-  return [cols.join(','), ...rows.map((r) => cols.map((c) => esc(r[c])).join(','))].join('\n')
+  return [
+    cols.join(","),
+    ...rows.map((r) => cols.map((c) => esc(r[c])).join(",")),
+  ].join("\n");
 }
 
 /**
@@ -26,18 +29,18 @@ export function rowsToCsv(rows: Record<string, any>[]): string {
  */
 export function downloadCsv(name: string, rows: Record<string, any>[]) {
   if (!rows?.length) {
-    console.warn('No data to export')
-    return
+    console.warn("No data to export");
+    return;
   }
 
-  const csv = rowsToCsv(rows)
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${name}.csv`
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 300)
+  const csv = rowsToCsv(rows);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${name}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 300);
 }
 
 // ============================================================================
@@ -47,28 +50,34 @@ export function downloadCsv(name: string, rows: Record<string, any>[]) {
 /**
  * Convert array of objects to Markdown table
  */
-export function rowsToMarkdown(rows: Record<string, any>[], title?: string): string {
-  if (!rows?.length) return ''
+export function rowsToMarkdown(
+  rows: Record<string, any>[],
+  title?: string,
+): string {
+  if (!rows?.length) return "";
 
-  const cols = Object.keys(rows[0])
-  let md = ''
+  const cols = Object.keys(rows[0]);
+  let md = "";
 
   if (title) {
-    md += `# ${title}\n\n`
+    md += `# ${title}\n\n`;
   }
 
   // Header row
-  md += '| ' + cols.join(' | ') + ' |\n'
+  md += "| " + cols.join(" | ") + " |\n";
 
   // Separator row
-  md += '| ' + cols.map(() => '---').join(' | ') + ' |\n'
+  md += "| " + cols.map(() => "---").join(" | ") + " |\n";
 
   // Data rows
   rows.forEach((row) => {
-    md += '| ' + cols.map((col) => formatMarkdownCell(row[col])).join(' | ') + ' |\n'
-  })
+    md +=
+      "| " +
+      cols.map((col) => formatMarkdownCell(row[col])).join(" | ") +
+      " |\n";
+  });
 
-  return md
+  return md;
 }
 
 /**
@@ -76,17 +85,17 @@ export function rowsToMarkdown(rows: Record<string, any>[], title?: string): str
  */
 export function downloadMarkdown(name: string, content: string) {
   if (!content) {
-    console.warn('No content to export')
-    return
+    console.warn("No content to export");
+    return;
   }
 
-  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${name}.md`
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 300)
+  const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${name}.md`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 300);
 }
 
 // ============================================================================
@@ -98,18 +107,18 @@ export function downloadMarkdown(name: string, content: string) {
  */
 export function downloadJson(name: string, data: any) {
   if (!data) {
-    console.warn('No data to export')
-    return
+    console.warn("No data to export");
+    return;
   }
 
-  const json = JSON.stringify(data, null, 2)
-  const blob = new Blob([json], { type: 'application/json;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${name}.json`
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 300)
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${name}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 300);
 }
 
 // ============================================================================
@@ -121,7 +130,11 @@ export function downloadJson(name: string, data: any) {
  */
 export function exportRetentionData(
   data: Array<{ consecutive_years: number; donor_count: number }>,
-  summary: { total_donors: number; avg_consecutive_years: number; max_consecutive_years: number }
+  summary: {
+    total_donors: number;
+    avg_consecutive_years: number;
+    max_consecutive_years: number;
+  },
 ) {
   const md = `# Donor Retention Analysis
 
@@ -136,18 +149,23 @@ ${rowsToMarkdown(data)}
 
 ---
 *Generated by Nexus on ${new Date().toLocaleString()}*
-`
+`;
 
-  downloadMarkdown('donor_retention', md)
+  downloadMarkdown("donor_retention", md);
 }
 
 /**
  * Export upgrade velocity data
  */
 export function exportUpgradeData(
-  data: Array<{ anon_id: string; amount_from: number; amount_to: number; pct_change: number }>,
+  data: Array<{
+    anon_id: string;
+    amount_from: number;
+    amount_to: number;
+    pct_change: number;
+  }>,
   yearFrom: number,
-  yearTo: number
+  yearTo: number,
 ) {
   const md = `# Year-over-Year Upgrade Analysis
 
@@ -160,17 +178,25 @@ ${rowsToMarkdown(data.slice(0, 20))}
 ---
 *Generated by Nexus on ${new Date().toLocaleString()}*
 *Note: Donor IDs are anonymized for privacy*
-`
+`;
 
-  downloadMarkdown(`upgrade_velocity_${yearFrom}_${yearTo}`, md)
+  downloadMarkdown(`upgrade_velocity_${yearFrom}_${yearTo}`, md);
 }
 
 /**
  * Export gift velocity data
  */
 export function exportGiftVelocityData(
-  data: Array<{ anon_id: string; gift_count: number; median_days_between: number }>,
-  summary: { total_repeat_donors: number; avg_days_between: number; median_days_between: number }
+  data: Array<{
+    anon_id: string;
+    gift_count: number;
+    median_days_between: number;
+  }>,
+  summary: {
+    total_repeat_donors: number;
+    avg_days_between: number;
+    median_days_between: number;
+  },
 ) {
   const md = `# Gift Velocity Analysis
 
@@ -186,19 +212,26 @@ ${rowsToMarkdown(data.slice(0, 50))}
 ---
 *Generated by Nexus on ${new Date().toLocaleString()}*
 *Note: Donor IDs are anonymized for privacy*
-`
+`;
 
-  downloadMarkdown('gift_velocity', md)
+  downloadMarkdown("gift_velocity", md);
 }
 
 /**
  * Export seasonality data
  */
 export function exportSeasonalityData(
-  data: Array<{ year: number; quarter: number; gift_count: number; total_amount: number }>,
-  year?: number
+  data: Array<{
+    year: number;
+    quarter: number;
+    gift_count: number;
+    total_amount: number;
+  }>,
+  year?: number,
 ) {
-  const title = year ? `Seasonality Analysis (${year})` : 'Seasonality Analysis (All Years)'
+  const title = year
+    ? `Seasonality Analysis (${year})`
+    : "Seasonality Analysis (All Years)";
 
   const md = `# ${title}
 
@@ -206,9 +239,9 @@ ${rowsToMarkdown(data)}
 
 ---
 *Generated by Nexus on ${new Date().toLocaleString()}*
-`
+`;
 
-  downloadMarkdown(year ? `seasonality_${year}` : 'seasonality_all', md)
+  downloadMarkdown(year ? `seasonality_${year}` : "seasonality_all", md);
 }
 
 // ============================================================================
@@ -219,27 +252,27 @@ ${rowsToMarkdown(data)}
  * Format cell value for Markdown table
  */
 function formatMarkdownCell(value: any): string {
-  if (value === null || value === undefined) return ''
-  if (typeof value === 'number') {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "number") {
     // Format numbers with commas
-    return value.toLocaleString()
+    return value.toLocaleString();
   }
-  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-  if (value instanceof Date) return value.toLocaleDateString()
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (value instanceof Date) return value.toLocaleDateString();
   // Escape pipe characters in strings
-  return String(value).replace(/\|/g, '\\|')
+  return String(value).replace(/\|/g, "\\|");
 }
 
 /**
  * Sanitize filename (remove special characters)
  */
 export function sanitizeFilename(name: string): string {
-  return name.replace(/[^a-z0-9_-]+/gi, '_').toLowerCase()
+  return name.replace(/[^a-z0-9_-]+/gi, "_").toLowerCase();
 }
 
 /**
  * Generate timestamp suffix for files
  */
 export function getTimestampSuffix(): string {
-  return new Date().toISOString().slice(0, 19).replace(/[T:]/g, '_')
+  return new Date().toISOString().slice(0, 19).replace(/[T:]/g, "_");
 }
