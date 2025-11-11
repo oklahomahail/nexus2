@@ -1,14 +1,114 @@
 # Deployment Guide for Nexus
 
-This guide covers deploying your Nexus application to various platforms with different backend configurations.
+This guide covers deploying your Nexus application to Vercel with Supabase backend.
 
-## Quick Start
+## Current Status (2025-11-11)
 
-### 1. Local Deployment
+✅ **DNS Configuration** - COMPLETE
+- CNAME: `app.leadwithnexus.com` → `cname.vercel-dns.com` (TTL: 600s)
+- Status: Active on Porkbun
+
+✅ **Vercel Configuration** - READY
+- [vercel.json](vercel.json) configured with Vite framework
+- Security headers in place
+- Build commands configured
+
+✅ **Supabase Client** - CODE READY
+- Client configured in [src/lib/supabaseClient.ts](src/lib/supabaseClient.ts)
+- Needs: Project creation + environment variables
+
+🔄 **Next Steps Required:**
+1. Create Supabase project (10 min)
+2. Add environment variables to Vercel (5 min)
+3. Trigger deployment (automatic)
+
+---
+
+## 🚀 Deployment Steps (15 minutes total)
+
+### Step 1: Create Supabase Project (10 minutes)
+
+1. **Go to Supabase Dashboard**
+   - Visit: https://app.supabase.com/
+   - Sign in with GitHub
+
+2. **Create New Project**
+   - Click "New project"
+   - Organization: Personal or create "Lead with Nexus"
+   - Name: `nexus-production`
+   - Database Password: **Generate strong password** (save securely)
+   - Region: `us-east-1` (or closest to users)
+   - Click "Create new project"
+
+3. **Get API Credentials** (wait ~2 minutes for project to provision)
+   - Go to Project Settings (gear icon) → API
+   - Copy these values:
+     - **URL**: `https://xxxxxxxxxxxxx.supabase.co`
+     - **anon/public key**: `eyJhbGci...` (long JWT token)
+
+### Step 2: Configure Vercel (5 minutes)
+
+1. **Add Environment Variables**
+   - Go to: https://vercel.com/ → Your Nexus project
+   - Navigate to: Settings → Environment Variables
+   - Add two variables:
+
+   ```
+   Name: VITE_SUPABASE_URL
+   Value: https://xxxxxxxxxxxxx.supabase.co
+   Environments: ☑ Production ☑ Preview ☑ Development
+
+   Name: VITE_SUPABASE_ANON_KEY
+   Value: eyJhbGci...your-actual-anon-key
+   Environments: ☑ Production ☑ Preview ☑ Development
+   ```
+
+2. **Add Domain** (if not already added)
+   - Go to: Settings → Domains
+   - Add domain: `app.leadwithnexus.com`
+   - Vercel will verify DNS (already configured ✅)
+
+3. **Trigger Deployment**
+   ```bash
+   # Option A: Push a commit
+   git commit --allow-empty -m "Configure Supabase environment variables"
+   git push
+
+   # Option B: Use Vercel dashboard
+   # Deployments → ... menu → Redeploy
+   ```
+
+### Step 3: Verify (2 minutes)
+
+1. **Wait for SSL Certificate** (~5-10 minutes after DNS propagation)
+
+2. **Check Deployment**
+   - Visit: https://app.leadwithnexus.com
+   - Open browser console (F12)
+   - Should NOT see: "Missing Supabase environment variables"
+
+3. **Test DNS**
+   ```bash
+   dig app.leadwithnexus.com
+   # Should show: cname.vercel-dns.com
+   ```
+
+---
+
+## Local Development Setup
+
+### Quick Start
 
 ```bash
 # Install dependencies
 pnpm install
+
+# Create .env file from template
+cp .env.example .env
+
+# Add your Supabase credentials to .env
+# VITE_SUPABASE_URL=https://xxxxx.supabase.co
+# VITE_SUPABASE_ANON_KEY=eyJhbGci...
 
 # Run in development mode
 pnpm dev
@@ -20,260 +120,250 @@ pnpm build
 pnpm preview
 ```
 
-### 2. Using the Deploy Script
+### Verify Supabase Connection
 
 ```bash
-# Deploy to Vercel (production)
-./scripts/deploy.sh production vercel
+# Start dev server
+pnpm dev
 
-# Deploy to Netlify (staging)
-./scripts/deploy.sh staging netlify
-
-# Deploy using Docker
-./scripts/deploy.sh production docker
-
-# Deploy using Docker Compose
-./scripts/deploy.sh development docker-compose
+# Open browser to http://localhost:5173
+# Check console - should NOT see:
+# "Missing Supabase environment variables"
 ```
 
-## Platform-Specific Deployment
+---
 
-### Vercel
+## Environment Variables Reference
 
-1. **Setup**:
+### Required for Production
 
-   ```bash
-   npm install -g vercel
-   vercel login
-   ```
+| Variable | Purpose | Where to Get | Example |
+|----------|---------|--------------|---------|
+| `VITE_SUPABASE_URL` | Supabase API endpoint | Supabase Dashboard → Settings → API | `https://abcdefg.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Public Supabase key | Supabase Dashboard → Settings → API | `eyJhbGci...` (JWT token) |
 
-2. **Configuration**:
-   - The `vercel.json` file is already configured
-   - Set environment variables in Vercel dashboard:
-     - `VITE_API_BASE_URL`
-     - `VITE_CLAUDE_API_KEY`
+**Important Notes:**
+- ⚠️ **MUST** have `VITE_` prefix for Vite to expose to client-side code
+- 🔒 Never commit actual values to git (use `.env` locally, Vercel dashboard for production)
+- ✅ Same values for Production, Preview, and Development environments
 
-3. **Deploy**:
-   ```bash
-   vercel --prod  # Production
-   vercel         # Preview
-   ```
+### Optional (Future Features)
 
-### Netlify
+| Variable | Purpose | When Needed |
+|----------|---------|-------------|
+| `VITE_SENTRY_DSN` | Error tracking | When you set up Sentry |
+| `VITE_POSTHOG_KEY` | Analytics | When you add PostHog |
+| `VITE_STRIPE_PUBLIC_KEY` | Payments | When you add billing |
 
-1. **Setup**:
-
-   ```bash
-   npm install -g netlify-cli
-   netlify login
-   ```
-
-2. **Configuration**:
-   - The `netlify.toml` file is already configured
-   - Set environment variables in Netlify dashboard
-
-3. **Deploy**:
-   ```bash
-   netlify deploy --prod --dir=dist  # Production
-   netlify deploy --dir=dist         # Preview
-   ```
-
-### Docker
-
-1. **Build and Run**:
-
-   ```bash
-   # Build production image
-   docker build \
-     --target production \
-     --build-arg VITE_API_ENVIRONMENT=production \
-     --build-arg VITE_API_BASE_URL=https://api.nexus.com/v1 \
-     --build-arg VITE_CLAUDE_API_KEY=your_key_here \
-     -t nexus:prod \
-     .
-
-   # Run container
-   docker run -d -p 80:80 nexus:prod
-   ```
-
-2. **Docker Compose**:
-
-   ```bash
-   # Development
-   COMPOSE_PROFILES=dev docker-compose up -d
-
-   # Production
-   COMPOSE_PROFILES=prod docker-compose up -d
-   ```
-
-## Backend Configuration
-
-The application supports multiple backend configurations through the API configuration system:
-
-### Available Configurations
-
-- **Development**: Local development server
-- **Staging**: Staging API server
-- **Production**: Production API server
-- **Mock**: Mock API server for testing
-- **Supabase**: Supabase backend
-- **Firebase**: Firebase backend
-- **GraphQL**: GraphQL backend
-
-### Switching Backends
-
-1. **Environment Variables**:
-
-   ```bash
-   # Set the environment
-   VITE_API_ENVIRONMENT=development
-
-   # Or override the base URL directly
-   VITE_API_BASE_URL=https://your-api.com/v1
-   ```
-
-2. **Programmatically**:
-
-   ```typescript
-   import { apiConfigService } from "./src/services/apiConfig";
-
-   // Switch to staging
-   apiConfigService.setConfig("staging");
-
-   // Or set custom configuration
-   apiConfigService.setCustomConfig({
-     name: "Custom API",
-     baseUrl: "https://custom-api.com",
-     // ... other config
-   });
-   ```
-
-## Environment Variables
-
-### Required Variables
-
-| Variable               | Description            | Example                    |
-| ---------------------- | ---------------------- | -------------------------- |
-| `VITE_API_ENVIRONMENT` | Deployment environment | `production`               |
-| `VITE_API_BASE_URL`    | API base URL           | `https://api.nexus.com/v1` |
-| `VITE_CLAUDE_API_KEY`  | Claude AI API key      | `sk-ant-...`               |
-
-### Optional Variables
-
-| Variable                    | Description           | Default |
-| --------------------------- | --------------------- | ------- |
-| `VITE_ENABLE_ANALYTICS`     | Enable analytics      | `true`  |
-| `VITE_ENABLE_NOTIFICATIONS` | Enable notifications  | `true`  |
-| `VITE_ENABLE_DEBUG`         | Enable debug mode     | `false` |
-| `VITE_CDN_URL`              | CDN URL for assets    | -       |
-| `VITE_SENTRY_DSN`           | Sentry error tracking | -       |
-
-## CI/CD with GitHub Actions
-
-The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that:
-
-1. Runs tests and builds the application
-2. Deploys to Vercel (or other platforms)
-3. Sends notifications
-
-### Required Secrets
-
-Set these secrets in your GitHub repository settings:
-
-| Secret                | Description             |
-| --------------------- | ----------------------- |
-| `VITE_API_BASE_URL`   | Production API URL      |
-| `VITE_CLAUDE_API_KEY` | Claude AI API key       |
-| `VERCEL_TOKEN`        | Vercel deployment token |
-| `VERCEL_ORG_ID`       | Vercel organization ID  |
-| `VERCEL_PROJECT_ID`   | Vercel project ID       |
-
-## Health Checks and Monitoring
-
-### Health Check Endpoints
-
-- **Docker**: `http://localhost/health`
-- **Application**: Built-in health checks for API connectivity
-
-### Monitoring Setup
-
-1. **Sentry** (Error Tracking):
-
-   ```bash
-   VITE_SENTRY_DSN=your_sentry_dsn_here
-   VITE_SENTRY_ENVIRONMENT=production
-   ```
-
-2. **Custom Monitoring**: The API client includes built-in retry logic and error handling
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Build Failures**:
-   - Ensure all environment variables are set
-   - Check that dependencies are installed with `pnpm install --frozen-lockfile`
-   - Verify Node.js version (≥20.0.0)
-
-2. **API Connection Issues**:
-   - Verify `VITE_API_BASE_URL` is correct
-   - Check CORS configuration on your API server
-   - Ensure API endpoints match the configuration
-
-3. **Docker Issues**:
-   - Make sure Docker daemon is running
-   - Check that all build args are provided
-   - Verify nginx configuration in `docker/nginx.conf`
-
-### Debug Mode
-
-Enable debug mode for development:
+### Current .env.example
 
 ```bash
-VITE_ENABLE_DEBUG=true pnpm dev
+# Supabase Configuration
+VITE_SUPABASE_URL=your_supabase_project_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Optional: Future features
+# VITE_SENTRY_DSN=
+# VITE_POSTHOG_KEY=
 ```
 
-## Security Considerations
+## Automatic Deployment (GitHub → Vercel)
 
-### Production Checklist
+Vercel automatically deploys when you push to GitHub:
 
-- [ ] All secrets are stored in environment variables
-- [ ] HTTPS is enabled
-- [ ] Security headers are configured
-- [ ] API endpoints are properly secured
-- [ ] Rate limiting is configured
-- [ ] Content Security Policy is set
+- **Push to `main`** → Deploys to production (`app.leadwithnexus.com`)
+- **Open PR** → Creates preview deployment
+- **Push to PR** → Updates preview deployment
 
-### Security Headers
+### No Additional Setup Required
 
-The deployment configurations include security headers:
+✅ Vercel is already connected to your GitHub repository
+✅ Environment variables set in Vercel dashboard apply to all deployments
+✅ Build logs visible at: https://vercel.com/your-project/deployments
 
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `X-XSS-Protection: 1; mode=block`
-- `Referrer-Policy: strict-origin-when-cross-origin`
+---
 
-## Performance Optimization
+## Troubleshooting & Common Issues
 
-### Build Optimizations
+### 1. "Missing Supabase environment variables" in Console
 
-- Tree shaking for unused code
-- Code splitting for better loading
-- Asset optimization and compression
-- Long-term caching for static assets
+**Cause:** Environment variables not set or missing `VITE_` prefix
 
-### Runtime Optimizations
+**Fix:**
+```bash
+# Local: Check .env file exists and has correct values
+cat .env
+# Should show:
+# VITE_SUPABASE_URL=https://xxxxx.supabase.co
+# VITE_SUPABASE_ANON_KEY=eyJhbGci...
 
-- Service worker for caching (if implemented)
-- Lazy loading of components
-- API request deduplication
-- Error boundary for graceful failures
+# Production: Check Vercel dashboard
+# Settings → Environment Variables
+# Redeploy after adding variables
+```
 
-## Support
+### 2. Domain Not Resolving
 
-For deployment issues or questions:
+**Cause:** DNS propagation or incorrect CNAME
 
-1. Check the troubleshooting section above
-2. Review the platform-specific documentation
-3. Check the application logs
-4. Ensure all environment variables are correctly set
+**Fix:**
+```bash
+# Check DNS
+dig app.leadwithnexus.com CNAME
+# Should show: cname.vercel-dns.com
+
+# Clear DNS cache (macOS)
+sudo dscacheutil -flushcache
+sudo killall -HUP mDNSResponder
+
+# Check from multiple locations
+# Use: https://www.whatsmydns.net/
+```
+
+### 3. SSL Certificate Error
+
+**Cause:** DNS not fully propagated or Vercel hasn't issued cert yet
+
+**Fix:**
+- Wait 10-15 minutes after DNS changes
+- Check Vercel Dashboard → Domains → should show "Valid Configuration"
+- SSL certificates are issued automatically by Vercel
+- If stuck >30 minutes, remove and re-add domain in Vercel
+
+### 4. Build Fails on Vercel
+
+**Cause:** TypeScript errors or missing dependencies
+
+**Fix:**
+```bash
+# Test build locally first
+pnpm build
+# Should complete in ~2 seconds with no errors
+
+# If errors, check:
+pnpm lint                    # Check for lint errors
+pnpm vitest run             # Run tests
+pnpm typecheck              # TypeScript check (if available)
+
+# Check Vercel build logs for specific error
+# Common issues:
+# - Import path case sensitivity (works locally on macOS, fails on Vercel Linux)
+# - Missing dependencies (add to package.json, not just devDependencies)
+```
+
+### 5. Supabase Connection Timeout
+
+**Cause:** Network policy, paused project, or incorrect URL
+
+**Fix:**
+- Verify `VITE_SUPABASE_URL` starts with `https://`
+- Check Supabase project is not paused (free tier pauses after 7 days inactivity)
+- Test from Supabase SQL Editor to verify project is running
+- Verify anon key matches the project (keys are project-specific)
+
+### 6. Changes Not Appearing After Deploy
+
+**Cause:** Browser cache or old service worker
+
+**Fix:**
+```bash
+# Hard refresh in browser
+# Chrome/Firefox: Ctrl+Shift+R (Cmd+Shift+R on Mac)
+# Safari: Cmd+Option+R
+
+# Or clear cache and reload
+# Chrome DevTools: Network tab → "Disable cache" checkbox
+
+# Verify deployment completed
+# Vercel dashboard should show "Ready" status
+```
+
+---
+
+## Security Features
+
+### ✅ Already Configured
+
+**Security Headers** ([vercel.json](vercel.json)):
+- `X-Frame-Options: DENY` - Prevents clickjacking
+- `X-Content-Type-Options: nosniff` - Prevents MIME sniffing
+- `X-XSS-Protection: 1; mode=block` - Browser XSS protection
+- `Referrer-Policy: strict-origin-when-cross-origin` - Limits referrer leakage
+
+**Supabase Security** ([src/lib/supabaseClient.ts](src/lib/supabaseClient.ts)):
+- Persistent sessions with localStorage
+- Automatic token refresh
+- Session detection in URL (for email magic links)
+- Rate limiting (10 events/second for realtime)
+
+**Content Safety** (Phase 3):
+- HTML/script sanitization
+- PII redaction (email, phone, SSN, credit cards)
+- Prompt injection detection
+
+### 🔜 Recommended Next Steps
+
+1. **Add Content Security Policy (CSP)**
+   ```json
+   // Add to vercel.json headers
+   {
+     "key": "Content-Security-Policy",
+     "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://*.supabase.co"
+   }
+   ```
+
+2. **Enable Supabase Row Level Security (RLS)**
+   ```sql
+   -- In Supabase SQL Editor
+   ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
+
+   CREATE POLICY "Users can view own clients"
+     ON clients FOR SELECT
+     USING (auth.uid() = user_id);
+   ```
+
+3. **Set Up Error Monitoring**
+   - Add Sentry for production error tracking
+   - Configure source maps for debugging
+
+---
+
+## Quick Reference
+
+### Essential Commands
+
+```bash
+# Development
+pnpm dev                    # Start dev server (http://localhost:5173)
+pnpm build                  # Test production build
+pnpm preview                # Preview production build
+
+# Testing
+pnpm vitest run             # Run all tests
+pnpm vitest --watch         # Watch mode
+pnpm lint                   # Check code quality
+
+# Deployment
+git push                    # Triggers automatic Vercel deployment
+vercel --prod               # Manual production deploy (if needed)
+```
+
+### Important Links
+
+- **Production**: https://app.leadwithnexus.com
+- **Vercel Dashboard**: https://vercel.com/your-project
+- **Supabase Dashboard**: https://app.supabase.com/
+- **DNS Management**: https://porkbun.com/account/webhosting/leadwithnexus.com
+
+### Support Resources
+
+- **Phase 3 Status**: [PHASE3_STATUS.md](PHASE3_STATUS.md)
+- **Vercel Docs**: https://vercel.com/docs
+- **Supabase Docs**: https://supabase.com/docs
+- **Vite Env Variables**: https://vitejs.dev/guide/env-and-mode.html
+
+---
+
+**Last Updated:** 2025-11-11
+**Current Phase:** Phase 3 (Content Safety & Infrastructure)
+**Status:** ✅ DNS configured | 🔄 Awaiting Supabase setup + Vercel env vars
