@@ -12,9 +12,11 @@ High-leverage patterns from Inkwell's battle-tested codebase adapted for Nexus's
 ## ✅ Completed
 
 ### 1. ErrorBoundary System
+
 **File**: `src/components/system/ErrorBoundary.tsx`
 
 **Features**:
+
 - App-level, feature-level, and component-level boundaries
 - Error reporting with local storage backup
 - Recovery UI with retry/reload options
@@ -23,12 +25,13 @@ High-leverage patterns from Inkwell's battle-tested codebase adapted for Nexus's
 - HOCs: `withErrorBoundary`, `FeatureErrorBoundary`, `ComponentErrorBoundary`
 
 **Usage**:
+
 ```tsx
-import { FeatureErrorBoundary } from '@/components/system/ErrorBoundary'
+import { FeatureErrorBoundary } from "@/components/system/ErrorBoundary";
 
 <FeatureErrorBoundary featureName="Campaign Designer">
   <CampaignDesignerWizard />
-</FeatureErrorBoundary>
+</FeatureErrorBoundary>;
 ```
 
 ---
@@ -36,12 +39,14 @@ import { FeatureErrorBoundary } from '@/components/system/ErrorBoundary'
 ## 📋 Remaining High-Priority Patterns
 
 ### 2. AsyncBoundary (Suspense + ErrorBoundary)
+
 **Priority**: HIGH
 **Effort**: 30 mins
 
 **File**: `src/components/system/AsyncBoundary.tsx`
 
 Combines React Suspense with ErrorBoundary for async data loading:
+
 ```tsx
 <AsyncBoundary fallback={<LoadingState />}>
   <DonorIntelligencePanel />
@@ -53,12 +58,14 @@ Combines React Suspense with ErrorBoundary for async data loading:
 ---
 
 ### 3. HTTP Client with Retry + Timeout
+
 **Priority**: HIGH
 **Effort**: 1 hour
 
 **File**: `src/lib/http.ts`
 
 **Features**:
+
 - Exponential backoff with jitter
 - Configurable retries (default: 3)
 - Request timeout (default: 30s)
@@ -66,37 +73,39 @@ Combines React Suspense with ErrorBoundary for async data loading:
 - Error normalization
 
 **API**:
+
 ```tsx
-import { retry, withTimeout } from '@/lib/http'
+import { retry, withTimeout } from "@/lib/http";
 
 // Wrap Supabase Edge Function calls
 const result = await retry(
-  () => supabase.functions.invoke('ai-privacy-gateway', { body: prompt }),
-  { retries: 3, base: 1000, max: 10000 }
-)
+  () => supabase.functions.invoke("ai-privacy-gateway", { body: prompt }),
+  { retries: 3, base: 1000, max: 10000 },
+);
 
 // Or with timeout
-const data = await withTimeout(
-  fetch('/api/data'),
-  { timeout: 5000 }
-)
+const data = await withTimeout(fetch("/api/data"), { timeout: 5000 });
 ```
 
 **Inkwell Source**: `src/lib/http.ts` (if exists) or implement from scratch using:
+
 - `p-retry` pattern
 - `AbortController` for timeout
 
 ---
 
 ### 4. Toast System (Promise-Aware)
+
 **Priority**: HIGH
 **Effort**: 1.5 hours
 
 **Files**:
+
 - `src/components/system/Toaster.tsx`
 - `src/hooks/useToast.ts`
 
 **Features**:
+
 - Promise-aware: `toast.promise(fn, { loading, success, error })`
 - Persistent toasts with manual dismiss
 - Positioning (top-right, bottom-right, etc.)
@@ -104,31 +113,29 @@ const data = await withTimeout(
 - Action buttons
 
 **API**:
-```tsx
-import { useToast } from '@/hooks/useToast'
 
-const toast = useToast()
+```tsx
+import { useToast } from "@/hooks/useToast";
+
+const toast = useToast();
 
 // Simple
-toast.success('Campaign generated!')
+toast.success("Campaign generated!");
 
 // Promise-aware
-await toast.promise(
-  generateCampaign(params),
-  {
-    loading: 'Generating campaign...',
-    success: (data) => `Generated ${data.channels.length} channels`,
-    error: 'Failed to generate campaign',
-  }
-)
+await toast.promise(generateCampaign(params), {
+  loading: "Generating campaign...",
+  success: (data) => `Generated ${data.channels.length} channels`,
+  error: "Failed to generate campaign",
+});
 
 // With action
-toast.info('Export ready', {
+toast.info("Export ready", {
   action: {
-    label: 'Download',
-    onClick: () => downloadFile(data)
-  }
-})
+    label: "Download",
+    onClick: () => downloadFile(data),
+  },
+});
 ```
 
 **Inkwell Source**: Check `src/components/ui/Toast.tsx` or `src/hooks/useToast.ts`
@@ -138,23 +145,26 @@ toast.info('Export ready', {
 ---
 
 ### 5. Content Sanitization
+
 **Priority**: MEDIUM
 **Effort**: 45 mins
 
 **File**: `src/privacy/sanitize.ts`
 
 **Features**:
+
 - HTML/script tag stripping
 - SQL injection phrase detection
 - Prompt injection guards
 - URL normalization
 
 **API**:
-```tsx
-import { sanitizeHTML, sanitizePrompt } from '@/privacy/sanitize'
 
-const clean = sanitizeHTML(userInput) // Strip <script>, <style>, etc.
-const safe = sanitizePrompt(userMessage) // Guard against prompt injection
+```tsx
+import { sanitizeHTML, sanitizePrompt } from "@/privacy/sanitize";
+
+const clean = sanitizeHTML(userInput); // Strip <script>, <style>, etc.
+const safe = sanitizePrompt(userMessage); // Guard against prompt injection
 ```
 
 **Inkwell Source**: `src/lib/sanitize.ts` or `src/privacy/sanitize.ts`
@@ -162,23 +172,26 @@ const safe = sanitizePrompt(userMessage) // Guard against prompt injection
 ---
 
 ### 6. Content Normalization
+
 **Priority**: MEDIUM
 **Effort**: 30 mins
 
 **File**: `src/privacy/normalize.ts`
 
 **Features**:
+
 - HTML → plain text
 - Whitespace collapse
 - Language detection hints
 - Smart quotes normalization
 
 **API**:
-```tsx
-import { htmlToText, normalizeWhitespace } from '@/privacy/normalize'
 
-const text = htmlToText(corpusHTML) // Clean text for AI prompts
-const clean = normalizeWhitespace(text) // Collapse multiple spaces/newlines
+```tsx
+import { htmlToText, normalizeWhitespace } from "@/privacy/normalize";
+
+const text = htmlToText(corpusHTML); // Clean text for AI prompts
+const clean = normalizeWhitespace(text); // Collapse multiple spaces/newlines
 ```
 
 **Inkwell Source**: `src/lib/normalize.ts`
@@ -186,40 +199,44 @@ const clean = normalizeWhitespace(text) // Collapse multiple spaces/newlines
 ---
 
 ### 7. TaskProgress + useTask
+
 **Priority**: MEDIUM
 **Effort**: 1 hour
 
 **Files**:
+
 - `src/components/system/TaskProgress.tsx`
 - `src/hooks/useTask.ts`
 
 **Features**:
+
 - Determinate/indeterminate progress
 - Cancellable operations
 - Progress percentage
 - Status messages
 
 **API**:
-```tsx
-import { useTask } from '@/hooks/useTask'
 
-const { start, progress, cancel, status } = useTask()
+```tsx
+import { useTask } from "@/hooks/useTask";
+
+const { start, progress, cancel, status } = useTask();
 
 const handleGenerate = async () => {
   await start(async (updateProgress) => {
-    updateProgress(0, 'Analyzing brand...')
-    const brand = await fetchBrand()
+    updateProgress(0, "Analyzing brand...");
+    const brand = await fetchBrand();
 
-    updateProgress(50, 'Generating content...')
-    const content = await generateContent(brand)
+    updateProgress(50, "Generating content...");
+    const content = await generateContent(brand);
 
-    updateProgress(100, 'Complete!')
-    return content
-  })
-}
+    updateProgress(100, "Complete!");
+    return content;
+  });
+};
 
 // In UI
-<TaskProgress progress={progress} status={status} onCancel={cancel} />
+<TaskProgress progress={progress} status={status} onCancel={cancel} />;
 ```
 
 **Inkwell Source**: `src/hooks/useTask.ts` or create from scratch
@@ -227,39 +244,43 @@ const handleGenerate = async () => {
 ---
 
 ### 8. Edge Function Shared Utilities
+
 **Priority**: MEDIUM
 **Effort**: 1 hour
 
 **Files**:
+
 - `supabase/functions/_shared/cors.ts`
 - `supabase/functions/_shared/auth.ts`
 - `supabase/functions/_shared/errors.ts`
 - `supabase/functions/_shared/rateLimit.ts`
 
 **Features**:
+
 - Unified CORS handling
 - JWT auth validation
 - Structured error responses
 - In-memory rate limiting
 
 **API**:
+
 ```tsx
-import { corsHeaders, handleCors } from '../_shared/cors'
-import { verifyAuth } from '../_shared/auth'
-import { ErrorResponse } from '../_shared/errors'
-import { checkRateLimit } from '../_shared/rateLimit'
+import { corsHeaders, handleCors } from "../_shared/cors";
+import { verifyAuth } from "../_shared/auth";
+import { ErrorResponse } from "../_shared/errors";
+import { checkRateLimit } from "../_shared/rateLimit";
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return handleCors(req)
+  if (req.method === "OPTIONS") return handleCors(req);
 
-  const user = await verifyAuth(req)
-  if (!user) return ErrorResponse.unauthorized()
+  const user = await verifyAuth(req);
+  if (!user) return ErrorResponse.unauthorized();
 
-  const allowed = await checkRateLimit(user.id, 'ai-privacy-gateway', 10)
-  if (!allowed) return ErrorResponse.rateLimited()
+  const allowed = await checkRateLimit(user.id, "ai-privacy-gateway", 10);
+  if (!allowed) return ErrorResponse.rateLimited();
 
   // ... function logic
-})
+});
 ```
 
 **Inkwell Source**: `supabase/functions/_shared/` directory
@@ -267,14 +288,17 @@ Deno.serve(async (req) => {
 ---
 
 ### 9. FocusTrap + A11y Utilities
+
 **Priority**: LOW
 **Effort**: 45 mins
 
 **Files**:
+
 - `src/components/system/FocusTrap.tsx`
 - `src/styles/a11y.css`
 
 **Features**:
+
 - Trap focus in modals
 - Keyboard navigation
 - Focus ring with brand colors
@@ -285,15 +309,18 @@ Deno.serve(async (req) => {
 ---
 
 ### 10. MSW Test Setup
+
 **Priority**: LOW
 **Effort**: 1 hour
 
 **Files**:
+
 - `tests/setup/msw.ts`
 - `tests/setup/vitest.ts`
 - `tests/smoke/services.test.ts`
 
 **Features**:
+
 - Mock Supabase Edge Function calls
 - Smoke tests for critical services
 - Test hooks without network
@@ -314,19 +341,23 @@ Deno.serve(async (req) => {
 ## 📊 Implementation Priority
 
 ### Phase 1 (This Session) ✅
+
 - [x] ErrorBoundary
 
 ### Phase 2 (Next Session)
+
 - [ ] AsyncBoundary (30 mins)
 - [ ] HTTP retry/timeout (1 hour)
 - [ ] Toast system (1.5 hours)
 
 ### Phase 3 (Follow-up)
+
 - [ ] Content sanitization (45 mins)
 - [ ] Content normalization (30 mins)
 - [ ] TaskProgress + useTask (1 hour)
 
 ### Phase 4 (Optional)
+
 - [ ] Edge Function utilities (1 hour)
 - [ ] FocusTrap + A11y (45 mins)
 - [ ] MSW test setup (1 hour)
@@ -336,20 +367,22 @@ Deno.serve(async (req) => {
 ## 🎯 Quick Wins to Apply Now
 
 ### 1. Wrap Critical Panels
+
 ```tsx
 // src/panels/CampaignDesignerWizard.tsx
-import { FeatureErrorBoundary } from '@/components/system/ErrorBoundary'
+import { FeatureErrorBoundary } from "@/components/system/ErrorBoundary";
 
 export default function CampaignDesignerWizard() {
   return (
     <FeatureErrorBoundary featureName="Campaign Designer">
       {/* existing code */}
     </FeatureErrorBoundary>
-  )
+  );
 }
 ```
 
 ### 2. Wrap Brand/Intelligence Panels
+
 ```tsx
 // src/panels/BrandProfilePanel.tsx
 <FeatureErrorBoundary featureName="Brand Profile">
@@ -363,13 +396,14 @@ export default function CampaignDesignerWizard() {
 ```
 
 ### 3. Replace AppContent (when re-added)
+
 ```tsx
 // src/app/App.tsx or AppRoutes.tsx
-import { AppErrorBoundary } from '@/components/system/ErrorBoundary'
+import { AppErrorBoundary } from "@/components/system/ErrorBoundary";
 
 <AppErrorBoundary level="app">
   <AppRoutes />
-</AppErrorBoundary>
+</AppErrorBoundary>;
 ```
 
 ---

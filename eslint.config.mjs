@@ -127,23 +127,28 @@ export default [
           paths: [
             {
               name: "@/components/ui",
-              message: "Use @/components/ui-kit instead. Duplicate UI library removed in Q1 2025 cleanup.",
+              message:
+                "Use @/components/ui-kit instead. Duplicate UI library removed in Q1 2025 cleanup.",
             },
             {
               name: "@/features/writing",
-              message: "Writing features are out of scope for Nexus. Nexus is a fundraising intelligence platform, not a writing tool.",
+              message:
+                "Writing features are out of scope for Nexus. Nexus is a fundraising intelligence platform, not a writing tool.",
             },
             {
               name: "@/services/backup",
-              message: "Backup services removed. Supabase is the source of truth. If offline support needed, re-add behind feature flag with E2EE.",
+              message:
+                "Backup services removed. Supabase is the source of truth. If offline support needed, re-add behind feature flag with E2EE.",
             },
             {
               name: "@/features/claude",
-              message: "ClaudePanel removed. Use ai-privacy-gateway + CampaignDesignerWizard/DonorIntelligencePanel instead.",
+              message:
+                "ClaudePanel removed. Use ai-privacy-gateway + CampaignDesignerWizard/DonorIntelligencePanel instead.",
             },
             {
               name: "@/features/tutorials",
-              message: "Tutorial system removed. Will be re-added as Phase 2 onboarding checklist.",
+              message:
+                "Tutorial system removed. Will be re-added as Phase 2 onboarding checklist.",
             },
           ],
           patterns: [
@@ -165,7 +170,8 @@ export default [
             },
             {
               group: ["**/models/**", "**/viewModels/**"],
-              message: "Use @/types/database.types.ts instead (generated from Supabase schema).",
+              message:
+                "Use @/types/database.types.ts instead (generated from Supabase schema).",
             },
           ],
         },

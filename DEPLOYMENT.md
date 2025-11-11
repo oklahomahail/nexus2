@@ -5,19 +5,23 @@ This guide covers deploying your Nexus application to Vercel with Supabase backe
 ## Current Status (2025-11-11)
 
 ✅ **DNS Configuration** - COMPLETE
+
 - CNAME: `app.leadwithnexus.com` → `cname.vercel-dns.com` (TTL: 600s)
 - Status: Active on Porkbun
 
 ✅ **Vercel Configuration** - READY
+
 - [vercel.json](vercel.json) configured with Vite framework
 - Security headers in place
 - Build commands configured
 
 ✅ **Supabase Client** - CODE READY
+
 - Client configured in [src/lib/supabaseClient.ts](src/lib/supabaseClient.ts)
 - Needs: Project creation + environment variables
 
 🔄 **Next Steps Required:**
+
 1. Create Supabase project (10 min)
 2. Add environment variables to Vercel (5 min)
 3. Trigger deployment (automatic)
@@ -69,6 +73,7 @@ This guide covers deploying your Nexus application to Vercel with Supabase backe
    - Vercel will verify DNS (already configured ✅)
 
 3. **Trigger Deployment**
+
    ```bash
    # Option A: Push a commit
    git commit --allow-empty -m "Configure Supabase environment variables"
@@ -137,23 +142,24 @@ pnpm dev
 
 ### Required for Production
 
-| Variable | Purpose | Where to Get | Example |
-|----------|---------|--------------|---------|
-| `VITE_SUPABASE_URL` | Supabase API endpoint | Supabase Dashboard → Settings → API | `https://abcdefg.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | Public Supabase key | Supabase Dashboard → Settings → API | `eyJhbGci...` (JWT token) |
+| Variable                 | Purpose               | Where to Get                        | Example                       |
+| ------------------------ | --------------------- | ----------------------------------- | ----------------------------- |
+| `VITE_SUPABASE_URL`      | Supabase API endpoint | Supabase Dashboard → Settings → API | `https://abcdefg.supabase.co` |
+| `VITE_SUPABASE_ANON_KEY` | Public Supabase key   | Supabase Dashboard → Settings → API | `eyJhbGci...` (JWT token)     |
 
 **Important Notes:**
+
 - ⚠️ **MUST** have `VITE_` prefix for Vite to expose to client-side code
 - 🔒 Never commit actual values to git (use `.env` locally, Vercel dashboard for production)
 - ✅ Same values for Production, Preview, and Development environments
 
 ### Optional (Future Features)
 
-| Variable | Purpose | When Needed |
-|----------|---------|-------------|
-| `VITE_SENTRY_DSN` | Error tracking | When you set up Sentry |
-| `VITE_POSTHOG_KEY` | Analytics | When you add PostHog |
-| `VITE_STRIPE_PUBLIC_KEY` | Payments | When you add billing |
+| Variable                 | Purpose        | When Needed            |
+| ------------------------ | -------------- | ---------------------- |
+| `VITE_SENTRY_DSN`        | Error tracking | When you set up Sentry |
+| `VITE_POSTHOG_KEY`       | Analytics      | When you add PostHog   |
+| `VITE_STRIPE_PUBLIC_KEY` | Payments       | When you add billing   |
 
 ### Current .env.example
 
@@ -190,6 +196,7 @@ Vercel automatically deploys when you push to GitHub:
 **Cause:** Environment variables not set or missing `VITE_` prefix
 
 **Fix:**
+
 ```bash
 # Local: Check .env file exists and has correct values
 cat .env
@@ -207,6 +214,7 @@ cat .env
 **Cause:** DNS propagation or incorrect CNAME
 
 **Fix:**
+
 ```bash
 # Check DNS
 dig app.leadwithnexus.com CNAME
@@ -225,6 +233,7 @@ sudo killall -HUP mDNSResponder
 **Cause:** DNS not fully propagated or Vercel hasn't issued cert yet
 
 **Fix:**
+
 - Wait 10-15 minutes after DNS changes
 - Check Vercel Dashboard → Domains → should show "Valid Configuration"
 - SSL certificates are issued automatically by Vercel
@@ -235,6 +244,7 @@ sudo killall -HUP mDNSResponder
 **Cause:** TypeScript errors or missing dependencies
 
 **Fix:**
+
 ```bash
 # Test build locally first
 pnpm build
@@ -256,6 +266,7 @@ pnpm typecheck              # TypeScript check (if available)
 **Cause:** Network policy, paused project, or incorrect URL
 
 **Fix:**
+
 - Verify `VITE_SUPABASE_URL` starts with `https://`
 - Check Supabase project is not paused (free tier pauses after 7 days inactivity)
 - Test from Supabase SQL Editor to verify project is running
@@ -266,6 +277,7 @@ pnpm typecheck              # TypeScript check (if available)
 **Cause:** Browser cache or old service worker
 
 **Fix:**
+
 ```bash
 # Hard refresh in browser
 # Chrome/Firefox: Ctrl+Shift+R (Cmd+Shift+R on Mac)
@@ -285,18 +297,21 @@ pnpm typecheck              # TypeScript check (if available)
 ### ✅ Already Configured
 
 **Security Headers** ([vercel.json](vercel.json)):
+
 - `X-Frame-Options: DENY` - Prevents clickjacking
 - `X-Content-Type-Options: nosniff` - Prevents MIME sniffing
 - `X-XSS-Protection: 1; mode=block` - Browser XSS protection
 - `Referrer-Policy: strict-origin-when-cross-origin` - Limits referrer leakage
 
 **Supabase Security** ([src/lib/supabaseClient.ts](src/lib/supabaseClient.ts)):
+
 - Persistent sessions with localStorage
 - Automatic token refresh
 - Session detection in URL (for email magic links)
 - Rate limiting (10 events/second for realtime)
 
 **Content Safety** (Phase 3):
+
 - HTML/script sanitization
 - PII redaction (email, phone, SSN, credit cards)
 - Prompt injection detection
@@ -304,6 +319,7 @@ pnpm typecheck              # TypeScript check (if available)
 ### 🔜 Recommended Next Steps
 
 1. **Add Content Security Policy (CSP)**
+
    ```json
    // Add to vercel.json headers
    {
@@ -313,6 +329,7 @@ pnpm typecheck              # TypeScript check (if available)
    ```
 
 2. **Enable Supabase Row Level Security (RLS)**
+
    ```sql
    -- In Supabase SQL Editor
    ALTER TABLE clients ENABLE ROW LEVEL SECURITY;

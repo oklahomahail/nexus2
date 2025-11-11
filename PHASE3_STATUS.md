@@ -9,6 +9,7 @@
 ### 1. Content Safety (src/privacy/)
 
 **sanitize.ts** - HTML/Script/PII Sanitization
+
 - ✅ 18+ injection vector detection (scripts, event handlers, dangerous tags)
 - ✅ PII redaction (email, phone, SSN, credit cards)
 - ✅ Prompt injection detection (15+ patterns)
@@ -21,6 +22,7 @@
   - Malformed HTML edge cases
 
 **normalize.ts** - Text Normalization
+
 - ✅ HTML→plain text conversion
 - ✅ HTML entity decoding (common + numeric)
 - ✅ Whitespace collapse (spaces + newlines)
@@ -32,6 +34,7 @@
 ### 2. Task Progress (src/components/ui-kit/ + src/hooks/)
 
 **useTask Hook**
+
 - ✅ Abort Controller-based cancellation
 - ✅ Progress tracking (determinate/indeterminate)
 - ✅ Status updates during execution
@@ -40,6 +43,7 @@
 - ✅ Auto-abort on unmount
 
 **TaskProgress Component**
+
 - ✅ Determinate progress bar (0-100%)
 - ✅ Indeterminate spinner animation
 - ✅ Cancel button support
@@ -50,12 +54,14 @@
 ### 3. Edge Utilities (src/edge/)
 
 **rateLimit.ts** - Token Bucket Rate Limiting
+
 - ✅ Sliding window with refill
 - ✅ Pluggable KV backend
 - ✅ Middleware helper
-- ✅ HTTP headers (X-RateLimit-*)
+- ✅ HTTP headers (X-RateLimit-\*)
 
 **errors.ts** - Structured HTTP Errors
+
 - ✅ HttpError class with status codes
 - ✅ Common error constructors (BadRequest, Unauthorized, etc.)
 - ✅ `errorResponse()` helper
@@ -64,6 +70,7 @@
 - ✅ CORS helper with preflight
 
 **kv/shims.ts** - KV Adapters
+
 - ✅ Memory KV (tests/local dev)
 - ✅ Vercel KV adapter
 - ✅ Cloudflare KV adapter
@@ -73,24 +80,28 @@
 ### 4. Test Infrastructure
 
 **MSW Setup**
+
 - ✅ Request handlers (notifications, brand, AI, campaigns, analytics)
 - ✅ Server setup with lifecycle hooks
 - ✅ Throttling simulation (429 on every 3rd request)
 - ✅ Enhanced test/setup.ts with MSW + AbortSignal polyfill
 
 **Test Suites**
+
 - ✅ sanitize.matrix.test.ts: 39 tests covering injection vectors + PII + prompts
 - ✅ normalize.test.ts: 9 tests for HTML→text + whitespace + tokens
 - ✅ rateLimit.test.ts: 9 tests with injected clock + memory KV
 - ✅ useTask.test.ts: 8 tests for cancellation + progress + lifecycle
 
 **Test Results**
+
 ```
 ✓ 56 passing
 ✗ 9 failing (expected - tests document gaps in sanitize.ts)
 ```
 
 Failing tests are intentional - they document features to add:
+
 1. Self-closing tag removal (embed, link, meta)
 2. Style attribute sanitization
 3. Malformed HTML handling
@@ -153,7 +164,7 @@ pnpm vitest run --coverage
 ### Content Sanitization
 
 ```typescript
-import { sanitizeContent } from '@/privacy/sanitize';
+import { sanitizeContent } from "@/privacy/sanitize";
 
 const result = sanitizeContent(userInput, {
   stripHTML: true,
@@ -168,7 +179,7 @@ console.log(result.metadata.injectionDetected); // true if attack detected
 ### Text Normalization
 
 ```typescript
-import { normalizeContent } from '@/privacy/normalize';
+import { normalizeContent } from "@/privacy/normalize";
 
 const result = normalizeContent(html, {
   fromHTML: true,
@@ -221,16 +232,16 @@ function ImportCorpus() {
 ### Rate Limiting
 
 ```typescript
-import { rateLimit } from '@/edge/rateLimit';
-import { errors, errorResponse } from '@/edge/errors';
-import { vercelKV } from '@/edge/kv/shims';
-import { kv } from '@vercel/kv';
+import { rateLimit } from "@/edge/rateLimit";
+import { errors, errorResponse } from "@/edge/errors";
+import { vercelKV } from "@/edge/kv/shims";
+import { kv } from "@vercel/kv";
 
 export default async function handler(req: Request) {
   try {
     const adapter = vercelKV(kv);
     const result = await rateLimit({
-      id: req.headers.get('x-forwarded-for') ?? 'anon',
+      id: req.headers.get("x-forwarded-for") ?? "anon",
       limit: 60,
       windowMs: 60_000,
       get: adapter.get,
@@ -238,7 +249,7 @@ export default async function handler(req: Request) {
     });
 
     if (!result.allowed) {
-      throw errors.TooManyRequests('Rate limit exceeded');
+      throw errors.TooManyRequests("Rate limit exceeded");
     }
 
     // ... do work

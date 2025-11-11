@@ -122,35 +122,35 @@ npm run dev
 
 ### Core Tables (Operational Data)
 
-| Table | Purpose | PII? |
-|-------|---------|------|
-| `clients` | Organization/nonprofit entities | Minimal |
-| `profiles` | User profiles (extends auth.users) | Yes |
-| `client_memberships` | User-to-client access control | No |
-| `campaigns` | Fundraising campaigns | No |
-| `donors` | Donor contact info | **YES** |
-| `donations` | Individual transactions | No |
+| Table                | Purpose                            | PII?    |
+| -------------------- | ---------------------------------- | ------- |
+| `clients`            | Organization/nonprofit entities    | Minimal |
+| `profiles`           | User profiles (extends auth.users) | Yes     |
+| `client_memberships` | User-to-client access control      | No      |
+| `campaigns`          | Fundraising campaigns              | No      |
+| `donors`             | Donor contact info                 | **YES** |
+| `donations`          | Individual transactions            | No      |
 
 ### Analytics Tables (Privacy-First)
 
-| Table | Purpose | PII? |
-|-------|---------|------|
-| `anon_identities` | Email hash → anonymous ID mapping | **No** (one-way hash) |
-| `behavioral_events` | Anonymous interaction tracking | No |
-| `giving_patterns` | Behavioral scores (no amounts) | No |
-| `donor_cohorts` | Time-based donor groups | No |
-| `cohort_retention_metrics` | Cohort retention over time | No |
+| Table                      | Purpose                           | PII?                  |
+| -------------------------- | --------------------------------- | --------------------- |
+| `anon_identities`          | Email hash → anonymous ID mapping | **No** (one-way hash) |
+| `behavioral_events`        | Anonymous interaction tracking    | No                    |
+| `giving_patterns`          | Behavioral scores (no amounts)    | No                    |
+| `donor_cohorts`            | Time-based donor groups           | No                    |
+| `cohort_retention_metrics` | Cohort retention over time        | No                    |
 
 ### Supporting Tables
 
-| Table | Purpose |
-|-------|---------|
-| `audience_segments` | Segmentation definitions |
+| Table                 | Purpose                   |
+| --------------------- | ------------------------- |
+| `audience_segments`   | Segmentation definitions  |
 | `segment_memberships` | Donor-to-segment mappings |
-| `notifications` | System notifications |
-| `scheduled_exports` | Export job definitions |
-| `export_jobs` | Export execution history |
-| `activity_log` | Audit trail |
+| `notifications`       | System notifications      |
+| `scheduled_exports`   | Export job definitions    |
+| `export_jobs`         | Export execution history  |
+| `activity_log`        | Audit trail               |
 
 ---
 
@@ -293,19 +293,19 @@ TypeScript types are in `/src/types/database.types.ts` and match the schema exac
 ### Usage
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient'
-import type { Tables, TablesInsert, TablesUpdate } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
+import type { Tables, TablesInsert, TablesUpdate } from "@/lib/supabaseClient";
 
 // Type-safe queries
-type Client = Tables<'clients'>
-type ClientInsert = TablesInsert<'clients'>
-type ClientUpdate = TablesUpdate<'clients'>
+type Client = Tables<"clients">;
+type ClientInsert = TablesInsert<"clients">;
+type ClientUpdate = TablesUpdate<"clients">;
 
 // Query with types
 const { data, error } = await supabase
-  .from('clients')
-  .select('*')
-  .eq('is_active', true)
+  .from("clients")
+  .select("*")
+  .eq("is_active", true);
 
 // data is automatically typed as Client[]
 ```
@@ -335,35 +335,35 @@ Now that your Supabase backend is set up, here are the recommended next steps:
 Replace the mock API with Supabase queries:
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 export async function fetchNotifications(since?: string, clientId?: string) {
   let query = supabase
-    .from('notifications')
-    .select('*')
-    .order('created_at', { ascending: false })
+    .from("notifications")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   if (since) {
-    query = query.gt('created_at', since)
+    query = query.gt("created_at", since);
   }
 
   if (clientId) {
-    query = query.eq('client_id', clientId)
+    query = query.eq("client_id", clientId);
   }
 
-  const { data, error } = await query
+  const { data, error } = await query;
 
-  if (error) throw error
+  if (error) throw error;
 
-  return data.map(n => ({
+  return data.map((n) => ({
     id: n.id,
     title: n.title,
     message: n.message,
-    type: n.type as 'info' | 'success' | 'warning' | 'error',
+    type: n.type as "info" | "success" | "warning" | "error",
     timestamp: n.created_at,
     read: !!n.read_at,
     clientId: n.client_id || undefined,
-  }))
+  }));
 }
 ```
 
@@ -383,17 +383,17 @@ Create an Edge Function or cron job that:
 Replace mock storage with Supabase:
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 export async function getAllClients() {
   const { data, error } = await supabase
-    .from('clients')
-    .select('*')
-    .eq('is_active', true)
-    .order('updated_at', { ascending: false })
+    .from("clients")
+    .select("*")
+    .eq("is_active", true)
+    .order("updated_at", { ascending: false });
 
-  if (error) throw error
-  return data
+  if (error) throw error;
+  return data;
 }
 ```
 
@@ -430,29 +430,29 @@ CREATE INDEX ON mv_campaign_kpis(client_id, campaign_id);
 Integrate Supabase Auth with your existing `AuthContext`:
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 export async function login(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
-  })
+  });
 
-  if (error) throw error
+  if (error) throw error;
 
   return {
     user: {
       id: data.user.id,
       email: data.user.email!,
       name: data.user.user_metadata.display_name || data.user.email!,
-      role: 'admin', // Get from profiles table
-      roles: ['admin'],
+      role: "admin", // Get from profiles table
+      roles: ["admin"],
     },
     tokens: {
       accessToken: data.session.access_token,
       refreshToken: data.session.refresh_token,
     },
-  }
+  };
 }
 ```
 
@@ -463,26 +463,26 @@ If you decide to move from polling to realtime:
 ```typescript
 // Subscribe to campaign changes
 const subscription = supabase
-  .channel('campaign-changes')
+  .channel("campaign-changes")
   .on(
-    'postgres_changes',
+    "postgres_changes",
     {
-      event: '*',
-      schema: 'public',
-      table: 'campaigns',
+      event: "*",
+      schema: "public",
+      table: "campaigns",
       filter: `client_id=eq.${clientId}`,
     },
     (payload) => {
-      console.log('Campaign updated:', payload)
+      console.log("Campaign updated:", payload);
       // Invalidate cache or update state
-    }
+    },
   )
-  .subscribe()
+  .subscribe();
 
 // Cleanup
 return () => {
-  subscription.unsubscribe()
-}
+  subscription.unsubscribe();
+};
 ```
 
 ---
@@ -492,28 +492,35 @@ return () => {
 ### Migration Errors
 
 **Error**: "relation already exists"
+
 - Solution: Drop conflicting tables or reset database via **Database** → **Reset**
 
 **Error**: "permission denied"
+
 - Solution: Check RLS policies or use service role key for admin operations
 
 **Error**: "function does not exist"
+
 - Solution: Ensure migration `20250110000001_rls_policies.sql` ran successfully
 
 ### Connection Issues
 
 **Error**: "Invalid API key"
+
 - Solution: Double-check `VITE_SUPABASE_ANON_KEY` in `.env`
 
 **Error**: "Network error"
+
 - Solution: Verify `VITE_SUPABASE_URL` is correct and project is active
 
 ### RLS Issues
 
 **Error**: "new row violates row-level security policy"
+
 - Solution: Check user is authenticated and has correct role in `client_memberships`
 
 **Debugging RLS**:
+
 ```sql
 -- Test RLS as specific user
 SET LOCAL role = 'authenticated';

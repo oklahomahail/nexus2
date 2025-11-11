@@ -24,11 +24,24 @@ const AnalyticsDashboard = React.lazy(
 );
 const DonorsPanel = React.lazy(() => import("@/panels/DonorsPanel"));
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
-const BrandProfilePanel = React.lazy(() => import("@/panels/BrandProfilePanel"));
-const DonorIntelligencePanel = React.lazy(() => import("@/panels/DonorIntelligencePanel"));
-const CampaignDesignerWizard = React.lazy(() => import("@/panels/CampaignDesignerWizard"));
+const BrandProfilePanel = React.lazy(
+  () => import("@/panels/BrandProfilePanel"),
+);
+const DonorIntelligencePanel = React.lazy(
+  () => import("@/panels/DonorIntelligencePanel"),
+);
+const CampaignDesignerWizard = React.lazy(
+  () => import("@/panels/CampaignDesignerWizard"),
+);
 
-type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors" | "brand" | "intelligence" | "designer";
+type ViewKey =
+  | "dashboard"
+  | "campaigns"
+  | "analytics"
+  | "donors"
+  | "brand"
+  | "intelligence"
+  | "designer";
 
 interface NavigationItem {
   key: ViewKey;
@@ -97,7 +110,8 @@ const AppContent: React.FC = () => {
       label: "Campaign Designer",
       icon: Wand2,
       component: CampaignDesignerWizard,
-      description: "AI-powered campaign generation (direct mail, email, social)",
+      description:
+        "AI-powered campaign generation (direct mail, email, social)",
     },
   ];
 

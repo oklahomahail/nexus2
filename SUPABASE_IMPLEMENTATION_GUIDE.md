@@ -7,21 +7,25 @@ Quick reference for integrating Inkwell's proven Supabase patterns into Nexus.
 ### 1. Create Supabase Client (`src/lib/supabaseClient.ts`)
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-const isTest = import.meta.env.MODE === 'test';
+const isTest = import.meta.env.MODE === "test";
 
 const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL ?? (isTest ? 'http://127.0.0.1:54321' : undefined);
+  import.meta.env.VITE_SUPABASE_URL ??
+  (isTest ? "http://127.0.0.1:54321" : undefined);
 const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ?? (isTest ? 'test-anon-key' : undefined);
+  import.meta.env.VITE_SUPABASE_ANON_KEY ??
+  (isTest ? "test-anon-key" : undefined);
 
 if (!isTest && (!supabaseUrl || !supabaseAnonKey)) {
-  throw new Error('Missing Supabase env vars. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
+  throw new Error(
+    "Missing Supabase env vars. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY",
+  );
 }
 
-const finalSupabaseUrl = supabaseUrl || 'http://localhost:54321';
-const finalSupabaseAnonKey = supabaseAnonKey || 'test-anon-key';
+const finalSupabaseUrl = supabaseUrl || "http://localhost:54321";
+const finalSupabaseAnonKey = supabaseAnonKey || "test-anon-key";
 
 export const supabase = createClient(finalSupabaseUrl, finalSupabaseAnonKey);
 ```
@@ -40,6 +44,7 @@ VITE_BASE_URL=http://localhost:5173
 Start with: `/Users/davehail/Developer/inkwell/src/context/AuthContext.tsx`
 
 Key changes for Nexus:
+
 - Update redirect paths to match Nexus routing
 - Adapt auth methods if different from Inkwell
 - Keep error handling and state management patterns
@@ -51,17 +56,23 @@ Start with: `/Users/davehail/Developer/inkwell/src/services/chaptersSyncService.
 Adapt for your entities (Clients, Projects, etc.):
 
 ```typescript
-export async function pushLocalChanges(entityType: string, entityId: string): Promise<void> {
+export async function pushLocalChanges(
+  entityType: string,
+  entityId: string,
+): Promise<void> {
   // Similar pattern: fetch local, compare timestamps, upsert if newer
 }
 
-export async function pullRemoteChanges(entityType: string, entityId: string): Promise<any[]> {
+export async function pullRemoteChanges(
+  entityType: string,
+  entityId: string,
+): Promise<any[]> {
   // Similar pattern: fetch remote, compare timestamps, update if newer
 }
 
 export function subscribeToChanges(
   entityType: string,
-  onChange: (id?: string) => void
+  onChange: (id?: string) => void,
 ): () => void {
   // Setup realtime listener with postgres_changes
 }
@@ -70,13 +81,13 @@ export function subscribeToChanges(
 ### 5. Wire Auth Hook (`src/hooks/useAuth.ts`)
 
 ```typescript
-import { useContext } from 'react';
-import { AuthContext } from '@/context/AuthContext';
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }
@@ -95,12 +106,12 @@ export function useSync() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
@@ -266,19 +277,18 @@ npx supabase db push --project-ref YOUR_PROJECT_ID
 setProjects([...projects, newProject]);
 
 // Sync in background
-syncService.pushLocalChanges('projects', newProject.id)
-  .catch(error => {
-    // Rollback on error
-    setProjects(projects.filter(p => p.id !== newProject.id));
-    showError(error.message);
-  });
+syncService.pushLocalChanges("projects", newProject.id).catch((error) => {
+  // Rollback on error
+  setProjects(projects.filter((p) => p.id !== newProject.id));
+  showError(error.message);
+});
 ```
 
 ### Pattern 2: Realtime Sync
 
 ```typescript
 useEffect(() => {
-  const unsubscribe = subscribeToChanges('projects', (projectId) => {
+  const unsubscribe = subscribeToChanges("projects", (projectId) => {
     // Refresh affected project from local cache or refetch
     refreshProject(projectId);
   });
@@ -290,27 +300,31 @@ useEffect(() => {
 ### Pattern 3: Conflict Resolution (Last-Write-Wins)
 
 ```typescript
-if (new Date(local.updatedAt).getTime() > new Date(remote.updatedAt).getTime()) {
+if (
+  new Date(local.updatedAt).getTime() > new Date(remote.updatedAt).getTime()
+) {
   // Local is newer, push it
-  await supabase.from('projects').upsert(local);
+  await supabase.from("projects").upsert(local);
 } else {
   // Remote is newer, pull it
-  await supabase.from('projects').select('*').eq('id', projectId);
+  await supabase.from("projects").select("*").eq("id", projectId);
 }
 ```
 
 ### Pattern 4: Error Recovery
 
 ```typescript
-const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'error'>('synced');
+const [syncStatus, setSyncStatus] = useState<"synced" | "pending" | "error">(
+  "synced",
+);
 
 async function retry() {
-  setSyncStatus('pending');
+  setSyncStatus("pending");
   try {
     await syncService.syncAll();
-    setSyncStatus('synced');
+    setSyncStatus("synced");
   } catch (error) {
-    setSyncStatus('error');
+    setSyncStatus("error");
     showError(error.message);
   }
 }
@@ -348,16 +362,19 @@ SELECT * FROM public.clients WHERE owner_id = auth.uid();
 
 ```typescript
 const channels = supabase.getChannels();
-console.log('Connected channels:', channels.map(ch => ch.topic));
+console.log(
+  "Connected channels:",
+  channels.map((ch) => ch.topic),
+);
 ```
 
 ### Verify Sync Direction
 
 ```typescript
 // Track what's being synced
-console.log('[Sync] Pushing:', local.length, 'items');
-console.log('[Sync] Pulling:', remote.length, 'items');
-console.log('[Sync] Conflicts:', conflicts.length);
+console.log("[Sync] Pushing:", local.length, "items");
+console.log("[Sync] Pulling:", remote.length, "items");
+console.log("[Sync] Conflicts:", conflicts.length);
 ```
 
 ---
@@ -402,13 +419,13 @@ console.log('[Sync] Conflicts:', conflicts.length);
 
 ## Common Errors & Fixes
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "Missing VITE_SUPABASE_URL" | Env var not set | Add to .env file |
-| "new row violates RLS policy" | RLS policy too strict | Check can_access_project() |
-| "Subscription to 'table' already exists" | Duplicate channel | Unsubscribe properly on cleanup |
-| "Realtime not connected" | Realtime disabled in project | Enable in Supabase Dashboard |
-| "Network error" | Offline | Check navigator.onLine |
+| Error                                    | Cause                        | Fix                             |
+| ---------------------------------------- | ---------------------------- | ------------------------------- |
+| "Missing VITE_SUPABASE_URL"              | Env var not set              | Add to .env file                |
+| "new row violates RLS policy"            | RLS policy too strict        | Check can_access_project()      |
+| "Subscription to 'table' already exists" | Duplicate channel            | Unsubscribe properly on cleanup |
+| "Realtime not connected"                 | Realtime disabled in project | Enable in Supabase Dashboard    |
+| "Network error"                          | Offline                      | Check navigator.onLine          |
 
 ---
 
@@ -423,4 +440,3 @@ console.log('[Sync] Conflicts:', conflicts.length);
 4. Apply migrations
 5. Integrate contexts and hooks
 6. Test auth and sync flows
-

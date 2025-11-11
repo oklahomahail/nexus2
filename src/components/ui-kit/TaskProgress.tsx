@@ -83,7 +83,10 @@ export function TaskProgress({
         {isDeterminate ? (
           // Determinate progress
           <div
-            className={bgColor + " absolute inset-y-0 left-0 transition-all duration-300 ease-out"}
+            className={
+              bgColor +
+              " absolute inset-y-0 left-0 transition-all duration-300 ease-out"
+            }
             style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
             role="progressbar"
             aria-valuenow={progress}
@@ -93,7 +96,10 @@ export function TaskProgress({
         ) : (
           // Indeterminate progress
           <div
-            className={bgColor + " absolute inset-y-0 w-1/3 animate-progress-indeterminate"}
+            className={
+              bgColor +
+              " absolute inset-y-0 w-1/3 animate-progress-indeterminate"
+            }
             role="progressbar"
             aria-label="Loading"
           />

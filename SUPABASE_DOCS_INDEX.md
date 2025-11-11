@@ -12,7 +12,6 @@ This directory contains comprehensive guides for implementing Inkwell's producti
    - Executive summary of all patterns
    - Visual tables and quick references
    - Implementation checklist
-   
 2. **SUPABASE_IMPLEMENTATION_GUIDE.md** - 15 min read
    - Step-by-step setup instructions
    - Code templates ready to copy-paste
@@ -30,9 +29,11 @@ This directory contains comprehensive guides for implementing Inkwell's producti
 ## Document Overview
 
 ### SUPABASE_PATTERNS_SUMMARY.md
+
 **Purpose:** Executive summary of all Supabase patterns from Inkwell
 
 **Contains:**
+
 - 12 key patterns explained in 1-2 paragraphs each
 - Visual tables for schema, context architecture, hooks
 - File locations in Inkwell codebase
@@ -46,9 +47,11 @@ This directory contains comprehensive guides for implementing Inkwell's producti
 ---
 
 ### SUPABASE_IMPLEMENTATION_GUIDE.md
+
 **Purpose:** Practical step-by-step guide to integrating Supabase
 
 **Contains:**
+
 - Quick start (6 main steps, 30 minutes)
 - Schema setup with SQL templates
 - Integration patterns with code examples
@@ -65,9 +68,11 @@ This directory contains comprehensive guides for implementing Inkwell's producti
 ---
 
 ### INKWELL_SUPABASE_PATTERNS.md
+
 **Purpose:** Comprehensive reference guide with all implementation details
 
 **Sections:**
+
 1. Supabase Client Setup
    - Initialization pattern
    - Environment configuration
@@ -180,18 +185,18 @@ This directory contains comprehensive guides for implementing Inkwell's producti
 
 ## Key Patterns at a Glance
 
-| Pattern | Location in Docs | Inkwell File |
-|---------|------------------|--------------|
-| Client Setup | Summary §1, Guide §1, Patterns §1 | supabaseClient.ts |
-| Schema Design | Summary §2, Patterns §2 | migrations/20250128000000_* |
-| RLS Policies | Summary §3, Patterns §3 | migrations/20250128000004_* |
-| Realtime Subs | Summary §4, Patterns §4 | chaptersSyncService.ts |
-| Bidirectional Sync | Summary §5, Patterns §5 | chaptersSyncService.ts |
-| AuthContext | Summary §6, Patterns §6.1 | context/AuthContext.tsx |
-| AppContext | Summary §6, Patterns §6.2 | context/AppContext.tsx |
-| Auth Methods | Summary §7, Patterns §7.3 | context/AuthContext.tsx |
-| Hooks | Summary §8, Patterns §8 | hooks/* |
-| Encryption | Patterns §8 | services/supabaseSync.ts |
+| Pattern            | Location in Docs                  | Inkwell File                  |
+| ------------------ | --------------------------------- | ----------------------------- |
+| Client Setup       | Summary §1, Guide §1, Patterns §1 | supabaseClient.ts             |
+| Schema Design      | Summary §2, Patterns §2           | migrations/20250128000000\_\* |
+| RLS Policies       | Summary §3, Patterns §3           | migrations/20250128000004\_\* |
+| Realtime Subs      | Summary §4, Patterns §4           | chaptersSyncService.ts        |
+| Bidirectional Sync | Summary §5, Patterns §5           | chaptersSyncService.ts        |
+| AuthContext        | Summary §6, Patterns §6.1         | context/AuthContext.tsx       |
+| AppContext         | Summary §6, Patterns §6.2         | context/AppContext.tsx        |
+| Auth Methods       | Summary §7, Patterns §7.3         | context/AuthContext.tsx       |
+| Hooks              | Summary §8, Patterns §8           | hooks/\*                      |
+| Encryption         | Patterns §8                       | services/supabaseSync.ts      |
 
 ---
 
@@ -199,15 +204,15 @@ This directory contains comprehensive guides for implementing Inkwell's producti
 
 ### Estimated Effort: 5 hours
 
-| Phase | Task | Time |
-|-------|------|------|
-| 1 | Foundation (client, env, dependencies) | 30 min |
-| 2 | Schema (migrations, RLS, indexes) | 15 min |
-| 3 | Auth (AuthContext, sign-in/up/out) | 45 min |
-| 4 | Sync (service, push/pull, realtime) | 60 min |
-| 5 | Hooks (useAuth, useSync, entity hooks) | 30 min |
-| 6 | Integration (wire contexts, test flows) | 60 min |
-| 7 | Testing (RLS, offline, conflicts, cleanup) | 90 min |
+| Phase | Task                                       | Time   |
+| ----- | ------------------------------------------ | ------ |
+| 1     | Foundation (client, env, dependencies)     | 30 min |
+| 2     | Schema (migrations, RLS, indexes)          | 15 min |
+| 3     | Auth (AuthContext, sign-in/up/out)         | 45 min |
+| 4     | Sync (service, push/pull, realtime)        | 60 min |
+| 5     | Hooks (useAuth, useSync, entity hooks)     | 30 min |
+| 6     | Integration (wire contexts, test flows)    | 60 min |
+| 7     | Testing (RLS, offline, conflicts, cleanup) | 90 min |
 
 ---
 
@@ -227,29 +232,35 @@ All files are located in `/Users/davehail/Developer/Nexus/`:
 ## Inkwell Source Files to Study
 
 ### Client & Configuration
+
 - `/Users/davehail/Developer/inkwell/src/lib/supabaseClient.ts` - Singleton client setup
 - `/Users/davehail/Developer/inkwell/.env.example` - Environment variable template
 
 ### Authentication
+
 - `/Users/davehail/Developer/inkwell/src/context/AuthContext.tsx` - Auth state management
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250119000000_auto_create_profiles.sql` - Profile trigger
 
 ### Database Schema
+
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250128000000_inkwell_schema.sql` - Core schema
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250128000004_roles_write_guard.sql` - RLS policies
 - `/Users/davehail/Developer/inkwell/supabase/migrations/20250128000001_touch_updated_at.sql` - Update triggers
 
 ### State Management
+
 - `/Users/davehail/Developer/inkwell/src/context/AppContext.tsx` - App state (projects, UI)
 - `/Users/davehail/Developer/inkwell/src/context/ChaptersContext.tsx` - Chapter metadata
 - `/Users/davehail/Developer/inkwell/src/context/AuthContext.tsx` - User/session state
 
 ### Sync & Realtime
+
 - `/Users/davehail/Developer/inkwell/src/services/chaptersSyncService.ts` - Push/pull sync, realtime
 - `/Users/davehail/Developer/inkwell/src/services/supabaseSync.ts` - Full sync orchestration
 - `/Users/davehail/Developer/inkwell/src/services/connectivityService.ts` - Online/offline tracking
 
 ### React Hooks
+
 - `/Users/davehail/Developer/inkwell/src/hooks/useAuth.ts` - Auth hook
 - `/Users/davehail/Developer/inkwell/src/hooks/useSync.ts` - Sync status hook
 - `/Users/davehail/Developer/inkwell/src/hooks/useChapters.ts` - Chapter management hook
@@ -261,24 +272,25 @@ All files are located in `/Users/davehail/Developer/Nexus/`:
 
 **Need to implement...** → **Read section...**
 
-| Task | Doc Section | Inkwell File | Time |
-|------|-------------|--------------|------|
-| Initialize Supabase | Guide §1 / Patterns §1 | supabaseClient.ts | 5 min |
-| Create database tables | Guide "Schema Setup" / Patterns §2 | migrations/ | 15 min |
-| Set up auth | Guide §3 / Patterns §7 | AuthContext.tsx | 45 min |
-| Implement sync | Guide §4 / Patterns §5 | chaptersSyncService.ts | 60 min |
-| Wire React hooks | Guide §5 / Patterns §8 | hooks/ | 30 min |
-| Enable realtime | Guide §4 / Patterns §4 | chaptersSyncService.ts | 20 min |
-| Configure RLS | Guide "Schema Setup" / Patterns §3 | migrations/ | 15 min |
-| Handle conflicts | Summary §5 / Patterns §5.3 | chaptersSyncService.ts | 10 min |
-| Test offline mode | Guide "Testing Checklist" | connectivityService.ts | 20 min |
-| Debug RLS issues | Guide "Debugging" / Patterns §3 | migrations/ | 10 min |
+| Task                   | Doc Section                        | Inkwell File           | Time   |
+| ---------------------- | ---------------------------------- | ---------------------- | ------ |
+| Initialize Supabase    | Guide §1 / Patterns §1             | supabaseClient.ts      | 5 min  |
+| Create database tables | Guide "Schema Setup" / Patterns §2 | migrations/            | 15 min |
+| Set up auth            | Guide §3 / Patterns §7             | AuthContext.tsx        | 45 min |
+| Implement sync         | Guide §4 / Patterns §5             | chaptersSyncService.ts | 60 min |
+| Wire React hooks       | Guide §5 / Patterns §8             | hooks/                 | 30 min |
+| Enable realtime        | Guide §4 / Patterns §4             | chaptersSyncService.ts | 20 min |
+| Configure RLS          | Guide "Schema Setup" / Patterns §3 | migrations/            | 15 min |
+| Handle conflicts       | Summary §5 / Patterns §5.3         | chaptersSyncService.ts | 10 min |
+| Test offline mode      | Guide "Testing Checklist"          | connectivityService.ts | 20 min |
+| Debug RLS issues       | Guide "Debugging" / Patterns §3    | migrations/            | 10 min |
 
 ---
 
 ## Document Features
 
 All three documents include:
+
 - Copy-paste ready code snippets
 - Clear explanations of patterns
 - File paths for reference
@@ -336,15 +348,18 @@ All three documents include:
 ## Additional Resources
 
 ### Supabase Official Documentation
+
 - https://supabase.com/docs
 - https://supabase.com/docs/guides/database/postgres/full-text-search
 - https://supabase.com/docs/guides/realtime
 
 ### TypeScript + Supabase
+
 - Generate types: `npx supabase gen types typescript --project-id YOUR_ID`
 - Type-safe queries with generated types
 
 ### Testing
+
 - Test RLS: Create test users with different roles
 - Test offline: Use DevTools network tab to simulate offline
 - Test conflicts: Edit same item on two browsers simultaneously

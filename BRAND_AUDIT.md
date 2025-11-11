@@ -108,6 +108,7 @@ Before merging:
 ## 🚨 Common Violations
 
 **❌ Don't:**
+
 - Use light backgrounds (#FFFFFF, #F5F5F5, etc.)
 - Create custom gradients outside the brand system
 - Use fonts other than Inter, Inter Tight, or JetBrains Mono
@@ -116,6 +117,7 @@ Before merging:
 - Use red/green colors outside semantic system
 
 **✅ Do:**
+
 - Use `--bg`, `--panel`, `--elevated` for backgrounds
 - Use `.nexus-glow` for all brand gradients
 - Load fonts from `index.html` Google Fonts link

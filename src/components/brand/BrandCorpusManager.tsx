@@ -234,7 +234,7 @@ export default function BrandCorpusManager({
                 "px-4 py-2 rounded-lg transition-colors",
                 addMode === "manual"
                   ? "bg-indigo-600 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600",
               )}
             >
               <MessageSquare className="inline w-4 h-4 mr-2" />
@@ -246,7 +246,7 @@ export default function BrandCorpusManager({
                 "px-4 py-2 rounded-lg transition-colors",
                 addMode === "url"
                   ? "bg-indigo-600 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600",
               )}
             >
               <Globe className="inline w-4 h-4 mr-2" />

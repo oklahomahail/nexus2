@@ -9,6 +9,7 @@
 ## Executive Summary
 
 **Current Nexus Vision**:
+
 - Privacy-first fundraising intelligence platform
 - AI-powered donor analytics (Phase 1 ✅)
 - Brand Bible + Campaign Designer (Phase 1 ✅)
@@ -16,6 +17,7 @@
 - Client-scoped SaaS with white-label support
 
 **Findings**:
+
 - ✅ **Keep**: 127 files (core functionality, brand system, donor intelligence)
 - ⚠️ **Review**: 45 files (potential consolidation or refactoring)
 - ❌ **Remove**: 68 files (redundant, unused, or out-of-scope)
@@ -27,6 +29,7 @@
 ### 1. Duplicate UI Component Libraries
 
 **Problem**: We have THREE UI component libraries:
+
 - `src/components/ui/` (5 files)
 - `src/components/ui-kit/` (17 files)
 - Inline components in various places
@@ -34,6 +37,7 @@
 **Recommendation**: ✅ Keep `src/components/ui-kit/` (most complete), ❌ Remove `src/components/ui/`
 
 **Files to Delete**:
+
 ```
 src/components/ui/Badge.tsx           # Duplicate of ui-kit/Badge.tsx
 src/components/ui/Button.tsx          # Duplicate of ui-kit/Button.tsx
@@ -51,10 +55,12 @@ src/components/ui/index.ts            # Barrel file
 ### 2. Duplicate Context Files
 
 **Problem**: Two context systems:
+
 - `src/context/` (9 files)
 - `src/contexts/` (2 files)
 
 **Files to Delete**:
+
 ```
 src/contexts/ClientContext.tsx        # Duplicate of context/ClientContext.tsx
 src/contexts/ToastContext.ts          # Duplicate of context/ToastContext.tsx
@@ -69,6 +75,7 @@ src/contexts/ToastContext.ts          # Duplicate of context/ToastContext.tsx
 **Problem**: Demo components that were scaffolds, now replaced by real implementations
 
 **Files to Delete**:
+
 ```
 src/components/DonorsPlaceholder.tsx                    # Replaced by DonorsPanel
 src/pages/CampaignBuilderDemo.tsx                       # Replaced by CampaignDesignerWizard
@@ -84,6 +91,7 @@ src/components/demos/FormComponentsDemo.tsx             # Demos not needed in pr
 **Problem**: Services built for features not yet in roadmap or replaced by Supabase
 
 **Files to Delete**:
+
 ```
 src/services/mockWebSocketServer.ts                     # Mock server not needed with Supabase
 src/services/websocketService.ts                        # Not using WebSockets yet
@@ -112,6 +120,7 @@ src/services/channelTemplatesService.ts                 # Phase 5 (future)
 **Problem**: Multiple components doing the same thing
 
 **Files to Delete**:
+
 ```
 src/components/CampaignCreationWizard.tsx               # Replaced by CampaignDesignerWizard
 src/components/CampaignModal.tsx                        # Replaced by CampaignDesignerWizard
@@ -153,6 +162,7 @@ src/components/IconButton.tsx                           # Replaced by ui-kit/But
 **Problem**: Old campaign system replaced by CampaignDesignerWizard + Brand Bible
 
 **Files to Delete**:
+
 ```
 src/components/CampaignAnalyticsDetail.tsx              # Phase 4 feature
 src/components/CampaignDetail.tsx                       # Replaced by CampaignDesignerWizard
@@ -170,6 +180,7 @@ src/components/channels/ChannelTemplatesLibrary.tsx     # Phase 5 feature
 ### 7. Unused Analytics Components (Phase 3-5)
 
 **Files to Delete**:
+
 ```
 src/components/analytics/AutomatedReportScheduler.tsx   # Phase 4 feature
 src/components/analytics/ComparativeCampaignAnalysis.tsx # Phase 4 feature
@@ -186,6 +197,7 @@ src/components/analytics/WritingStats.tsx               # Out of scope (no writi
 ### 8. Unused Segmentation Components (Phase 3)
 
 **Files to Delete**:
+
 ```
 src/components/segmentation/SegmentBuilder.tsx              # Phase 3 feature
 src/components/segmentation/SegmentPerformanceDashboard.tsx # Phase 3 feature
@@ -198,6 +210,7 @@ src/components/segmentation/SegmentPerformanceDashboard.tsx # Phase 3 feature
 **Problem**: Nexus is NOT a messaging/writing tool, it's a fundraising intelligence platform
 
 **Files to Delete**:
+
 ```
 src/components/composer/Composer.tsx                    # Out of scope
 src/components/composer/WritingEditor.tsx               # Out of scope
@@ -215,6 +228,7 @@ src/types/writing.ts                                    # Out of scope
 ### 10. Obsolete Context/State Management
 
 **Files to Delete**:
+
 ```
 src/context/appReducer.ts                               # Not using app-level reducer
 src/context/uiTypes.ts                                  # Not used
@@ -228,6 +242,7 @@ src/context/toast-context.ts                            # Duplicate of ToastCont
 **Problem**: Multiple overlapping model definitions, not following DRY
 
 **Files to Delete**:
+
 ```
 src/models/campaign.ts                                  # Duplicate of campaigns.ts
 src/models/donor.ts                                     # Duplicate of donors.ts
@@ -246,6 +261,7 @@ src/viewModels/donorView.ts                             # Not using view models
 ### 12. Unused Hooks
 
 **Files to Delete**:
+
 ```
 src/hooks/useDonorAnalytics.ts                          # Replaced by useDonorIntelligence.ts
 src/hooks/useForm.ts                                    # Not using custom form hook
@@ -258,6 +274,7 @@ src/hooks/useWebSocket.ts                               # Not using WebSockets y
 ### 13. Obsolete Pages (Replaced by AppRoutes)
 
 **Files to Delete**:
+
 ```
 src/pages/ClientList.tsx                                # Replaced by ClientsPage.tsx
 src/pages/ClientDashboard.tsx                           # Replaced by client/ClientDashboard.tsx
@@ -268,6 +285,7 @@ src/pages/ClientDashboard.tsx                           # Replaced by client/Cli
 ### 14. Unused Data/Demo Files
 
 **Files to Delete**:
+
 ```
 src/data/demo/demoAnalytics.ts                          # Using real Supabase data
 src/data/demo/demoCampaign.ts                           # Using real Supabase data
@@ -281,6 +299,7 @@ src/data/demo/demoClient.ts                             # Using real Supabase da
 ### 15. Obsolete Services (Database Layer)
 
 **Files to Delete**:
+
 ```
 src/services/database/persistentCampaignService.ts      # Using Supabase directly
 src/services/database/persistentClientService.ts        # Using Supabase directly
@@ -295,6 +314,7 @@ src/services/database/persistentClientService.ts        # Using Supabase directl
 ### 1. Backup Services (May Be Useful)
 
 **Files**:
+
 ```
 src/services/backup/backupCore.ts
 src/services/backup/backupService.ts
@@ -315,6 +335,7 @@ src/components/dashboard/StorageQuotaChip.tsx
 ### 2. Tutorial/Onboarding System
 
 **Files**:
+
 ```
 src/features/tutorials/*
 src/tours/*
@@ -329,6 +350,7 @@ src/tours/*
 ### 3. Claude Panel (Legacy?)
 
 **Files**:
+
 ```
 src/features/claude/*
 src/services/ai/ClaudeToolbar.tsx
@@ -343,6 +365,7 @@ src/services/ai/ClaudeToolbar.tsx
 ### 4. Theme Probe (Dev Tool)
 
 **Files**:
+
 ```
 src/dev/ThemeProbe.tsx
 ```
@@ -354,6 +377,7 @@ src/dev/ThemeProbe.tsx
 ## Files to KEEP (Core Functionality)
 
 ### ✅ Essential React Components
+
 - `src/components/AppContent.tsx` - Main app shell
 - `src/components/ErrorBoundary.tsx` - Error handling
 - `src/components/LoadingSpinner.tsx` - Loading states
@@ -363,6 +387,7 @@ src/dev/ThemeProbe.tsx
 - `src/components/campaign/*` - Campaign builder (4 files)
 
 ### ✅ Essential Panels
+
 - `src/panels/DashboardPanel.tsx`
 - `src/panels/CampaignsPanel.tsx`
 - `src/panels/DonorsPanel.tsx`
@@ -371,11 +396,13 @@ src/dev/ThemeProbe.tsx
 - `src/panels/CampaignDesignerWizard.tsx`
 
 ### ✅ Essential Pages (AppRoutes)
+
 - `src/pages/Dashboard.tsx`
 - `src/pages/ClientsPage.tsx`
 - `src/pages/client/*` (5 files)
 
 ### ✅ Essential Services
+
 - `src/services/brandService.ts` - Brand Bible
 - `src/services/campaignDesignService.ts` - Campaign generation
 - `src/services/campaignDesignerPrompts.ts` - AI prompts
@@ -389,6 +416,7 @@ src/dev/ThemeProbe.tsx
 - `src/services/functions/brandImport.ts` - Brand corpus import
 
 ### ✅ Essential Hooks
+
 - `src/hooks/useBrandProfile.ts`
 - `src/hooks/useCampaignDesigner.ts`
 - `src/hooks/useClaudeAnalysis.ts`
@@ -402,6 +430,7 @@ src/dev/ThemeProbe.tsx
 - `src/hooks/usePolling.ts`
 
 ### ✅ Essential Context
+
 - `src/context/AuthContext.tsx`
 - `src/context/ClientContext.tsx`
 - `src/context/ToastContext.tsx`
@@ -409,6 +438,7 @@ src/dev/ThemeProbe.tsx
 - `src/context/useUI.ts`
 
 ### ✅ Essential Utils
+
 - `src/utils/export.ts` - CSV/Markdown export
 - `src/utils/themeAPI.ts` - Client theming
 - `src/privacy/scrub.ts` - PII detection
@@ -416,6 +446,7 @@ src/dev/ThemeProbe.tsx
 - `src/lib/cn.ts` - Class name utility
 
 ### ✅ Essential Types
+
 - `src/types/database.types.ts` - Supabase schema
 - `src/types/client.ts`
 - `src/types/toast.ts`
@@ -425,26 +456,31 @@ src/dev/ThemeProbe.tsx
 ## Migration Plan
 
 ### Phase 1: Remove Obsolete Files (2 hours)
+
 1. Delete duplicate UI components (`src/components/ui/`)
 2. Delete duplicate contexts (`src/contexts/`)
 3. Delete demo/placeholder components (5 files)
 4. Delete obsolete services (18 files)
 
 ### Phase 2: Consolidate Redundant Components (3 hours)
+
 1. Delete duplicate campaign components (12 files)
 2. Delete unused analytics components (8 files)
 3. Delete messaging/composer features (8 files)
 4. Update imports in remaining files
 
 ### Phase 3: Clean Up Models/ViewModels (1 hour)
+
 1. Delete redundant model files (9 files)
 2. Update all imports to use `database.types.ts`
 
 ### Phase 4: Remove Future-Phase Services (1 hour)
+
 1. Delete Phase 3-5 services (not implemented yet)
 2. Add TODO comments referencing roadmap phases
 
 ### Phase 5: Test & Verify (2 hours)
+
 1. Run typecheck: `npm run typecheck`
 2. Run build: `npm run build`
 3. Test all core flows (dashboard, campaigns, analytics, brand)
@@ -460,6 +496,7 @@ src/dev/ThemeProbe.tsx
 **Files to Remove**: 68 (28%)
 
 **Benefits of Cleanup**:
+
 - ✅ Reduced build size (~30% smaller)
 - ✅ Faster TypeScript compilation
 - ✅ Clearer codebase navigation

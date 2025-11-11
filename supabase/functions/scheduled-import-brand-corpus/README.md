@@ -95,14 +95,14 @@ body = '''
 
 ```typescript
 {
-  client_id: string      // UUID of client
-  brand_id: string       // UUID of brand profile
+  client_id: string; // UUID of client
+  brand_id: string; // UUID of brand profile
   sources: Array<{
-    source_type: "website" | "pdf" | "doc" | "social" | "manual"
-    url?: string         // Required for website/pdf/doc/social
-    title?: string       // Optional override title
-    content?: string     // Required for manual, optional for others
-  }>
+    source_type: "website" | "pdf" | "doc" | "social" | "manual";
+    url?: string; // Required for website/pdf/doc/social
+    title?: string; // Optional override title
+    content?: string; // Required for manual, optional for others
+  }>;
 }
 ```
 
@@ -110,17 +110,17 @@ body = '''
 
 ```typescript
 {
-  ok: boolean
-  client_id: string
-  brand_id: string
-  processed: number
+  ok: boolean;
+  client_id: string;
+  brand_id: string;
+  processed: number;
   results: Array<{
-    url?: string
-    title?: string
-    status: "upserted" | "skipped_small" | "error"
-    note?: string
-    error?: string
-  }>
+    url?: string;
+    title?: string;
+    status: "upserted" | "skipped_small" | "error";
+    note?: string;
+    error?: string;
+  }>;
 }
 ```
 
@@ -188,19 +188,23 @@ If duplicate content is submitted, it will update the existing row instead of cr
 ## Troubleshooting
 
 **Error: "Invalid or missing webhook secret"**
+
 - Verify `BRAND_IMPORT_WEBHOOK_SECRET` is set correctly
 - Check `X-Brand-Import-Secret` header in request
 
 **Error: "Fetch failed 403"**
+
 - Some sites block bots/scrapers
 - Try manual content entry instead
 
 **Content skipped as "too short"**
+
 - Likely extracted only navigation/footer
 - Try providing `content` manually
 - Check if site uses JavaScript rendering (not supported)
 
 **PDF extraction fails**
+
 - Verify PDF is text-based (not scanned image)
 - Try downloading and copying text manually
 

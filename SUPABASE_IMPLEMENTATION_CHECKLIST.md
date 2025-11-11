@@ -12,6 +12,7 @@ Track your progress implementing the Nexus Supabase backend.
 - [x] Add seed data for demo clients and campaigns
 
 **Files Created**:
+
 - ✅ `/supabase/migrations/20250110000000_nexus_initial_schema.sql`
 - ✅ `/supabase/migrations/20250110000001_rls_policies.sql`
 - ✅ `/supabase/migrations/20250110000002_seed_demo_data.sql`
@@ -49,6 +50,7 @@ Track your progress implementing the Nexus Supabase backend.
 ### 2.3 Run Migrations
 
 **Option A: Supabase CLI (Recommended)**
+
 ```bash
 npm install -g supabase
 supabase login
@@ -57,6 +59,7 @@ supabase db push
 ```
 
 **Option B: Supabase Dashboard**
+
 - [ ] Go to SQL Editor
 - [ ] Run `20250110000000_nexus_initial_schema.sql`
 - [ ] Run `20250110000001_rls_policies.sql`
@@ -89,6 +92,7 @@ supabase db push
 - [ ] Test with demo data
 
 **Acceptance Criteria**:
+
 - Notifications load from Supabase
 - `since` parameter filters correctly
 - `clientId` scoping works
@@ -126,6 +130,7 @@ supabase db push
 - [ ] Integrate into ExportPanel or Settings
 
 **Acceptance Criteria**:
+
 - Scheduled exports run on cadence
 - Artifacts stored and downloadable
 - Notifications sent on completion
@@ -148,6 +153,7 @@ supabase db push
 - [ ] Remove localStorage fallback (optional: keep for offline)
 
 **Acceptance Criteria**:
+
 - All client CRUD operations work via Supabase
 - RLS policies enforced (can't see other clients)
 - Optimistic updates for UX
@@ -189,6 +195,7 @@ supabase db push
   - [ ] Engagement trends
 
 **Acceptance Criteria**:
+
 - Analytics queries return real data from Supabase
 - No PII exposed in analytics tables
 - Aggregations meet privacy thresholds
@@ -212,6 +219,7 @@ supabase db push
 - [ ] Test role-based access via `client_memberships`
 
 **Acceptance Criteria**:
+
 - Users can sign up and log in
 - Sessions persist across page reloads
 - RLS policies enforce access control
@@ -370,19 +378,19 @@ supabase db push
 
 ## Timeline Estimate
 
-| Phase | Description | Hours | Status |
-|-------|-------------|-------|--------|
-| 1 | Foundation (schema, migrations, types) | 6 | ✅ Complete |
-| 2 | Supabase project setup | 1 | ⏳ In Progress |
-| 3 | Wire notifications API | 2 | 🔜 Next |
-| 4 | Scheduled exports MVP | 5 | 🔜 Next |
-| 5 | Migrate client service | 3 | 🔜 Upcoming |
-| 6 | Analytics infrastructure | 10 | 🔜 Upcoming |
-| 7 | Authentication integration | 4 | 🔜 Future |
-| 8 | Campaign service migration | 5 | 🔜 Future |
-| 9 | Donor & donation services | 8 | 🔜 Future |
-| 10 | Realtime (optional) | 6 | 🔮 Deferred |
-| **Total** | | **50 hours** | |
+| Phase     | Description                            | Hours        | Status         |
+| --------- | -------------------------------------- | ------------ | -------------- |
+| 1         | Foundation (schema, migrations, types) | 6            | ✅ Complete    |
+| 2         | Supabase project setup                 | 1            | ⏳ In Progress |
+| 3         | Wire notifications API                 | 2            | 🔜 Next        |
+| 4         | Scheduled exports MVP                  | 5            | 🔜 Next        |
+| 5         | Migrate client service                 | 3            | 🔜 Upcoming    |
+| 6         | Analytics infrastructure               | 10           | 🔜 Upcoming    |
+| 7         | Authentication integration             | 4            | 🔜 Future      |
+| 8         | Campaign service migration             | 5            | 🔜 Future      |
+| 9         | Donor & donation services              | 8            | 🔜 Future      |
+| 10        | Realtime (optional)                    | 6            | 🔮 Deferred    |
+| **Total** |                                        | **50 hours** |                |
 
 **Recommended Sprint**: Phases 2-4 (8 hours) aligns with your current priorities.
 
