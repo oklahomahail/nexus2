@@ -6,7 +6,6 @@
  */
 
 import { Wand2, Download, RefreshCw } from "lucide-react";
-import React from "react";
 
 import { GeneratedOutputViewer } from "@/components/campaign/GeneratedOutputViewer";
 import { useClient } from "@/context/ClientContext";

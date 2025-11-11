@@ -59,7 +59,6 @@ export async function importBrandSources(
   params: BrandImportParams,
 ): Promise<BrandImportResponse> {
   try {
-    // @ts-expect-error - Supabase not yet installed
     const { data, error } =
       await supabase.functions.invoke<BrandImportResponse>(
         "scheduled-import-brand-corpus",

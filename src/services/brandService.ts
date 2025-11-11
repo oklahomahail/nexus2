@@ -177,12 +177,12 @@ export async function upsertBrandProfile(
 ): Promise<BrandProfile> {
   const { data, error } = await supabase
     .from("brand_profiles")
-    .upsert(input, { onConflict: "id" })
+    .upsert(input as any, { onConflict: "id" })
     .select("*")
     .single();
 
   if (error) throw error;
-  return data;
+  return data as BrandProfile;
 }
 
 /**
@@ -191,6 +191,7 @@ export async function upsertBrandProfile(
 export async function deleteBrandProfile(id: string): Promise<void> {
   const { error } = await supabase
     .from("brand_profiles")
+    // @ts-ignore - Supabase types incomplete until database types are generated
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);
 
@@ -234,12 +235,12 @@ export async function addBrandAsset(
 ): Promise<BrandAsset> {
   const { data, error } = await supabase
     .from("brand_assets")
-    .insert(input)
+    .insert(input as any)
     .select("*")
     .single();
 
   if (error) throw error;
-  return data;
+  return data as BrandAsset;
 }
 
 /**
@@ -251,13 +252,14 @@ export async function updateBrandAsset(
 ): Promise<BrandAsset> {
   const { data, error } = await supabase
     .from("brand_assets")
+    // @ts-ignore - Supabase types incomplete until database types are generated
     .update(updates)
     .eq("id", id)
     .select("*")
     .single();
 
   if (error) throw error;
-  return data;
+  return data as BrandAsset;
 }
 
 /**
@@ -266,6 +268,7 @@ export async function updateBrandAsset(
 export async function deleteBrandAsset(id: string): Promise<void> {
   const { error } = await supabase
     .from("brand_assets")
+    // @ts-ignore - Supabase types incomplete until database types are generated
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);
 
@@ -316,7 +319,7 @@ export async function upsertCorpusChunk(
 ): Promise<BrandCorpusChunk> {
   const { data, error } = await supabase
     .from("brand_corpus")
-    .upsert(input, {
+    .upsert(input as any, {
       onConflict: "client_id,brand_id,checksum",
       ignoreDuplicates: false,
     })
@@ -324,7 +327,7 @@ export async function upsertCorpusChunk(
     .single();
 
   if (error) throw error;
-  return data;
+  return data as BrandCorpusChunk;
 }
 
 /**
@@ -384,6 +387,7 @@ export async function getTopCorpusSnippets(
 export async function deleteCorpusChunk(id: string): Promise<void> {
   const { error } = await supabase
     .from("brand_corpus")
+    // @ts-ignore - Supabase types incomplete until database types are generated
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", id);
 

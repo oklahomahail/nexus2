@@ -99,7 +99,6 @@ export async function computeMetric<T = unknown>(
   request: MetricRequest,
 ): Promise<MetricResponse<T>> {
   try {
-    // @ts-expect-error - Supabase not yet installed
     const { data, error } = await supabase.functions.invoke<MetricResponse<T>>(
       "analyze-donor-data",
       {

@@ -15,7 +15,7 @@ import {
   ExternalLink,
   Loader2,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandCorpusChunk } from "@/services/brandService";
