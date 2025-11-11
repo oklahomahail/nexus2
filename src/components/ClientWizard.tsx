@@ -1,8 +1,8 @@
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { useState } from "react";
 
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import Button from "@/components/ui-kit/Button";
+import Input from "@/components/ui-kit/Input";
 
 interface ClientWizardProps {
   open: boolean;
@@ -288,7 +288,7 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
 
           <div className="flex items-center gap-3">
             {currentStep > 1 && (
-              <Button variant="ghost" onClick={handleBack}>
+              <Button variant="outline" onClick={handleBack}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>

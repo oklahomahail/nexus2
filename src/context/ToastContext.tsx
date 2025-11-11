@@ -1,12 +1,23 @@
 // src/context/ToastContext.tsx
 // Context for managing toast notifications
 
-import React, { useState, useCallback, type ReactNode } from "react";
+import React, { createContext, useState, useCallback, type ReactNode } from "react";
 
 import ToastContainer from "@/components/ui-kit/ToastContainer";
 import type { Toast } from "@/types/toast";
 
-import { ToastContext, type ToastContextValue } from "./toast-context";
+export interface ToastContextValue {
+  toasts: Toast[];
+  addToast: (toast: Omit<Toast, "id">) => string;
+  removeToast: (id: string) => void;
+  clearToasts: () => void;
+  success: (title: string, description?: string, options?: Partial<Toast>) => string;
+  error: (title: string, description?: string, options?: Partial<Toast>) => string;
+  warning: (title: string, description?: string, options?: Partial<Toast>) => string;
+  info: (title: string, description?: string, options?: Partial<Toast>) => string;
+}
+
+export const ToastContext = createContext<ToastContextValue | undefined>(undefined);
 
 interface ToastProviderProps {
   children: ReactNode;

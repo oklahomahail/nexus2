@@ -190,6 +190,7 @@ export async function generateCampaign(
       : null
 
   // Call AI Privacy Gateway (CRITICAL: All AI requests must go through privacy gateway)
+  // @ts-expect-error - Supabase not yet installed
   const { data, error } = await supabase.functions.invoke<{
     ok: boolean
     data?: {

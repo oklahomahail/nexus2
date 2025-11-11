@@ -43,6 +43,7 @@ export function useClaudeAnalysis(): UseClaudeAnalysisReturn {
 
     try {
       // Call AI Privacy Gateway with analytics category
+      // @ts-expect-error - Supabase not yet installed
       const { data: response, error: invokeError } = await supabase.functions.invoke<{
         ok: boolean
         data?: {

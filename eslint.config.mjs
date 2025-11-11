@@ -119,6 +119,57 @@ export default [
       ],
       "unused-imports/no-unused-imports": "error",
 
+      // Prevent imports from removed directories (Q1 2025 cleanup)
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/components/ui",
+              message: "Use @/components/ui-kit instead. Duplicate UI library removed in Q1 2025 cleanup.",
+            },
+            {
+              name: "@/features/writing",
+              message: "Writing features are out of scope for Nexus. Nexus is a fundraising intelligence platform, not a writing tool.",
+            },
+            {
+              name: "@/services/backup",
+              message: "Backup services removed. Supabase is the source of truth. If offline support needed, re-add behind feature flag with E2EE.",
+            },
+            {
+              name: "@/features/claude",
+              message: "ClaudePanel removed. Use ai-privacy-gateway + CampaignDesignerWizard/DonorIntelligencePanel instead.",
+            },
+            {
+              name: "@/features/tutorials",
+              message: "Tutorial system removed. Will be re-added as Phase 2 onboarding checklist.",
+            },
+          ],
+          patterns: [
+            {
+              group: ["**/components/ui/**"],
+              message: "Use @/components/ui-kit instead.",
+            },
+            {
+              group: ["**/features/writing/**"],
+              message: "Writing features are out of scope.",
+            },
+            {
+              group: ["**/services/backup/**"],
+              message: "Backup services removed.",
+            },
+            {
+              group: ["**/features/claude/**"],
+              message: "ClaudePanel removed.",
+            },
+            {
+              group: ["**/models/**", "**/viewModels/**"],
+              message: "Use @/types/database.types.ts instead (generated from Supabase schema).",
+            },
+          ],
+        },
+      ],
+
       // Async safety
       "@typescript-eslint/await-thenable": "warn",
       "@typescript-eslint/no-floating-promises": [

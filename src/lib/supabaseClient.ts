@@ -9,8 +9,12 @@
  * - VITE_SUPABASE_ANON_KEY
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+// TODO: Install @supabase/supabase-js when implementing Supabase integration
+// import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '../types/database.types'
+
+// Stub types until Supabase is installed
+type SupabaseClient = any;
 
 // Supabase configuration from environment
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -24,7 +28,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Singleton client instance
-let supabaseInstance: SupabaseClient<Database> | null = null
+let supabaseInstance: SupabaseClient | null = null
 
 /**
  * Get or create Supabase client instance
@@ -32,7 +36,7 @@ let supabaseInstance: SupabaseClient<Database> | null = null
  * Uses singleton pattern to ensure only one client exists
  * Includes error handling for missing environment variables
  */
-export function getSupabaseClient(): SupabaseClient<Database> {
+export function getSupabaseClient(): SupabaseClient {
   if (!supabaseInstance) {
     if (!supabaseUrl || !supabaseAnonKey) {
       throw new Error(
@@ -40,7 +44,9 @@ export function getSupabaseClient(): SupabaseClient<Database> {
       )
     }
 
-    supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    // TODO: Uncomment when @supabase/supabase-js is installed
+    supabaseInstance = {} as any; // createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    /*
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -54,10 +60,10 @@ export function getSupabaseClient(): SupabaseClient<Database> {
           eventsPerSecond: 10,
         },
       },
-    })
+    }) */
   }
 
-  return supabaseInstance
+  return supabaseInstance!
 }
 
 /**

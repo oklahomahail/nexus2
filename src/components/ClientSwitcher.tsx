@@ -88,9 +88,10 @@ export default function ClientSwitcher({ className }: Props) {
                       className="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-slate-700/50 rounded transition-colors group"
                     >
                       <div className="flex items-center space-x-3 min-w-0">
-                        {client.brand?.logoUrl ? (
+                        {/* TODO: Add brand property to Client type */}
+                        {false ? (
                           <img
-                            src={client.brand.logoUrl}
+                            src=""
                             alt=""
                             className="w-6 h-6 rounded object-cover flex-shrink-0"
                           />

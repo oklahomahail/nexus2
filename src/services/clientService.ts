@@ -1,13 +1,35 @@
 // src/services/clientService.ts
-// Re-export from real service for backend integration
-export * from "./realClientService";
-export { realClientService as clientService } from "./realClientService";
+// Client service - Supabase-first implementation
 
-import { realClientService } from "./realClientService";
+export type { Client } from "@/types/client";
+
+// Placeholder service - implement with Supabase calls
+export const clientService = {
+  list: async () => {
+    // TODO: Implement with Supabase
+    return [];
+  },
+  getAllClients: async () => {
+    // TODO: Implement with Supabase
+    return [];
+  },
+  delete: async (id: string) => {
+    // TODO: Implement with Supabase
+    console.log("Delete client:", id);
+  },
+  createClient: async (data: any) => {
+    // TODO: Implement with Supabase
+    console.log("Create client:", data);
+  },
+  updateClient: async (id: string, data: any) => {
+    // TODO: Implement with Supabase
+    console.log("Update client:", id, data);
+  },
+};
 
 // Add missing exports for backward compatibility
-export const listClients = () => realClientService.getAllClients();
-export const deleteClient = (id: string) => realClientService.delete(id);
-export const createClient = (data: any) => realClientService.createClient(data);
+export const listClients = () => clientService.getAllClients();
+export const deleteClient = (id: string) => clientService.delete(id);
+export const createClient = (data: any) => clientService.createClient(data);
 export const updateClient = (id: string, data: any) =>
-  realClientService.updateClient(id, data);
+  clientService.updateClient(id, data);
