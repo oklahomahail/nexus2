@@ -16,6 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import clsx from "clsx";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandCorpusChunk } from "@/services/brandService";
@@ -229,22 +230,24 @@ export default function BrandCorpusManager({
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setAddMode("manual")}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={clsx(
+                "px-4 py-2 rounded-lg transition-colors",
                 addMode === "manual"
                   ? "bg-indigo-600 text-white"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
+              )}
             >
               <MessageSquare className="inline w-4 h-4 mr-2" />
               Manual Entry
             </button>
             <button
               onClick={() => setAddMode("url")}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={clsx(
+                "px-4 py-2 rounded-lg transition-colors",
                 addMode === "url"
                   ? "bg-indigo-600 text-white"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
+              )}
             >
               <Globe className="inline w-4 h-4 mr-2" />
               Import from URL
