@@ -1,0 +1,50 @@
+<svg width="400" height="160" viewBox="0 0 400 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tagline-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B36F4" />
+      <stop offset="100%" stop-color="#72E4FC" />
+    </linearGradient>
+    <filter id="tagline-glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="tagline-node-glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Logo Symbol (centered) -->
+  <g transform="translate(120, 60)">
+    <!-- Connection lines -->
+    <line x1="0" y1="0" x2="0" y2="-28" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="24.25" y2="-14" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="24.25" y2="14" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="0" y2="28" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="-24.25" y2="14" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="-24.25" y2="-14" stroke="url(#tagline-gradient)" stroke-width="1.6" stroke-linecap="round" opacity="0.6" />
+
+    <!-- Outer nodes -->
+    <circle cx="0" cy="-28" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+    <circle cx="24.25" cy="-14" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+    <circle cx="24.25" cy="14" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+    <circle cx="0" cy="28" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+    <circle cx="-24.25" cy="14" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+    <circle cx="-24.25" cy="-14" r="6.4" fill="url(#tagline-gradient)" filter="url(#tagline-node-glow)" />
+
+    <!-- Center core -->
+    <circle cx="0" cy="0" r="9.6" fill="#FFFFFF" filter="url(#tagline-glow)" />
+  </g>
+
+  <!-- Wordmark -->
+  <text x="200" y="72" font-family="Inter Tight, Inter, sans-serif" font-size="40" font-weight="600" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.5">Nexus</text>
+
+  <!-- Tagline -->
+  <text x="200" y="120" font-family="Inter, sans-serif" font-size="18" font-weight="500" fill="#A0A3B1" text-anchor="middle" letter-spacing="0.27">Where mission meets intelligence.</text>
+</svg>

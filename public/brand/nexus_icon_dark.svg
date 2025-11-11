@@ -1,0 +1,36 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B36F4" />
+      <stop offset="100%" stop-color="#72E4FC" />
+    </linearGradient>
+    <filter id="icon-glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(32, 32)">
+    <!-- Connection lines -->
+    <line x1="0" y1="0" x2="0" y2="-22.4" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+    <line x1="0" y1="0" x2="19.39" y2="-11.2" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+    <line x1="0" y1="0" x2="19.39" y2="11.2" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+    <line x1="0" y1="0" x2="0" y2="22.4" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+    <line x1="0" y1="0" x2="-19.39" y2="11.2" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+    <line x1="0" y1="0" x2="-19.39" y2="-11.2" stroke="url(#icon-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.5" />
+
+    <!-- Outer nodes -->
+    <circle cx="0" cy="-22.4" r="5.12" fill="url(#icon-gradient)" />
+    <circle cx="19.39" cy="-11.2" r="5.12" fill="url(#icon-gradient)" />
+    <circle cx="19.39" cy="11.2" r="5.12" fill="url(#icon-gradient)" />
+    <circle cx="0" cy="22.4" r="5.12" fill="url(#icon-gradient)" />
+    <circle cx="-19.39" cy="11.2" r="5.12" fill="url(#icon-gradient)" />
+    <circle cx="-19.39" cy="-11.2" r="5.12" fill="url(#icon-gradient)" />
+
+    <!-- Center core -->
+    <circle cx="0" cy="0" r="7.68" fill="#FFFFFF" filter="url(#icon-glow)" />
+  </g>
+</svg>

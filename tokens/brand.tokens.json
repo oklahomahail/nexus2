@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "version": "1.0.0",
+  "name": "Nexus Brand Tokens",
+  "description": "Design tokens for Nexus 2025 brand system. Used by Figma, Tailwind, and React components for design-dev parity.",
+  "colors": {
+    "brand": {
+      "indigo": {
+        "value": "#3B36F4",
+        "description": "Indigo Nexus - Primary brand color",
+        "usage": "Buttons, links, primary accents"
+      },
+      "cyan": {
+        "value": "#72E4FC",
+        "description": "Electric Cyan - Secondary accent",
+        "usage": "Highlights, gradients, hover states"
+      },
+      "violet": {
+        "value": "#6B4DFF",
+        "description": "Deep Violet - Tertiary accent",
+        "usage": "Shadow glow, hover states"
+      }
+    },
+    "background": {
+      "night": {
+        "value": "#0D0D12",
+        "rgb": "13 13 18",
+        "description": "Nexus Night - Primary background",
+        "usage": "App background, dark surfaces"
+      },
+      "slate": {
+        "value": "#1A1A22",
+        "rgb": "26 26 34",
+        "description": "Slate Layer - Surface color",
+        "usage": "Cards, panels, modals"
+      },
+      "elevated": {
+        "value": "#1D1F2A",
+        "rgb": "29 31 42",
+        "description": "Elevated Surface",
+        "usage": "Raised elements, popovers"
+      }
+    },
+    "text": {
+      "primary": {
+        "value": "#FFFFFF",
+        "rgb": "255 255 255",
+        "description": "White - Primary text",
+        "usage": "Headings, body text"
+      },
+      "muted": {
+        "value": "#A0A3B1",
+        "rgb": "160 163 177",
+        "description": "Zinc Gray - Secondary text",
+        "usage": "Labels, captions, metadata"
+      }
+    },
+    "border": {
+      "default": {
+        "value": "#2D2D3A",
+        "rgb": "45 45 58",
+        "description": "Border color",
+        "usage": "Card borders, dividers"
+      }
+    },
+    "semantic": {
+      "success": {
+        "value": "#4ADE80",
+        "rgb": "74 222 128",
+        "description": "Growth Green",
+        "usage": "Success states, positive metrics"
+      },
+      "warning": {
+        "value": "#FACC15",
+        "rgb": "250 204 21",
+        "description": "Insight Amber",
+        "usage": "Warnings, alerts"
+      },
+      "error": {
+        "value": "#F87171",
+        "rgb": "248 113 113",
+        "description": "Privacy Red",
+        "usage": "Errors, privacy alerts"
+      }
+    }
+  },
+  "gradients": {
+    "nexusGlow": {
+      "value": "linear-gradient(135deg, #3B36F4 0%, #72E4FC 100%)",
+      "angle": 135,
+      "stops": [
+        { "color": "#3B36F4", "position": "0%" },
+        { "color": "#72E4FC", "position": "100%" }
+      ],
+      "description": "Nexus Glow - Primary brand gradient",
+      "usage": "Buttons, headers, hero backgrounds"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "display": {
+        "family": "Inter Tight, sans-serif",
+        "weight": 600,
+        "description": "Wordmark and display typography"
+      },
+      "heading": {
+        "family": "Satoshi, Inter, sans-serif",
+        "weights": [500, 600, 700],
+        "description": "Section titles, hero text"
+      },
+      "body": {
+        "family": "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+        "weight": 400,
+        "description": "Paragraphs, UI labels"
+      },
+      "mono": {
+        "family": "JetBrains Mono, monospace",
+        "weight": 400,
+        "description": "Code, keys, metrics"
+      }
+    },
+    "scale": {
+      "h1": { "size": "36px", "lineHeight": "44px", "weight": 700 },
+      "h2": { "size": "28px", "lineHeight": "36px", "weight": 600 },
+      "h3": { "size": "22px", "lineHeight": "30px", "weight": 600 },
+      "body": { "size": "16px", "lineHeight": "24px", "weight": 400 },
+      "small": { "size": "13px", "lineHeight": "18px", "weight": 400 }
+    }
+  },
+  "spacing": {
+    "base": "4px",
+    "scale": [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96, 128],
+    "description": "4px base unit for consistent spacing"
+  },
+  "borderRadius": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "20px",
+    "2xl": "24px",
+    "full": "9999px"
+  },
+  "shadows": {
+    "soft": {
+      "value": "0 1px 2px rgba(0, 0, 0, 0.25)",
+      "description": "UI chrome, subtle elevation"
+    },
+    "medium": {
+      "value": "0 4px 12px rgba(0, 0, 0, 0.25)",
+      "description": "Cards, dropdowns"
+    },
+    "strong": {
+      "value": "0 8px 24px rgba(0, 0, 0, 0.25)",
+      "description": "Modals, menus"
+    },
+    "glow": {
+      "value": "0 0 20px rgba(59, 54, 244, 0.3), 0 0 40px rgba(114, 228, 252, 0.2)",
+      "description": "Nexus glow effect"
+    }
+  },
+  "animation": {
+    "duration": {
+      "fast": "150ms",
+      "normal": "200ms",
+      "slow": "300ms",
+      "brand": "3000ms"
+    },
+    "easing": {
+      "easeIn": "ease-in",
+      "easeOut": "ease-out",
+      "easeInOut": "ease-in-out",
+      "linear": "linear"
+    },
+    "keyframes": {
+      "nexusPulse": {
+        "value": "nexusPulse 3s ease-in-out infinite",
+        "description": "Logo breathing effect"
+      },
+      "nexusGlow": {
+        "value": "nexusGlow 3s ease-in-out infinite",
+        "description": "Glow pulsing effect"
+      },
+      "nexusOrbit": {
+        "value": "nexusOrbit 20s linear infinite",
+        "description": "Orbital rotation"
+      }
+    }
+  },
+  "logo": {
+    "minSize": {
+      "screen": "32px",
+      "print": "12mm"
+    },
+    "clearSpace": "1 node radius",
+    "nodeCount": 6,
+    "geometry": {
+      "nodeRadius": "0.08 * size",
+      "coreRadius": "0.12 * size",
+      "orbitRadius": "0.35 * size"
+    }
+  },
+  "breakpoints": {
+    "xs": "475px",
+    "sm": "640px",
+    "md": "768px",
+    "lg": "1024px",
+    "xl": "1280px",
+    "2xl": "1536px",
+    "3xl": "1600px"
+  }
+}

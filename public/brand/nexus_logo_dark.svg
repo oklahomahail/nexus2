@@ -1,0 +1,47 @@
+<svg width="200" height="64" viewBox="0 0 200 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="nexus-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B36F4" />
+      <stop offset="100%" stop-color="#72E4FC" />
+    </linearGradient>
+    <filter id="nexus-glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="node-glow">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Logo Symbol (6-node network) -->
+  <g transform="translate(32, 32)">
+    <!-- Connection lines -->
+    <line x1="0" y1="0" x2="0" y2="-22.4" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="19.39" y2="-11.2" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="19.39" y2="11.2" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="0" y2="22.4" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="-19.39" y2="11.2" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+    <line x1="0" y1="0" x2="-19.39" y2="-11.2" stroke="url(#nexus-gradient)" stroke-width="1.28" stroke-linecap="round" opacity="0.6" />
+
+    <!-- Outer nodes -->
+    <circle cx="0" cy="-22.4" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+    <circle cx="19.39" cy="-11.2" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+    <circle cx="19.39" cy="11.2" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+    <circle cx="0" cy="22.4" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+    <circle cx="-19.39" cy="11.2" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+    <circle cx="-19.39" cy="-11.2" r="5.12" fill="url(#nexus-gradient)" filter="url(#node-glow)" />
+
+    <!-- Center core -->
+    <circle cx="0" cy="0" r="7.68" fill="#FFFFFF" filter="url(#nexus-glow)" />
+  </g>
+
+  <!-- Wordmark "Nexus" -->
+  <text x="70" y="42" font-family="Inter Tight, Inter, sans-serif" font-size="32" font-weight="600" fill="#FFFFFF" letter-spacing="-0.5">Nexus</text>
+</svg>
