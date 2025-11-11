@@ -7,6 +7,9 @@ import {
   Bot,
   Menu,
   X,
+  Palette,
+  Brain,
+  Wand2,
 } from "lucide-react";
 import React, { Suspense, useMemo, useState } from "react";
 
@@ -23,8 +26,11 @@ const AnalyticsDashboard = React.lazy(
 );
 const DonorsPanel = React.lazy(() => import("@/panels/DonorsPanel"));
 const DashboardPanel = React.lazy(() => import("@/panels/DashboardPanel"));
+const BrandProfilePanel = React.lazy(() => import("@/panels/BrandProfilePanel"));
+const DonorIntelligencePanel = React.lazy(() => import("@/panels/DonorIntelligencePanel"));
+const CampaignDesignerWizard = React.lazy(() => import("@/panels/CampaignDesignerWizard"));
 
-type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors";
+type ViewKey = "dashboard" | "campaigns" | "analytics" | "donors" | "brand" | "intelligence" | "designer";
 
 interface NavigationItem {
   key: ViewKey;
@@ -104,6 +110,27 @@ const AppContent: React.FC = () => {
       icon: Users,
       component: DonorsPanel,
       description: "Donor management and insights",
+    },
+    {
+      key: "brand",
+      label: "Brand Profile",
+      icon: Palette,
+      component: BrandProfilePanel,
+      description: "Manage brand identity for AI-generated campaigns",
+    },
+    {
+      key: "intelligence",
+      label: "Donor Intelligence",
+      icon: Brain,
+      component: DonorIntelligencePanel,
+      description: "AI-powered donor analytics with privacy enforcement",
+    },
+    {
+      key: "designer",
+      label: "Campaign Designer",
+      icon: Wand2,
+      component: CampaignDesignerWizard,
+      description: "AI-powered campaign generation (direct mail, email, social)",
     },
   ];
 
