@@ -5,5 +5,5 @@
     "noUnusedParameters": false
   },
   "include": ["src"],
-  "exclude": ["src/deprecated/**/*", "dist", "node_modules"]
+  "exclude": ["src/deprecated/**/*", "src/_archive/**/*", "dist", "node_modules"]
 }

@@ -15,6 +15,14 @@ export interface ToastContextValue {
   error: (title: string, description?: string, options?: Partial<Toast>) => string;
   warning: (title: string, description?: string, options?: Partial<Toast>) => string;
   info: (title: string, description?: string, options?: Partial<Toast>) => string;
+  promise: <T>(
+    fn: Promise<T>,
+    messages: {
+      loading: string;
+      success: string | ((data: T) => string);
+      error: string | ((err: any) => string);
+    }
+  ) => Promise<T>;
 }
 
 export const ToastContext = createContext<ToastContextValue | undefined>(undefined);
@@ -103,6 +111,46 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     [addToast],
   );
 
+  // Promise-aware toast for async operations
+  const promise = useCallback(
+    async <T,>(
+      fn: Promise<T>,
+      messages: {
+        loading: string;
+        success: string | ((data: T) => string);
+        error: string | ((err: any) => string);
+      }
+    ): Promise<T> => {
+      const loadingId = addToast({
+        type: "info",
+        title: messages.loading,
+        duration: 0, // Don't auto-dismiss loading
+      });
+
+      try {
+        const result = await fn;
+        removeToast(loadingId);
+
+        const successMsg =
+          typeof messages.success === "function"
+            ? messages.success(result)
+            : messages.success;
+        success(successMsg);
+
+        return result;
+      } catch (err) {
+        removeToast(loadingId);
+
+        const errorMsg =
+          typeof messages.error === "function" ? messages.error(err) : messages.error;
+        error(errorMsg);
+
+        throw err;
+      }
+    },
+    [addToast, removeToast, success, error],
+  );
+
   const value: ToastContextValue = {
     toasts,
     addToast,
@@ -112,6 +160,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     error,
     warning,
     info,
+    promise,
   };
 
   return (

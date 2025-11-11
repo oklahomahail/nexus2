@@ -18,6 +18,7 @@ interface State {
   errorInfo: ErrorInfo | null | undefined;
   errorId: string | null | undefined;
   showDetails: boolean;
+  copySuccess: boolean;
 }
 
 interface ErrorReport {
@@ -49,6 +50,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       errorInfo: null,
       errorId: null,
       showDetails: false,
+      copySuccess: false,
     };
   }
 
@@ -137,6 +139,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       errorInfo: null,
       errorId: null,
       showDetails: false,
+      copySuccess: false,
     });
   };
 
@@ -175,7 +178,9 @@ ${JSON.stringify(errorReport, null, 2)}`;
     if (errorReport) {
       try {
         await navigator.clipboard.writeText(JSON.stringify(errorReport, null, 2));
-        alert('Error details copied to clipboard');
+        // Simple feedback without alert since ErrorBoundary can't use hooks
+        this.setState({ copySuccess: true });
+        setTimeout(() => this.setState({ copySuccess: false }), 2000);
       } catch (err) {
         console.error('Failed to copy to clipboard:', err);
       }
@@ -303,7 +308,7 @@ ${JSON.stringify(errorReport, null, 2)}`;
                       className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300"
                     >
                       <Copy className="w-3 h-3" />
-                      Copy
+                      {this.state.copySuccess ? 'Copied!' : 'Copy'}
                     </button>
                   </div>
                   <pre className="text-xs text-gray-400 overflow-auto max-h-40 whitespace-pre-wrap">

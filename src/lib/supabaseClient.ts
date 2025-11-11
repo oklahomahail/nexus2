@@ -9,12 +9,10 @@
  * - VITE_SUPABASE_ANON_KEY
  */
 
-// TODO: Install @supabase/supabase-js when implementing Supabase integration
-// import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../types/database.types'
 
-// Stub types until Supabase is installed
-type SupabaseClient = any;
+type SupabaseClient = ReturnType<typeof createClient<Database>>
 
 // Supabase configuration from environment
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -44,9 +42,7 @@ export function getSupabaseClient(): SupabaseClient {
       )
     }
 
-    // TODO: Uncomment when @supabase/supabase-js is installed
-    supabaseInstance = {} as any; // createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    /*
+    supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -60,7 +56,7 @@ export function getSupabaseClient(): SupabaseClient {
           eventsPerSecond: 10,
         },
       },
-    }) */
+    })
   }
 
   return supabaseInstance!

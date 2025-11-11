@@ -28,16 +28,10 @@ export default defineConfig({
           vendor: ["react", "react-dom", "react-router-dom"],
           icons: ["lucide-react"],
           charts: ["recharts"],
-          analytics: [
-            "./src/components/analytics/ComparativeCampaignAnalysis.tsx",
-            "./src/components/analytics/WritingStats.tsx",
-            "./src/panels/AnalyticsDashboard.tsx",
-          ],
           utils: [
             "crypto-js",
             "uuid",
             "zod",
-            "./src/services/analyticsService.ts",
             "./src/services/campaignService.ts",
           ],
         },

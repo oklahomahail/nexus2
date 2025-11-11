@@ -20,6 +20,7 @@ import {
 } from 'recharts'
 
 import { useClient } from '@/context/ClientContext'
+import { useToast } from '@/hooks/useToast'
 import {
   useDonorIntelligence,
   useRetainedDonors,
@@ -332,11 +333,12 @@ function UpgradeView({
   onYearFromChange,
   onYearToChange,
 }: UpgradeViewProps) {
+  const toast = useToast()
   const { data, isLoading, error, privacyEnforced, fetch } = useYoyUpgrade(clientId)
 
   const handleFetch = () => {
     if (yearFrom >= yearTo) {
-      alert('Year From must be less than Year To')
+      toast.warning('Invalid Year Range', 'Year From must be less than Year To')
       return
     }
     fetch(yearFrom, yearTo)
