@@ -160,8 +160,7 @@ const promptInjectionPhrases = [
 describe("sanitizeHTML – structural sanitization", () => {
   for (const v of injectionVectors) {
     // Known failure: CSS url(javascript) in malformed HTML (Issue #12)
-    const testFn =
-      v.name === "CSS url(javascript)" ? it.fails : it;
+    const testFn = v.name === "CSS url(javascript)" ? it.fails : it;
 
     testFn(`removes ${v.name}`, () => {
       const out = sanitizeHTML(v.input);

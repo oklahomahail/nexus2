@@ -17,6 +17,7 @@ Phase 4 monitoring infrastructure with error tracking and 429 rate limit telemet
 ### 2. Get Your DSN
 
 After creating the project, copy the DSN from:
+
 - **Settings** → **Client Keys (DSN)**
 - Format: `https://xxx@xxx.ingest.sentry.io/xxx`
 
@@ -34,6 +35,7 @@ SENTRY_PROJECT=nexus-production
 ```
 
 **To get SENTRY_AUTH_TOKEN:**
+
 1. Go to: https://sentry.io/settings/account/api/auth-tokens/
 2. Create new token with scopes:
    - `project:releases`
@@ -55,6 +57,7 @@ git push
 ### Error Tracking
 
 Automatic capture of:
+
 - Unhandled exceptions
 - Promise rejections
 - React component errors
@@ -108,15 +111,18 @@ if (injectionDetected) {
 ### Environment-Specific Settings
 
 **Development:**
+
 - Sentry disabled by default
 - Enable by setting `VITE_SENTRY_DSN` in `.env`
 
 **Production:**
+
 - Enabled automatically
 - 10% trace sampling
 - Source maps uploaded for debugging
 
 **Staging/Preview:**
+
 - Full event capture
 - 100% trace sampling
 
@@ -270,6 +276,7 @@ export function importBrandContent(rawHtml: string) {
 ### Events Not Appearing
 
 **Check:**
+
 1. `VITE_SENTRY_DSN` is set in Vercel environment variables
 2. DSN format: `https://key@org.ingest.sentry.io/project`
 3. Environment is not `development` (Sentry disabled by default)
@@ -286,6 +293,7 @@ Sentry.captureMessage("Test event from browser");
 ### Source Maps Not Uploading
 
 **Check:**
+
 1. `SENTRY_AUTH_TOKEN` has correct scopes (project:releases, org:read)
 2. `SENTRY_ORG` matches your organization slug
 3. `SENTRY_PROJECT` matches your project name
@@ -327,11 +335,13 @@ Sentry.init({
 ## Cost Estimates
 
 **Sentry Pricing (Team Plan - $26/month):**
+
 - 50,000 errors/month included
 - 100GB performance data included
 - 50 session replays included
 
 **Expected Usage (1,000 MAU):**
+
 - Errors: ~5,000/month (0.5% error rate)
 - Performance: ~50GB/month (100 page views/user)
 - Rate Limit Events: ~1,000/month (1 per user avg)
@@ -350,6 +360,7 @@ After Sentry is live:
    - Rate limit abuse (>100 429s in 1 hour)
 
 2. **Create release tracking**:
+
    ```bash
    # In CI/CD
    pnpm sentry-cli releases new v0.3.0
