@@ -1,5 +1,14 @@
 // src/services/ai/claudeService.ts
-// Single source of truth for Claude API calls, key storage, and streaming
+// DEPRECATED: Direct Claude API calls (bypasses privacy gateway)
+//
+// ⚠️ WARNING: This service makes direct API calls to Claude
+// ⚠️ It does NOT scrub PII or enforce privacy validation
+// ⚠️ Use src/services/ai/privacyAwareClaudeService.ts instead
+//
+// This is kept for:
+// - Legacy compatibility during migration
+// - Development/testing scenarios
+// - Features not yet migrated to privacy gateway
 
 import CryptoJS from "crypto-js";
 
@@ -176,6 +185,9 @@ export async function callClaude(
   prompt: string,
   opts: ClaudeCallOptions = {},
 ): Promise<ClaudeToolResponse> {
+  console.warn(
+    "[DEPRECATED] callClaude bypasses privacy gateway. Use callClaudeSafely from privacyAwareClaudeService instead.",
+  );
   const apiKey = getApiKeyOrThrow();
 
   const body = {
@@ -224,6 +236,9 @@ export async function streamClaude(
     onError?: (_err: unknown) => void;
   },
 ) {
+  console.warn(
+    "[DEPRECATED] streamClaude bypasses privacy gateway. Streaming not yet supported in privacyAwareClaudeService.",
+  );
   const apiKey = getApiKeyOrThrow();
 
   const body = {
@@ -301,6 +316,9 @@ export async function generateResponse(
   _context: string,
   request: ClaudeRequest,
 ): Promise<ClaudeResponse> {
+  console.warn(
+    "[DEPRECATED] generateResponse bypasses privacy gateway. Use generateSimple or generateCampaignContent from privacyAwareClaudeService instead.",
+  );
   try {
     // If streaming requested, use streamClaude under the hood
     if (request.stream && request.onToken) {

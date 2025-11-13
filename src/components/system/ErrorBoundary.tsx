@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // Nexus Error Boundary System
 // Adapted from Inkwell's battle-tested pattern
 import { AlertTriangle, RefreshCw, Bug, Mail, Copy } from "lucide-react";
