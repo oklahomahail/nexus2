@@ -268,10 +268,7 @@ export const campaignService = {
    * @param input - Campaign update data
    * @returns Updated campaign
    */
-  update: async (
-    id: string,
-    input: UpdateCampaignInput,
-  ): Promise<Campaign> => {
+  update: async (id: string, input: UpdateCampaignInput): Promise<Campaign> => {
     const update = mapUpdateInputToUpdate(input);
 
     const { data, error } = await supabase
@@ -334,10 +331,7 @@ export const campaignService = {
    * @param amount - New raised amount
    * @returns Updated campaign
    */
-  updateRaisedAmount: async (
-    id: string,
-    amount: number,
-  ): Promise<Campaign> => {
+  updateRaisedAmount: async (id: string, amount: number): Promise<Campaign> => {
     const { data, error } = await supabase
       .from("campaigns")
       .update({ raised_amount: amount } as never)

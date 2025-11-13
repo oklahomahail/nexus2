@@ -128,20 +128,18 @@ export async function getPlatformMetrics(): Promise<PlatformMetrics> {
         : 0;
 
     // Get donor count from previous period
-    const { count: previousDonorCount, error: prevDonorsError } =
-      await supabase
-        .from("donors")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "active")
-        .is("deleted_at", null)
-        .lte("created_at", thirtyDaysAgo.toISOString());
+    const { count: previousDonorCount, error: prevDonorsError } = await supabase
+      .from("donors")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "active")
+      .is("deleted_at", null)
+      .lte("created_at", thirtyDaysAgo.toISOString());
 
     if (prevDonorsError) throw prevDonorsError;
 
     const donorsChange =
       previousDonorCount && previousDonorCount > 0
-        ? (((totalDonors || 0) - previousDonorCount) / previousDonorCount) *
-          100
+        ? (((totalDonors || 0) - previousDonorCount) / previousDonorCount) * 100
         : 0;
 
     return {
@@ -211,18 +209,14 @@ export async function getClientMetrics(
 
     // Calculate average donation size
     const avgDonationSize =
-      donations && donations.length > 0
-        ? totalRaised / donations.length
-        : 0;
+      donations && donations.length > 0 ? totalRaised / donations.length : 0;
 
     // Get recent donations (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const recentDonations =
-      donations?.filter(
-        (d: any) => new Date(d.date) >= thirtyDaysAgo,
-      ) || [];
+      donations?.filter((d: any) => new Date(d.date) >= thirtyDaysAgo) || [];
     const recentDonationCount = recentDonations.length;
 
     // Calculate donation growth (compare to previous 30 days)
@@ -232,8 +226,7 @@ export async function getClientMetrics(
     const previousPeriodDonations =
       donations?.filter(
         (d: any) =>
-          new Date(d.date) >= sixtyDaysAgo &&
-          new Date(d.date) < thirtyDaysAgo,
+          new Date(d.date) >= sixtyDaysAgo && new Date(d.date) < thirtyDaysAgo,
       ) || [];
 
     const donationGrowth =
@@ -257,9 +250,7 @@ export async function getClientMetrics(
       totalEvents > 0 ? (recentDonationCount / totalEvents) * 100 : 0;
 
     // Calculate donor retention rate (donors who gave in both periods)
-    const recentDonorIds = new Set(
-      recentDonations.map((d: any) => d.donor_id),
-    );
+    const recentDonorIds = new Set(recentDonations.map((d: any) => d.donor_id));
     const previousDonorIds = new Set(
       previousPeriodDonations.map((d: any) => d.donor_id),
     );
@@ -328,8 +319,7 @@ export async function getRecentActivity(
       donationsQuery.eq("client_id", clientId);
     }
 
-    const { data: donations, error: donationsError } =
-      await donationsQuery;
+    const { data: donations, error: donationsError } = await donationsQuery;
 
     if (!donationsError && donations) {
       donations.forEach((donation: any) => {
@@ -352,7 +342,9 @@ export async function getRecentActivity(
     // Get recent campaign updates
     const campaignsQuery = supabase
       .from("campaigns")
-      .select("id, name, created_at, client_id, status, raised_amount, goal_amount")
+      .select(
+        "id, name, created_at, client_id, status, raised_amount, goal_amount",
+      )
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -360,8 +352,7 @@ export async function getRecentActivity(
       campaignsQuery.eq("client_id", clientId);
     }
 
-    const { data: campaigns, error: campaignsError } =
-      await campaignsQuery;
+    const { data: campaigns, error: campaignsError } = await campaignsQuery;
 
     if (!campaignsError && campaigns) {
       campaigns.forEach((campaign: any) => {
@@ -384,8 +375,7 @@ export async function getRecentActivity(
 
     // Sort all activities by time and return top N
     activities.sort(
-      (a, b) =>
-        parseTimeAgo(b.time).getTime() - parseTimeAgo(a.time).getTime(),
+      (a, b) => parseTimeAgo(b.time).getTime() - parseTimeAgo(a.time).getTime(),
     );
 
     return activities.slice(0, limit);
@@ -408,8 +398,7 @@ function formatTimeAgo(date: Date): string {
 
   if (diffSec < 60) return "just now";
   if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
-  if (diffHour < 24)
-    return `${diffHour} hour${diffHour === 1 ? "" : "s"} ago`;
+  if (diffHour < 24) return `${diffHour} hour${diffHour === 1 ? "" : "s"} ago`;
   if (diffDay < 7) return `${diffDay} day${diffDay === 1 ? "" : "s"} ago`;
   return date.toLocaleDateString();
 }

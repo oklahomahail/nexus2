@@ -5,6 +5,7 @@
  * Provides search, import, and manual entry capabilities
  */
 
+import clsx from "clsx";
 import {
   Search,
   Plus,
@@ -16,7 +17,6 @@ import {
   Loader2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import clsx from "clsx";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandCorpusChunk } from "@/services/brandService";

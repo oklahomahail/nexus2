@@ -42,23 +42,3 @@ export function FeatureFlag({
 
   return <>{children}</>;
 }
-
-/**
- * Hook for programmatic feature flag checks
- *
- * Usage:
- * const { isEnabled, allFlags } = useFeatureFlags();
- *
- * if (isEnabled('campaignDesigner')) {
- *   // Show campaign designer
- * }
- */
-export function useFeatureFlags(clientOverrides?: Partial<FeatureFlags>) {
-  const isEnabled = (feature: keyof FeatureFlags) => {
-    return isFeatureEnabled(feature, clientOverrides);
-  };
-
-  return {
-    isEnabled,
-  };
-}

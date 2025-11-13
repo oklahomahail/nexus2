@@ -3,9 +3,9 @@
 
 import { supabase } from "@/lib/supabaseClient";
 import type { Tables, TablesInsert, TablesUpdate } from "@/lib/supabaseClient";
+import type { Client } from "@/types/client";
 
 export type { Client } from "@/types/client";
-import type { Client } from "@/types/client";
 
 // Database row type from schema
 type ClientRow = Tables<"clients">;

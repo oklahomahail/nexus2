@@ -161,12 +161,9 @@ export const AnalyticsProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     void refreshRecentActivity();
 
-    const interval = setInterval(
-      () => {
-        void refreshRecentActivity();
-      },
-      30 * 1000,
-    ); // 30 seconds
+    const interval = setInterval(() => {
+      void refreshRecentActivity();
+    }, 30 * 1000); // 30 seconds
 
     return () => clearInterval(interval);
   }, [refreshRecentActivity]);

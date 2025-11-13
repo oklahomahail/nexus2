@@ -95,9 +95,7 @@ export default function Dashboard() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-center space-x-3">
             <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
             <div>
-              <p className="text-red-800 font-medium">
-                Failed to load metrics
-              </p>
+              <p className="text-red-800 font-medium">Failed to load metrics</p>
               <p className="text-red-600 text-sm">{platformError}</p>
             </div>
           </div>
