@@ -5,7 +5,8 @@ const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN;
 const ENVIRONMENT = import.meta.env.VITE_API_ENVIRONMENT || "development";
 
 export function initSentry() {
-  if (!SENTRY_DSN) {
+  // Skip if DSN is not configured or is still using placeholder
+  if (!SENTRY_DSN || SENTRY_DSN === "your_sentry_dsn_here") {
     console.warn("Sentry DSN not configured - monitoring disabled");
     return;
   }
