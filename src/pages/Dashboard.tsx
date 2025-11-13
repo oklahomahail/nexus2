@@ -8,48 +8,40 @@ import {
   Mail,
   BarChart3,
   PlusCircle,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { useAnalytics } from "@/context/analytics/AnalyticsContext";
+import { useClient } from "@/context/ClientContext";
+
 export default function Dashboard() {
-  // Mock data for overview - replace with real data from your services
-  const overviewStats = {
-    totalClients: 1,
-    activeCampaigns: 2,
-    totalDonors: 384,
-    monthlyRevenue: 32500,
-    avgGiftSize: 85,
+  const { platformMetrics, platformLoading, platformError, recentActivity } =
+    useAnalytics();
+  const { clients } = useClient();
+
+  // Get activity icon and color based on type
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case "donation":
+        return { icon: DollarSign, color: "text-green-400" };
+      case "campaign":
+        return { icon: Target, color: "text-blue-400" };
+      case "email":
+        return { icon: Mail, color: "text-purple-400" };
+      case "segment":
+        return { icon: Users, color: "text-orange-400" };
+      default:
+        return { icon: Calendar, color: "text-slate-400" };
+    }
   };
 
-  const recentActivity = [
-    {
-      id: "1",
-      type: "donation",
-      message: "New donation of $250 from Sarah Johnson",
-      time: "2 hours ago",
-      client: "Regional Food Bank",
-      icon: DollarSign,
-      color: "text-green-400",
-    },
-    {
-      id: "2",
-      type: "campaign",
-      message: "End of Year Campaign reached 65% of goal",
-      time: "5 hours ago",
-      client: "Regional Food Bank",
-      icon: Target,
-      color: "text-blue-400",
-    },
-    {
-      id: "3",
-      type: "email",
-      message: "Monthly newsletter sent to 450 subscribers",
-      time: "1 day ago",
-      client: "Regional Food Bank",
-      icon: Mail,
-      color: "text-purple-400",
-    },
-  ];
+  // Get client name by ID
+  const getClientName = (clientId: string) => {
+    const client = clients.find((c) => c.id === clientId);
+    return client?.name || "Unknown Client";
+  };
 
   const quickActions = [
     {
@@ -99,62 +91,93 @@ export default function Dashboard() {
         <h2 className="text-xl font-semibold text-slate-900 mb-6">
           Platform Overview
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-3">
-              <Building className="w-6 h-6 text-blue-500" />
-              <span className="text-xs text-slate-500">Total</span>
+        {platformError ? (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-center space-x-3">
+            <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
+            <div>
+              <p className="text-red-800 font-medium">
+                Failed to load metrics
+              </p>
+              <p className="text-red-600 text-sm">{platformError}</p>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
-              {overviewStats.totalClients}
-            </div>
-            <div className="text-slate-600 text-sm">Clients</div>
           </div>
+        ) : platformLoading ? (
+          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-12 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+            <span className="ml-3 text-slate-600">Loading metrics...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Building className="w-6 h-6 text-blue-500" />
+                <span className="text-xs text-slate-500">Total</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                {platformMetrics?.totalClients || 0}
+              </div>
+              <div className="text-slate-600 text-sm">Clients</div>
+            </div>
 
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-3">
-              <Target className="w-6 h-6 text-green-500" />
-              <span className="text-xs text-green-500">Active</span>
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Target className="w-6 h-6 text-green-500" />
+                <span className="text-xs text-green-500">Active</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                {platformMetrics?.activeCampaigns || 0}
+              </div>
+              <div className="text-slate-600 text-sm">Campaigns</div>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
-              {overviewStats.activeCampaigns}
-            </div>
-            <div className="text-slate-600 text-sm">Campaigns</div>
-          </div>
 
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-3">
-              <Users className="w-6 h-6 text-purple-500" />
-              <span className="text-xs text-purple-500">+12%</span>
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Users className="w-6 h-6 text-purple-500" />
+                {platformMetrics && platformMetrics.donorsChange !== 0 && (
+                  <span
+                    className={`text-xs ${platformMetrics.donorsChange > 0 ? "text-green-500" : "text-red-500"}`}
+                  >
+                    {platformMetrics.donorsChange > 0 ? "+" : ""}
+                    {platformMetrics.donorsChange.toFixed(1)}%
+                  </span>
+                )}
+              </div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                {platformMetrics?.totalDonors.toLocaleString() || 0}
+              </div>
+              <div className="text-slate-600 text-sm">Total Donors</div>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
-              {overviewStats.totalDonors.toLocaleString()}
-            </div>
-            <div className="text-slate-600 text-sm">Total Donors</div>
-          </div>
 
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-3">
-              <DollarSign className="w-6 h-6 text-emerald-500" />
-              <span className="text-xs text-emerald-500">+8%</span>
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <DollarSign className="w-6 h-6 text-emerald-500" />
+                {platformMetrics && platformMetrics.revenueChange !== 0 && (
+                  <span
+                    className={`text-xs ${platformMetrics.revenueChange > 0 ? "text-green-500" : "text-red-500"}`}
+                  >
+                    {platformMetrics.revenueChange > 0 ? "+" : ""}
+                    {platformMetrics.revenueChange.toFixed(1)}%
+                  </span>
+                )}
+              </div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                ${platformMetrics?.monthlyRevenue.toLocaleString() || 0}
+              </div>
+              <div className="text-slate-600 text-sm">Revenue (30d)</div>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
-              ${overviewStats.monthlyRevenue.toLocaleString()}
-            </div>
-            <div className="text-slate-600 text-sm">Revenue (30d)</div>
-          </div>
 
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center justify-between mb-3">
-              <TrendingUp className="w-6 h-6 text-orange-500" />
-              <span className="text-xs text-orange-500">$125 prev</span>
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
+              <div className="flex items-center justify-between mb-3">
+                <TrendingUp className="w-6 h-6 text-orange-500" />
+                <span className="text-xs text-slate-500">Avg</span>
+              </div>
+              <div className="text-2xl font-bold text-slate-900 mb-1">
+                ${platformMetrics?.avgGiftSize || 0}
+              </div>
+              <div className="text-slate-600 text-sm">Avg Gift Size</div>
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">
-              ${overviewStats.avgGiftSize}
-            </div>
-            <div className="text-slate-600 text-sm">Avg Gift Size</div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Quick Actions */}
@@ -208,15 +231,13 @@ export default function Dashboard() {
           ) : (
             <div className="divide-y divide-slate-200">
               {recentActivity.map((activity) => {
-                const Icon = activity.icon;
+                const { icon: Icon, color } = getActivityIcon(activity.type);
                 return (
                   <div
                     key={activity.id}
                     className="flex items-start space-x-4 p-6 hover:bg-slate-50 transition-colors"
                   >
-                    <div
-                      className={`p-2 rounded-lg bg-slate-100 ${activity.color}`}
-                    >
+                    <div className={`p-2 rounded-lg bg-slate-100 ${color}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -225,7 +246,7 @@ export default function Dashboard() {
                       </p>
                       <div className="flex items-center space-x-2 mt-1">
                         <p className="text-slate-500 text-xs">
-                          {activity.client}
+                          {getClientName(activity.clientId)}
                         </p>
                         <span className="text-slate-400">•</span>
                         <p className="text-slate-500 text-xs">
