@@ -3,9 +3,23 @@
 import path from "path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
+
 export default defineConfig({
   base: "/",
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Upload source maps to Sentry in production builds
+    process.env.VITE_API_ENVIRONMENT === "production" &&
+    process.env.SENTRY_AUTH_TOKEN
+      ? sentryVitePlugin({
+          org: process.env.SENTRY_ORG,
+          project: process.env.SENTRY_PROJECT,
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          telemetry: false, // Disable telemetry to Sentry
+        })
+      : null,
+  ].filter(Boolean),
 
   resolve: {
     alias: { "@": path.resolve(__dirname, "src") },

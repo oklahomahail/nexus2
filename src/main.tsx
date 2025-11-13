@@ -7,6 +7,10 @@ import "./index.css";
 
 import App from "./App";
 import { AppProviders } from "./context/AppProviders";
+import { initSentry } from "./lib/sentry";
+
+// Initialize Sentry monitoring (Phase 4)
+initSentry();
 
 const rootEl = document.getElementById("root");
 if (!rootEl) {
