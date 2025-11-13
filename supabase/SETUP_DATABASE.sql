@@ -668,17 +668,24 @@ FOR EACH ROW EXECUTE FUNCTION update_donor_aggregates();
 
 CREATE OR REPLACE FUNCTION update_campaign_aggregates()
 RETURNS TRIGGER AS $$
+DECLARE
+    target_campaign_id UUID;
 BEGIN
-    -- Update campaign's raised amount when donation changes
-    UPDATE campaigns
-    SET
-        raised_amount = (
-            SELECT COALESCE(SUM(amount_cents), 0) / 100.0
-            FROM donations
-            WHERE campaign_id = COALESCE(NEW.campaign_id, OLD.campaign_id)
-        ),
-        updated_at = NOW()
-    WHERE id = COALESCE(NEW.campaign_id, OLD.campaign_id);
+    -- Determine which campaign to update
+    target_campaign_id := COALESCE(NEW.campaign_id, OLD.campaign_id);
+
+    -- Only update if there's a campaign associated
+    IF target_campaign_id IS NOT NULL THEN
+        UPDATE campaigns
+        SET
+            raised_amount = (
+                SELECT COALESCE(SUM(amount_cents), 0) / 100.0
+                FROM donations
+                WHERE campaign_id = target_campaign_id
+            ),
+            updated_at = NOW()
+        WHERE id = target_campaign_id;
+    END IF;
 
     RETURN COALESCE(NEW, OLD);
 END;
@@ -686,8 +693,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_campaign_aggregates_on_donation
 AFTER INSERT OR UPDATE OR DELETE ON donations
-FOR EACH ROW EXECUTE FUNCTION update_campaign_aggregates()
-WHEN (NEW.campaign_id IS NOT NULL OR OLD.campaign_id IS NOT NULL);
+FOR EACH ROW EXECUTE FUNCTION update_campaign_aggregates();
 
 -- ============================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
