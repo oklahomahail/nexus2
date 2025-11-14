@@ -5,8 +5,9 @@
  * Allows selection from 5 campaign seasons with metadata
  */
 
-import React from "react";
 import { Calendar, Target, Heart, Zap, Sparkles } from "lucide-react";
+import React from "react";
+
 import { CampaignSeason, CAMPAIGN_SEASONS } from "@/types/track15.types";
 
 interface SeasonSelectionStepProps {
@@ -164,8 +165,8 @@ export default function SeasonSelectionStep({
             </p>
             <p className="pt-2 border-t border-indigo-200 dark:border-indigo-700">
               Your campaign will be pre-configured with Track15's proven
-              narrative framework, donor segmentation rules, and channel strategy
-              for this season.
+              narrative framework, donor segmentation rules, and channel
+              strategy for this season.
             </p>
           </div>
         </div>
@@ -177,9 +178,9 @@ export default function SeasonSelectionStep({
           What is a Campaign Season?
         </h4>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Track15 organizes fundraising into strategic seasons aligned with donor
-          psychology and giving patterns. Each season has a unique narrative
-          approach, optimal timing, and proven engagement strategies.
+          Track15 organizes fundraising into strategic seasons aligned with
+          donor psychology and giving patterns. Each season has a unique
+          narrative approach, optimal timing, and proven engagement strategies.
         </p>
       </div>
     </div>

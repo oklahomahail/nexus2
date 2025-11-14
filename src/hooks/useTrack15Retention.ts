@@ -5,8 +5,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { Track15RetentionSeries } from "@/types/track15.types";
+
 import { getRetentionSeries } from "@/services/track15Service";
+import { Track15RetentionSeries } from "@/types/track15.types";
 
 interface UseTrack15RetentionReturn {
   data: Track15RetentionSeries | null;
@@ -16,7 +17,7 @@ interface UseTrack15RetentionReturn {
 }
 
 export function useTrack15Retention(
-  campaignId: string | null
+  campaignId: string | null,
 ): UseTrack15RetentionReturn {
   const [data, setData] = useState<Track15RetentionSeries | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +37,9 @@ export function useTrack15Retention(
       setData(series);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Unknown error loading retention data";
+        err instanceof Error
+          ? err.message
+          : "Unknown error loading retention data";
       setError(errorMessage);
       setData(null);
     } finally {
@@ -45,8 +48,8 @@ export function useTrack15Retention(
   };
 
   useEffect(() => {
-    fetchRetention();
-  }, [campaignId]);
+    void fetchRetention();
+  }, [campaignId, fetchRetention]);
 
   return {
     data,

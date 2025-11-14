@@ -105,7 +105,7 @@ export interface DonorNarrativeInput {
  * Get voice profile for a client
  */
 export async function getVoiceProfile(
-  clientId: string
+  clientId: string,
 ): Promise<VoiceProfile | null> {
   const { data, error } = await supabase
     .from("client_voice")
@@ -130,7 +130,7 @@ export async function getVoiceProfile(
  */
 export async function upsertVoiceProfile(
   clientId: string,
-  input: VoiceProfileInput
+  input: VoiceProfileInput,
 ): Promise<VoiceProfile> {
   const { data, error } = await supabase
     .from("client_voice")
@@ -141,7 +141,7 @@ export async function upsertVoiceProfile(
       },
       {
         onConflict: "client_id",
-      }
+      },
     )
     .select()
     .single();
@@ -177,7 +177,7 @@ export async function deleteVoiceProfile(clientId: string): Promise<void> {
  * Get messaging profile for a client
  */
 export async function getMessagingProfile(
-  clientId: string
+  clientId: string,
 ): Promise<MessagingProfile | null> {
   const { data, error } = await supabase
     .from("client_messaging")
@@ -201,7 +201,7 @@ export async function getMessagingProfile(
  */
 export async function upsertMessagingProfile(
   clientId: string,
-  input: MessagingProfileInput
+  input: MessagingProfileInput,
 ): Promise<MessagingProfile> {
   const { data, error } = await supabase
     .from("client_messaging")
@@ -212,7 +212,7 @@ export async function upsertMessagingProfile(
       },
       {
         onConflict: "client_id",
-      }
+      },
     )
     .select()
     .single();
@@ -252,7 +252,7 @@ export async function listDonorNarratives(
   filters?: {
     storyType?: DonorStoryType;
     tags?: string[];
-  }
+  },
 ): Promise<DonorNarrative[]> {
   let query = supabase
     .from("client_donor_narratives")
@@ -282,7 +282,7 @@ export async function listDonorNarratives(
  * Get a single narrative by ID
  */
 export async function getDonorNarrative(
-  narrativeId: string
+  narrativeId: string,
 ): Promise<DonorNarrative> {
   const { data, error } = await supabase
     .from("client_donor_narratives")
@@ -303,7 +303,7 @@ export async function getDonorNarrative(
  */
 export async function createDonorNarrative(
   clientId: string,
-  input: DonorNarrativeInput
+  input: DonorNarrativeInput,
 ): Promise<DonorNarrative> {
   const { data, error } = await supabase
     .from("client_donor_narratives")
@@ -327,7 +327,7 @@ export async function createDonorNarrative(
  */
 export async function updateDonorNarrative(
   narrativeId: string,
-  input: Partial<DonorNarrativeInput>
+  input: Partial<DonorNarrativeInput>,
 ): Promise<DonorNarrative> {
   const { data, error } = await supabase
     .from("client_donor_narratives")
@@ -364,7 +364,7 @@ export async function deleteDonorNarrative(narrativeId: string): Promise<void> {
  */
 export async function searchDonorNarratives(
   clientId: string,
-  searchTerm: string
+  searchTerm: string,
 ): Promise<DonorNarrative[]> {
   const { data, error } = await supabase
     .from("client_donor_narratives")

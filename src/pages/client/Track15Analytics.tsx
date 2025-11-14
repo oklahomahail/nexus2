@@ -5,6 +5,7 @@
  */
 
 import { useSearchParams } from "react-router-dom";
+
 import Track15AnalyticsPanel from "@/panels/Track15AnalyticsPanel";
 
 export default function Track15Analytics() {

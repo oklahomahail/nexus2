@@ -5,8 +5,9 @@
  * Leverages brand_assets table
  */
 
+import { FolderOpen, Upload, Image, FileText, Palette } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { FolderOpen, Upload, Image, FileText, Palette, ExternalLink } from "lucide-react";
+
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandAssetType } from "@/services/brandService";
 
@@ -31,12 +32,11 @@ export default function ClientAssets({
   });
 
   useEffect(() => {
-    loadAssets();
+    void loadAssets();
   }, [loadAssets]);
 
-  const filteredAssets = filter === "all"
-    ? assets
-    : assets.filter((a) => a.asset_type === filter);
+  const filteredAssets =
+    filter === "all" ? assets : assets.filter((a) => a.asset_type === filter);
 
   const handleUpload = async () => {
     if (!newAsset.url || !profile) return;
@@ -78,7 +78,9 @@ export default function ClientAssets({
   };
 
   if (isLoading) {
-    return <div className="text-gray-600 dark:text-gray-400">Loading assets...</div>;
+    return (
+      <div className="text-gray-600 dark:text-gray-400">Loading assets...</div>
+    );
   }
 
   if (!profile) {
@@ -89,7 +91,8 @@ export default function ClientAssets({
           Create Brand Profile First
         </h3>
         <p className="text-gray-600 dark:text-gray-400">
-          Assets are linked to brand profiles. Please create a brand profile first.
+          Assets are linked to brand profiles. Please create a brand profile
+          first.
         </p>
       </div>
     );
@@ -131,7 +134,7 @@ export default function ClientAssets({
             >
               {type === "all" ? "All" : type.replace("_", " ")}
             </button>
-          )
+          ),
         )}
       </div>
 
@@ -157,7 +160,8 @@ export default function ClientAssets({
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredAssets.map((asset) => {
             const Icon = getAssetIcon(asset.asset_type);
-            const isImage = asset.asset_type === "photo" || asset.asset_type === "logo";
+            const isImage =
+              asset.asset_type === "photo" || asset.asset_type === "logo";
 
             return (
               <div
@@ -297,8 +301,8 @@ export default function ClientAssets({
       {/* Helpful Note */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-200">
-          <strong>Note:</strong> Assets are stored in your Brand Profile. For advanced
-          asset management and file uploads, visit the{" "}
+          <strong>Note:</strong> Assets are stored in your Brand Profile. For
+          advanced asset management and file uploads, visit the{" "}
           <a
             href="/brand"
             className="underline hover:text-blue-900 dark:hover:text-blue-100"

@@ -5,7 +5,6 @@
  * Build the donor journey through stages: awareness → engagement → consideration → conversion → gratitude
  */
 
-import React, { useState } from "react";
 import {
   Plus,
   Trash2,
@@ -19,12 +18,12 @@ import {
   Globe,
   AlertCircle,
 } from "lucide-react";
+import React, { useState } from "react";
+
 import {
   Track15NarrativeStep,
-  Track15StepFormData,
   Track15NarrativeStage,
   Track15Channel,
-  DonorSegment,
   NARRATIVE_STAGES,
   TRACK15_CHANNELS,
   SEGMENT_DEFINITIONS,
@@ -82,13 +81,15 @@ export default function NarrativeArcBuilder({
   onStepsUpdate,
 }: NarrativeArcBuilderProps) {
   const [editingStep, setEditingStep] = useState<number | null>(null);
-  const [newStepStage, setNewStepStage] = useState<Track15NarrativeStage>("awareness");
+  const [_newStepStage, _setNewStepStage] =
+    useState<Track15NarrativeStage>("awareness");
 
   const addNewStep = (stage: Track15NarrativeStage) => {
     const stageSteps = steps.filter((s) => s.stage === stage);
-    const newSequence = stageSteps.length > 0
-      ? Math.max(...stageSteps.map((s) => s.sequence)) + 1
-      : 1;
+    const newSequence =
+      stageSteps.length > 0
+        ? Math.max(...stageSteps.map((s) => s.sequence)) + 1
+        : 1;
 
     const newStep: Track15NarrativeStep = {
       id: `temp-${Date.now()}`,
@@ -107,9 +108,16 @@ export default function NarrativeArcBuilder({
     setEditingStep(steps.length);
   };
 
-  const updateStep = (index: number, updates: Partial<Track15NarrativeStep>) => {
+  const updateStep = (
+    index: number,
+    updates: Partial<Track15NarrativeStep>,
+  ) => {
     const updated = [...steps];
-    updated[index] = { ...updated[index], ...updates, updatedAt: new Date().toISOString() };
+    updated[index] = {
+      ...updated[index],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
     onStepsUpdate(updated);
   };
 
@@ -134,7 +142,7 @@ export default function NarrativeArcBuilder({
         .sort((a, b) => a.sequence - b.sequence);
       return acc;
     },
-    {} as Record<Track15NarrativeStage, Track15NarrativeStep[]>
+    {} as Record<Track15NarrativeStage, Track15NarrativeStep[]>,
   );
 
   return (
@@ -206,13 +214,16 @@ export default function NarrativeArcBuilder({
               {/* Steps in this stage */}
               <div className="space-y-2">
                 {stageSteps.length === 0 ? (
-                  <div className={`${colors.bg} ${colors.border} border-2 border-dashed rounded-lg p-6 text-center`}>
+                  <div
+                    className={`${colors.bg} ${colors.border} border-2 border-dashed rounded-lg p-6 text-center`}
+                  >
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      No steps yet. Click "Add Step" to create your first touchpoint.
+                      No steps yet. Click "Add Step" to create your first
+                      touchpoint.
                     </p>
                   </div>
                 ) : (
-                  stageSteps.map((step, idx) => {
+                  stageSteps.map((step, _idx) => {
                     const globalIndex = steps.indexOf(step);
                     const isEditing = editingStep === globalIndex;
 
@@ -228,7 +239,11 @@ export default function NarrativeArcBuilder({
                               <input
                                 type="text"
                                 value={step.title}
-                                onChange={(e) => updateStep(globalIndex, { title: e.target.value })}
+                                onChange={(e) =>
+                                  updateStep(globalIndex, {
+                                    title: e.target.value,
+                                  })
+                                }
                                 placeholder="Step title..."
                                 className="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                               />
@@ -250,7 +265,11 @@ export default function NarrativeArcBuilder({
 
                             <textarea
                               value={step.body}
-                              onChange={(e) => updateStep(globalIndex, { body: e.target.value })}
+                              onChange={(e) =>
+                                updateStep(globalIndex, {
+                                  body: e.target.value,
+                                })
+                              }
                               placeholder="Step content/messaging..."
                               rows={3}
                               className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -261,24 +280,29 @@ export default function NarrativeArcBuilder({
                                 Channels
                               </label>
                               <div className="flex flex-wrap gap-2">
-                                {Object.entries(TRACK15_CHANNELS).map(([key, channel]) => {
-                                  const channelKey = key as Track15Channel;
-                                  const isSelected = step.channels.includes(channelKey);
-                                  return (
-                                    <button
-                                      key={key}
-                                      onClick={() => toggleChannel(globalIndex, channelKey)}
-                                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                                        isSelected
-                                          ? "bg-indigo-600 text-white"
-                                          : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                                      }`}
-                                    >
-                                      {CHANNEL_ICONS[channelKey]}
-                                      {channel.name}
-                                    </button>
-                                  );
-                                })}
+                                {Object.entries(TRACK15_CHANNELS).map(
+                                  ([key, channel]) => {
+                                    const channelKey = key as Track15Channel;
+                                    const isSelected =
+                                      step.channels.includes(channelKey);
+                                    return (
+                                      <button
+                                        key={key}
+                                        onClick={() =>
+                                          toggleChannel(globalIndex, channelKey)
+                                        }
+                                        className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                                          isSelected
+                                            ? "bg-indigo-600 text-white"
+                                            : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                                        }`}
+                                      >
+                                        {CHANNEL_ICONS[channelKey]}
+                                        {channel.name}
+                                      </button>
+                                    );
+                                  },
+                                )}
                               </div>
                             </div>
 
@@ -289,7 +313,12 @@ export default function NarrativeArcBuilder({
                                 </label>
                                 <select
                                   value={step.primarySegment || ""}
-                                  onChange={(e) => updateStep(globalIndex, { primarySegment: e.target.value || undefined })}
+                                  onChange={(e) =>
+                                    updateStep(globalIndex, {
+                                      primarySegment:
+                                        e.target.value || undefined,
+                                    })
+                                  }
                                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
                                 >
                                   <option value="">All segments</option>
@@ -308,7 +337,11 @@ export default function NarrativeArcBuilder({
                                 <input
                                   type="text"
                                   value={step.callToAction || ""}
-                                  onChange={(e) => updateStep(globalIndex, { callToAction: e.target.value || undefined })}
+                                  onChange={(e) =>
+                                    updateStep(globalIndex, {
+                                      callToAction: e.target.value || undefined,
+                                    })
+                                  }
                                   placeholder="e.g., Donate Now"
                                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm"
                                 />
@@ -324,7 +357,11 @@ export default function NarrativeArcBuilder({
                             <div className="flex items-start justify-between mb-2">
                               <div className="flex-1">
                                 <h4 className="font-semibold text-gray-900 dark:text-white">
-                                  {step.title || <span className="text-gray-400 italic">Untitled Step</span>}
+                                  {step.title || (
+                                    <span className="text-gray-400 italic">
+                                      Untitled Step
+                                    </span>
+                                  )}
                                 </h4>
                                 {step.body && (
                                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
@@ -351,7 +388,10 @@ export default function NarrativeArcBuilder({
 
                             {step.callToAction && (
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                CTA: <span className="font-medium">{step.callToAction}</span>
+                                CTA:{" "}
+                                <span className="font-medium">
+                                  {step.callToAction}
+                                </span>
                               </div>
                             )}
                           </div>
@@ -375,10 +415,19 @@ export default function NarrativeArcBuilder({
               Track15 Narrative Arc Best Practices
             </h4>
             <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
-              <li>• Build momentum: start soft (awareness), increase intensity toward conversion</li>
-              <li>• Use multiple channels per stage for better reach and reinforcement</li>
+              <li>
+                • Build momentum: start soft (awareness), increase intensity
+                toward conversion
+              </li>
+              <li>
+                • Use multiple channels per stage for better reach and
+                reinforcement
+              </li>
               <li>• Tailor messaging to specific segments when needed</li>
-              <li>• Always close with gratitude - donor retention starts after the gift</li>
+              <li>
+                • Always close with gratitude - donor retention starts after the
+                gift
+              </li>
             </ul>
           </div>
         </div>

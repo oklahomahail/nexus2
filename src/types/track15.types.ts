@@ -11,6 +11,9 @@
 
 export type Track15Season = "spring" | "summer" | "fall" | "winter";
 
+// Alias for backwards compatibility
+export type CampaignSeason = Track15Season;
+
 export const TRACK15_SEASONS = {
   spring: {
     name: "Spring Cultivation",
@@ -41,6 +44,9 @@ export const TRACK15_SEASONS = {
     defaultDuration: 56,
   },
 } as const;
+
+// Alias for backwards compatibility
+export const CAMPAIGN_SEASONS = TRACK15_SEASONS;
 
 // ============================================================================
 // WORKFLOW STAGES
@@ -294,7 +300,13 @@ export const TRACK15_TEMPLATES: Record<string, Track15Template> = {
     },
     suggestedChannels: ["email", "direct_mail", "social"],
     estimatedDuration: 84,
-    narrativeStages: ["awareness", "engagement", "consideration", "conversion", "gratitude"],
+    narrativeStages: [
+      "awareness",
+      "engagement",
+      "consideration",
+      "conversion",
+      "gratitude",
+    ],
   },
   year_end: {
     key: "year_end",
@@ -307,7 +319,13 @@ export const TRACK15_TEMPLATES: Record<string, Track15Template> = {
     },
     suggestedChannels: ["email", "direct_mail", "social"],
     estimatedDuration: 56,
-    narrativeStages: ["awareness", "engagement", "consideration", "conversion", "gratitude"],
+    narrativeStages: [
+      "awareness",
+      "engagement",
+      "consideration",
+      "conversion",
+      "gratitude",
+    ],
   },
   emergency: {
     key: "emergency",
@@ -333,7 +351,13 @@ export const TRACK15_TEMPLATES: Record<string, Track15Template> = {
     },
     suggestedChannels: ["email", "social", "events"],
     estimatedDuration: 60,
-    narrativeStages: ["awareness", "engagement", "consideration", "conversion", "gratitude"],
+    narrativeStages: [
+      "awareness",
+      "engagement",
+      "consideration",
+      "conversion",
+      "gratitude",
+    ],
   },
 };
 

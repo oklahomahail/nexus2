@@ -5,8 +5,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { Track15LiftMetrics } from "@/types/track15.types";
+
 import { getLiftMetrics } from "@/services/track15Service";
+import { Track15LiftMetrics } from "@/types/track15.types";
 
 interface UseTrack15MetricsReturn {
   metrics: Track15LiftMetrics | null;
@@ -16,7 +17,7 @@ interface UseTrack15MetricsReturn {
 }
 
 export function useTrack15Metrics(
-  campaignId: string | null
+  campaignId: string | null,
 ): UseTrack15MetricsReturn {
   const [metrics, setMetrics] = useState<Track15LiftMetrics | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +37,9 @@ export function useTrack15Metrics(
       setMetrics(data);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Unknown error loading lift metrics";
+        err instanceof Error
+          ? err.message
+          : "Unknown error loading lift metrics";
       setError(errorMessage);
       setMetrics(null);
     } finally {
@@ -45,8 +48,8 @@ export function useTrack15Metrics(
   };
 
   useEffect(() => {
-    fetchMetrics();
-  }, [campaignId]);
+    void fetchMetrics();
+  }, [campaignId, fetchMetrics]);
 
   return {
     metrics,

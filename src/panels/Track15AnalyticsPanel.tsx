@@ -5,15 +5,16 @@
  * Shows lift metrics, segment performance, and retention over time
  */
 
-import React, { useState, useEffect } from "react";
 import { Sparkles, TrendingUp, ChevronDown } from "lucide-react";
-import { useClient } from "@/context/ClientContext";
-import { useTrack15Retention } from "@/hooks/useTrack15Retention";
-import { useTrack15Metrics } from "@/hooks/useTrack15Metrics";
-import { useTrack15Segments } from "@/hooks/useTrack15Segments";
+import React, { useState, useEffect } from "react";
+
 import Track15LiftMetrics from "@/components/analytics/Track15LiftMetrics";
-import Track15SegmentPerformance from "@/components/analytics/Track15SegmentPerformance";
 import Track15RetentionChart from "@/components/analytics/Track15RetentionChart";
+import Track15SegmentPerformance from "@/components/analytics/Track15SegmentPerformance";
+import { useClient } from "@/context/ClientContext";
+import { useTrack15Metrics } from "@/hooks/useTrack15Metrics";
+import { useTrack15Retention } from "@/hooks/useTrack15Retention";
+import { useTrack15Segments } from "@/hooks/useTrack15Segments";
 import { supabase } from "@/lib/supabaseClient";
 
 interface Campaign {
@@ -32,7 +33,7 @@ export default function Track15AnalyticsPanel({
 }: Track15AnalyticsPanelProps) {
   const { currentClient } = useClient();
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
-    initialCampaignId || null
+    initialCampaignId || null,
   );
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loadingCampaigns, setLoadingCampaigns] = useState(false);
@@ -65,20 +66,20 @@ export default function Track15AnalyticsPanel({
       }
     };
 
-    fetchCampaigns();
-  }, [currentClient?.id]);
+    void fetchCampaigns();
+  }, [currentClient?.id, selectedCampaignId]);
 
   // Fetch data using hooks
   const {
     metrics,
     isLoading: metricsLoading,
-    error: metricsError,
+    error: _metricsError,
   } = useTrack15Metrics(selectedCampaignId);
 
   const {
     segments,
     isLoading: segmentsLoading,
-    error: segmentsError,
+    error: _segmentsError,
   } = useTrack15Segments(selectedCampaignId);
 
   const {
@@ -96,19 +97,16 @@ export default function Track15AnalyticsPanel({
   }
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen track15-bg px-4 py-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <header className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Track15 Performance Analytics
-              </h1>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Advanced donor engagement and campaign lift metrics
+            <h1 className="text-3xl font-semibold font-track15-heading text-track15-primary">
+              Track15 Performance
+            </h1>
+            <p className="text-sm track15-text-muted mt-1">
+              Campaign analytics and donor journey insights
             </p>
           </div>
 
@@ -118,14 +116,17 @@ export default function Track15AnalyticsPanel({
               <div className="relative">
                 <select
                   value={selectedCampaignId || ""}
-                  onChange={(e) => setSelectedCampaignId(e.target.value || null)}
-                  className="appearance-none px-4 py-2 pr-10 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  onChange={(e) =>
+                    setSelectedCampaignId(e.target.value || null)
+                  }
+                  className="appearance-none px-4 py-2.5 pr-10 rounded-lg border track15-border track15-surface track15-text focus:outline-none focus:ring-2 focus:ring-track15-primary/20"
                   disabled={loadingCampaigns}
                 >
                   {campaigns.map((campaign) => (
                     <option key={campaign.id} value={campaign.id}>
                       {campaign.name}
-                      {campaign.track15_season && ` (${campaign.track15_season})`}
+                      {campaign.track15_season &&
+                        ` (${campaign.track15_season})`}
                     </option>
                   ))}
                 </select>
@@ -133,38 +134,37 @@ export default function Track15AnalyticsPanel({
               </div>
             )}
 
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-lg">
+              <TrendingUp className="w-4 h-4 text-emerald-600" />
+              <span className="text-xs font-medium text-emerald-700">
                 Track15 Active
               </span>
             </div>
           </div>
-        </div>
-      </div>
+        </header>
 
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+        {/* Content */}
+        <div className="space-y-6">
           {/* No Campaign Selected */}
-          {!selectedCampaignId && campaigns.length === 0 && !loadingCampaigns && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-12 border border-gray-200 dark:border-gray-700 text-center">
-              <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                No Track15 Campaigns Yet
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Create your first Track15 campaign to see performance analytics here.
-              </p>
-            </div>
-          )}
+          {!selectedCampaignId &&
+            campaigns.length === 0 &&
+            !loadingCampaigns && (
+              <div className="track15-card p-12 text-center">
+                <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold font-track15-heading text-track15-primary mb-2">
+                  No Track15 Campaigns Yet
+                </h3>
+                <p className="track15-text-muted mb-4">
+                  Create your first Track15 campaign to see performance
+                  analytics here.
+                </p>
+              </div>
+            )}
 
           {/* Loading State */}
           {loadingCampaigns && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-12 border border-gray-200 dark:border-gray-700 text-center">
-              <div className="text-gray-600 dark:text-gray-400">
-                Loading campaigns...
-              </div>
+            <div className="track15-card p-12 text-center">
+              <div className="track15-text-muted">Loading campaigns...</div>
             </div>
           )}
 
@@ -173,7 +173,10 @@ export default function Track15AnalyticsPanel({
             <>
               {/* Lift Metrics */}
               {metrics ? (
-                <Track15LiftMetrics metrics={metrics} loading={metricsLoading} />
+                <Track15LiftMetrics
+                  metrics={metrics}
+                  loading={metricsLoading}
+                />
               ) : metricsLoading ? (
                 <Track15LiftMetrics
                   metrics={{
@@ -202,40 +205,41 @@ export default function Track15AnalyticsPanel({
           )}
 
           {/* Track15 Methodology Info */}
-          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-6 border border-indigo-200 dark:border-indigo-800">
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border border-indigo-200">
             <div className="flex items-start gap-4">
-              <Sparkles className="w-6 h-6 text-indigo-600 dark:text-indigo-400 flex-shrink-0 mt-1" />
+              <Sparkles className="w-6 h-6 text-indigo-600 flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold font-track15-heading text-track15-primary mb-2">
                   About Track15 Methodology
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                <p className="text-sm track15-text mb-3">
                   Track15 is a proven fundraising framework that combines donor
-                  segmentation, narrative arc design, and multi-channel engagement to
-                  maximize campaign performance.
+                  segmentation, narrative arc design, and multi-channel
+                  engagement to maximize campaign performance.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <div className="font-semibold text-indigo-700 dark:text-indigo-300 mb-1">
+                    <div className="font-semibold text-indigo-700 mb-1">
                       Narrative Stages
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">
-                      Awareness → Engagement → Consideration → Conversion → Gratitude
+                    <div className="track15-text-muted">
+                      Awareness → Engagement → Consideration → Conversion →
+                      Gratitude
                     </div>
                   </div>
                   <div>
-                    <div className="font-semibold text-indigo-700 dark:text-indigo-300 mb-1">
+                    <div className="font-semibold text-indigo-700 mb-1">
                       Donor Segmentation
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">
+                    <div className="track15-text-muted">
                       7 strategic segments with tailored messaging
                     </div>
                   </div>
                   <div>
-                    <div className="font-semibold text-indigo-700 dark:text-indigo-300 mb-1">
+                    <div className="font-semibold text-indigo-700 mb-1">
                       Performance Tracking
                     </div>
-                    <div className="text-gray-600 dark:text-gray-400">
+                    <div className="track15-text-muted">
                       Lift metrics vs. baseline across all campaigns
                     </div>
                   </div>

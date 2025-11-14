@@ -5,8 +5,9 @@
  * Leverages brand_corpus table with type filtering
  */
 
+import { FileText, Plus, Search } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { FileText, Plus, Search, ExternalLink } from "lucide-react";
+
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 
 interface SOPsProps {
@@ -26,18 +27,20 @@ export default function SOPs({ clientId, onSaveSuccess }: SOPsProps) {
   });
 
   useEffect(() => {
-    loadCorpus();
+    void loadCorpus();
   }, [loadCorpus]);
 
   // Filter to only show SOP-type corpus entries
   const sops = corpus.filter(
-    (entry) => entry.source_type === "manual" && entry.title?.toLowerCase().includes("sop")
+    (entry) =>
+      entry.source_type === "manual" &&
+      entry.title?.toLowerCase().includes("sop"),
   );
 
   const filteredSOPs = sops.filter(
     (sop) =>
       sop.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sop.content.toLowerCase().includes(searchTerm.toLowerCase())
+      sop.content.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const handleAddSOP = async () => {
@@ -69,7 +72,9 @@ export default function SOPs({ clientId, onSaveSuccess }: SOPsProps) {
   };
 
   if (isLoading) {
-    return <div className="text-gray-600 dark:text-gray-400">Loading SOPs...</div>;
+    return (
+      <div className="text-gray-600 dark:text-gray-400">Loading SOPs...</div>
+    );
   }
 
   return (
@@ -220,8 +225,8 @@ export default function SOPs({ clientId, onSaveSuccess }: SOPsProps) {
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-200">
           <strong>Note:</strong> SOPs are stored in your Brand Corpus and can be
-          referenced by AI when generating campaigns. For detailed corpus management,
-          visit the{" "}
+          referenced by AI when generating campaigns. For detailed corpus
+          management, visit the{" "}
           <a
             href="/brand"
             className="underline hover:text-blue-900 dark:hover:text-blue-100"

@@ -5,8 +5,9 @@
  * Wraps the existing BrandProfilePanel functionality
  */
 
-import React from "react";
 import { Sparkles, ExternalLink } from "lucide-react";
+import React from "react";
+
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 
 interface BrandGuidelinesProps {
@@ -16,12 +17,16 @@ interface BrandGuidelinesProps {
 
 export default function BrandGuidelines({
   clientId,
-  onSaveSuccess,
+  onSaveSuccess: _onSaveSuccess,
 }: BrandGuidelinesProps) {
   const { profile, isLoading } = useBrandProfile(clientId);
 
   if (isLoading) {
-    return <div className="text-gray-600 dark:text-gray-400">Loading brand profile...</div>;
+    return (
+      <div className="text-gray-600 dark:text-gray-400">
+        Loading brand profile...
+      </div>
+    );
   }
 
   if (!profile) {

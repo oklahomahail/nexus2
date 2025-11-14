@@ -5,8 +5,9 @@
  * Defines the campaign's narrative foundation
  */
 
-import React, { useState } from "react";
 import { Sparkles, AlertCircle, CheckCircle } from "lucide-react";
+import React, { useState } from "react";
+
 import {
   Track15CoreStory,
   DONOR_MOTIVATIONS,
@@ -196,12 +197,17 @@ export default function CoreStoryBuilder({
               Track15 Core Story Best Practices
             </h4>
             <ul className="text-xs text-gray-700 dark:text-gray-300 space-y-1">
-              <li>• Keep your headline clear, compelling, and emotionally resonant</li>
-              <li>• Focus on donor impact, not organizational needs</li>
-              <li>• Choose one primary motivation - trying to hit multiple dilutes impact</li>
               <li>
-                • Your value proposition should answer: "What will I accomplish by
-                giving?"
+                • Keep your headline clear, compelling, and emotionally resonant
+              </li>
+              <li>• Focus on donor impact, not organizational needs</li>
+              <li>
+                • Choose one primary motivation - trying to hit multiple dilutes
+                impact
+              </li>
+              <li>
+                • Your value proposition should answer: "What will I accomplish
+                by giving?"
               </li>
             </ul>
           </div>

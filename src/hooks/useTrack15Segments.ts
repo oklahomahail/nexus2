@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useState } from "react";
+
 import {
   getSegmentPerformance,
   type SegmentPerformanceData,
@@ -18,7 +19,7 @@ interface UseTrack15SegmentsReturn {
 }
 
 export function useTrack15Segments(
-  campaignId: string | null
+  campaignId: string | null,
 ): UseTrack15SegmentsReturn {
   const [segments, setSegments] = useState<SegmentPerformanceData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,8 +50,8 @@ export function useTrack15Segments(
   };
 
   useEffect(() => {
-    fetchSegments();
-  }, [campaignId]);
+    void fetchSegments();
+  }, [campaignId, fetchSegments]);
 
   return {
     segments,

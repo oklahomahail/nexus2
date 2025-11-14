@@ -578,9 +578,7 @@ export async function getSegmentPerformance(
       recentThreshold.setDate(recentThreshold.getDate() - 90);
 
       const recentDonors = segmentDonors.filter((donor) =>
-        donor.donations?.some(
-          (d: any) => new Date(d.date) >= recentThreshold,
-        ),
+        donor.donations?.some((d: any) => new Date(d.date) >= recentThreshold),
       );
       const retentionRate =
         donorCount > 0 ? (recentDonors.length / donorCount) * 100 : 0;
@@ -610,8 +608,16 @@ export async function getRetentionMetrics(
 ): Promise<RetentionMetrics> {
   try {
     const now = new Date();
-    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-    const twoYearsAgo = new Date(now.getFullYear() - 2, now.getMonth(), now.getDate());
+    const oneYearAgo = new Date(
+      now.getFullYear() - 1,
+      now.getMonth(),
+      now.getDate(),
+    );
+    const twoYearsAgo = new Date(
+      now.getFullYear() - 2,
+      now.getMonth(),
+      now.getDate(),
+    );
 
     // Get donations for current and previous year
     const { data: donations, error } = await supabase
@@ -682,9 +688,8 @@ export async function getRetentionMetrics(
 
     // Average gift frequency
     const totalDonations = donations?.length || 0;
-    const totalUniqueDonors = new Set(
-      donations?.map((d: any) => d.donor_id),
-    ).size;
+    const totalUniqueDonors = new Set(donations?.map((d: any) => d.donor_id))
+      .size;
     const averageGiftFrequency =
       totalUniqueDonors > 0 ? totalDonations / totalUniqueDonors : 0;
 
@@ -840,7 +845,10 @@ export async function getCampaignLift(
     if (donationsError) throw donationsError;
 
     // Group by week
-    const weeklyData = new Map<string, { revenue: number; donors: Set<string> }>();
+    const weeklyData = new Map<
+      string,
+      { revenue: number; donors: Set<string> }
+    >();
 
     donations?.forEach((donation: any) => {
       const date = new Date(donation.date);
@@ -964,9 +972,7 @@ export async function getChannelAttribution(
       conversions: data.conversions,
       revenue: Math.round(data.revenue),
       averageGiftSize:
-        data.conversions > 0
-          ? Math.round(data.revenue / data.conversions)
-          : 0,
+        data.conversions > 0 ? Math.round(data.revenue / data.conversions) : 0,
       conversionRate:
         data.touchpoints > 0
           ? Math.round((data.conversions / data.touchpoints) * 100 * 10) / 10

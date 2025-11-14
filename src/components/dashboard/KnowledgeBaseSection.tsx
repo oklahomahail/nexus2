@@ -5,9 +5,16 @@
  * Compact summary view
  */
 
+import {
+  Library,
+  ArrowRight,
+  Sparkles,
+  MessageCircle,
+  Target,
+} from "lucide-react";
 import React from "react";
-import { Library, ArrowRight, Sparkles, MessageCircle, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 import { useClient } from "@/context/ClientContext";
 
 export default function KnowledgeBaseSection() {
@@ -104,25 +111,35 @@ export default function KnowledgeBaseSection() {
             onClick={() => navigate(`/clients/${clientId}/knowledge?tab=voice`)}
             className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">Voice & Tone</div>
+            <div className="text-sm text-gray-900 dark:text-white">
+              Voice & Tone
+            </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Communication guidelines
             </div>
           </button>
           <button
-            onClick={() => navigate(`/clients/${clientId}/knowledge?tab=messaging`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/knowledge?tab=messaging`)
+            }
             className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">Messaging Pillars</div>
+            <div className="text-sm text-gray-900 dark:text-white">
+              Messaging Pillars
+            </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Core narrative themes
             </div>
           </button>
           <button
-            onClick={() => navigate(`/clients/${clientId}/knowledge?tab=narratives`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/knowledge?tab=narratives`)
+            }
             className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">Donor Narratives</div>
+            <div className="text-sm text-gray-900 dark:text-white">
+              Donor Narratives
+            </div>
             <div className="text-xs text-gray-500 dark:text-gray-400">
               {kbStats.donorStories} impact stories
             </div>
@@ -139,8 +156,8 @@ export default function KnowledgeBaseSection() {
               Power Your Campaigns
             </h4>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-              Your knowledge base feeds AI campaign generation with authentic brand
-              voice and proven narratives.
+              Your knowledge base feeds AI campaign generation with authentic
+              brand voice and proven narratives.
             </p>
             <button
               onClick={() => navigate(`/clients/${clientId}/knowledge`)}

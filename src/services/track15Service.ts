@@ -7,7 +7,6 @@
 
 import { supabase } from "@/lib/supabaseClient";
 import {
-  Track15Campaign,
   Track15CampaignMeta,
   Track15CoreStory,
   Track15NarrativeStep,
@@ -26,13 +25,13 @@ import {
  * Get Track15 meta for a campaign
  */
 export async function getTrack15Meta(
-  campaignId: string
+  campaignId: string,
 ): Promise<Track15CampaignMeta | null> {
   try {
     const { data: campaign, error } = await supabase
       .from("campaigns")
       .select(
-        "track15_enabled, track15_season, track15_template_key, track15_stage, track15_core_headline, track15_core_summary, track15_value_proposition, track15_donor_motivation"
+        "track15_enabled, track15_season, track15_template_key, track15_stage, track15_core_headline, track15_core_summary, track15_value_proposition, track15_donor_motivation",
       )
       .eq("id", campaignId)
       .single();
@@ -70,7 +69,7 @@ export async function getTrack15Meta(
  */
 export async function updateTrack15Meta(
   campaignId: string,
-  meta: Partial<Track15CampaignMeta>
+  meta: Partial<Track15CampaignMeta>,
 ): Promise<boolean> {
   try {
     const updateData: Record<string, any> = {};
@@ -112,7 +111,7 @@ export async function updateTrack15Meta(
 export async function enableTrack15(
   campaignId: string,
   season: Track15Season,
-  templateKey?: string
+  templateKey?: string,
 ): Promise<boolean> {
   try {
     const { error } = await supabase
@@ -138,7 +137,7 @@ export async function enableTrack15(
  */
 export async function updateTrack15Stage(
   campaignId: string,
-  stage: Track15Stage
+  stage: Track15Stage,
 ): Promise<boolean> {
   try {
     const { error } = await supabase
@@ -163,7 +162,7 @@ export async function updateTrack15Stage(
  */
 export async function updateCoreStory(
   campaignId: string,
-  coreStory: Partial<Track15CoreStory>
+  coreStory: Partial<Track15CoreStory>,
 ): Promise<boolean> {
   try {
     const updateData: Record<string, any> = {};
@@ -210,7 +209,7 @@ export async function updateCoreStory(
  * Get narrative steps for a campaign
  */
 export async function getNarrativeSteps(
-  campaignId: string
+  campaignId: string,
 ): Promise<Track15NarrativeStep[]> {
   try {
     const { data, error } = await supabase
@@ -250,7 +249,10 @@ export async function getNarrativeSteps(
  */
 export async function createNarrativeStep(
   campaignId: string,
-  step: Omit<Track15NarrativeStep, "id" | "campaignId" | "createdAt" | "updatedAt">
+  step: Omit<
+    Track15NarrativeStep,
+    "id" | "campaignId" | "createdAt" | "updatedAt"
+  >,
 ): Promise<Track15NarrativeStep | null> {
   try {
     const { data, error } = await supabase
@@ -298,7 +300,7 @@ export async function updateNarrativeStep(
   stepId: string,
   updates: Partial<
     Omit<Track15NarrativeStep, "id" | "campaignId" | "createdAt" | "updatedAt">
-  >
+  >,
 ): Promise<boolean> {
   try {
     const updateData: Record<string, any> = {};
@@ -350,7 +352,7 @@ export async function deleteNarrativeStep(stepId: string): Promise<boolean> {
  */
 export async function bulkUpdateNarrativeSteps(
   campaignId: string,
-  steps: Track15NarrativeStep[]
+  steps: Track15NarrativeStep[],
 ): Promise<boolean> {
   try {
     // Delete existing steps
@@ -408,7 +410,7 @@ export async function bulkUpdateNarrativeSteps(
  * Get lift metrics for a campaign
  */
 export async function getLiftMetrics(
-  campaignId: string
+  campaignId: string,
 ): Promise<Track15LiftMetrics | null> {
   try {
     const { data, error } = await supabase
@@ -446,7 +448,7 @@ export async function getLiftMetrics(
  */
 export async function updateLiftMetrics(
   campaignId: string,
-  metrics: Partial<Track15LiftMetrics>
+  metrics: Partial<Track15LiftMetrics>,
 ): Promise<boolean> {
   try {
     const updateData: Record<string, any> = {
@@ -494,7 +496,7 @@ export async function updateLiftMetrics(
  * Calculates retention over time vs baseline
  */
 export async function getRetentionSeries(
-  campaignId: string
+  campaignId: string,
 ): Promise<Track15RetentionSeries | null> {
   try {
     // Get campaign info
@@ -541,12 +543,16 @@ export async function getRetentionSeries(
         .lt("donation_date", currentDate.toISOString());
 
       if (previousDonations && previousDonations.length > 0) {
-        const previousDonorIds = new Set(previousDonations.map((d) => d.donor_id));
-        const currentDonorIds = new Set(periodDonations?.map((d) => d.donor_id) || []);
+        const previousDonorIds = new Set(
+          previousDonations.map((d) => d.donor_id),
+        );
+        const currentDonorIds = new Set(
+          periodDonations?.map((d) => d.donor_id) || [],
+        );
 
         // Count how many previous donors gave again
         const retainedCount = Array.from(previousDonorIds).filter((id) =>
-          currentDonorIds.has(id)
+          currentDonorIds.has(id),
         ).length;
 
         const campaignRetention = retainedCount / previousDonorIds.size;
@@ -582,16 +588,20 @@ export async function getRetentionSeries(
               if (!cPrevDonations || cPrevDonations.length === 0) return null;
 
               const cPrevIds = new Set(cPrevDonations.map((d) => d.donor_id));
-              const cCurrentIds = new Set(cCurrentDonations?.map((d) => d.donor_id) || []);
+              const cCurrentIds = new Set(
+                cCurrentDonations?.map((d) => d.donor_id) || [],
+              );
               const cRetained = Array.from(cPrevIds).filter((id) =>
-                cCurrentIds.has(id)
+                cCurrentIds.has(id),
               ).length;
 
               return cRetained / cPrevIds.size;
-            })
+            }),
           );
 
-          const validRates = retentionRates.filter((r) => r !== null) as number[];
+          const validRates = retentionRates.filter(
+            (r) => r !== null,
+          ) as number[];
           if (validRates.length > 0) {
             baselineRetention =
               validRates.reduce((sum, r) => sum + r, 0) / validRates.length;
@@ -637,11 +647,11 @@ export interface SegmentPerformanceData {
  * Get segment performance data for a campaign
  */
 export async function getSegmentPerformance(
-  campaignId: string
+  campaignId: string,
 ): Promise<SegmentPerformanceData[]> {
   try {
     // Get campaign info
-    const { data: campaign, error: campaignError } = await supabase
+    const { data: _campaign, error: campaignError } = await supabase
       .from("campaigns")
       .select("client_id, start_date, end_date")
       .eq("id", campaignId)
@@ -670,7 +680,10 @@ export async function getSegmentPerformance(
         .eq("campaign_id", campaignId);
 
       if (donationsError) {
-        console.error(`Error fetching donations for segment ${segment}:`, donationsError);
+        console.error(
+          `Error fetching donations for segment ${segment}:`,
+          donationsError,
+        );
         continue;
       }
 
@@ -734,7 +747,7 @@ export async function getSegmentPerformance(
  * Get complete Track15 campaign data
  */
 export async function getCompleteTrack15Campaign(
-  campaignId: string
+  campaignId: string,
 ): Promise<Track15CampaignMeta | null> {
   try {
     const [meta, steps, metrics] = await Promise.all([

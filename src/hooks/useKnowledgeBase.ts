@@ -17,7 +17,6 @@ import {
   getCompleteKnowledgeBase,
   upsertVoiceProfile,
   upsertMessagingProfile,
-  listDonorNarratives,
   createDonorNarrative,
   updateDonorNarrative,
   deleteDonorNarrative,
@@ -46,7 +45,10 @@ interface UseKnowledgeBaseReturn {
 
   // Narrative operations
   addNarrative: (input: DonorNarrativeInput) => Promise<void>;
-  editNarrative: (id: string, updates: Partial<DonorNarrativeInput>) => Promise<void>;
+  editNarrative: (
+    id: string,
+    updates: Partial<DonorNarrativeInput>,
+  ) => Promise<void>;
   removeNarrative: (id: string) => Promise<void>;
   searchNarratives: (query: string) => Promise<DonorNarrative[]>;
 
@@ -96,9 +98,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
 
       try {
         const updated = await upsertVoiceProfile(clientId, updates);
-        setKnowledgeBase((prev) =>
-          prev ? { ...prev, voice: updated } : null
-        );
+        setKnowledgeBase((prev) => (prev ? { ...prev, voice: updated } : null));
       } catch (err) {
         console.error("Failed to update voice profile:", err);
         setError("Failed to update voice profile");
@@ -107,7 +107,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
         setIsLoading(false);
       }
     },
-    [clientId]
+    [clientId],
   );
 
   // Messaging operations
@@ -121,7 +121,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
       try {
         const updated = await upsertMessagingProfile(clientId, updates);
         setKnowledgeBase((prev) =>
-          prev ? { ...prev, messaging: updated } : null
+          prev ? { ...prev, messaging: updated } : null,
         );
       } catch (err) {
         console.error("Failed to update messaging profile:", err);
@@ -131,7 +131,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
         setIsLoading(false);
       }
     },
-    [clientId]
+    [clientId],
   );
 
   // Narrative operations
@@ -145,9 +145,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
       try {
         const created = await createDonorNarrative(clientId, input);
         setKnowledgeBase((prev) =>
-          prev
-            ? { ...prev, narratives: [created, ...prev.narratives] }
-            : null
+          prev ? { ...prev, narratives: [created, ...prev.narratives] } : null,
         );
       } catch (err) {
         console.error("Failed to create narrative:", err);
@@ -157,7 +155,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
         setIsLoading(false);
       }
     },
-    [clientId]
+    [clientId],
   );
 
   const editNarrative = useCallback(
@@ -172,10 +170,10 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
             ? {
                 ...prev,
                 narratives: prev.narratives.map((n) =>
-                  n.id === id ? updated : n
+                  n.id === id ? updated : n,
                 ),
               }
-            : null
+            : null,
         );
       } catch (err) {
         console.error("Failed to update narrative:", err);
@@ -185,7 +183,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
         setIsLoading(false);
       }
     },
-    []
+    [],
   );
 
   const removeNarrative = useCallback(async (id: string) => {
@@ -197,7 +195,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
       setKnowledgeBase((prev) =>
         prev
           ? { ...prev, narratives: prev.narratives.filter((n) => n.id !== id) }
-          : null
+          : null,
       );
     } catch (err) {
       console.error("Failed to delete narrative:", err);
@@ -219,7 +217,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
         return [];
       }
     },
-    [clientId]
+    [clientId],
   );
 
   // Refresh all data
@@ -230,7 +228,7 @@ export function useKnowledgeBase(clientId: string): UseKnowledgeBaseReturn {
   // Load on mount and when clientId changes
   useEffect(() => {
     if (clientId) {
-      loadKnowledgeBase();
+      void loadKnowledgeBase();
     }
   }, [clientId, loadKnowledgeBase]);
 

@@ -5,8 +5,9 @@
  * Manages how the organization communicates with donors
  */
 
-import React, { useState, useEffect } from "react";
 import { Save, Plus, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+
 import type { VoiceProfile } from "@/services/knowledgeBaseService";
 import knowledgeBaseService from "@/services/knowledgeBaseService";
 
@@ -172,7 +173,8 @@ export default function VoiceTone({
           </span>
         </label>
         <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-          How to address and position donors (problem solvers, champions, partners, etc.)
+          How to address and position donors (problem solvers, champions,
+          partners, etc.)
         </p>
         <textarea
           value={formData.donor_language_rules}
@@ -278,8 +280,8 @@ export default function VoiceTone({
       <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
         <p className="text-sm text-indigo-800 dark:text-indigo-200">
           <strong>Track15 Tip:</strong> Strong voice & tone guidelines ensure
-          consistent, authentic communication across all donor touchpoints. AI-generated
-          campaigns will automatically apply these rules.
+          consistent, authentic communication across all donor touchpoints.
+          AI-generated campaigns will automatically apply these rules.
         </p>
       </div>
     </div>

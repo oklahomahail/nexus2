@@ -9,14 +9,14 @@
 
 import React from "react";
 import { useParams } from "react-router-dom";
+
+import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
+import CampaignEngineSection from "@/components/dashboard/CampaignEngineSection";
+import KnowledgeBaseSection from "@/components/dashboard/KnowledgeBaseSection";
 import { useClient } from "@/context/ClientContext";
 
-import CampaignEngineSection from "@/components/dashboard/CampaignEngineSection";
-import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
-import KnowledgeBaseSection from "@/components/dashboard/KnowledgeBaseSection";
-
 export default function ClientDashboard() {
-  const { clientId } = useParams();
+  const { clientId: _clientId } = useParams();
   const { currentClient } = useClient();
 
   return (

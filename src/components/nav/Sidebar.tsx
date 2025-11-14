@@ -35,9 +35,17 @@ export const Sidebar: React.FC = () => {
         <>
           {link(`/clients/${clientId}`, "Dashboard", "nav.dashboard")}
           {link(`/clients/${clientId}/campaigns`, "Campaigns", "nav.campaigns")}
-          {link(`/clients/${clientId}/knowledge`, "Knowledge Base", "nav.knowledge")}
+          {link(
+            `/clients/${clientId}/knowledge`,
+            "Knowledge Base",
+            "nav.knowledge",
+          )}
           {link(`/clients/${clientId}/analytics`, "Analytics", "nav.analytics")}
-          {link(`/clients/${clientId}/track15`, "Track15 Performance", "nav.track15")}
+          {link(
+            `/clients/${clientId}/track15`,
+            "Track15 Performance",
+            "nav.track15",
+          )}
           {link(`/clients/${clientId}/reports`, "Reports", "nav.reports")}
         </>
       )}

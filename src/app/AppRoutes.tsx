@@ -14,7 +14,9 @@ const ClientAnalytics = lazy(() => import("@/pages/client/ClientAnalytics"));
 const CampaignBuilder = lazy(() => import("@/pages/client/CampaignBuilder"));
 const KnowledgeBase = lazy(() => import("@/pages/client/KnowledgeBase"));
 const Track15Analytics = lazy(() => import("@/pages/client/Track15Analytics"));
-const Track15CampaignWizard = lazy(() => import("@/pages/client/Track15CampaignWizard"));
+const Track15CampaignWizard = lazy(
+  () => import("@/pages/client/Track15CampaignWizard"),
+);
 
 // Loading component
 const PageLoader = () => (

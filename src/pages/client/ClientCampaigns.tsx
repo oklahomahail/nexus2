@@ -1,5 +1,5 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ClientCampaigns() {
   const { clientId } = useParams();
@@ -119,7 +119,9 @@ export default function ClientCampaigns() {
                     <button
                       className="text-blue-600 hover:text-blue-800"
                       onClick={() =>
-                        navigate(`/clients/${clientId}/campaigns/${campaign.id}`)
+                        navigate(
+                          `/clients/${clientId}/campaigns/${campaign.id}`,
+                        )
                       }
                       data-tutorial-step="campaigns.row"
                     >
@@ -129,7 +131,9 @@ export default function ClientCampaigns() {
                       <button
                         className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
                         onClick={() =>
-                          navigate(`/clients/${clientId}/track15?campaign=${campaign.id}`)
+                          navigate(
+                            `/clients/${clientId}/track15?campaign=${campaign.id}`,
+                          )
                         }
                         title="View Track15 Analytics"
                       >

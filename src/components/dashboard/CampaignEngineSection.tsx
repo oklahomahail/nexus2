@@ -5,9 +5,10 @@
  * Dominant panel in three-panel layout
  */
 
-import React from "react";
 import { Plus, Calendar, TrendingUp, Target, Sparkles } from "lucide-react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useClient } from "@/context/ClientContext";
 
 export default function CampaignEngineSection() {
@@ -53,7 +54,9 @@ export default function CampaignEngineSection() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <Sparkles className="w-4 h-4" />
@@ -75,7 +78,9 @@ export default function CampaignEngineSection() {
           <div
             key={campaign.id}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors cursor-pointer"
-            onClick={() => navigate(`/clients/${clientId}/campaigns/${campaign.id}`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/${campaign.id}`)
+            }
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1">
@@ -138,7 +143,8 @@ export default function CampaignEngineSection() {
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-gray-400" />
                 <span className="text-sm text-gray-600 dark:text-gray-400">
-                  ${((campaign.goal - campaign.raised) / 1000).toFixed(1)}k to go
+                  ${((campaign.goal - campaign.raised) / 1000).toFixed(1)}k to
+                  go
                 </span>
               </div>
             </div>
@@ -156,7 +162,9 @@ export default function CampaignEngineSection() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 transition-colors text-left"
           >
             <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -167,7 +175,9 @@ export default function CampaignEngineSection() {
             </div>
           </button>
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 transition-colors text-left"
           >
             <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -178,7 +188,9 @@ export default function CampaignEngineSection() {
             </div>
           </button>
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 transition-colors text-left"
           >
             <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -189,7 +201,9 @@ export default function CampaignEngineSection() {
             </div>
           </button>
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700 transition-colors text-left"
           >
             <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">

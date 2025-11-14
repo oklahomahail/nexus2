@@ -4,8 +4,9 @@
  * Track15 messaging framework: pillars, positioning, and narrative elements
  */
 
+import { Save, Plus, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { Save, Plus, X, Edit2 } from "lucide-react";
+
 import type { MessagingProfile } from "@/services/knowledgeBaseService";
 import knowledgeBaseService from "@/services/knowledgeBaseService";
 
@@ -37,7 +38,7 @@ export default function MessagingPillars({
   });
 
   // Pillar editor state
-  const [editingPillar, setEditingPillar] = useState<number | null>(null);
+  const [_editingPillar, _setEditingPillar] = useState<number | null>(null);
   const [newPillar, setNewPillar] = useState<Pillar>({
     title: "",
     description: "",
@@ -298,9 +299,10 @@ export default function MessagingPillars({
       {/* Track15 Tip */}
       <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
         <p className="text-sm text-indigo-800 dark:text-indigo-200">
-          <strong>Track15 Tip:</strong> These messaging pillars form the foundation
-          of your narrative arc. Every campaign should weave in at least 2-3 pillars
-          to maintain consistency and reinforce your core themes.
+          <strong>Track15 Tip:</strong> These messaging pillars form the
+          foundation of your narrative arc. Every campaign should weave in at
+          least 2-3 pillars to maintain consistency and reinforce your core
+          themes.
         </p>
       </div>
     </div>

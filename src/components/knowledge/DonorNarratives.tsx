@@ -5,10 +5,14 @@
  * Track15-specific: emotional center, donor role, story types
  */
 
-import React, { useState } from "react";
 import { Heart, Plus, Search, Edit2, Trash2 } from "lucide-react";
-import type { DonorNarrative, DonorStoryType } from "@/services/knowledgeBaseService";
+import React, { useState } from "react";
+
 import { useKnowledgeBase } from "@/hooks/useKnowledgeBase";
+import type {
+  DonorNarrative,
+  DonorStoryType,
+} from "@/services/knowledgeBaseService";
 
 interface DonorNarrativesProps {
   clientId: string;
@@ -21,7 +25,8 @@ export default function DonorNarratives({
   narratives,
   onSaveSuccess,
 }: DonorNarrativesProps) {
-  const { addNarrative, editNarrative, removeNarrative } = useKnowledgeBase(clientId);
+  const { addNarrative, editNarrative, removeNarrative } =
+    useKnowledgeBase(clientId);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<DonorStoryType | "all">("all");
@@ -41,7 +46,8 @@ export default function DonorNarratives({
     const matchesSearch =
       narrative.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       narrative.narrative.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === "all" || narrative.story_type === filterType;
+    const matchesType =
+      filterType === "all" || narrative.story_type === filterType;
     return matchesSearch && matchesType;
   });
 
@@ -149,7 +155,9 @@ export default function DonorNarratives({
         </div>
         <select
           value={filterType}
-          onChange={(e) => setFilterType(e.target.value as DonorStoryType | "all")}
+          onChange={(e) =>
+            setFilterType(e.target.value as DonorStoryType | "all")
+          }
           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
         >
           <option value="all">All Types</option>
@@ -414,9 +422,10 @@ export default function DonorNarratives({
       {/* Track15 Tip */}
       <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-lg p-4">
         <p className="text-sm text-indigo-800 dark:text-indigo-200">
-          <strong>Track15 Tip:</strong> Strong donor narratives provide authentic
-          stories for campaigns. Tag stories by emotional center and donor role to
-          easily find the right narrative for each campaign moment.
+          <strong>Track15 Tip:</strong> Strong donor narratives provide
+          authentic stories for campaigns. Tag stories by emotional center and
+          donor role to easily find the right narrative for each campaign
+          moment.
         </p>
       </div>
     </div>

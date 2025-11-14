@@ -1,10 +1,11 @@
 /* Nexus Platform - Unified CSS Foundation */
-@import "tailwindcss";
-@plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/typography";
 
 /* Track15 Fonts - Montserrat for headings, Source Sans 3 for body */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap");
+
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
 
 /* Tailwind v4 theme tokens mapped from your design variables */
 @theme {

@@ -5,9 +5,16 @@
  * Track15 metrics summary
  */
 
+import {
+  TrendingUp,
+  Users,
+  DollarSign,
+  Target,
+  ArrowRight,
+} from "lucide-react";
 import React from "react";
-import { TrendingUp, Users, DollarSign, Target, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 import { useClient } from "@/context/ClientContext";
 
 export default function AnalyticsSection() {
@@ -150,20 +157,34 @@ export default function AnalyticsSection() {
         </h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-700 dark:text-gray-300">Current Donors</span>
-            <span className="font-semibold text-gray-900 dark:text-white">842</span>
+            <span className="text-gray-700 dark:text-gray-300">
+              Current Donors
+            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              842
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-700 dark:text-gray-300">Lapsed Donors</span>
-            <span className="font-semibold text-gray-900 dark:text-white">215</span>
+            <span className="text-gray-700 dark:text-gray-300">
+              Lapsed Donors
+            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              215
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-700 dark:text-gray-300">High Value</span>
-            <span className="font-semibold text-gray-900 dark:text-white">48</span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              48
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-700 dark:text-gray-300">Monthly Givers</span>
-            <span className="font-semibold text-gray-900 dark:text-white">143</span>
+            <span className="text-gray-700 dark:text-gray-300">
+              Monthly Givers
+            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              143
+            </span>
           </div>
         </div>
       </div>

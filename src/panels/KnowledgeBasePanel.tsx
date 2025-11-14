@@ -12,35 +12,27 @@ import {
   FileText,
   FolderOpen,
   Heart,
-  Save,
   AlertCircle,
   Zap,
 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useClient } from "@/context/ClientContext";
-import { useKnowledgeBase } from "@/hooks/useKnowledgeBase";
-
 // Tab components
 import BrandGuidelines from "@/components/knowledge/BrandGuidelines";
-import VoiceTone from "@/components/knowledge/VoiceTone";
-import MessagingPillars from "@/components/knowledge/MessagingPillars";
-import SOPs from "@/components/knowledge/SOPs";
 import ClientAssets from "@/components/knowledge/ClientAssets";
 import DonorNarratives from "@/components/knowledge/DonorNarratives";
+import MessagingPillars from "@/components/knowledge/MessagingPillars";
+import SOPs from "@/components/knowledge/SOPs";
+import VoiceTone from "@/components/knowledge/VoiceTone";
+import { useClient } from "@/context/ClientContext";
+import { useKnowledgeBase } from "@/hooks/useKnowledgeBase";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
-type TabId =
-  | "brand"
-  | "voice"
-  | "messaging"
-  | "sops"
-  | "assets"
-  | "narratives";
+type TabId = "brand" | "voice" | "messaging" | "sops" | "assets" | "narratives";
 
 // ============================================================================
 // MAIN COMPONENT
@@ -125,13 +117,16 @@ export default function KnowledgeBasePanel() {
               Knowledge Base
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Centralized repository for {currentClient?.name || "your organization"}
+              Centralized repository for{" "}
+              {currentClient?.name || "your organization"}
             </p>
           </div>
 
           {/* Track15 CTA */}
           <button
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new/track15`)}
+            onClick={() =>
+              navigate(`/clients/${clientId}/campaigns/new/track15`)
+            }
             className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
             title="Create a Track15 campaign using your knowledge base"
           >
@@ -198,7 +193,10 @@ export default function KnowledgeBasePanel() {
         ) : (
           <div className="p-6">
             {activeTab === "brand" && (
-              <BrandGuidelines clientId={clientId} onSaveSuccess={handleSaveSuccess} />
+              <BrandGuidelines
+                clientId={clientId}
+                onSaveSuccess={handleSaveSuccess}
+              />
             )}
             {activeTab === "voice" && (
               <VoiceTone
@@ -218,7 +216,10 @@ export default function KnowledgeBasePanel() {
               <SOPs clientId={clientId} onSaveSuccess={handleSaveSuccess} />
             )}
             {activeTab === "assets" && (
-              <ClientAssets clientId={clientId} onSaveSuccess={handleSaveSuccess} />
+              <ClientAssets
+                clientId={clientId}
+                onSaveSuccess={handleSaveSuccess}
+              />
             )}
             {activeTab === "narratives" && (
               <DonorNarratives
