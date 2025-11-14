@@ -5,7 +5,15 @@
  * Allows selection from 5 campaign seasons with metadata
  */
 
-import { Calendar, Target, Heart, Zap, Sparkles } from "lucide-react";
+import {
+  Calendar,
+  Target,
+  Heart,
+  Zap,
+  Sparkles,
+  Leaf,
+  Snowflake,
+} from "lucide-react";
 import React from "react";
 
 import { CampaignSeason, CAMPAIGN_SEASONS } from "@/types/track15.types";
@@ -18,6 +26,8 @@ interface SeasonSelectionStepProps {
 const SEASON_ICONS: Record<CampaignSeason, React.ReactNode> = {
   spring: <Sparkles className="w-8 h-8" />,
   summer: <Target className="w-8 h-8" />,
+  fall: <Leaf className="w-8 h-8" />,
+  winter: <Snowflake className="w-8 h-8" />,
   ntxgd: <Heart className="w-8 h-8" />,
   eoy: <Zap className="w-8 h-8" />,
   custom: <Calendar className="w-8 h-8" />,
@@ -38,6 +48,18 @@ const SEASON_COLORS: Record<
     border: "border-yellow-200 dark:border-yellow-800",
     text: "text-yellow-900 dark:text-yellow-100",
     icon: "text-yellow-600 dark:text-yellow-400",
+  },
+  fall: {
+    bg: "bg-orange-50 dark:bg-orange-900/20",
+    border: "border-orange-200 dark:border-orange-800",
+    text: "text-orange-900 dark:text-orange-100",
+    icon: "text-orange-600 dark:text-orange-400",
+  },
+  winter: {
+    bg: "bg-blue-50 dark:bg-blue-900/20",
+    border: "border-blue-200 dark:border-blue-800",
+    text: "text-blue-900 dark:text-blue-100",
+    icon: "text-blue-600 dark:text-blue-400",
   },
   ntxgd: {
     bg: "bg-red-50 dark:bg-red-900/20",
