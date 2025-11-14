@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 
 export default function ClientCampaigns() {
   const { clientId } = useParams();
@@ -11,6 +12,7 @@ export default function ClientCampaigns() {
       status: "Active",
       raised: "$45,230",
       goal: "$75,000",
+      track15_enabled: true, // Example Track15 campaign
     },
   ];
 
@@ -80,7 +82,20 @@ export default function ClientCampaigns() {
           <tbody>
             {campaigns.map((campaign) => (
               <tr key={campaign.id} className="border-b">
-                <td className="p-4">{campaign.name}</td>
+                <td className="p-4">
+                  <div className="flex items-center gap-2">
+                    {campaign.name}
+                    {campaign.track15_enabled && (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                        title="Track15 Campaign"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        Track15
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="p-4">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     {campaign.status}
@@ -100,15 +115,28 @@ export default function ClientCampaigns() {
                   </div>
                 </td>
                 <td className="p-4">
-                  <button
-                    className="text-blue-600 hover:text-blue-800"
-                    onClick={() =>
-                      navigate(`/clients/${clientId}/campaigns/${campaign.id}`)
-                    }
-                    data-tutorial-step="campaigns.row"
-                  >
-                    Edit
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      className="text-blue-600 hover:text-blue-800"
+                      onClick={() =>
+                        navigate(`/clients/${clientId}/campaigns/${campaign.id}`)
+                      }
+                      data-tutorial-step="campaigns.row"
+                    >
+                      Edit
+                    </button>
+                    {campaign.track15_enabled && (
+                      <button
+                        className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
+                        onClick={() =>
+                          navigate(`/clients/${clientId}/track15?campaign=${campaign.id}`)
+                        }
+                        title="View Track15 Analytics"
+                      >
+                        Analytics
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

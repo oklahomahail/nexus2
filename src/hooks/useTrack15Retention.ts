@@ -1,0 +1,57 @@
+/**
+ * useTrack15Retention Hook
+ *
+ * Fetches retention series data for Track15 campaigns
+ */
+
+import { useEffect, useState } from "react";
+import { Track15RetentionSeries } from "@/types/track15.types";
+import { getRetentionSeries } from "@/services/track15Service";
+
+interface UseTrack15RetentionReturn {
+  data: Track15RetentionSeries | null;
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
+export function useTrack15Retention(
+  campaignId: string | null
+): UseTrack15RetentionReturn {
+  const [data, setData] = useState<Track15RetentionSeries | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchRetention = async () => {
+    if (!campaignId) {
+      setData(null);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const series = await getRetentionSeries(campaignId);
+      setData(series);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error loading retention data";
+      setError(errorMessage);
+      setData(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRetention();
+  }, [campaignId]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchRetention,
+  };
+}

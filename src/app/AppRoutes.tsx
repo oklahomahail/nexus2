@@ -12,6 +12,9 @@ const ClientCampaigns = lazy(() => import("@/pages/client/ClientCampaigns"));
 const ClientReports = lazy(() => import("@/pages/client/ClientReports"));
 const ClientAnalytics = lazy(() => import("@/pages/client/ClientAnalytics"));
 const CampaignBuilder = lazy(() => import("@/pages/client/CampaignBuilder"));
+const KnowledgeBase = lazy(() => import("@/pages/client/KnowledgeBase"));
+const Track15Analytics = lazy(() => import("@/pages/client/Track15Analytics"));
+const Track15CampaignWizard = lazy(() => import("@/pages/client/Track15CampaignWizard"));
 
 // Loading component
 const PageLoader = () => (
@@ -56,6 +59,14 @@ export default function AppRoutes() {
           }
         />
         <Route
+          path="campaigns/new/track15"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <Track15CampaignWizard />
+            </Suspense>
+          }
+        />
+        <Route
           path="campaigns/:campaignId"
           element={
             <Suspense fallback={<PageLoader />}>
@@ -76,6 +87,22 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientReports />
+            </Suspense>
+          }
+        />
+        <Route
+          path="knowledge"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <KnowledgeBase />
+            </Suspense>
+          }
+        />
+        <Route
+          path="track15"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <Track15Analytics />
             </Suspense>
           }
         />

@@ -3,6 +3,9 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
+/* Track15 Fonts - Montserrat for headings, Source Sans 3 for body */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap");
+
 /* Tailwind v4 theme tokens mapped from your design variables */
 @theme {
   /* Professional Color System - Track15-Adjacent */
@@ -49,6 +52,10 @@
   --font-mono:
     "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Track15 Typography */
+  --font-track15-heading: "Montserrat", var(--font-sans);
+  --font-track15-body: "Source Sans 3", var(--font-sans);
 
   /* Sizing scales */
   --spacing-18: 4.5rem;
@@ -98,6 +105,17 @@
     --accent-3: 107 77 255; /* #6B4DFF - Deep Violet (Accent) */
     --warn: 250 204 21; /* #FACC15 - Insight Amber */
     --error: 248 113 113; /* #F87171 - Privacy Red */
+
+    /* Track15 Brand Colors - Light Theme Palette */
+    --track15-primary: 13 95 168; /* #0D5FA8 - Professional Blue */
+    --track15-primary-dark: 9 64 112; /* #094070 - Deeper Blue */
+    --track15-primary-soft: 229 241 255; /* #E5F1FF - Light Blue BG */
+    --track15-accent: 249 168 38; /* #F9A826 - Warm Orange/Gold */
+    --track15-bg: 244 245 247; /* #F4F5F7 - Page Background */
+    --track15-surface: 255 255 255; /* #FFFFFF - Card Surface */
+    --track15-border: 229 231 235; /* #E5E7EB - Border */
+    --track15-text: 31 41 51; /* #1F2933 - Primary Text */
+    --track15-muted: 107 114 128; /* #6B7280 - Muted Text */
 
     /* Legacy mappings for backwards compatibility */
     --bg-primary: var(--bg);
@@ -501,6 +519,83 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 1.5rem;
+  }
+
+  /* Track15 Theme Utilities - Light Professional Styling */
+  .track15-bg {
+    background-color: rgb(var(--track15-bg));
+  }
+  .track15-surface {
+    background-color: rgb(var(--track15-surface));
+  }
+  .track15-text {
+    color: rgb(var(--track15-text));
+  }
+  .track15-text-muted {
+    color: rgb(var(--track15-muted));
+  }
+  .track15-border {
+    border-color: rgb(var(--track15-border));
+  }
+
+  .track15-primary {
+    background-color: rgb(var(--track15-primary));
+    color: white;
+  }
+  .track15-primary:hover:not(:disabled) {
+    background-color: rgb(var(--track15-primary-dark));
+  }
+
+  .track15-primary-soft {
+    background-color: rgb(var(--track15-primary-soft));
+    color: rgb(var(--track15-primary));
+  }
+
+  .text-track15-primary {
+    color: rgb(var(--track15-primary));
+  }
+  .text-track15-accent {
+    color: rgb(var(--track15-accent));
+  }
+  .bg-track15-primary {
+    background-color: rgb(var(--track15-primary));
+  }
+  .bg-track15-accent {
+    background-color: rgb(var(--track15-accent));
+  }
+
+  /* Track15 Font Families */
+  .font-track15-heading {
+    font-family: var(--font-track15-heading);
+  }
+  .font-track15-body {
+    font-family: var(--font-track15-body);
+  }
+
+  /* Track15 Card Styling */
+  .track15-card {
+    @apply rounded-2xl border shadow-sm;
+    background-color: rgb(var(--track15-surface));
+    border-color: rgb(var(--track15-border));
+  }
+
+  .track15-stepper-step {
+    @apply flex h-8 w-8 items-center justify-center rounded-full border text-xs font-medium transition-all;
+  }
+  .track15-stepper-step.active {
+    border-color: rgb(var(--track15-primary));
+    background-color: rgb(var(--track15-primary-soft));
+    color: rgb(var(--track15-primary));
+  }
+  .track15-stepper-step.completed {
+    border-color: rgb(var(--track15-primary));
+    background-color: rgb(var(--track15-primary));
+    color: white;
+  }
+  .track15-stepper-step.pending {
+    border-color: rgb(var(--track15-border));
+    background-color: rgb(var(--track15-bg));
+    color: rgb(var(--track15-muted));
   }
 }
 
