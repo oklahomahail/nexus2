@@ -6,6 +6,7 @@
  */
 
 import { supabase } from "@/lib/supabaseClient";
+import type { TablesInsert, TablesUpdate } from "@/lib/supabaseClient";
 import {
   Track15CampaignMeta,
   Track15CoreStory,
@@ -73,7 +74,7 @@ export async function updateTrack15Meta(
   meta: Partial<Track15CampaignMeta>,
 ): Promise<boolean> {
   try {
-    const updateData: Record<string, any> = {};
+    const updateData: TablesUpdate<"campaigns"> = {};
 
     if (meta.enabled !== undefined) updateData.track15_enabled = meta.enabled;
     if (meta.season !== undefined) updateData.track15_season = meta.season;
@@ -166,7 +167,7 @@ export async function updateCoreStory(
   coreStory: Partial<Track15CoreStory>,
 ): Promise<boolean> {
   try {
-    const updateData: Record<string, any> = {};
+    const updateData: TablesUpdate<"campaigns"> = {};
 
     if (coreStory.headline !== undefined)
       updateData.track15_core_headline = coreStory.headline;
@@ -227,11 +228,11 @@ export async function getNarrativeSteps(
       data?.map((row) => ({
         id: row.id,
         campaignId: row.campaign_id,
-        stage: row.stage,
+        stage: row.stage as Track15NarrativeStep["stage"],
         title: row.title,
         body: row.body,
         sequence: row.sequence,
-        channels: row.channels || [],
+        channels: (row.channels || []) as Track15NarrativeStep["channels"],
         primarySegment: row.primary_segment || undefined,
         callToAction: row.call_to_action || undefined,
         isActive: row.is_active,
@@ -256,19 +257,21 @@ export async function createNarrativeStep(
   >,
 ): Promise<Track15NarrativeStep | null> {
   try {
+    const insertData: TablesInsert<"track15_narrative_steps"> = {
+      campaign_id: campaignId,
+      stage: step.stage,
+      title: step.title,
+      body: step.body,
+      sequence: step.sequence,
+      channels: step.channels,
+      primary_segment: step.primarySegment ?? null,
+      call_to_action: step.callToAction ?? null,
+      is_active: step.isActive,
+    };
+
     const { data, error } = await supabase
       .from("track15_narrative_steps")
-      .insert({
-        campaign_id: campaignId,
-        stage: step.stage,
-        title: step.title,
-        body: step.body,
-        sequence: step.sequence,
-        channels: step.channels,
-        primary_segment: step.primarySegment,
-        call_to_action: step.callToAction,
-        is_active: step.isActive,
-      })
+      .insert(insertData)
       .select()
       .single();
 
@@ -277,11 +280,11 @@ export async function createNarrativeStep(
     return {
       id: data.id,
       campaignId: data.campaign_id,
-      stage: data.stage,
+      stage: data.stage as Track15NarrativeStep["stage"],
       title: data.title,
       body: data.body,
       sequence: data.sequence,
-      channels: data.channels || [],
+      channels: (data.channels || []) as Track15NarrativeStep["channels"],
       primarySegment: data.primary_segment || undefined,
       callToAction: data.call_to_action || undefined,
       isActive: data.is_active,
@@ -304,7 +307,7 @@ export async function updateNarrativeStep(
   >,
 ): Promise<boolean> {
   try {
-    const updateData: Record<string, any> = {};
+    const updateData: TablesUpdate<"track15_narrative_steps"> = {};
 
     if (updates.stage !== undefined) updateData.stage = updates.stage;
     if (updates.title !== undefined) updateData.title = updates.title;
@@ -363,18 +366,20 @@ export async function bulkUpdateNarrativeSteps(
       .eq("campaign_id", campaignId);
 
     // Insert new steps
-    const stepsToInsert = steps.map((step) => ({
-      id: step.id.startsWith("temp-") ? undefined : step.id, // Let DB generate ID for temp IDs
-      campaign_id: campaignId,
-      stage: step.stage,
-      title: step.title,
-      body: step.body,
-      sequence: step.sequence,
-      channels: step.channels,
-      primary_segment: step.primarySegment,
-      call_to_action: step.callToAction,
-      is_active: step.isActive,
-    }));
+    const stepsToInsert: TablesInsert<"track15_narrative_steps">[] = steps.map(
+      (step) => ({
+        id: step.id.startsWith("temp-") ? undefined : step.id, // Let DB generate ID for temp IDs
+        campaign_id: campaignId,
+        stage: step.stage,
+        title: step.title,
+        body: step.body,
+        sequence: step.sequence,
+        channels: step.channels,
+        primary_segment: step.primarySegment ?? null,
+        call_to_action: step.callToAction ?? null,
+        is_active: step.isActive,
+      }),
+    );
 
     const { error } = await supabase
       .from("track15_narrative_steps")
@@ -452,7 +457,7 @@ export async function updateLiftMetrics(
   metrics: Partial<Track15LiftMetrics>,
 ): Promise<boolean> {
   try {
-    const updateData: Record<string, any> = {
+    const updateData: TablesInsert<"track15_campaign_metrics"> = {
       campaign_id: campaignId,
       calculated_at: new Date().toISOString(),
     };
@@ -512,7 +517,7 @@ export async function getRetentionSeries(
 
     // Calculate retention points over time
     // This is a simplified version - you may want to adjust based on your actual retention logic
-    const startDate = new Date(campaign.start_date);
+    const startDate = campaign.start_date ? new Date(campaign.start_date) : new Date();
     const now = new Date();
     const points: Track15RetentionPoint[] = [];
 
@@ -704,7 +709,7 @@ export async function getSegmentPerformance(
       // Calculate metrics
       const uniqueDonors = new Set(donations.map((d) => d.donor_id));
       const donorCount = uniqueDonors.size;
-      const totalGifts = donations.reduce((sum, d) => sum + d.amount, 0);
+      const totalGifts = donations.reduce((sum, d) => sum + (d.amount ?? 0), 0);
       const avgGiftSize = donorCount > 0 ? totalGifts / donorCount : 0;
 
       // Mock response rate and conversion rate for now

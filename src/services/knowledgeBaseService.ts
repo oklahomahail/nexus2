@@ -10,6 +10,8 @@
  */
 
 import { supabase } from "@/lib/supabaseClient";
+import type { TablesInsert, TablesUpdate } from "@/lib/supabaseClient";
+import type { Json } from "@/types/database.types";
 
 // ============================================================================
 // TYPES
@@ -132,17 +134,19 @@ export async function upsertVoiceProfile(
   clientId: string,
   input: VoiceProfileInput,
 ): Promise<VoiceProfile> {
+  const insertData: TablesInsert<"client_voice"> = {
+    client_id: clientId,
+    voice_description: input.voice_description ?? null,
+    tone_guidelines: input.tone_guidelines ?? null,
+    donor_language_rules: input.donor_language_rules ?? null,
+    examples: input.examples ?? null,
+  };
+
   const { data, error } = await supabase
     .from("client_voice")
-    .upsert(
-      {
-        client_id: clientId,
-        ...input,
-      },
-      {
-        onConflict: "client_id",
-      },
-    )
+    .upsert(insertData, {
+      onConflict: "client_id",
+    })
     .select()
     .single();
 
@@ -203,17 +207,21 @@ export async function upsertMessagingProfile(
   clientId: string,
   input: MessagingProfileInput,
 ): Promise<MessagingProfile> {
+  const insertData: TablesInsert<"client_messaging"> = {
+    client_id: clientId,
+    pillars: (input.pillars ?? null) as Json,
+    impact_language: input.impact_language ?? null,
+    value_proposition: input.value_proposition ?? null,
+    problem_statement: input.problem_statement ?? null,
+    vision_statement: input.vision_statement ?? null,
+    point_of_view: input.point_of_view ?? null,
+  };
+
   const { data, error } = await supabase
     .from("client_messaging")
-    .upsert(
-      {
-        client_id: clientId,
-        ...input,
-      },
-      {
-        onConflict: "client_id",
-      },
-    )
+    .upsert(insertData, {
+      onConflict: "client_id",
+    })
     .select()
     .single();
 
@@ -305,12 +313,20 @@ export async function createDonorNarrative(
   clientId: string,
   input: DonorNarrativeInput,
 ): Promise<DonorNarrative> {
+  const insertData: TablesInsert<"client_donor_narratives"> = {
+    client_id: clientId,
+    title: input.title,
+    narrative: input.narrative,
+    donor_role: input.donor_role ?? null,
+    emotional_center: input.emotional_center ?? null,
+    story_type: input.story_type ?? null,
+    tags: input.tags ?? null,
+    metadata: (input.metadata ?? null) as Json,
+  };
+
   const { data, error } = await supabase
     .from("client_donor_narratives")
-    .insert({
-      client_id: clientId,
-      ...input,
-    })
+    .insert(insertData)
     .select()
     .single();
 
@@ -329,9 +345,19 @@ export async function updateDonorNarrative(
   narrativeId: string,
   input: Partial<DonorNarrativeInput>,
 ): Promise<DonorNarrative> {
+  const updateData: TablesUpdate<"client_donor_narratives"> = {};
+
+  if (input.title !== undefined) updateData.title = input.title;
+  if (input.narrative !== undefined) updateData.narrative = input.narrative;
+  if (input.donor_role !== undefined) updateData.donor_role = input.donor_role;
+  if (input.emotional_center !== undefined) updateData.emotional_center = input.emotional_center;
+  if (input.story_type !== undefined) updateData.story_type = input.story_type;
+  if (input.tags !== undefined) updateData.tags = input.tags;
+  if (input.metadata !== undefined) updateData.metadata = input.metadata as Json;
+
   const { data, error } = await supabase
     .from("client_donor_narratives")
-    .update(input)
+    .update(updateData)
     .eq("id", narrativeId)
     .select()
     .single();

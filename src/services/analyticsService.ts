@@ -829,7 +829,7 @@ export async function getCampaignLift(
 
     if (campaignError || !campaign) throw campaignError;
 
-    const startDate = new Date(campaign.start_date);
+    const startDate = campaign.start_date ? new Date(campaign.start_date) : new Date();
     const endDate = campaign.end_date
       ? new Date(campaign.end_date)
       : new Date();

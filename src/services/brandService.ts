@@ -132,7 +132,19 @@ export async function listBrandProfiles(
     .order("updated_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return (data || []).map((profile) => ({
+    ...profile,
+    mission_statement: profile.mission_statement ?? undefined,
+    tone_of_voice: profile.tone_of_voice ?? undefined,
+    brand_personality: profile.brand_personality ?? undefined,
+    style_keywords: (profile.style_keywords ?? undefined) as string[] | undefined,
+    primary_colors: (profile.primary_colors ?? undefined) as string[] | undefined,
+    typography: (profile.typography ?? undefined) as BrandProfile["typography"],
+    logo_url: profile.logo_url ?? undefined,
+    guidelines_url: profile.guidelines_url ?? undefined,
+    created_by: profile.created_by ?? undefined,
+    deleted_at: profile.deleted_at ?? undefined,
+  }));
 }
 
 /**
@@ -147,7 +159,19 @@ export async function getBrandProfile(id: string): Promise<BrandProfile> {
     .single();
 
   if (error) throw error;
-  return data;
+  return {
+    ...data,
+    mission_statement: data.mission_statement ?? undefined,
+    tone_of_voice: data.tone_of_voice ?? undefined,
+    brand_personality: data.brand_personality ?? undefined,
+    style_keywords: (data.style_keywords ?? undefined) as string[] | undefined,
+    primary_colors: (data.primary_colors ?? undefined) as string[] | undefined,
+    typography: (data.typography ?? undefined) as BrandProfile["typography"],
+    logo_url: data.logo_url ?? undefined,
+    guidelines_url: data.guidelines_url ?? undefined,
+    created_by: data.created_by ?? undefined,
+    deleted_at: data.deleted_at ?? undefined,
+  };
 }
 
 /**
@@ -166,7 +190,20 @@ export async function getPrimaryBrandProfile(
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  if (!data) return null;
+  return {
+    ...data,
+    mission_statement: data.mission_statement ?? undefined,
+    tone_of_voice: data.tone_of_voice ?? undefined,
+    brand_personality: data.brand_personality ?? undefined,
+    style_keywords: (data.style_keywords ?? undefined) as string[] | undefined,
+    primary_colors: (data.primary_colors ?? undefined) as string[] | undefined,
+    typography: (data.typography ?? undefined) as BrandProfile["typography"],
+    logo_url: data.logo_url ?? undefined,
+    guidelines_url: data.guidelines_url ?? undefined,
+    created_by: data.created_by ?? undefined,
+    deleted_at: data.deleted_at ?? undefined,
+  };
 }
 
 /**
@@ -224,7 +261,14 @@ export async function listBrandAssets(
   const { data, error } = await query.order("updated_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return (data || []).map((asset) => ({
+    ...asset,
+    asset_type: asset.asset_type as BrandAssetType,
+    description: asset.description ?? undefined,
+    metadata: (asset.metadata ?? undefined) as Record<string, unknown> | undefined,
+    created_by: asset.created_by ?? undefined,
+    deleted_at: asset.deleted_at ?? undefined,
+  }));
 }
 
 /**
@@ -292,7 +336,7 @@ export async function listBrandCorpus(
 ): Promise<BrandCorpusChunk[]> {
   let query = supabase
     .from("brand_corpus")
-    .select("id, title, source_type, source_url, content, tokens, updated_at")
+    .select("*")
     .eq("client_id", clientId)
     .eq("brand_id", brandId)
     .is("deleted_at", null);
@@ -308,7 +352,16 @@ export async function listBrandCorpus(
   const { data, error } = await query.order("updated_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return (data || []).map((chunk) => ({
+    ...chunk,
+    source_type: chunk.source_type as BrandCorpusSourceType,
+    source_url: chunk.source_url ?? undefined,
+    title: chunk.title ?? undefined,
+    embedding: (chunk.embedding ?? undefined) as number[] | undefined,
+    tokens: chunk.tokens ?? undefined,
+    created_by: chunk.created_by ?? undefined,
+    deleted_at: chunk.deleted_at ?? undefined,
+  }));
 }
 
 /**
@@ -341,14 +394,23 @@ export async function searchCorpusFts(
 ): Promise<BrandCorpusChunk[]> {
   const { data, error } = await supabase
     .from("brand_corpus")
-    .select("id, title, source_type, source_url, content, updated_at")
+    .select("*")
     .eq("client_id", clientId)
     .eq("brand_id", brandId)
     .textSearch("content", query, { type: "websearch" })
     .limit(limit);
 
   if (error) throw error;
-  return data || [];
+  return (data || []).map((chunk) => ({
+    ...chunk,
+    source_type: chunk.source_type as BrandCorpusSourceType,
+    source_url: chunk.source_url ?? undefined,
+    title: chunk.title ?? undefined,
+    embedding: (chunk.embedding ?? undefined) as number[] | undefined,
+    tokens: chunk.tokens ?? undefined,
+    created_by: chunk.created_by ?? undefined,
+    deleted_at: chunk.deleted_at ?? undefined,
+  }));
 }
 
 /**
