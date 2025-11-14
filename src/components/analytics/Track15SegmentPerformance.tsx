@@ -149,9 +149,7 @@ export default function Track15SegmentPerformance({
                 <div>
                   <div className="flex items-center gap-1 mb-1">
                     <Users className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs track15-text-muted">
-                      Donors
-                    </span>
+                    <span className="text-xs track15-text-muted">Donors</span>
                   </div>
                   <div className="text-sm font-semibold text-track15-primary">
                     {segment.donorCount}
@@ -164,9 +162,7 @@ export default function Track15SegmentPerformance({
                 <div>
                   <div className="flex items-center gap-1 mb-1">
                     <DollarSign className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs track15-text-muted">
-                      Avg Gift
-                    </span>
+                    <span className="text-xs track15-text-muted">Avg Gift</span>
                   </div>
                   <div className="text-sm font-semibold text-track15-primary">
                     ${segment.avgGiftSize.toFixed(0)}
@@ -176,9 +172,7 @@ export default function Track15SegmentPerformance({
                 <div>
                   <div className="flex items-center gap-1 mb-1">
                     <Percent className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs track15-text-muted">
-                      Response
-                    </span>
+                    <span className="text-xs track15-text-muted">Response</span>
                   </div>
                   <div className="text-sm font-semibold text-track15-primary">
                     {segment.responseRate.toFixed(1)}%

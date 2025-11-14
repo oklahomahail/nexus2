@@ -92,19 +92,13 @@ export default function Track15RetentionChart({
           <h3 className="text-xl font-semibold font-track15-heading text-track15-primary">
             Retention Over Time
           </h3>
-          <span className="text-xs track15-text-muted">
-            {series.label}
-          </span>
+          <span className="text-xs track15-text-muted">{series.label}</span>
         </div>
         <div className="text-right">
-          <div className="text-sm track15-text-muted">
-            Avg Lift
-          </div>
+          <div className="text-sm track15-text-muted">Avg Lift</div>
           <div
             className={`text-lg font-bold ${
-              avgLift >= 0
-                ? "text-green-600"
-                : "text-red-600"
+              avgLift >= 0 ? "text-green-600" : "text-red-600"
             }`}
           >
             {avgLift >= 0 ? "+" : ""}
@@ -175,9 +169,7 @@ export default function Track15RetentionChart({
       <div className="mt-6 pt-6 border-t track15-border">
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <div className="text-xs track15-text-muted mb-1">
-              Latest Period
-            </div>
+            <div className="text-xs track15-text-muted mb-1">Latest Period</div>
             <div className="text-lg font-semibold text-track15-primary">
               {(
                 series.points[series.points.length - 1].campaignRetention * 100
@@ -186,9 +178,7 @@ export default function Track15RetentionChart({
             </div>
           </div>
           <div>
-            <div className="text-xs track15-text-muted mb-1">
-              Baseline
-            </div>
+            <div className="text-xs track15-text-muted mb-1">Baseline</div>
             <div className="text-lg font-semibold text-track15-primary">
               {(
                 series.points[series.points.length - 1].baselineRetention * 100
@@ -197,14 +187,10 @@ export default function Track15RetentionChart({
             </div>
           </div>
           <div>
-            <div className="text-xs track15-text-muted mb-1">
-              Trend
-            </div>
+            <div className="text-xs track15-text-muted mb-1">Trend</div>
             <div
               className={`text-lg font-semibold ${
-                avgLift >= 0
-                  ? "text-green-600"
-                  : "text-red-600"
+                avgLift >= 0 ? "text-green-600" : "text-red-600"
               }`}
             >
               {avgLift >= 0 ? "↗ Improving" : "↘ Declining"}

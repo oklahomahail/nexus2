@@ -47,10 +47,19 @@ export default function SOPs({ clientId, onSaveSuccess }: SOPsProps) {
     if (!newSOP.title || !newSOP.content) return;
 
     try {
+      // Generate a simple checksum from title + content
+      const checksum = `${newSOP.title}-${newSOP.content}`
+        .split("")
+        .reduce((acc, char) => {
+          return (acc << 5) - acc + char.charCodeAt(0);
+        }, 0)
+        .toString(36);
+
       await addCorpusEntry({
         source_type: "manual",
         title: `SOP: ${newSOP.title}`,
         content: newSOP.content,
+        checksum,
       });
       setNewSOP({ title: "", content: "" });
       setShowAddModal(false);

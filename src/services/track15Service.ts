@@ -15,6 +15,7 @@ import {
   Track15Stage,
   Track15RetentionSeries,
   Track15RetentionPoint,
+  DonorSegment,
 } from "@/types/track15.types";
 
 // ============================================================================
@@ -634,7 +635,7 @@ export async function getRetentionSeries(
 // ============================================================================
 
 export interface SegmentPerformanceData {
-  segment: string;
+  segment: DonorSegment;
   donorCount: number;
   totalGifts: number;
   avgGiftSize: number;
@@ -660,7 +661,7 @@ export async function getSegmentPerformance(
     if (campaignError) throw campaignError;
 
     // Define segments
-    const segments = [
+    const segments: DonorSegment[] = [
       "current_donors",
       "lapsed_donors",
       "high_value_donors",

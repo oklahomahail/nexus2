@@ -9,7 +9,7 @@
 // CAMPAIGN SEASONS
 // ============================================================================
 
-export type Track15Season = "spring" | "summer" | "fall" | "winter";
+export type Track15Season = "spring" | "summer" | "fall" | "winter" | "ntxgd";
 
 // Alias for backwards compatibility
 export type CampaignSeason = Track15Season;
@@ -42,6 +42,13 @@ export const TRACK15_SEASONS = {
     focus: "Tax benefits and year-end appeals",
     description: "November-December year-end giving campaigns",
     defaultDuration: 56,
+  },
+  ntxgd: {
+    name: "North Texas Giving Day",
+    timing: "September",
+    focus: "24-hour giving day event",
+    description: "North Texas Giving Day concentrated fundraising",
+    defaultDuration: 1,
   },
 } as const;
 
