@@ -6,7 +6,7 @@
  */
 
 import { Save, Plus, X } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import type { VoiceProfile } from "@/services/knowledgeBaseService";
 import knowledgeBaseService from "@/services/knowledgeBaseService";

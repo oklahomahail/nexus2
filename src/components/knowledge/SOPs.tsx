@@ -6,7 +6,7 @@
  */
 
 import { FileText, Plus, Search } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 

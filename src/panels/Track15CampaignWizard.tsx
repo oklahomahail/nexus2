@@ -6,7 +6,7 @@
  */
 
 import { Check } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CoreStoryBuilder from "@/components/campaign/wizard-steps/CoreStoryBuilder";

@@ -6,7 +6,7 @@
  */
 
 import { Heart, Plus, Search, Edit2, Trash2 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useKnowledgeBase } from "@/hooks/useKnowledgeBase";
 import type {

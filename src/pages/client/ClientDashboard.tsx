@@ -7,7 +7,6 @@
  * - Knowledge Base (quick access)
  */
 
-import React from "react";
 import { useParams } from "react-router-dom";
 
 import AnalyticsSection from "@/components/dashboard/AnalyticsSection";

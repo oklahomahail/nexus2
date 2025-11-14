@@ -6,7 +6,6 @@
  */
 
 import { Plus, Calendar, TrendingUp, Target, Sparkles } from "lucide-react";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useClient } from "@/context/ClientContext";

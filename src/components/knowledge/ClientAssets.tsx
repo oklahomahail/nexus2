@@ -6,7 +6,7 @@
  */
 
 import { FolderOpen, Upload, Image, FileText, Palette } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandAssetType } from "@/services/brandService";

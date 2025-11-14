@@ -6,7 +6,6 @@
  */
 
 import { Sparkles, ExternalLink } from "lucide-react";
-import React from "react";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 

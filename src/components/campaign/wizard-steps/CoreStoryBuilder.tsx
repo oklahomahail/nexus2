@@ -6,7 +6,7 @@
  */
 
 import { Sparkles, AlertCircle, CheckCircle } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import {
   Track15CoreStory,

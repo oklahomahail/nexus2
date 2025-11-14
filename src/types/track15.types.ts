@@ -9,7 +9,14 @@
 // CAMPAIGN SEASONS
 // ============================================================================
 
-export type Track15Season = "spring" | "summer" | "fall" | "winter" | "ntxgd";
+export type Track15Season =
+  | "spring"
+  | "summer"
+  | "fall"
+  | "winter"
+  | "ntxgd"
+  | "eoy"
+  | "custom";
 
 // Alias for backwards compatibility
 export type CampaignSeason = Track15Season;
@@ -49,6 +56,20 @@ export const TRACK15_SEASONS = {
     focus: "24-hour giving day event",
     description: "North Texas Giving Day concentrated fundraising",
     defaultDuration: 1,
+  },
+  eoy: {
+    name: "End of Year",
+    timing: "December",
+    focus: "Year-end giving surge",
+    description: "December year-end giving intensive",
+    defaultDuration: 31,
+  },
+  custom: {
+    name: "Custom Campaign",
+    timing: "Flexible",
+    focus: "Organization-specific timing",
+    description: "Custom campaign with flexible timing",
+    defaultDuration: 30,
   },
 } as const;
 

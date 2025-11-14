@@ -6,7 +6,6 @@
  */
 
 import { Users, DollarSign, TrendingUp, Percent } from "lucide-react";
-import React from "react";
 
 import { DonorSegment, SEGMENT_DEFINITIONS } from "@/types/track15.types";
 

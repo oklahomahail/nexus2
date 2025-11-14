@@ -6,7 +6,6 @@
  */
 
 import { TrendingUp, TrendingDown, Activity, Target, Zap } from "lucide-react";
-import React from "react";
 
 import type { Track15LiftMetrics } from "@/types/track15.types";
 

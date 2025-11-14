@@ -6,7 +6,7 @@
  */
 
 import { Sparkles, TrendingUp, ChevronDown } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import Track15LiftMetrics from "@/components/analytics/Track15LiftMetrics";
 import Track15RetentionChart from "@/components/analytics/Track15RetentionChart";
