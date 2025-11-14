@@ -517,7 +517,9 @@ export async function getRetentionSeries(
 
     // Calculate retention points over time
     // This is a simplified version - you may want to adjust based on your actual retention logic
-    const startDate = campaign.start_date ? new Date(campaign.start_date) : new Date();
+    const startDate = campaign.start_date
+      ? new Date(campaign.start_date)
+      : new Date();
     const now = new Date();
     const points: Track15RetentionPoint[] = [];
 

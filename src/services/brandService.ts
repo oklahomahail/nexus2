@@ -137,8 +137,12 @@ export async function listBrandProfiles(
     mission_statement: profile.mission_statement ?? undefined,
     tone_of_voice: profile.tone_of_voice ?? undefined,
     brand_personality: profile.brand_personality ?? undefined,
-    style_keywords: (profile.style_keywords ?? undefined) as string[] | undefined,
-    primary_colors: (profile.primary_colors ?? undefined) as string[] | undefined,
+    style_keywords: (profile.style_keywords ?? undefined) as
+      | string[]
+      | undefined,
+    primary_colors: (profile.primary_colors ?? undefined) as
+      | string[]
+      | undefined,
     typography: (profile.typography ?? undefined) as BrandProfile["typography"],
     logo_url: profile.logo_url ?? undefined,
     guidelines_url: profile.guidelines_url ?? undefined,
@@ -265,7 +269,9 @@ export async function listBrandAssets(
     ...asset,
     asset_type: asset.asset_type as BrandAssetType,
     description: asset.description ?? undefined,
-    metadata: (asset.metadata ?? undefined) as Record<string, unknown> | undefined,
+    metadata: (asset.metadata ?? undefined) as
+      | Record<string, unknown>
+      | undefined,
     created_by: asset.created_by ?? undefined,
     deleted_at: asset.deleted_at ?? undefined,
   }));

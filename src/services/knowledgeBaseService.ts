@@ -350,10 +350,12 @@ export async function updateDonorNarrative(
   if (input.title !== undefined) updateData.title = input.title;
   if (input.narrative !== undefined) updateData.narrative = input.narrative;
   if (input.donor_role !== undefined) updateData.donor_role = input.donor_role;
-  if (input.emotional_center !== undefined) updateData.emotional_center = input.emotional_center;
+  if (input.emotional_center !== undefined)
+    updateData.emotional_center = input.emotional_center;
   if (input.story_type !== undefined) updateData.story_type = input.story_type;
   if (input.tags !== undefined) updateData.tags = input.tags;
-  if (input.metadata !== undefined) updateData.metadata = input.metadata as Json;
+  if (input.metadata !== undefined)
+    updateData.metadata = input.metadata as Json;
 
   const { data, error } = await supabase
     .from("client_donor_narratives")
