@@ -6,15 +6,15 @@ Static SVG logo files for use in marketing, presentations, and external applicat
 
 ## 📦 Files
 
-| File                           | Size    | Use Case                                                |
-| ------------------------------ | ------- | ------------------------------------------------------- |
-| `nexus_logo_blue_bg.svg`       | Full    | Logo with blue background (dark themes, presentations) |
-| `nexus_logo_blue_bg.png`       | Full    | Logo with blue background PNG (social media, email)    |
-| `nexus_logo_transparent.svg`   | Full    | Logo with transparent background (light themes, web)   |
-| `nexus_logo_transparent.png`   | Full    | Logo with transparent PNG (general use, overlays)      |
-| `nexus_logo_dark.svg`          | 200×64  | Legacy: Main logo with wordmark (headers, splash)      |
-| `nexus_icon_dark.svg`          | 64×64   | Symbol only (app icons, favicons, badges)              |
-| `nexus_tagline_lockup.svg`     | 400×160 | Hero lockup with tagline (presentations, hero)         |
+| File                         | Size    | Use Case                                               |
+| ---------------------------- | ------- | ------------------------------------------------------ |
+| `nexus_logo_blue_bg.svg`     | Full    | Logo with blue background (dark themes, presentations) |
+| `nexus_logo_blue_bg.png`     | Full    | Logo with blue background PNG (social media, email)    |
+| `nexus_logo_transparent.svg` | Full    | Logo with transparent background (light themes, web)   |
+| `nexus_logo_transparent.png` | Full    | Logo with transparent PNG (general use, overlays)      |
+| `nexus_logo_dark.svg`        | 200×64  | Legacy: Main logo with wordmark (headers, splash)      |
+| `nexus_icon_dark.svg`        | 64×64   | Symbol only (app icons, favicons, badges)              |
+| `nexus_tagline_lockup.svg`   | 400×160 | Hero lockup with tagline (presentations, hero)         |
 
 ---
 

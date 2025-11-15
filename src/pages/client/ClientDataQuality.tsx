@@ -213,10 +213,7 @@ export default function ClientDataQuality() {
                   Outliers
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {metrics.outliers.reduce(
-                    (sum, o) => sum + o.record_count,
-                    0,
-                  )}
+                  {metrics.outliers.reduce((sum, o) => sum + o.record_count, 0)}
                 </p>
               </div>
             </div>

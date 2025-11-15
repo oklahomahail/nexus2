@@ -53,8 +53,9 @@ export function useDataQuality(clientId: string): UseDataQualityResult {
 
   useEffect(() => {
     if (clientId) {
-      fetchMetrics();
+      void fetchMetrics();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
 
   return {
