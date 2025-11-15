@@ -1,4 +1,5 @@
 # Nexus Migration Plan
+
 ## Aligning Current Implementation with Structure Documents
 
 **Created:** 2025-01-13
@@ -11,6 +12,7 @@
 The Nexus codebase is **80-90% complete** with a solid foundation. The primary work ahead is **connecting existing components to live data** and **adding Track15-specific features** rather than building new infrastructure.
 
 ### Current State
+
 - ✅ All UI primitives implemented (19 components)
 - ✅ Complete service layer (client, campaign, analytics, brand, donor intel)
 - ✅ Comprehensive Supabase schema (17+ tables)
@@ -21,7 +23,9 @@ The Nexus codebase is **80-90% complete** with a solid foundation. The primary w
 - ❌ Track15 campaign methodology not integrated
 
 ### What Structure Documents Propose
+
 The two structure documents propose a **Track15-aligned dashboard** with:
+
 1. Three-panel client dashboard (Campaign Engine, Analytics, Knowledge Base)
 2. Track15 campaign creation workflow (story-first, seasonal arcs)
 3. Client knowledge base system (Brand, Voice, Messaging Pillars, SOPs, Assets, Donor Narratives)
@@ -33,18 +37,18 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 
 ### What Exists vs What's Needed
 
-| Feature | Current Status | Structure Doc Spec | Action Required |
-|---------|---------------|-------------------|-----------------|
-| **UI Primitives** | ✅ All 19 exist | Panel, Card, Button, Modal, etc. | ✅ None - already complete |
-| **Client Dashboard** | ⚠️ Exists with mock data | Three-panel layout | 🔧 Refactor to new layout |
-| **Campaign Engine** | ⚠️ Builder exists | Track15 workflow | 🔧 Add Track15 methodology |
-| **Analytics Section** | ⚠️ Context exists | Track15 KPIs | 🔧 Add retention, segment metrics |
-| **Knowledge Base** | ❌ Not implemented | 6-tab system | ➕ Build from scratch |
-| **Client Services** | ✅ Fully implemented | CRUD operations | ✅ Already complete |
-| **Campaign Services** | ✅ Fully implemented | CRUD operations | ✅ Already complete |
-| **Brand Services** | ✅ Fully implemented | Brand profiles | ✅ Already complete |
-| **Supabase Tables** | ⚠️ Core tables exist | Need KB tables | ➕ Add 6 new tables |
-| **AppContext** | ⚠️ Specialized contexts | Unified reducer | 🤔 Decide on approach |
+| Feature               | Current Status           | Structure Doc Spec               | Action Required                   |
+| --------------------- | ------------------------ | -------------------------------- | --------------------------------- |
+| **UI Primitives**     | ✅ All 19 exist          | Panel, Card, Button, Modal, etc. | ✅ None - already complete        |
+| **Client Dashboard**  | ⚠️ Exists with mock data | Three-panel layout               | 🔧 Refactor to new layout         |
+| **Campaign Engine**   | ⚠️ Builder exists        | Track15 workflow                 | 🔧 Add Track15 methodology        |
+| **Analytics Section** | ⚠️ Context exists        | Track15 KPIs                     | 🔧 Add retention, segment metrics |
+| **Knowledge Base**    | ❌ Not implemented       | 6-tab system                     | ➕ Build from scratch             |
+| **Client Services**   | ✅ Fully implemented     | CRUD operations                  | ✅ Already complete               |
+| **Campaign Services** | ✅ Fully implemented     | CRUD operations                  | ✅ Already complete               |
+| **Brand Services**    | ✅ Fully implemented     | Brand profiles                   | ✅ Already complete               |
+| **Supabase Tables**   | ⚠️ Core tables exist     | Need KB tables                   | ➕ Add 6 new tables               |
+| **AppContext**        | ⚠️ Specialized contexts  | Unified reducer                  | 🤔 Decide on approach             |
 
 ---
 
@@ -58,6 +62,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 **Recommendation:** **Keep current specialized contexts**
 
 **Rationale:**
+
 - Current architecture is cleaner and more modular
 - Each context has a single responsibility
 - Better performance (components only subscribe to what they need)
@@ -73,6 +78,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 **Structure Doc:** Proposes 6 new tables for voice, messaging, SOPs, assets, narratives
 
 **Current Brand Tables:**
+
 ```sql
 - brand_profiles (name, mission, tagline, primary_color, website, logo_url)
 - brand_assets (type, url, description, metadata)
@@ -80,6 +86,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ```
 
 **Proposed New Tables:**
+
 ```sql
 - client_voice (voice_description, tone_guidelines, examples)
 - client_messaging (pillars, impact_language, value_prop)
@@ -91,11 +98,13 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 **Recommendation:** **Extend existing brand system, add 3 new tables**
 
 **New Tables Needed:**
+
 1. `client_voice` - Voice and tone guidelines
 2. `client_messaging` - Messaging pillars and positioning
 3. `client_donor_narratives` - Donor stories repository
 
 **Adapt Existing:**
+
 - Keep `brand_profiles` as-is
 - Rename `brand_assets` → `client_assets` (or alias)
 - Keep `brand_corpus` for general content
@@ -111,6 +120,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 **Recommendation:** **Enhance existing wizard with Track15 stages**
 
 **Add to Campaign Builder:**
+
 1. Campaign season selection (Spring, Summer, NTXGD, End-of-Year, Custom)
 2. Core story definition (anchor, imagery, emotional center)
 3. Narrative arc builder (cultivation sequence → solicitation sequence)
@@ -122,9 +132,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ## Implementation Plan
 
 ### Phase 1: Data Layer Foundation (Week 1)
+
 **Goal:** Add missing database tables and extend services
 
 #### Tasks
+
 1. **Add Knowledge Base Tables**
    - Create migration: `20250113000000_knowledge_base_tables.sql`
    - Add tables: `client_voice`, `client_messaging`, `client_donor_narratives`
@@ -142,6 +154,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Add channel attribution tracking
 
 **Deliverables:**
+
 - ✅ Migration file
 - ✅ knowledgeBaseService.ts
 - ✅ Extended analyticsService.ts
@@ -149,9 +162,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ---
 
 ### Phase 2: Knowledge Base UI (Week 2)
+
 **Goal:** Build the 6-tab knowledge base interface
 
 #### Tasks
+
 1. **Create Knowledge Base Components**
    - `src/components/knowledge/BrandGuidelines.tsx` (already exists via BrandProfilePanel)
    - `src/components/knowledge/VoiceTone.tsx` (new)
@@ -171,6 +186,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Or extend ClientContext
 
 **Deliverables:**
+
 - ✅ 6 knowledge base components
 - ✅ KnowledgeBaseSection.tsx
 - ✅ Context or hooks for KB data
@@ -178,9 +194,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ---
 
 ### Phase 3: Dashboard Refactor (Week 2-3)
+
 **Goal:** Implement three-panel client dashboard layout
 
 #### Tasks
+
 1. **Create Dashboard Sections**
    - `src/components/dashboard/CampaignEngineSection.tsx`
    - `src/components/dashboard/AnalyticsSection.tsx`
@@ -199,6 +217,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Test data refresh and polling
 
 **Deliverables:**
+
 - ✅ Three dashboard section components
 - ✅ Refactored ClientDashboard.tsx
 - ✅ Live data integration complete
@@ -206,9 +225,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ---
 
 ### Phase 4: Track15 Campaign Workflow (Week 3-4)
+
 **Goal:** Integrate Track15 campaign methodology into campaign builder
 
 #### Tasks
+
 1. **Extend Campaign Schema**
    - Add fields to campaigns table:
      - `season` (spring, summer, ntxgd, eoy, custom)
@@ -244,6 +265,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Auto-populate from Knowledge Base
 
 **Deliverables:**
+
 - ✅ Extended campaign schema
 - ✅ Track15-enhanced campaign builder
 - ✅ Updated AI campaign designer
@@ -252,9 +274,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ---
 
 ### Phase 5: Analytics Enhancement (Week 4-5)
+
 **Goal:** Add Track15-specific analytics and insights
 
 #### Tasks
+
 1. **Implement Track15 Metrics**
    - Year-over-year retention
    - Renewal rates by segment
@@ -277,6 +301,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Add seasonal trend analysis
 
 **Deliverables:**
+
 - ✅ Track15 metrics in analyticsService
 - ✅ New analytics components
 - ✅ Enhanced analytics dashboard
@@ -284,9 +309,11 @@ The two structure documents propose a **Track15-aligned dashboard** with:
 ---
 
 ### Phase 6: Polish & Integration (Week 5-6)
+
 **Goal:** Connect all pieces and ensure smooth workflows
 
 #### Tasks
+
 1. **Cross-Feature Integration**
    - Knowledge Base → Campaign Builder flow
    - Campaign Builder → Analytics tracking
@@ -313,6 +340,7 @@ The two structure documents propose a **Track15-aligned dashboard** with:
    - Test data refresh and caching
 
 **Deliverables:**
+
 - ✅ Integrated feature workflows
 - ✅ Polished UX
 - ✅ Complete documentation
@@ -496,7 +524,7 @@ alter table public.campaigns add column if not exists assets_required jsonb;
 #### knowledgeBaseService.ts Structure
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from "@/lib/supabaseClient";
 
 // Types
 export interface VoiceProfile {
@@ -511,7 +539,11 @@ export interface VoiceProfile {
 export interface MessagingProfile {
   id: string;
   clientId: string;
-  pillars: Array<{ title: string; description: string; examples: string[] }> | null;
+  pillars: Array<{
+    title: string;
+    description: string;
+    examples: string[];
+  }> | null;
   impactLanguage: string | null;
   valueProposition: string | null;
   problemStatement: string | null;
@@ -534,19 +566,31 @@ export interface DonorNarrative {
 // Service methods
 export const knowledgeBaseService = {
   // Voice & Tone
-  async getVoice(clientId: string): Promise<VoiceProfile | null> { },
-  async upsertVoice(clientId: string, data: Partial<VoiceProfile>): Promise<VoiceProfile> { },
+  async getVoice(clientId: string): Promise<VoiceProfile | null> {},
+  async upsertVoice(
+    clientId: string,
+    data: Partial<VoiceProfile>,
+  ): Promise<VoiceProfile> {},
 
   // Messaging
-  async getMessaging(clientId: string): Promise<MessagingProfile | null> { },
-  async upsertMessaging(clientId: string, data: Partial<MessagingProfile>): Promise<MessagingProfile> { },
+  async getMessaging(clientId: string): Promise<MessagingProfile | null> {},
+  async upsertMessaging(
+    clientId: string,
+    data: Partial<MessagingProfile>,
+  ): Promise<MessagingProfile> {},
 
   // Donor Narratives
-  async listNarratives(clientId: string): Promise<DonorNarrative[]> { },
-  async getNarrative(id: string): Promise<DonorNarrative> { },
-  async createNarrative(clientId: string, data: Partial<DonorNarrative>): Promise<DonorNarrative> { },
-  async updateNarrative(id: string, data: Partial<DonorNarrative>): Promise<DonorNarrative> { },
-  async deleteNarrative(id: string): Promise<void> { },
+  async listNarratives(clientId: string): Promise<DonorNarrative[]> {},
+  async getNarrative(id: string): Promise<DonorNarrative> {},
+  async createNarrative(
+    clientId: string,
+    data: Partial<DonorNarrative>,
+  ): Promise<DonorNarrative> {},
+  async updateNarrative(
+    id: string,
+    data: Partial<DonorNarrative>,
+  ): Promise<DonorNarrative> {},
+  async deleteNarrative(id: string): Promise<void> {},
 };
 ```
 
@@ -640,36 +684,42 @@ src/
 ## Success Criteria
 
 ### Phase 1 Complete When:
+
 - [ ] All 3 new tables created in Supabase
 - [ ] knowledgeBaseService.ts passes manual testing
 - [ ] analyticsService includes retention and segment metrics
 - [ ] Migration successfully applied
 
 ### Phase 2 Complete When:
+
 - [ ] All 6 KB components render correctly
 - [ ] KnowledgeBaseSection tabs switch properly
 - [ ] Data loads from knowledgeBaseService
 - [ ] Can create/edit/delete narratives
 
 ### Phase 3 Complete When:
+
 - [ ] ClientDashboard shows real data (no mock data)
 - [ ] Three-panel layout matches design
 - [ ] Campaign Engine section is visually dominant
 - [ ] All metrics refresh on client selection
 
 ### Phase 4 Complete When:
+
 - [ ] Campaign builder includes all Track15 steps
 - [ ] Campaign creation pulls from Knowledge Base
 - [ ] AI generates Track15-compliant campaigns
 - [ ] Seasonal templates available
 
 ### Phase 5 Complete When:
+
 - [ ] All Track15 metrics calculate correctly
 - [ ] New analytics components render
 - [ ] ClientAnalytics page shows Track15 insights
 - [ ] Segment performance tracking works
 
 ### Phase 6 Complete When:
+
 - [ ] Knowledge Base → Campaign flow seamless
 - [ ] All empty states have helpful prompts
 - [ ] Documentation complete
@@ -680,17 +730,21 @@ src/
 ## Risk Assessment
 
 ### Low Risk
+
 - **Phase 1-2:** Straightforward CRUD, follows existing patterns
 - **Phase 3:** UI refactor, existing data layer
 
 ### Medium Risk
+
 - **Phase 4:** Complex campaign logic, AI prompt changes
 - **Phase 5:** Analytics calculation accuracy
 
 ### High Risk
+
 - None identified
 
 ### Mitigation Strategies
+
 1. **Incremental rollout:** Each phase is independently testable
 2. **Feature flags:** Gate new features during development
 3. **Backward compatibility:** Existing campaigns continue working
@@ -701,15 +755,15 @@ src/
 
 ## Timeline Summary
 
-| Phase | Duration | Key Deliverable |
-|-------|----------|----------------|
-| Phase 1 | 3-5 days | Knowledge Base tables + service |
-| Phase 2 | 5-7 days | Knowledge Base UI complete |
-| Phase 3 | 5-7 days | Dashboard refactor with live data |
-| Phase 4 | 7-10 days | Track15 campaign workflow |
-| Phase 5 | 5-7 days | Track15 analytics |
-| Phase 6 | 5-7 days | Polish and integration |
-| **Total** | **5-6 weeks** | Full Track15 integration |
+| Phase     | Duration      | Key Deliverable                   |
+| --------- | ------------- | --------------------------------- |
+| Phase 1   | 3-5 days      | Knowledge Base tables + service   |
+| Phase 2   | 5-7 days      | Knowledge Base UI complete        |
+| Phase 3   | 5-7 days      | Dashboard refactor with live data |
+| Phase 4   | 7-10 days     | Track15 campaign workflow         |
+| Phase 5   | 5-7 days      | Track15 analytics                 |
+| Phase 6   | 5-7 days      | Polish and integration            |
+| **Total** | **5-6 weeks** | Full Track15 integration          |
 
 ---
 
@@ -726,6 +780,7 @@ src/
 ## Notes
 
 ### Why This Approach Works
+
 1. **Builds on existing foundation:** 80% of infrastructure already exists
 2. **Incremental:** Each phase delivers value independently
 3. **Low risk:** No breaking changes to existing features
@@ -733,12 +788,14 @@ src/
 5. **Data-driven:** Real Supabase data, no mock data
 
 ### Architecture Decisions
+
 - **Keep specialized contexts:** Better than monolithic AppContext
 - **Extend existing tables:** Minimal schema changes
 - **Leverage existing UI kit:** No new primitives needed
 - **Adapt Structure Doc patterns:** Align with current codebase conventions
 
 ### Post-Launch Enhancements
+
 - Advanced segmentation builder
 - Campaign performance forecasting
 - A/B testing framework

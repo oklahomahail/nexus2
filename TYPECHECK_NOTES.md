@@ -12,6 +12,7 @@
 Most type errors are due to Supabase types not being regenerated after schema changes. Tables return `never` type because the TypeScript definitions don't match the current database schema.
 
 **Affected Files:**
+
 - `src/services/track15Service.ts` - Track15 tables (campaigns, track15_narrative_steps)
 - `src/services/analyticsService.ts` - Campaigns table
 - `src/services/knowledgeBaseService.ts` - Knowledge base tables
@@ -22,6 +23,7 @@ Most type errors are due to Supabase types not being regenerated after schema ch
 The migrations added Track15 fields to existing tables, but Supabase types haven't been regenerated to reflect these changes.
 
 **Solution:**
+
 ```bash
 # Generate Supabase types
 npx supabase gen types typescript --project-id <project-id> > src/types/supabase.ts
@@ -42,6 +44,7 @@ npx supabase gen types typescript --local > src/types/supabase.ts
 **Issue:** Component name conflicts with type name when using value import
 
 **Fix:** Changed to type-only import
+
 ```typescript
 // Before
 import { Track15LiftMetrics } from "@/types/track15.types";
@@ -59,6 +62,7 @@ import type { Track15LiftMetrics } from "@/types/track15.types";
 **File:** `src/components/campaign/wizard-steps/SeasonSelectionStep.tsx`
 
 **Issues:**
+
 - Missing `CampaignSeason` export
 - Missing `CAMPAIGN_SEASONS` export
 
@@ -77,6 +81,7 @@ import type { Track15LiftMetrics } from "@/types/track15.types";
 ## Workarounds
 
 Until Supabase types are regenerated, the app will still compile and run, but TypeScript will show errors in the IDE. The errors don't prevent:
+
 - Development server from running
 - Building for production
 - Runtime functionality
@@ -93,4 +98,4 @@ The type errors are compile-time only and don't affect actual functionality.
 
 ---
 
-*This file documents expected type errors and can be deleted once Supabase types are regenerated.*
+_This file documents expected type errors and can be deleted once Supabase types are regenerated._

@@ -39,6 +39,7 @@ All Track15 theme variables have been added to `src/index.css`:
 All utility classes have been added to `src/index.css`:
 
 **Background:**
+
 - `.track15-bg` - Page background (#F4F5F7)
 - `.track15-surface` - Card/surface white
 - `.track15-primary` - Primary blue button
@@ -47,19 +48,23 @@ All utility classes have been added to `src/index.css`:
 - `.bg-track15-accent` - Accent orange background
 
 **Text:**
+
 - `.track15-text` - Primary text color
 - `.track15-text-muted` - Muted text
 - `.text-track15-primary` - Primary blue text
 - `.text-track15-accent` - Accent orange text
 
 **Borders:**
+
 - `.track15-border` - Border color
 
 **Typography:**
+
 - `.font-track15-heading` - Montserrat font for headings
 - `.font-track15-body` - Source Sans 3 for body
 
 **Components:**
+
 - `.track15-card` - Pre-styled card (rounded, border, shadow)
 - `.track15-stepper-step` - Base stepper circle
   - `.active` - Current step (blue outline, light blue bg)
@@ -76,7 +81,7 @@ Google Fonts imported in `src/index.css`:
 
 ---
 
-##  Components To Update
+## Components To Update
 
 ### 1. Track15CampaignWizard
 
@@ -88,6 +93,7 @@ Google Fonts imported in `src/index.css`:
 **Changes Needed:**
 
 #### Container/Wrapper
+
 ```tsx
 // BEFORE
 <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -97,6 +103,7 @@ Google Fonts imported in `src/index.css`:
 ```
 
 #### Header
+
 ```tsx
 // BEFORE
 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -113,6 +120,7 @@ Google Fonts imported in `src/index.css`:
 ```
 
 #### Progress Stepper
+
 ```tsx
 // BEFORE
 <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border...">
@@ -143,6 +151,7 @@ Google Fonts imported in `src/index.css`:
 ```
 
 #### Card Container
+
 ```tsx
 // BEFORE
 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -154,6 +163,7 @@ Google Fonts imported in `src/index.css`:
 ```
 
 #### Buttons
+
 ```tsx
 // BEFORE (Back button)
 <button className="text-gray-600 hover:text-gray-900 ...">
@@ -189,7 +199,8 @@ return (
         </h1>
         <p className="text-sm track15-text-muted max-w-2xl">
           Design a donor journey that mirrors Track15's consulting approach:
-          clear seasons, a strong core story, and a consistent five-stage narrative.
+          clear seasons, a strong core story, and a consistent five-stage
+          narrative.
         </p>
       </header>
 
@@ -241,6 +252,7 @@ return (
 **Changes Needed:**
 
 #### Page Container
+
 ```tsx
 // BEFORE
 <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -250,6 +262,7 @@ return (
 ```
 
 #### Header
+
 ```tsx
 // BEFORE
 <div className="bg-white dark:bg-gray-800 border-b ...">
@@ -269,6 +282,7 @@ return (
 ```
 
 #### Campaign Selector
+
 ```tsx
 // BEFORE
 <select className="rounded-lg border border-gray-300 bg-white ...">
@@ -282,6 +296,7 @@ return (
 ```
 
 #### Analytics Cards
+
 ```tsx
 // BEFORE
 <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 ...">
@@ -296,6 +311,7 @@ return (
 ```
 
 #### Stat Cards
+
 ```tsx
 // Highlight important numbers in primary blue
 <div className="text-2xl font-bold text-track15-primary">
@@ -325,8 +341,10 @@ return (
 
         {/* Campaign Selector */}
         <select className="px-4 py-2.5 rounded-lg border track15-border track15-surface track15-text">
-          {campaigns.map(c => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+          {campaigns.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
       </header>
@@ -402,14 +420,23 @@ return (
 <table className="w-full">
   <thead>
     <tr className="border-b track15-border">
-      <th className="text-left py-3 px-4 font-semibold track15-text text-sm">Segment</th>
-      <th className="text-right py-3 px-4 font-semibold track15-text text-sm">Donors</th>
-      <th className="text-right py-3 px-4 font-semibold track15-text text-sm">Lift</th>
+      <th className="text-left py-3 px-4 font-semibold track15-text text-sm">
+        Segment
+      </th>
+      <th className="text-right py-3 px-4 font-semibold track15-text text-sm">
+        Donors
+      </th>
+      <th className="text-right py-3 px-4 font-semibold track15-text text-sm">
+        Lift
+      </th>
     </tr>
   </thead>
   <tbody>
-    {segments.map(segment => (
-      <tr key={segment.name} className="border-b track15-border hover:bg-track15-bg/50 transition-colors">
+    {segments.map((segment) => (
+      <tr
+        key={segment.name}
+        className="border-b track15-border hover:bg-track15-bg/50 transition-colors"
+      >
         <td className="py-3 px-4 track15-text">{segment.name}</td>
         <td className="py-3 px-4 text-right track15-text">{segment.donors}</td>
         <td className="py-3 px-4 text-right">
@@ -457,6 +484,7 @@ return (
 ### When to Use Track15 Theme
 
 Use Track15 theme (light) for:
+
 - Track15CampaignWizard panel
 - Track15AnalyticsPanel
 - Any Track15-specific modals or overlays
@@ -465,6 +493,7 @@ Use Track15 theme (light) for:
 ### When to Keep Nexus Theme
 
 Keep Nexus theme (dark) for:
+
 - Main app shell (sidebar, header)
 - Standard campaigns
 - Donor management
@@ -473,13 +502,13 @@ Keep Nexus theme (dark) for:
 
 ### Color Mapping
 
-| Element | Nexus (Dark) | Track15 (Light) |
-|---------|-------------|-----------------|
-| Page Background | `#0D0D12` (dark) | `#F4F5F7` (light gray) |
-| Card Surface | `#1A1A22` (dark gray) | `#FFFFFF` (white) |
-| Primary Text | `#FFFFFF` (white) | `#1F2933` (dark) |
-| Primary CTA | `#3B36F4` (indigo) | `#0D5FA8` (blue) |
-| Accent | `#72E4FC` (cyan) | `#F9A826` (orange) |
+| Element         | Nexus (Dark)          | Track15 (Light)        |
+| --------------- | --------------------- | ---------------------- |
+| Page Background | `#0D0D12` (dark)      | `#F4F5F7` (light gray) |
+| Card Surface    | `#1A1A22` (dark gray) | `#FFFFFF` (white)      |
+| Primary Text    | `#FFFFFF` (white)     | `#1F2933` (dark)       |
+| Primary CTA     | `#3B36F4` (indigo)    | `#0D5FA8` (blue)       |
+| Accent          | `#72E4FC` (cyan)      | `#F9A826` (orange)     |
 
 ---
 
@@ -488,12 +517,14 @@ Keep Nexus theme (dark) for:
 ### Headings
 
 Use `font-track15-heading` (Montserrat) for:
+
 - Page titles (h1)
 - Section headings (h2)
 - Card titles
 - Step labels in wizard
 
 **Example:**
+
 ```tsx
 <h1 className="text-3xl font-semibold font-track15-heading text-track15-primary">
   Your Track15 Campaign Builder
@@ -503,12 +534,14 @@ Use `font-track15-heading` (Montserrat) for:
 ### Body Text
 
 Use `font-track15-body` (Source Sans 3) for:
+
 - Paragraph text
 - Form labels
 - Descriptions
 - Helper text
 
 **Example:**
+
 ```tsx
 <p className="text-sm font-track15-body track15-text-muted">
   Design a donor journey that mirrors Track15's consulting approach
@@ -525,11 +558,13 @@ Use `font-track15-body` (Source Sans 3) for:
 ## Implementation Checklist
 
 ### Phase 1: Core Components ✅
+
 - [x] Add CSS variables to `src/index.css`
 - [x] Add utility classes to `src/index.css`
 - [x] Import Google Fonts in `src/index.css`
 
 ### Phase 2: Wizard (Pending)
+
 - [ ] Update `Track15CampaignWizard.tsx` container
 - [ ] Update wizard header
 - [ ] Update progress stepper
@@ -538,6 +573,7 @@ Use `font-track15-body` (Source Sans 3) for:
 - [ ] Test wizard flow
 
 ### Phase 3: Analytics (Pending)
+
 - [ ] Update `Track15AnalyticsPanel.tsx` container
 - [ ] Update analytics header
 - [ ] Update campaign selector
@@ -545,12 +581,14 @@ Use `font-track15-body` (Source Sans 3) for:
 - [ ] Test analytics display
 
 ### Phase 4: Analytics Components (Pending)
+
 - [ ] Update `Track15LiftMetrics.tsx`
 - [ ] Update `Track15SegmentPerformance.tsx`
 - [ ] Update `Track15RetentionChart.tsx` colors
 - [ ] Test all charts
 
 ### Phase 5: Testing (Pending)
+
 - [ ] Visual QA in light mode
 - [ ] Verify font loading
 - [ ] Check color contrast (WCAG)
@@ -564,38 +602,47 @@ Use `font-track15-body` (Source Sans 3) for:
 ### Common Class Combinations
 
 **Page Container:**
+
 ```tsx
-className="min-h-screen track15-bg px-4 py-6"
+className = "min-h-screen track15-bg px-4 py-6";
 ```
 
 **Card:**
+
 ```tsx
-className="track15-card p-6"
+className = "track15-card p-6";
 ```
 
 **Heading:**
+
 ```tsx
-className="text-2xl font-semibold font-track15-heading text-track15-primary"
+className = "text-2xl font-semibold font-track15-heading text-track15-primary";
 ```
 
 **Muted Text:**
+
 ```tsx
-className="text-sm track15-text-muted"
+className = "text-sm track15-text-muted";
 ```
 
 **Primary Button:**
+
 ```tsx
-className="track15-primary px-6 py-2.5 rounded-lg font-medium"
+className = "track15-primary px-6 py-2.5 rounded-lg font-medium";
 ```
 
 **Secondary/Ghost Button:**
+
 ```tsx
-className="track15-text-muted hover:track15-text hover:bg-track15-bg px-4 py-2 rounded-lg"
+className =
+  "track15-text-muted hover:track15-text hover:bg-track15-bg px-4 py-2 rounded-lg";
 ```
 
 **Input Field:**
+
 ```tsx
-className="px-4 py-2.5 rounded-lg border track15-border track15-surface track15-text focus:ring-2 focus:ring-track15-primary/20"
+className =
+  "px-4 py-2.5 rounded-lg border track15-border track15-surface track15-text focus:ring-2 focus:ring-track15-primary/20";
 ```
 
 ---
@@ -610,5 +657,5 @@ className="px-4 py-2.5 rounded-lg border track15-border track15-surface track15-
 
 ---
 
-*Last Updated: 2025-01-14*
-*Status: CSS Complete, Component Updates Needed*
+_Last Updated: 2025-01-14_
+_Status: CSS Complete, Component Updates Needed_

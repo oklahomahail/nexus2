@@ -7,7 +7,6 @@ import {
   Calendar,
   Mail,
   BarChart3,
-  PlusCircle,
   Loader2,
   AlertCircle,
 } from "lucide-react";
@@ -78,17 +77,49 @@ export default function Dashboard() {
     <div className="space-y-8 p-6">
       {/* Welcome Header */}
       <section>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">
+        <h1 className="text-3xl font-bold text-blue-900 mb-2">
           Welcome to Nexus
         </h1>
-        <p className="text-slate-600">
+        <p className="text-blue-700">
           Your comprehensive fundraising management platform
         </p>
       </section>
 
+      {/* Client Manager - Moved to Top */}
+      <section className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6 shadow-sm">
+        <div className="flex items-start space-x-4">
+          <div className="p-3 bg-blue-600 rounded-lg">
+            <Building className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              Client Manager
+            </h3>
+            <p className="text-blue-700 mb-4">
+              Manage your clients and access their dashboards. View client
+              details, campaigns, and performance metrics.
+            </p>
+            <div className="flex space-x-3">
+              <Link
+                to="/clients/regional-food-bank"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm shadow-sm"
+              >
+                View Client Dashboard
+              </Link>
+              <Link
+                to="/clients"
+                className="px-4 py-2 bg-white border border-blue-300 text-blue-700 rounded-md hover:bg-blue-50 font-medium text-sm shadow-sm"
+              >
+                Manage All Clients
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Key Metrics Grid */}
       <section>
-        <h2 className="text-xl font-semibold text-slate-900 mb-6">
+        <h2 className="text-xl font-semibold text-blue-900 mb-6">
           Platform Overview
         </h2>
         {platformError ? (
@@ -180,7 +211,7 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <section>
-        <h2 className="text-xl font-semibold text-slate-900 mb-6">
+        <h2 className="text-xl font-semibold text-blue-900 mb-6">
           Quick Actions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -190,15 +221,15 @@ export default function Dashboard() {
               <Link
                 key={index}
                 to={action.href}
-                className="p-6 bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200 text-left group"
+                className="p-6 bg-white rounded-lg border border-blue-200 shadow-sm hover:shadow-md hover:border-blue-400 transition-all duration-200 text-left group"
               >
                 <Icon
                   className={`w-8 h-8 ${action.color} mb-4 group-hover:scale-110 transition-transform duration-200`}
                 />
-                <div className="font-semibold text-slate-900 mb-2">
+                <div className="font-semibold text-blue-900 mb-2">
                   {action.title}
                 </div>
-                <div className="text-slate-600 text-sm">
+                <div className="text-blue-700 text-sm">
                   {action.description}
                 </div>
               </Link>
@@ -210,7 +241,7 @@ export default function Dashboard() {
       {/* Recent Activity */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-slate-900">
+          <h2 className="text-xl font-semibold text-blue-900">
             Recent Activity
           </h2>
           <Link
@@ -220,36 +251,34 @@ export default function Dashboard() {
             View All
           </Link>
         </div>
-        <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
+        <div className="bg-white rounded-lg border border-blue-200 shadow-sm">
           {recentActivity.length === 0 ? (
             <div className="text-center py-12">
-              <Calendar className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <p className="text-slate-500">No recent activity</p>
+              <Calendar className="w-12 h-12 text-blue-400 mx-auto mb-3" />
+              <p className="text-blue-600">No recent activity</p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-200">
+            <div className="divide-y divide-blue-100">
               {recentActivity.map((activity) => {
                 const { icon: Icon, color } = getActivityIcon(activity.type);
                 return (
                   <div
                     key={activity.id}
-                    className="flex items-start space-x-4 p-6 hover:bg-slate-50 transition-colors"
+                    className="flex items-start space-x-4 p-6 hover:bg-blue-50 transition-colors"
                   >
-                    <div className={`p-2 rounded-lg bg-slate-100 ${color}`}>
+                    <div className={`p-2 rounded-lg bg-blue-100 ${color}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-slate-900 text-sm font-medium">
+                      <p className="text-blue-900 text-sm font-medium">
                         {activity.message}
                       </p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <p className="text-slate-500 text-xs">
+                        <p className="text-blue-600 text-xs">
                           {getClientName(activity.clientId)}
                         </p>
-                        <span className="text-slate-400">•</span>
-                        <p className="text-slate-500 text-xs">
-                          {activity.time}
-                        </p>
+                        <span className="text-blue-400">•</span>
+                        <p className="text-blue-600 text-xs">{activity.time}</p>
                       </div>
                     </div>
                   </div>
@@ -257,40 +286,6 @@ export default function Dashboard() {
               })}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* Getting Started Card */}
-      <section>
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200 p-6">
-          <div className="flex items-start space-x-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <PlusCircle className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Get Started with Nexus
-              </h3>
-              <p className="text-slate-600 mb-4">
-                Ready to launch your next fundraising campaign? Start by
-                exploring your client dashboard or creating a new campaign.
-              </p>
-              <div className="flex space-x-3">
-                <Link
-                  to="/clients/regional-food-bank"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
-                >
-                  View Client Dashboard
-                </Link>
-                <Link
-                  to="/clients"
-                  className="px-4 py-2 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-50 font-medium text-sm"
-                >
-                  Manage Clients
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </div>

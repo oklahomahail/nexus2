@@ -1,6 +1,7 @@
 # Issue #2: Connect Analytics to Real Data - COMPLETE
 
 ## Summary
+
 Successfully replaced all mock data in Track15 analytics components with live service calls and proper state management. The analytics dashboard now displays real-time data from the database.
 
 ---
@@ -8,11 +9,13 @@ Successfully replaced all mock data in Track15 analytics components with live se
 ## Files Created
 
 ### 1. useTrack15Metrics Hook
+
 **File:** `src/hooks/useTrack15Metrics.ts`
 
 **Purpose:** Fetch Track15 lift metrics for a campaign
 
 **Interface:**
+
 ```typescript
 interface UseTrack15MetricsReturn {
   metrics: Track15LiftMetrics | null;
@@ -23,16 +26,19 @@ interface UseTrack15MetricsReturn {
 ```
 
 **Usage:**
+
 ```typescript
 const { metrics, isLoading, error } = useTrack15Metrics(campaignId);
 ```
 
 ### 2. useTrack15Segments Hook
+
 **File:** `src/hooks/useTrack15Segments.ts`
 
 **Purpose:** Fetch segment performance data for a campaign
 
 **Interface:**
+
 ```typescript
 interface UseTrack15SegmentsReturn {
   segments: SegmentPerformanceData[];
@@ -43,6 +49,7 @@ interface UseTrack15SegmentsReturn {
 ```
 
 **Usage:**
+
 ```typescript
 const { segments, isLoading, error } = useTrack15Segments(campaignId);
 ```
@@ -52,6 +59,7 @@ const { segments, isLoading, error } = useTrack15Segments(campaignId);
 ## Files Modified
 
 ### 1. track15Service.ts - Added Segment Performance
+
 **Location:** `src/services/track15Service.ts`
 
 **New Function:** `getSegmentPerformance(campaignId: string)`
@@ -59,9 +67,10 @@ const { segments, isLoading, error } = useTrack15Segments(campaignId);
 **Returns:** `SegmentPerformanceData[]`
 
 **Data Structure:**
+
 ```typescript
 interface SegmentPerformanceData {
-  segment: string;  // Segment identifier
+  segment: string; // Segment identifier
   donorCount: number;
   totalGifts: number;
   avgGiftSize: number;
@@ -72,6 +81,7 @@ interface SegmentPerformanceData {
 ```
 
 **Implementation Details:**
+
 - Queries donations table for campaign
 - Groups by donor segment
 - Calculates metrics per segment:
@@ -84,6 +94,7 @@ interface SegmentPerformanceData {
 - Returns array of 7 segments
 
 **Segments Tracked:**
+
 1. current_donors
 2. lapsed_donors
 3. high_value_donors
@@ -93,24 +104,29 @@ interface SegmentPerformanceData {
 7. planned_giving_prospects
 
 ### 2. Track15AnalyticsPanel.tsx - Complete Rewrite
+
 **Location:** `src/panels/Track15AnalyticsPanel.tsx`
 
 **Major Changes:**
 
 #### Added Campaign Selector
+
 - Fetches all Track15-enabled campaigns for client
 - Dropdown selector in header
 - Auto-selects first campaign
 - Shows campaign name + season
 
 #### Replaced Mock Data
+
 **Before:**
+
 ```typescript
 const mockLiftMetrics = { ... };
 const mockSegmentData = [ ... ];
 ```
 
 **After:**
+
 ```typescript
 const { metrics, isLoading, error } = useTrack15Metrics(selectedCampaignId);
 const { segments, isLoading, error } = useTrack15Segments(selectedCampaignId);
@@ -118,24 +134,30 @@ const { data, isLoading, error } = useTrack15Retention(selectedCampaignId);
 ```
 
 #### Added State Management
+
 ```typescript
-const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
+const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
+  null,
+);
 const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 const [loadingCampaigns, setLoadingCampaigns] = useState(false);
 ```
 
 #### Added Loading States
+
 - Campaign list loading
 - Metrics loading (skeleton)
 - Segments loading (skeleton)
 - Retention loading (existing)
 
 #### Added Empty States
+
 - No Track15 campaigns created yet
 - No campaign selected
 - Loading campaigns
 
 #### Data Flow
+
 ```
 User selects campaign
   ↓
@@ -153,12 +175,15 @@ UI updates with live metrics
 ## Component Updates
 
 ### Track15LiftMetrics
+
 **Changes:**
+
 - Added `loading` prop
 - Displays skeleton when loading
 - Receives metrics from `useTrack15Metrics` hook
 
 **Integration:**
+
 ```typescript
 <Track15LiftMetrics
   metrics={metrics}
@@ -167,12 +192,15 @@ UI updates with live metrics
 ```
 
 ### Track15SegmentPerformance
+
 **Changes:**
+
 - Added `loading` prop
 - Receives segments from `useTrack15Segments` hook
 - Handles empty segments array
 
 **Integration:**
+
 ```typescript
 <Track15SegmentPerformance
   segments={segments}
@@ -181,7 +209,9 @@ UI updates with live metrics
 ```
 
 ### Track15RetentionChart
+
 **No Changes Required:**
+
 - Already using `useTrack15Retention` hook
 - Already has loading/error states
 - Working as expected
@@ -224,27 +254,33 @@ UI updates with live metrics
 ## Data Sources
 
 ### Lift Metrics
+
 **Service:** `getLiftMetrics(campaignId)`
 
 **Database Tables:**
+
 - `track15_campaign_metrics`
 
 **Fields Retrieved:**
+
 - engagement_lift
 - response_rate_lift
 - velocity_lift
-- baseline_* (comparison data)
-- current_* (current campaign data)
+- baseline\_\* (comparison data)
+- current\_\* (current campaign data)
 - calculated_at (timestamp)
 
 ### Segment Performance
+
 **Service:** `getSegmentPerformance(campaignId)`
 
 **Database Tables:**
+
 - `campaigns` (campaign info)
 - `donations` (gift data)
 
 **Calculated Metrics:**
+
 - Donor count per segment
 - Total gifts per segment
 - Average gift size
@@ -253,13 +289,16 @@ UI updates with live metrics
 - Retention rate (for donor segments)
 
 ### Retention Series
+
 **Service:** `getRetentionSeries(campaignId)`
 
 **Database Tables:**
+
 - `campaigns` (campaign info)
 - `donations` (donor activity)
 
 **Calculated:**
+
 - Monthly retention points
 - Campaign retention vs baseline
 - Period-over-period comparison
@@ -269,7 +308,9 @@ UI updates with live metrics
 ## Error Handling
 
 ### Hook-Level Errors
+
 All hooks return `error: string | null`:
+
 ```typescript
 const { data, isLoading, error } = useTrack15Metrics(campaignId);
 
@@ -281,12 +322,14 @@ if (error) {
 ```
 
 ### Component-Level Errors
+
 - Graceful degradation
 - Error messages displayed inline
 - No crashes on missing data
 - Console logging for debugging
 
 ### Network Errors
+
 - Caught in try/catch blocks
 - Displayed via error state
 - User-friendly error messages
@@ -296,16 +339,19 @@ if (error) {
 ## Performance Considerations
 
 ### Data Fetching
+
 - Hooks only fetch when campaignId changes
 - No unnecessary re-fetches
 - Parallel data loading (metrics, segments, retention)
 
 ### Loading States
+
 - Skeleton loaders prevent layout shift
 - Progressive data display
 - User sees content as it loads
 
 ### Campaign Selector
+
 - Campaigns fetched once on mount
 - Cached in component state
 - Only re-fetches on client change
@@ -315,6 +361,7 @@ if (error) {
 ## Testing Checklist
 
 ### Manual Testing
+
 - [x] Navigate to Track15 Analytics
 - [x] Verify campaign selector appears
 - [x] Select different campaigns
@@ -324,6 +371,7 @@ if (error) {
 - [x] Verify error handling
 
 ### Data Validation
+
 - [ ] Lift metrics display correctly
 - [ ] Segment data calculates properly
 - [ ] Retention chart renders
@@ -331,6 +379,7 @@ if (error) {
 - [ ] No TypeScript errors
 
 ### Edge Cases
+
 - [ ] No campaigns → empty state
 - [ ] Single campaign → no dropdown
 - [ ] Multiple campaigns → dropdown works
@@ -342,22 +391,27 @@ if (error) {
 ## Future Improvements
 
 ### Real Calculations Needed
+
 Currently using mock values for:
+
 - Response rates (segment performance)
 - Conversion rates (segment performance)
 
 **Implementation Plan:**
+
 1. Track campaign emails/touchpoints sent
 2. Track opens/clicks/responses
-3. Calculate: (responses / touchpoints) * 100
+3. Calculate: (responses / touchpoints) \* 100
 4. Store in database or calculate on-demand
 
 ### Caching
+
 - Consider caching metrics data
 - Refresh on user action or interval
 - Reduce database load
 
 ### Real-Time Updates
+
 - Consider websocket/polling for live data
 - Update metrics as donations come in
 - Show "Updated X minutes ago"
@@ -390,6 +444,7 @@ Currently using mock values for:
 ## Code Examples
 
 ### Using the Metrics Hook
+
 ```typescript
 import { useTrack15Metrics } from '@/hooks/useTrack15Metrics';
 
@@ -405,6 +460,7 @@ function MyComponent({ campaignId }) {
 ```
 
 ### Using the Segments Hook
+
 ```typescript
 import { useTrack15Segments } from '@/hooks/useTrack15Segments';
 
@@ -421,16 +477,19 @@ function MyComponent({ campaignId }) {
 ```
 
 ### Campaign Selector Pattern
+
 ```typescript
-const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
+const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
+  null,
+);
 const [campaigns, setCampaigns] = useState<Campaign[]>([]);
 
 useEffect(() => {
   async function fetchCampaigns() {
     const { data } = await supabase
-      .from('campaigns')
-      .select('*')
-      .eq('track15_enabled', true);
+      .from("campaigns")
+      .select("*")
+      .eq("track15_enabled", true);
 
     setCampaigns(data || []);
     if (data && data.length > 0) {
@@ -443,5 +502,5 @@ useEffect(() => {
 
 ---
 
-*Last Updated: 2025-01-13*
-*Issue #2 Status: ✅ COMPLETE*
+_Last Updated: 2025-01-13_
+_Issue #2 Status: ✅ COMPLETE_

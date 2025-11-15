@@ -48,29 +48,34 @@ Track15 is a scientific approach to fundraising that guides donors through a 5-s
 ### The 5 Stages
 
 **1. Awareness** (Days 1-3)
-   - Introduce your organization's mission
-   - Build trust and credibility
-   - Set expectations for the campaign
+
+- Introduce your organization's mission
+- Build trust and credibility
+- Set expectations for the campaign
 
 **2. Engagement** (Days 4-6)
-   - Share impact stories
-   - Demonstrate transparency
-   - Create emotional connection
+
+- Share impact stories
+- Demonstrate transparency
+- Create emotional connection
 
 **3. Consideration** (Days 7-10)
-   - Present specific giving opportunities
-   - Address objections
-   - Build urgency
+
+- Present specific giving opportunities
+- Address objections
+- Build urgency
 
 **4. Conversion** (Days 11-13)
-   - Direct call-to-action
-   - Simplified giving process
-   - Final urgency messaging
+
+- Direct call-to-action
+- Simplified giving process
+- Final urgency messaging
 
 **5. Gratitude** (Days 14-15)
-   - Thank donors immediately
-   - Share preliminary impact
-   - Set stage for long-term relationship
+
+- Thank donors immediately
+- Share preliminary impact
+- Set stage for long-term relationship
 
 ### The 7 Donor Segments
 
@@ -93,6 +98,7 @@ Track15 automatically tailors messaging for each RFM (Recency, Frequency, Moneta
 - **Measurement**: Clear lift metrics
 
 **Average Results:**
+
 - 40-60% increase in conversion rates
 - 45-55% increase in total revenue
 - 30-40% improvement in donor retention
@@ -141,12 +147,14 @@ Track15 is available from **4 locations** in Nexus:
 #### Step 1: Campaign Basics
 
 **What You'll Do:**
+
 - Name your campaign
 - Set fundraising goal
 - Define campaign dates
 - Add description
 
 **Best Practices:**
+
 ```
 ✅ Good Name: "Spring 2025 Food Security Campaign"
 ❌ Bad Name: "Campaign 1"
@@ -159,6 +167,7 @@ Track15 is available from **4 locations** in Nexus:
 ```
 
 **Tips:**
+
 - Use descriptive names that include season and cause
 - Set realistic goals based on donor base size
 - Ensure 15-day duration for full Track15 methodology
@@ -167,6 +176,7 @@ Track15 is available from **4 locations** in Nexus:
 #### Step 2: Select Your Season
 
 **What You'll Do:**
+
 - Choose from 4 seasonal templates
 - Review season-specific messaging themes
 - Understand optimal timing
@@ -174,30 +184,35 @@ Track15 is available from **4 locations** in Nexus:
 **Season Characteristics:**
 
 **Spring Cultivation** (March-May)
+
 - **Theme:** Growth, renewal, planting seeds
 - **Donor Mindset:** Optimistic, forward-looking
 - **Best For:** Programs, capacity building, new initiatives
 - **Messaging:** Hope, fresh starts, community growth
 
 **Summer Emergency** (June-August)
+
 - **Theme:** Urgent needs, immediate impact
 - **Donor Mindset:** Responsive to crisis
 - **Best For:** Emergency relief, critical gaps
 - **Messaging:** Urgency, action, timely response
 
 **Fall Engagement** (September-November)
+
 - **Theme:** Harvest, gratitude, preparation
 - **Donor Mindset:** Reflective, community-focused
 - **Best For:** General operations, annual fund
 - **Messaging:** Community, belonging, preparation
 
 **Year-End Appeal** (December-January)
+
 - **Theme:** Reflection, generosity, new beginnings
 - **Donor Mindset:** Charitable, tax-motivated
 - **Best For:** Year-end giving, major initiatives
 - **Messaging:** Impact stories, gratitude, legacy
 
 **Choosing Your Season:**
+
 ```
 Ask yourself:
 1. What time of year will this campaign run?
@@ -209,6 +224,7 @@ Ask yourself:
 #### Step 3: Build Your Core Story
 
 **What You'll Do:**
+
 - Write your campaign headline
 - Craft a compelling summary
 - Define your value proposition
@@ -217,6 +233,7 @@ Ask yourself:
 **The 4 Core Story Elements:**
 
 **1. Headline** (6-10 words)
+
 ```
 ✅ Good: "Feed 500 Families This Spring"
 ✅ Good: "Clean Water for 3 Rural Communities"
@@ -231,6 +248,7 @@ Tips:
 ```
 
 **2. Summary** (2-3 sentences)
+
 ```
 ✅ Good: "Every $50 provides a week of groceries for a family facing
 food insecurity. Your gift today directly supports our community
@@ -248,6 +266,7 @@ Tips:
 ```
 
 **3. Value Proposition** (What donor gets)
+
 ```
 ✅ Good: "Your $50 gift provides a tangible, measurable impact:
 one week of nutritious food for a struggling family."
@@ -263,6 +282,7 @@ Tips:
 ```
 
 **4. Donor Motivation** (Why they should care)
+
 ```
 ✅ Good: "Because every child deserves to go to bed with a full
 stomach, and you have the power to make that happen in your
@@ -281,6 +301,7 @@ Tips:
 #### Step 4: Design Your Narrative Arc
 
 **What You'll Do:**
+
 - Create 15 touchpoints across 5 stages
 - Customize messaging for each stage
 - Review narrative flow
@@ -288,6 +309,7 @@ Tips:
 **Narrative Arc Builder:**
 
 Each touchpoint should have:
+
 - **Stage** (which of the 5 stages)
 - **Subject Line** (for emails)
 - **Message** (core content)
@@ -297,90 +319,106 @@ Each touchpoint should have:
 
 **STAGE 1: AWARENESS (Days 1-3)**
 
-*Touchpoint 1 (Day 1):*
+_Touchpoint 1 (Day 1):_
+
 - **Subject:** "Meet the families we serve"
 - **Message:** Introduction to community need, share statistics
 - **CTA:** "Learn more about our food pantry"
 
-*Touchpoint 2 (Day 2):*
+_Touchpoint 2 (Day 2):_
+
 - **Subject:** "Behind the scenes at our food pantry"
 - **Message:** Show operations, introduce staff, build trust
 - **CTA:** "See how we ensure quality and dignity"
 
-*Touchpoint 3 (Day 3):*
+_Touchpoint 3 (Day 3):_
+
 - **Subject:** "Food insecurity in our community"
 - **Message:** Local context, why this matters now
 - **CTA:** "Explore the data"
 
 **STAGE 2: ENGAGEMENT (Days 4-6)**
 
-*Touchpoint 4 (Day 4):*
+_Touchpoint 4 (Day 4):_
+
 - **Subject:** "Sarah's story: From hungry to hopeful"
 - **Message:** Impact story, emotional connection
 - **CTA:** "Read Sarah's full story"
 
-*Touchpoint 5 (Day 5):*
+_Touchpoint 5 (Day 5):_
+
 - **Subject:** "What your neighbors are saying"
 - **Message:** Testimonials, social proof
 - **CTA:** "See what others are saying"
 
-*Touchpoint 6 (Day 6):*
+_Touchpoint 6 (Day 6):_
+
 - **Subject:** "The ripple effect of one meal"
 - **Message:** Long-term impact, systems change
 - **CTA:** "Discover the bigger picture"
 
 **STAGE 3: CONSIDERATION (Days 7-10)**
 
-*Touchpoint 7 (Day 7):*
+_Touchpoint 7 (Day 7):_
+
 - **Subject:** "How $50 becomes 7 days of food"
 - **Message:** Specific giving opportunity, transparency
 - **CTA:** "See the breakdown"
 
-*Touchpoint 8 (Day 8):*
+_Touchpoint 8 (Day 8):_
+
 - **Subject:** "Your questions answered"
 - **Message:** Address objections, build confidence
 - **CTA:** "Learn more about our approach"
 
-*Touchpoint 9 (Day 9):*
+_Touchpoint 9 (Day 9):_
+
 - **Subject:** "Only 6 days left to make an impact"
 - **Message:** Build urgency, show progress
 - **CTA:** "Join the campaign today"
 
-*Touchpoint 10 (Day 10):*
+_Touchpoint 10 (Day 10):_
+
 - **Subject:** "Match your values with action"
 - **Message:** Connect giving to donor identity
 - **CTA:** "Make your gift"
 
 **STAGE 4: CONVERSION (Days 11-13)**
 
-*Touchpoint 11 (Day 11):*
+_Touchpoint 11 (Day 11):_
+
 - **Subject:** "It takes 5 minutes to feed a family"
 - **Message:** Direct ask, simplified process
 - **CTA:** "Donate now" (prominent button)
 
-*Touchpoint 12 (Day 12):*
+_Touchpoint 12 (Day 12):_
+
 - **Subject:** "Last 48 hours: We're 73% to our goal"
 - **Message:** Urgency, social proof, momentum
 - **CTA:** "Be one of the final donors"
 
-*Touchpoint 13 (Day 13):*
+_Touchpoint 13 (Day 13):_
+
 - **Subject:** "Final call: Help us reach 500 families"
 - **Message:** Final push, specific need remaining
 - **CTA:** "Make your gift before midnight"
 
 **STAGE 5: GRATITUDE (Days 14-15)**
 
-*Touchpoint 14 (Day 14):*
+_Touchpoint 14 (Day 14):_
+
 - **Subject:** "You did it! Campaign results inside"
 - **Message:** Thank donors, share preliminary results
 - **CTA:** "See what we accomplished together"
 
-*Touchpoint 15 (Day 15):*
+_Touchpoint 15 (Day 15):_
+
 - **Subject:** "What happens next"
 - **Message:** Next steps, ongoing involvement, impact timeline
 - **CTA:** "Stay connected with our work"
 
 **Tips for Building Your Narrative Arc:**
+
 - Start with awareness, not asks
 - Build emotional connection before financial ask
 - Address objections in Consideration stage
@@ -391,12 +429,14 @@ Each touchpoint should have:
 #### Step 5: Review & Launch
 
 **What You'll Do:**
+
 - Review all campaign details
 - Verify dates and goals
 - Confirm narrative flow
 - Launch campaign
 
 **Pre-Launch Checklist:**
+
 - [ ] Campaign name is clear and descriptive
 - [ ] Fundraising goal is realistic and specific
 - [ ] Campaign dates span exactly 15 days
@@ -412,6 +452,7 @@ Each touchpoint should have:
 
 **After Launch:**
 Once you click "Create Campaign," your Track15 campaign will:
+
 1. Be saved to the database
 2. Appear in your campaigns list with Track15 badge
 3. Be ready for activation and donor outreach
@@ -428,18 +469,21 @@ All your campaigns appear in **Campaigns** → **Campaigns List**.
 Track15 campaigns are marked with a purple **✨ Track15** badge.
 
 **Available Actions:**
+
 - **Edit** - Modify campaign details
 - **Analytics** - View Track15 performance (Track15 campaigns only)
 
 ### Editing a Campaign
 
 From the campaigns list, click **Edit** on any campaign to:
+
 - Update campaign details
 - Modify narrative arc
 - Adjust messaging
 - Change dates (if campaign hasn't started)
 
 **Note:** Some fields cannot be changed after campaign activation:
+
 - Track15 season
 - Campaign duration (must remain 15 days)
 - Client assignment
@@ -457,12 +501,14 @@ Track15 campaigns progress through stages:
 ### Activating Your Campaign
 
 **Prerequisites:**
+
 - Campaign status: "Ready for Launch"
 - All touchpoints scheduled
 - Donor lists segmented
 - Email templates prepared
 
 **Activation Process:**
+
 1. Review campaign one final time
 2. Verify donor segments have recipients
 3. Schedule first touchpoint
@@ -499,6 +545,7 @@ The Track15 Analytics dashboard shows **3 key metric sections**:
 Comparison of Track15 methodology vs. control group (standard approach).
 
 **Key Metrics:**
+
 - **Conversion Rate:** Percentage of recipients who donated
   - Control: Baseline conversion
   - Track15: Enhanced conversion
@@ -510,6 +557,7 @@ Comparison of Track15 methodology vs. control group (standard approach).
   - Lift %: Revenue increase
 
 **How to Interpret:**
+
 ```
 ✅ Good Performance:
 - Conversion lift: 40%+
@@ -528,6 +576,7 @@ Comparison of Track15 methodology vs. control group (standard approach).
 ```
 
 **Example:**
+
 ```
 Control Conversion: 3.2%
 Track15 Conversion: 4.8%
@@ -544,12 +593,14 @@ achieved.
 How each of the 7 donor segments responded to your campaign.
 
 **Metrics Per Segment:**
+
 - **Donor Count:** Number who gave
 - **Total Gifts:** Sum of donations
 - **Avg Gift Size:** Mean donation amount
 - **Lift %:** Performance vs. expected
 
 **Segments (Best to Worst Typical Performance):**
+
 1. Champions (usually 50-60% lift)
 2. Loyal (usually 40-50% lift)
 3. Potential Loyalists (usually 35-45% lift)
@@ -561,6 +612,7 @@ How each of the 7 donor segments responded to your campaign.
 **How to Use This Data:**
 
 **Identify Top Performers:**
+
 ```
 If "Champions" segment has 55% lift:
 → Your messaging resonates with loyal donors
@@ -569,6 +621,7 @@ If "Champions" segment has 55% lift:
 ```
 
 **Find Opportunities:**
+
 ```
 If "At Risk" segment has only 8% lift:
 → Current messaging not reconnecting lapsed donors
@@ -577,6 +630,7 @@ If "At Risk" segment has only 8% lift:
 ```
 
 **Optimize Budget:**
+
 ```
 If "New Donors" has 40% lift but low donor count:
 → Great conversion, but small audience
@@ -590,11 +644,13 @@ If "New Donors" has 40% lift but low donor count:
 How many donors stay engaged across the 5 stages of the Track15 journey.
 
 **Metrics:**
+
 - **Donors:** Count at each stage
 - **Retention Rate:** % who progress to next stage
 - **Cumulative Revenue:** Total raised by this stage
 
 **Stages (in order):**
+
 1. Awareness (100% - everyone starts here)
 2. Engagement (typically 70-85%)
 3. Consideration (typically 50-70%)
@@ -604,6 +660,7 @@ How many donors stay engaged across the 5 stages of the Track15 journey.
 **How to Interpret:**
 
 **Healthy Retention Pattern:**
+
 ```
 Awareness → Engagement: 80%
 Engagement → Consideration: 65%
@@ -615,6 +672,7 @@ mid-stage engagement.
 ```
 
 **Red Flags:**
+
 ```
 ⚠️ Big Drop at Awareness → Engagement (< 60%)
 → Opening touchpoints not compelling
@@ -634,6 +692,7 @@ mid-stage engagement.
 ```
 
 **Revenue Analysis:**
+
 ```
 If revenue is flat between stages:
 → Donors giving early (good!)
@@ -651,11 +710,13 @@ If revenue is distributed evenly:
 ### Downloading Reports
 
 **Export Options:**
+
 - **CSV Export:** Raw data for Excel analysis
 - **PDF Report:** Formatted summary for stakeholders
 - **Image Export:** Charts for presentations
 
 **When to Export:**
+
 - Weekly during campaign
 - Final report at campaign end
 - Board presentations
@@ -669,6 +730,7 @@ If revenue is distributed evenly:
 
 **1. Complete Your Knowledge Base First**
 Track15 campaigns are only as good as your foundational content:
+
 - Brand guidelines inform visual consistency
 - Voice & tone ensure messaging alignment
 - Messaging pillars provide thematic backbone
@@ -676,6 +738,7 @@ Track15 campaigns are only as good as your foundational content:
 - Donor narratives guide segmentation strategy
 
 **2. Set Realistic Goals**
+
 ```
 Formula:
 Historical Donor Count × Average Gift × Track15 Lift Factor (1.5)
@@ -685,6 +748,7 @@ Example:
 ```
 
 **3. Allow Adequate Prep Time**
+
 - 2-3 weeks before campaign start
 - Time for stakeholder review
 - Buffer for revisions
@@ -696,6 +760,7 @@ Example:
 **Writing Compelling Core Stories**
 
 **Do:**
+
 - Focus on impact, not your organization
 - Use specific numbers and examples
 - Paint vivid pictures with words
@@ -703,6 +768,7 @@ Example:
 - Address head and heart
 
 **Don't:**
+
 - Use jargon or insider language
 - Guilt or manipulate
 - Make vague claims
@@ -712,6 +778,7 @@ Example:
 **Building Effective Narrative Arcs**
 
 **Do:**
+
 - Start with education, not asks
 - Build trust before requesting money
 - Vary your content types (story, data, testimonial)
@@ -719,6 +786,7 @@ Example:
 - Always thank promptly
 
 **Don't:**
+
 - Ask for money in first 3 touchpoints
 - Repeat the same message 15 times
 - Ignore segment differences
@@ -728,6 +796,7 @@ Example:
 **Subject Line Best Practices**
 
 **Strong Subject Lines:**
+
 ```
 ✅ "Meet Sarah: From food insecurity to stability"
 ✅ "The surprising truth about local hunger"
@@ -737,6 +806,7 @@ Example:
 ```
 
 **Weak Subject Lines:**
+
 ```
 ❌ "Donate now"
 ❌ "Newsletter #3"
@@ -746,6 +816,7 @@ Example:
 ```
 
 **Tips:**
+
 - 6-10 words ideal
 - Use numbers when relevant
 - Create curiosity
@@ -755,6 +826,7 @@ Example:
 ### During Your Campaign
 
 **Monitor Daily**
+
 - Check analytics dashboard
 - Review email open rates
 - Track donation pace
@@ -763,18 +835,21 @@ Example:
 
 **Make Adjustments**
 You can modify:
+
 - Remaining touchpoint timing
 - Subject lines (for unsent messages)
 - Donation page content
 - Follow-up sequences
 
 You cannot change:
+
 - Overall campaign duration
 - Season selection
 - Past touchpoints
 - Campaign goals (can add stretch goals)
 
 **Engage Your Board**
+
 - Share daily updates
 - Celebrate milestones
 - Mobilize for peer-to-peer
@@ -783,24 +858,28 @@ You cannot change:
 ### After Your Campaign
 
 **Within 24 Hours:**
+
 - Send final thank-you
 - Share preliminary results
 - Thank staff and volunteers
 - Celebrate publicly
 
 **Within 1 Week:**
+
 - Export analytics
 - Create final report
 - Document lessons learned
 - Thank major donors personally
 
 **Within 1 Month:**
+
 - Send impact update
 - Share photos/stories
 - Begin stewardship plan
 - Plan next campaign
 
 **Continuous Improvement:**
+
 - Compare to past campaigns
 - Identify best-performing touchpoints
 - Note which segments exceeded expectations
@@ -816,6 +895,7 @@ You cannot change:
 #### "I can't find the Track15 wizard"
 
 **Check:**
+
 1. Are you on the client dashboard?
 2. Look for purple "New Track15 Campaign" button
 3. Alternative: Sidebar → "Track15 Performance"
@@ -824,11 +904,13 @@ You cannot change:
 #### "Campaign won't proceed past Step 2"
 
 **Common Causes:**
+
 - No season selected
 - Season selection not fully loaded
 - Network connection issue
 
 **Fix:**
+
 - Refresh page
 - Try different season first, then switch back
 - Clear browser cache
@@ -836,12 +918,14 @@ You cannot change:
 #### "Analytics show no data"
 
 **Possible Reasons:**
+
 1. Campaign just created (data takes 1-2 hours)
 2. Campaign not yet activated
 3. No donations recorded yet
 4. Database sync delay
 
 **Fix:**
+
 - Wait 2 hours after first donation
 - Verify campaign is active
 - Check donation records in database
@@ -850,12 +934,14 @@ You cannot change:
 #### "Lift metrics seem incorrect"
 
 **Validation Checks:**
+
 1. Verify control group data exists
 2. Check if donations properly tagged
 3. Ensure campaign dates are correct
 4. Confirm segment assignments
 
 **If Still Wrong:**
+
 - Export raw data
 - Contact technical support
 - Provide campaign ID
@@ -864,11 +950,13 @@ You cannot change:
 #### "Segment performance missing data"
 
 **Common Causes:**
+
 - Donors not assigned to RFM segments
 - Recent segment update not synced
 - Donations not linked to campaigns
 
 **Fix:**
+
 1. Go to Donors → Segmentation
 2. Verify all donors have RFM segments
 3. Run segment refresh if available
@@ -877,18 +965,22 @@ You cannot change:
 ### Getting Help
 
 **Technical Support:**
+
 - Email: support@nexus.io
 - Include: Campaign ID, screenshot, error message
 
 **Best Practices Questions:**
+
 - Slack: #track15-users
 - Office Hours: Thursdays 2-3pm ET
 
 **Bug Reports:**
+
 - GitHub: issues/track15
 - Include: Steps to reproduce, expected vs. actual
 
 **Feature Requests:**
+
 - Feedback Form: nexus.io/feedback
 - Community Voting: nexus.io/roadmap
 
@@ -955,6 +1047,7 @@ A: Yes. Use the campaign selector dropdown in analytics to switch between campai
 **Q: When is the best time to run a Track15 campaign?**
 
 A: Align with your selected season:
+
 - Spring: March-May
 - Summer: June-August
 - Fall: September-November
@@ -965,6 +1058,7 @@ Avoid major holidays (campaign should not span Thanksgiving, Christmas, etc.).
 **Q: How do I know if Track15 is working?**
 
 A: Look for:
+
 - Conversion lift >40%
 - Revenue lift >45%
 - Steady progression through stages
@@ -1002,6 +1096,7 @@ A: No. Track15 is a methodology for campaign design, not a brand. Donors simply 
 ### Community
 
 Join other Track15 users:
+
 - **Slack:** #track15-users
 - **Office Hours:** Thursdays 2-3pm ET
 - **Monthly Webinars:** First Wednesday
@@ -1015,6 +1110,6 @@ Join other Track15 users:
 
 ---
 
-*Last Updated: 2025-01-14*
-*Version: 1.0*
-*© 2025 Nexus. All rights reserved.*
+_Last Updated: 2025-01-14_
+_Version: 1.0_
+_© 2025 Nexus. All rights reserved._

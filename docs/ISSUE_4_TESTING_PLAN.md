@@ -74,7 +74,7 @@ describe("useTrack15Metrics", () => {
 
   it("should handle errors gracefully", async () => {
     vi.spyOn(track15Service, "getLiftMetrics").mockRejectedValue(
-      new Error("Database connection failed")
+      new Error("Database connection failed"),
     );
 
     const { result } = renderHook(() => useTrack15Metrics("campaign-123"));
@@ -96,12 +96,13 @@ describe("useTrack15Metrics", () => {
   });
 
   it("should refetch when campaign ID changes", async () => {
-    const spy = vi.spyOn(track15Service, "getLiftMetrics").mockResolvedValue({} as any);
+    const spy = vi
+      .spyOn(track15Service, "getLiftMetrics")
+      .mockResolvedValue({} as any);
 
-    const { rerender } = renderHook(
-      ({ id }) => useTrack15Metrics(id),
-      { initialProps: { id: "campaign-1" } }
-    );
+    const { rerender } = renderHook(({ id }) => useTrack15Metrics(id), {
+      initialProps: { id: "campaign-1" },
+    });
 
     await waitFor(() => expect(spy).toHaveBeenCalledWith("campaign-1"));
 
@@ -132,7 +133,9 @@ describe("useTrack15Segments", () => {
       },
     ];
 
-    vi.spyOn(track15Service, "getSegmentPerformance").mockResolvedValue(mockSegments);
+    vi.spyOn(track15Service, "getSegmentPerformance").mockResolvedValue(
+      mockSegments,
+    );
 
     const { result } = renderHook(() => useTrack15Segments("campaign-123"));
 
@@ -158,7 +161,10 @@ Test Track15 service methods with mocked Supabase client.
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getLiftMetrics, getSegmentPerformance } from "@/services/track15Service";
+import {
+  getLiftMetrics,
+  getSegmentPerformance,
+} from "@/services/track15Service";
 import { supabase } from "@/lib/supabaseClient";
 
 vi.mock("@/lib/supabaseClient", () => ({
@@ -216,7 +222,9 @@ describe("track15Service", () => {
         }),
       });
 
-      await expect(getLiftMetrics("invalid-id")).rejects.toThrow("Campaign not found");
+      await expect(getLiftMetrics("invalid-id")).rejects.toThrow(
+        "Campaign not found",
+      );
     });
   });
 
@@ -240,7 +248,7 @@ describe("track15Service", () => {
       const result = await getSegmentPerformance("campaign-123");
 
       expect(result).toHaveLength(7); // 7 RFM segments
-      const champions = result.find(s => s.segment_name === "Champions");
+      const champions = result.find((s) => s.segment_name === "Champions");
       expect(champions?.donor_count).toBe(2);
       expect(champions?.total_gifts).toBe(300);
     });
@@ -1324,5 +1332,5 @@ const renderWithRouter = (ui: React.ReactElement, { initialRoute = "/" } = {}) =
 
 ---
 
-*Last Updated: 2025-01-14*
-*Status: DOCUMENTED - Ready for Implementation*
+_Last Updated: 2025-01-14_
+_Status: DOCUMENTED - Ready for Implementation_

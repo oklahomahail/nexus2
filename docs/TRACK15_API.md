@@ -39,6 +39,7 @@ import type {
 ### Service Location
 
 All Track15 service methods are located in:
+
 ```
 src/services/track15Service.ts
 ```
@@ -52,27 +53,32 @@ src/services/track15Service.ts
 Enable Track15 methodology for a campaign.
 
 **Signature:**
+
 ```typescript
 async function enableTrack15(
   campaignId: string,
   season: Track15Season,
-  templateKey?: string
-): Promise<void>
+  templateKey?: string,
+): Promise<void>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 - `season` (Track15Season, required): One of "spring" | "summer" | "fall" | "year_end"
 - `templateKey` (string, optional): Template identifier for pre-built narrative arcs
 
 **Returns:**
+
 - `Promise<void>`: Resolves on success
 
 **Throws:**
+
 - Error if campaign not found
 - Error if database update fails
 
 **Example:**
+
 ```typescript
 import { enableTrack15 } from "@/services/track15Service";
 
@@ -84,6 +90,7 @@ await enableTrack15("campaign-uuid-123", "year_end", "holiday-appeal-2025");
 ```
 
 **Database Changes:**
+
 - Sets `track15_enabled = true`
 - Sets `track15_season = season`
 - Sets `track15_template_key = templateKey` (if provided)
@@ -97,14 +104,16 @@ await enableTrack15("campaign-uuid-123", "year_end", "holiday-appeal-2025");
 Update the core story for a Track15 campaign.
 
 **Signature:**
+
 ```typescript
 async function updateCoreStory(
   campaignId: string,
-  coreStory: Partial<Track15CoreStory>
-): Promise<void>
+  coreStory: Partial<Track15CoreStory>,
+): Promise<void>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 - `coreStory` (Partial<Track15CoreStory>, required): Core story object with fields:
   - `headline` (string): 6-10 word campaign headline
@@ -113,27 +122,33 @@ async function updateCoreStory(
   - `donor_motivation` (string): Why donor should care
 
 **Returns:**
+
 - `Promise<void>`: Resolves on success
 
 **Throws:**
+
 - Error if campaign not found
 - Error if campaign is not Track15-enabled
 
 **Example:**
+
 ```typescript
 import { updateCoreStory } from "@/services/track15Service";
 
 const coreStory = {
   headline: "Feed 500 Families This Spring",
-  summary: "Every $50 provides a week of groceries for a family facing food insecurity.",
+  summary:
+    "Every $50 provides a week of groceries for a family facing food insecurity.",
   value_proposition: "Your $50 gift provides tangible, measurable impact.",
-  donor_motivation: "Because every child deserves to go to bed with a full stomach.",
+  donor_motivation:
+    "Because every child deserves to go to bed with a full stomach.",
 };
 
 await updateCoreStory("campaign-uuid-123", coreStory);
 ```
 
 **Database Changes:**
+
 - Updates `track15_core_story` JSONB field
 - Merges with existing data (partial updates supported)
 
@@ -144,40 +159,46 @@ await updateCoreStory("campaign-uuid-123", coreStory);
 Create or update multiple narrative steps for a campaign.
 
 **Signature:**
+
 ```typescript
 async function bulkUpdateNarrativeSteps(
   campaignId: string,
-  steps: Track15NarrativeStep[]
-): Promise<void>
+  steps: Track15NarrativeStep[],
+): Promise<void>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 - `steps` (Track15NarrativeStep[], required): Array of narrative steps (max 15)
 
 **Step Structure:**
+
 ```typescript
 interface Track15NarrativeStep {
-  step_number: number;        // 1-15
-  stage: Track15Stage;        // "awareness" | "engagement" | "consideration" | "conversion" | "gratitude"
-  day: number;                // 1-15
-  subject_line: string;       // Email subject
-  message: string;            // Core message content
-  call_to_action: string;     // What donor should do
+  step_number: number; // 1-15
+  stage: Track15Stage; // "awareness" | "engagement" | "consideration" | "conversion" | "gratitude"
+  day: number; // 1-15
+  subject_line: string; // Email subject
+  message: string; // Core message content
+  call_to_action: string; // What donor should do
   segment_customization?: Record<string, any>; // Optional per-segment variations
 }
 ```
 
 **Returns:**
+
 - `Promise<void>`: Resolves on success
 
 **Throws:**
+
 - Error if campaign not found
 - Error if more than 15 steps provided
 - Error if step numbers not unique
 - Error if database insert fails
 
 **Example:**
+
 ```typescript
 import { bulkUpdateNarrativeSteps } from "@/services/track15Service";
 
@@ -205,6 +226,7 @@ await bulkUpdateNarrativeSteps("campaign-uuid-123", steps);
 ```
 
 **Database Changes:**
+
 - Inserts/updates rows in `track15_narrative_steps` table
 - Uses upsert logic (insert or update based on campaign_id + step_number)
 
@@ -215,14 +237,16 @@ await bulkUpdateNarrativeSteps("campaign-uuid-123", steps);
 Update the stage of a Track15 campaign.
 
 **Signature:**
+
 ```typescript
 async function updateTrack15Stage(
   campaignId: string,
-  stage: Track15Stage
-): Promise<void>
+  stage: Track15Stage,
+): Promise<void>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 - `stage` (Track15Stage, required): One of:
   - `"draft"`: Campaign being built
@@ -232,13 +256,16 @@ async function updateTrack15Stage(
   - `"completed"`: 15-day window finished
 
 **Returns:**
+
 - `Promise<void>`: Resolves on success
 
 **Throws:**
+
 - Error if campaign not found
 - Error if invalid stage transition
 
 **Example:**
+
 ```typescript
 import { updateTrack15Stage } from "@/services/track15Service";
 
@@ -250,6 +277,7 @@ await updateTrack15Stage("campaign-uuid-123", "active");
 ```
 
 **Database Changes:**
+
 - Updates `track15_stage` field
 - Updates `updated_at` timestamp
 
@@ -260,33 +288,36 @@ await updateTrack15Stage("campaign-uuid-123", "active");
 Get performance lift metrics for a Track15 campaign.
 
 **Signature:**
+
 ```typescript
-async function getLiftMetrics(
-  campaignId: string
-): Promise<Track15LiftMetrics>
+async function getLiftMetrics(campaignId: string): Promise<Track15LiftMetrics>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 
 **Returns:**
+
 ```typescript
 interface Track15LiftMetrics {
-  control_conversion: number;     // Control group conversion rate (0-1)
-  track15_conversion: number;     // Track15 conversion rate (0-1)
-  lift_percentage: number;        // Percentage improvement
-  control_revenue: number;        // Expected revenue without Track15
-  track15_revenue: number;        // Actual revenue with Track15
-  revenue_lift: number;           // Revenue improvement percentage
+  control_conversion: number; // Control group conversion rate (0-1)
+  track15_conversion: number; // Track15 conversion rate (0-1)
+  lift_percentage: number; // Percentage improvement
+  control_revenue: number; // Expected revenue without Track15
+  track15_revenue: number; // Actual revenue with Track15
+  revenue_lift: number; // Revenue improvement percentage
 }
 ```
 
 **Throws:**
+
 - Error if campaign not found
 - Error if campaign not Track15-enabled
 - Error if insufficient data for calculation
 
 **Example:**
+
 ```typescript
 import { getLiftMetrics } from "@/services/track15Service";
 
@@ -298,9 +329,11 @@ console.log(`Track15 Revenue: $${metrics.track15_revenue.toLocaleString()}`);
 ```
 
 **Calculation Logic:**
+
 ```typescript
 // Lift percentage = ((Track15 - Control) / Control) × 100
-lift_percentage = ((track15_conversion - control_conversion) / control_conversion) * 100;
+lift_percentage =
+  ((track15_conversion - control_conversion) / control_conversion) * 100;
 
 // Revenue lift = ((Track15 Revenue - Control Revenue) / Control Revenue) × 100
 revenue_lift = ((track15_revenue - control_revenue) / control_revenue) * 100;
@@ -313,31 +346,36 @@ revenue_lift = ((track15_revenue - control_revenue) / control_revenue) * 100;
 Get performance metrics broken down by RFM donor segment.
 
 **Signature:**
+
 ```typescript
 async function getSegmentPerformance(
-  campaignId: string
-): Promise<SegmentPerformanceData[]>
+  campaignId: string,
+): Promise<SegmentPerformanceData[]>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 
 **Returns:**
+
 ```typescript
 interface SegmentPerformanceData {
-  segment_name: string;       // "Champions" | "Loyal" | "Potential" | "New" | "Promising" | "Need Attention" | "At Risk"
-  donor_count: number;        // Number of donors who gave
-  total_gifts: number;        // Sum of all donations
-  avg_gift_size: number;      // Mean donation amount
-  lift_percentage: number;    // Performance vs. baseline
+  segment_name: string; // "Champions" | "Loyal" | "Potential" | "New" | "Promising" | "Need Attention" | "At Risk"
+  donor_count: number; // Number of donors who gave
+  total_gifts: number; // Sum of all donations
+  avg_gift_size: number; // Mean donation amount
+  lift_percentage: number; // Performance vs. baseline
 }
 ```
 
 **Throws:**
+
 - Error if campaign not found
 - Error if no donation data available
 
 **Example:**
+
 ```typescript
 import { getSegmentPerformance } from "@/services/track15Service";
 
@@ -345,7 +383,7 @@ const segments = await getSegmentPerformance("campaign-uuid-123");
 
 // Find top performing segment
 const topSegment = segments.reduce((max, segment) =>
-  segment.lift_percentage > max.lift_percentage ? segment : max
+  segment.lift_percentage > max.lift_percentage ? segment : max,
 );
 
 console.log(`Top Segment: ${topSegment.segment_name}`);
@@ -355,6 +393,7 @@ console.log(`Avg Gift: $${topSegment.avg_gift_size.toFixed(2)}`);
 ```
 
 **Calculation Logic:**
+
 ```typescript
 // For each RFM segment:
 // 1. Get all donations for campaign from that segment
@@ -371,40 +410,45 @@ console.log(`Avg Gift: $${topSegment.avg_gift_size.toFixed(2)}`);
 Get donor retention data across the 5 Track15 stages.
 
 **Signature:**
+
 ```typescript
 async function getRetentionSeries(
-  campaignId: string
-): Promise<RetentionSeriesData>
+  campaignId: string,
+): Promise<RetentionSeriesData>;
 ```
 
 **Parameters:**
+
 - `campaignId` (string, required): Campaign UUID
 
 **Returns:**
+
 ```typescript
 interface RetentionSeriesData {
   series: RetentionDataPoint[];
 }
 
 interface RetentionDataPoint {
-  stage: Track15Stage;          // "awareness" | "engagement" | etc.
-  donors: number;                // Donor count at this stage
-  retention_rate: number;        // Percentage retained from start
-  cumulative_revenue: number;    // Total revenue through this stage
+  stage: Track15Stage; // "awareness" | "engagement" | etc.
+  donors: number; // Donor count at this stage
+  retention_rate: number; // Percentage retained from start
+  cumulative_revenue: number; // Total revenue through this stage
 }
 ```
 
 **Throws:**
+
 - Error if campaign not found
 - Error if campaign not yet active
 
 **Example:**
+
 ```typescript
 import { getRetentionSeries } from "@/services/track15Service";
 
 const { series } = await getRetentionSeries("campaign-uuid-123");
 
-series.forEach(point => {
+series.forEach((point) => {
   console.log(`Stage: ${point.stage}`);
   console.log(`Donors: ${point.donors}`);
   console.log(`Retention: ${point.retention_rate}%`);
@@ -414,13 +458,16 @@ series.forEach(point => {
 
 // Calculate drop-off between stages
 for (let i = 1; i < series.length; i++) {
-  const dropoff = series[i-1].donors - series[i].donors;
-  const dropoffPct = (dropoff / series[i-1].donors) * 100;
-  console.log(`${series[i-1].stage} → ${series[i].stage}: ${dropoffPct.toFixed(1)}% drop-off`);
+  const dropoff = series[i - 1].donors - series[i].donors;
+  const dropoffPct = (dropoff / series[i - 1].donors) * 100;
+  console.log(
+    `${series[i - 1].stage} → ${series[i].stage}: ${dropoffPct.toFixed(1)}% drop-off`,
+  );
 }
 ```
 
 **Calculation Logic:**
+
 ```typescript
 // For each stage:
 // 1. Count donors who engaged with touchpoints in that stage
@@ -437,16 +484,17 @@ for (let i = 1; i < series.length; i++) {
 Custom hook for fetching lift metrics with loading/error states.
 
 **Signature:**
+
 ```typescript
-function useTrack15Metrics(
-  campaignId: string | null
-): UseTrack15MetricsReturn
+function useTrack15Metrics(campaignId: string | null): UseTrack15MetricsReturn;
 ```
 
 **Parameters:**
+
 - `campaignId` (string | null, required): Campaign UUID or null
 
 **Returns:**
+
 ```typescript
 interface UseTrack15MetricsReturn {
   metrics: Track15LiftMetrics | null;
@@ -457,6 +505,7 @@ interface UseTrack15MetricsReturn {
 ```
 
 **Example:**
+
 ```typescript
 import { useTrack15Metrics } from "@/hooks/useTrack15Metrics";
 
@@ -479,6 +528,7 @@ function MyComponent() {
 ```
 
 **Behavior:**
+
 - Fetches data on mount and when `campaignId` changes
 - Skips fetch if `campaignId` is null
 - Auto-updates loading/error states
@@ -493,16 +543,19 @@ function MyComponent() {
 Custom hook for fetching segment performance data.
 
 **Signature:**
+
 ```typescript
 function useTrack15Segments(
-  campaignId: string | null
-): UseTrack15SegmentsReturn
+  campaignId: string | null,
+): UseTrack15SegmentsReturn;
 ```
 
 **Parameters:**
+
 - `campaignId` (string | null, required): Campaign UUID or null
 
 **Returns:**
+
 ```typescript
 interface UseTrack15SegmentsReturn {
   segments: SegmentPerformanceData[];
@@ -513,6 +566,7 @@ interface UseTrack15SegmentsReturn {
 ```
 
 **Example:**
+
 ```typescript
 import { useTrack15Segments } from "@/hooks/useTrack15Segments";
 
@@ -558,16 +612,19 @@ function SegmentTable() {
 Custom hook for fetching retention series data.
 
 **Signature:**
+
 ```typescript
 function useTrack15Retention(
-  campaignId: string | null
-): UseTrack15RetentionReturn
+  campaignId: string | null,
+): UseTrack15RetentionReturn;
 ```
 
 **Parameters:**
+
 - `campaignId` (string | null, required): Campaign UUID or null
 
 **Returns:**
+
 ```typescript
 interface UseTrack15RetentionReturn {
   data: RetentionSeriesData | null;
@@ -578,6 +635,7 @@ interface UseTrack15RetentionReturn {
 ```
 
 **Example:**
+
 ```typescript
 import { useTrack15Retention } from "@/hooks/useTrack15Retention";
 import Track15RetentionChart from "@/components/analytics/Track15RetentionChart";
@@ -606,6 +664,7 @@ type Track15Season = "spring" | "summer" | "fall" | "year_end";
 ```
 
 **Usage:**
+
 - Campaign creation
 - Template selection
 - Seasonal messaging themes
@@ -624,6 +683,7 @@ type Track15Stage =
 ```
 
 **Narrative Stage (different from campaign stage):**
+
 ```typescript
 type NarrativeStage =
   | "awareness"
@@ -639,10 +699,10 @@ type NarrativeStage =
 
 ```typescript
 interface Track15CoreStory {
-  headline: string;              // 6-10 word campaign headline
-  summary: string;               // 2-3 sentence summary
-  value_proposition: string;     // What donor gets
-  donor_motivation: string;      // Why donor should care
+  headline: string; // 6-10 word campaign headline
+  summary: string; // 2-3 sentence summary
+  value_proposition: string; // What donor gets
+  donor_motivation: string; // Why donor should care
 }
 ```
 
@@ -654,17 +714,17 @@ interface Track15CoreStory {
 
 ```typescript
 interface Track15NarrativeStep {
-  id?: string;                                    // UUID (auto-generated)
-  campaign_id: string;                            // Foreign key
-  step_number: number;                            // 1-15
-  stage: NarrativeStage;                          // Which of 5 stages
-  day: number;                                    // 1-15
-  subject_line: string;                           // Email subject
-  message: string;                                // Core content
-  call_to_action: string;                         // What donor should do
-  segment_customization?: Record<string, any>;    // Per-segment variations
-  created_at?: string;                            // ISO timestamp
-  updated_at?: string;                            // ISO timestamp
+  id?: string; // UUID (auto-generated)
+  campaign_id: string; // Foreign key
+  step_number: number; // 1-15
+  stage: NarrativeStage; // Which of 5 stages
+  day: number; // 1-15
+  subject_line: string; // Email subject
+  message: string; // Core content
+  call_to_action: string; // What donor should do
+  segment_customization?: Record<string, any>; // Per-segment variations
+  created_at?: string; // ISO timestamp
+  updated_at?: string; // ISO timestamp
 }
 ```
 
@@ -674,12 +734,12 @@ interface Track15NarrativeStep {
 
 ```typescript
 interface Track15LiftMetrics {
-  control_conversion: number;     // 0-1 (e.g., 0.032 = 3.2%)
-  track15_conversion: number;     // 0-1 (e.g., 0.048 = 4.8%)
-  lift_percentage: number;        // Percentage (e.g., 50.0)
-  control_revenue: number;        // Dollar amount
-  track15_revenue: number;        // Dollar amount
-  revenue_lift: number;           // Percentage (e.g., 50.0)
+  control_conversion: number; // 0-1 (e.g., 0.032 = 3.2%)
+  track15_conversion: number; // 0-1 (e.g., 0.048 = 4.8%)
+  lift_percentage: number; // Percentage (e.g., 50.0)
+  control_revenue: number; // Dollar amount
+  track15_revenue: number; // Dollar amount
+  revenue_lift: number; // Percentage (e.g., 50.0)
 }
 ```
 
@@ -689,11 +749,11 @@ interface Track15LiftMetrics {
 
 ```typescript
 interface SegmentPerformanceData {
-  segment_name: RFMSegment;       // Segment identifier
-  donor_count: number;            // Number of donors
-  total_gifts: number;            // Sum of donations
-  avg_gift_size: number;          // Mean gift amount
-  lift_percentage: number;        // Performance vs baseline
+  segment_name: RFMSegment; // Segment identifier
+  donor_count: number; // Number of donors
+  total_gifts: number; // Sum of donations
+  avg_gift_size: number; // Mean gift amount
+  lift_percentage: number; // Performance vs baseline
 }
 
 type RFMSegment =
@@ -716,10 +776,10 @@ interface RetentionSeriesData {
 }
 
 interface RetentionDataPoint {
-  stage: NarrativeStage;          // Which stage
-  donors: number;                 // Donor count at stage
-  retention_rate: number;         // % of initial donors
-  cumulative_revenue: number;     // Total $ through stage
+  stage: NarrativeStage; // Which stage
+  donors: number; // Donor count at stage
+  retention_rate: number; // % of initial donors
+  cumulative_revenue: number; // Total $ through stage
 }
 ```
 
@@ -753,6 +813,7 @@ track15_completed_at TIMESTAMPTZ
 ```
 
 **Indexes:**
+
 ```sql
 CREATE INDEX idx_campaigns_track15_enabled ON campaigns(track15_enabled);
 CREATE INDEX idx_campaigns_track15_season ON campaigns(track15_season);
@@ -791,6 +852,7 @@ CREATE INDEX idx_track15_narrative_steps_stage ON track15_narrative_steps(stage)
 ### Common Errors
 
 **Campaign Not Found:**
+
 ```typescript
 try {
   await getLiftMetrics("invalid-id");
@@ -801,6 +863,7 @@ try {
 ```
 
 **Track15 Not Enabled:**
+
 ```typescript
 try {
   await updateCoreStory("non-track15-campaign", story);
@@ -811,6 +874,7 @@ try {
 ```
 
 **Insufficient Data:**
+
 ```typescript
 try {
   await getSegmentPerformance("new-campaign-with-no-donations");
@@ -826,15 +890,16 @@ All service methods throw standard JavaScript `Error` objects:
 
 ```typescript
 interface ErrorResponse {
-  message: string;      // Human-readable error message
-  code?: string;        // Error code (if applicable)
-  details?: any;        // Additional context
+  message: string; // Human-readable error message
+  code?: string; // Error code (if applicable)
+  details?: any; // Additional context
 }
 ```
 
 ### Best Practices
 
 **1. Always wrap in try/catch:**
+
 ```typescript
 try {
   const metrics = await getLiftMetrics(campaignId);
@@ -846,6 +911,7 @@ try {
 ```
 
 **2. Validate input before calling:**
+
 ```typescript
 if (!campaignId) {
   console.warn("No campaign ID provided");
@@ -856,6 +922,7 @@ const metrics = await getLiftMetrics(campaignId);
 ```
 
 **3. Use hooks for React components:**
+
 ```typescript
 // ✅ Good: Use hook (handles errors automatically)
 const { metrics, error } = useTrack15Metrics(campaignId);
@@ -907,9 +974,11 @@ async function createTrack15Campaign() {
     // 3. Add core story
     const coreStory = {
       headline: "Feed 500 Families This Spring",
-      summary: "Every $50 provides a week of groceries for a family facing food insecurity.",
+      summary:
+        "Every $50 provides a week of groceries for a family facing food insecurity.",
       value_proposition: "Your $50 gift provides tangible, measurable impact.",
-      donor_motivation: "Because every child deserves to go to bed with a full stomach.",
+      donor_motivation:
+        "Because every child deserves to go to bed with a full stomach.",
     };
     await updateCoreStory(campaignId, coreStory);
 
@@ -932,7 +1001,6 @@ async function createTrack15Campaign() {
 
     console.log("Campaign created successfully!", campaignId);
     return campaignId;
-
   } catch (error) {
     console.error("Failed to create campaign:", error);
     throw error;
@@ -1007,6 +1075,6 @@ function Track15Dashboard({ campaignId }: { campaignId: string }) {
 
 ---
 
-*Last Updated: 2025-01-14*
-*Version: 1.0*
-*© 2025 Nexus. All rights reserved.*
+_Last Updated: 2025-01-14_
+_Version: 1.0_
+_© 2025 Nexus. All rights reserved._

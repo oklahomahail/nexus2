@@ -105,23 +105,24 @@ CREATE INDEX idx_campaigns_client_track15
 
 ### Field Definitions
 
-| Field | Type | Nullable | Default | Description |
-|-------|------|----------|---------|-------------|
-| `track15_enabled` | BOOLEAN | No | FALSE | Whether Track15 methodology is enabled |
-| `track15_season` | VARCHAR(20) | Yes | NULL | Seasonal template: 'spring', 'summer', 'fall', 'year_end' |
-| `track15_stage` | VARCHAR(30) | Yes | NULL | Campaign stage in workflow |
-| `track15_template_key` | VARCHAR(100) | Yes | NULL | Template identifier for pre-built arcs |
-| `track15_core_story` | JSONB | Yes | NULL | Core story elements (headline, summary, etc.) |
-| `track15_control_conversion` | DECIMAL(5,4) | Yes | NULL | Control group conversion rate |
-| `track15_test_conversion` | DECIMAL(5,4) | Yes | NULL | Track15 group conversion rate |
-| `track15_control_revenue` | DECIMAL(12,2) | Yes | NULL | Expected revenue without Track15 |
-| `track15_test_revenue` | DECIMAL(12,2) | Yes | NULL | Actual revenue with Track15 |
-| `track15_activated_at` | TIMESTAMPTZ | Yes | NULL | Campaign activation timestamp |
-| `track15_completed_at` | TIMESTAMPTZ | Yes | NULL | Campaign completion timestamp |
+| Field                        | Type          | Nullable | Default | Description                                               |
+| ---------------------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
+| `track15_enabled`            | BOOLEAN       | No       | FALSE   | Whether Track15 methodology is enabled                    |
+| `track15_season`             | VARCHAR(20)   | Yes      | NULL    | Seasonal template: 'spring', 'summer', 'fall', 'year_end' |
+| `track15_stage`              | VARCHAR(30)   | Yes      | NULL    | Campaign stage in workflow                                |
+| `track15_template_key`       | VARCHAR(100)  | Yes      | NULL    | Template identifier for pre-built arcs                    |
+| `track15_core_story`         | JSONB         | Yes      | NULL    | Core story elements (headline, summary, etc.)             |
+| `track15_control_conversion` | DECIMAL(5,4)  | Yes      | NULL    | Control group conversion rate                             |
+| `track15_test_conversion`    | DECIMAL(5,4)  | Yes      | NULL    | Track15 group conversion rate                             |
+| `track15_control_revenue`    | DECIMAL(12,2) | Yes      | NULL    | Expected revenue without Track15                          |
+| `track15_test_revenue`       | DECIMAL(12,2) | Yes      | NULL    | Actual revenue with Track15                               |
+| `track15_activated_at`       | TIMESTAMPTZ   | Yes      | NULL    | Campaign activation timestamp                             |
+| `track15_completed_at`       | TIMESTAMPTZ   | Yes      | NULL    | Campaign completion timestamp                             |
 
 ### Validation Rules
 
 **track15_season:**
+
 ```sql
 ALTER TABLE campaigns
   ADD CONSTRAINT chk_track15_season
@@ -129,6 +130,7 @@ ALTER TABLE campaigns
 ```
 
 **track15_stage:**
+
 ```sql
 ALTER TABLE campaigns
   ADD CONSTRAINT chk_track15_stage
@@ -136,6 +138,7 @@ ALTER TABLE campaigns
 ```
 
 **Conversion rates (0-1 range):**
+
 ```sql
 ALTER TABLE campaigns
   ADD CONSTRAINT chk_track15_conversion_range
@@ -146,6 +149,7 @@ ALTER TABLE campaigns
 ```
 
 **Revenue must be non-negative:**
+
 ```sql
 ALTER TABLE campaigns
   ADD CONSTRAINT chk_track15_revenue_positive
@@ -198,31 +202,32 @@ CREATE INDEX idx_track15_narrative_steps_day
 
 ### Field Definitions
 
-| Field | Type | Nullable | Constraints | Description |
-|-------|------|----------|-------------|-------------|
-| `id` | UUID | No | PK | Unique step identifier |
-| `campaign_id` | UUID | No | FK → campaigns | Parent campaign |
-| `step_number` | INTEGER | No | 1-15, UNIQUE per campaign | Step sequence number |
-| `stage` | VARCHAR(20) | No | awareness \| engagement \| consideration \| conversion \| gratitude | Which narrative stage |
-| `day` | INTEGER | No | 1-15 | Which day of campaign |
-| `subject_line` | TEXT | No | - | Email subject line |
-| `message` | TEXT | No | - | Core message content |
-| `call_to_action` | TEXT | No | - | What donor should do |
-| `segment_customization` | JSONB | Yes | NULL | Per-segment message variations |
-| `created_at` | TIMESTAMPTZ | No | NOW() | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | No | NOW() | Last update timestamp |
+| Field                   | Type        | Nullable | Constraints                                                         | Description                    |
+| ----------------------- | ----------- | -------- | ------------------------------------------------------------------- | ------------------------------ |
+| `id`                    | UUID        | No       | PK                                                                  | Unique step identifier         |
+| `campaign_id`           | UUID        | No       | FK → campaigns                                                      | Parent campaign                |
+| `step_number`           | INTEGER     | No       | 1-15, UNIQUE per campaign                                           | Step sequence number           |
+| `stage`                 | VARCHAR(20) | No       | awareness \| engagement \| consideration \| conversion \| gratitude | Which narrative stage          |
+| `day`                   | INTEGER     | No       | 1-15                                                                | Which day of campaign          |
+| `subject_line`          | TEXT        | No       | -                                                                   | Email subject line             |
+| `message`               | TEXT        | No       | -                                                                   | Core message content           |
+| `call_to_action`        | TEXT        | No       | -                                                                   | What donor should do           |
+| `segment_customization` | JSONB       | Yes      | NULL                                                                | Per-segment message variations |
+| `created_at`            | TIMESTAMPTZ | No       | NOW()                                                               | Creation timestamp             |
+| `updated_at`            | TIMESTAMPTZ | No       | NOW()                                                               | Last update timestamp          |
 
 ### Stage Distribution
 
-| Stage | Step Numbers | Days | Purpose |
-|-------|--------------|------|---------|
-| awareness | 1-3 | 1-3 | Introduce mission, build trust |
-| engagement | 4-6 | 4-6 | Share stories, create connection |
-| consideration | 7-10 | 7-10 | Present opportunities, address objections |
-| conversion | 11-13 | 11-13 | Direct ask, build urgency |
-| gratitude | 14-15 | 14-15 | Thank donors, share impact |
+| Stage         | Step Numbers | Days  | Purpose                                   |
+| ------------- | ------------ | ----- | ----------------------------------------- |
+| awareness     | 1-3          | 1-3   | Introduce mission, build trust            |
+| engagement    | 4-6          | 4-6   | Share stories, create connection          |
+| consideration | 7-10         | 7-10  | Present opportunities, address objections |
+| conversion    | 11-13        | 11-13 | Direct ask, build urgency                 |
+| gratitude     | 14-15        | 14-15 | Thank donors, share impact                |
 
 **Typical Distribution:**
+
 - Awareness: 3 steps (20%)
 - Engagement: 3 steps (20%)
 - Consideration: 4 steps (27%)
@@ -275,6 +280,7 @@ CREATE INDEX idx_donors_client_rfm
 ### RFM Scoring Logic
 
 **Recency (R):**
+
 - 5: Donated within last 30 days
 - 4: 31-90 days ago
 - 3: 91-180 days ago
@@ -282,6 +288,7 @@ CREATE INDEX idx_donors_client_rfm
 - 1: >365 days ago
 
 **Frequency (F):**
+
 - 5: 10+ donations
 - 4: 6-9 donations
 - 3: 3-5 donations
@@ -289,6 +296,7 @@ CREATE INDEX idx_donors_client_rfm
 - 1: 1 donation
 
 **Monetary (M):**
+
 - 5: $1000+ total
 - 4: $500-999
 - 3: $200-499
@@ -297,15 +305,15 @@ CREATE INDEX idx_donors_client_rfm
 
 ### Segment Assignment
 
-| Segment | R | F | M | Description |
-|---------|---|---|---|-------------|
-| Champions | 4-5 | 4-5 | 4-5 | Best donors |
-| Loyal | 3-5 | 3-5 | 3-5 | Consistent |
+| Segment             | R   | F   | M   | Description       |
+| ------------------- | --- | --- | --- | ----------------- |
+| Champions           | 4-5 | 4-5 | 4-5 | Best donors       |
+| Loyal               | 3-5 | 3-5 | 3-5 | Consistent        |
 | Potential Loyalists | 4-5 | 1-3 | 1-3 | Recent, promising |
-| New Donors | 4-5 | 1 | 1-2 | First gift |
-| Promising | 3-4 | 2-3 | 2-3 | Moderate |
-| Need Attention | 2-3 | 2-4 | 2-4 | Declining |
-| At Risk | 1-2 | 1-3 | 1-3 | Lapsed |
+| New Donors          | 4-5 | 1   | 1-2 | First gift        |
+| Promising           | 3-4 | 2-3 | 2-3 | Moderate          |
+| Need Attention      | 2-3 | 2-4 | 2-4 | Declining         |
+| At Risk             | 1-2 | 1-3 | 1-3 | Lapsed            |
 
 ---
 
@@ -330,27 +338,32 @@ clients
 ### Relationships Detail
 
 **clients → campaigns**
+
 - Type: One-to-Many
 - FK: `campaigns.client_id → clients.id`
 - Delete: CASCADE (deleting client removes all campaigns)
 
 **campaigns → track15_narrative_steps**
+
 - Type: One-to-Many (exactly 15 for Track15 campaigns)
 - FK: `track15_narrative_steps.campaign_id → campaigns.id`
 - Delete: CASCADE (deleting campaign removes all steps)
 - Unique Constraint: `(campaign_id, step_number)`
 
 **campaigns → donations**
+
 - Type: One-to-Many
 - FK: `donations.campaign_id → campaigns.id`
 - Delete: SET NULL (preserve donations even if campaign deleted)
 
 **donors → donations**
+
 - Type: One-to-Many
 - FK: `donations.donor_id → donors.id`
 - Delete: CASCADE (deleting donor removes donation records)
 
 **clients → donors**
+
 - Type: One-to-Many
 - FK: `donors.client_id → clients.id`
 - Delete: CASCADE (deleting client removes all donors)
@@ -404,6 +417,7 @@ graph TD
 ### Data Updates
 
 **Campaign Updates:**
+
 ```sql
 -- Trigger to auto-update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -426,6 +440,7 @@ CREATE TRIGGER update_track15_narrative_steps_updated_at
 ```
 
 **RFM Recalculation:**
+
 ```sql
 -- Function to recalculate RFM segments
 CREATE OR REPLACE FUNCTION recalculate_rfm_segments(p_client_id UUID)
@@ -720,15 +735,18 @@ COMMIT;
 ### Constraints Summary
 
 **Primary Keys:**
+
 - All tables have UUID primary keys
 - Generated via `gen_random_uuid()`
 
 **Foreign Keys:**
+
 - All relationships enforced via FK constraints
 - Cascade deletes where appropriate
 - Prevent orphaned records
 
 **Check Constraints:**
+
 - Step numbers: 1-15
 - Days: 1-15
 - Conversion rates: 0-1
@@ -736,24 +754,36 @@ COMMIT;
 - Enum values validated
 
 **Unique Constraints:**
+
 - `(campaign_id, step_number)` on narrative steps
 - Prevents duplicate steps per campaign
 
 ### Data Validation
 
 **Application-Level:**
+
 ```typescript
 // Validate before insert
 function validateNarrativeStep(step: Track15NarrativeStep): boolean {
   if (step.step_number < 1 || step.step_number > 15) return false;
   if (step.day < 1 || step.day > 15) return false;
   if (!step.subject_line || !step.message || !step.call_to_action) return false;
-  if (!['awareness', 'engagement', 'consideration', 'conversion', 'gratitude'].includes(step.stage)) return false;
+  if (
+    ![
+      "awareness",
+      "engagement",
+      "consideration",
+      "conversion",
+      "gratitude",
+    ].includes(step.stage)
+  )
+    return false;
   return true;
 }
 ```
 
 **Database-Level:**
+
 - CHECK constraints enforce ranges
 - NOT NULL constraints enforce required fields
 - FK constraints enforce relationships
@@ -761,11 +791,13 @@ function validateNarrativeStep(step: Track15NarrativeStep): boolean {
 ### Backup Strategy
 
 **Automated Backups:**
+
 - Supabase automatic daily backups
 - Point-in-time recovery available
 - 7-day retention (free tier)
 
 **Manual Backups:**
+
 ```bash
 # Export campaigns with Track15 data
 pg_dump -h db.supabase.co -U postgres \
@@ -774,6 +806,7 @@ pg_dump -h db.supabase.co -U postgres \
 ```
 
 **Restore:**
+
 ```bash
 psql -h db.supabase.co -U postgres nexus_db < track15_backup.sql
 ```
@@ -787,6 +820,7 @@ psql -h db.supabase.co -U postgres nexus_db < track15_backup.sql
 **Common Queries:**
 
 **1. Fetch Track15 campaigns for client:**
+
 ```sql
 -- Optimized with idx_campaigns_client_track15
 SELECT * FROM campaigns
@@ -795,6 +829,7 @@ ORDER BY created_at DESC;
 ```
 
 **2. Fetch campaign with narrative steps:**
+
 ```sql
 -- Optimized with idx_track15_narrative_steps_campaign
 SELECT
@@ -807,6 +842,7 @@ GROUP BY c.id;
 ```
 
 **3. Segment performance analysis:**
+
 ```sql
 -- Optimized with idx_donors_rfm_segment
 SELECT
@@ -823,6 +859,7 @@ GROUP BY d.rfm_segment;
 ### Index Maintenance
 
 **Monitor Index Usage:**
+
 ```sql
 SELECT
   schemaname,
@@ -837,6 +874,7 @@ ORDER BY idx_scan DESC;
 ```
 
 **Identify Missing Indexes:**
+
 ```sql
 SELECT
   schemaname,
@@ -856,12 +894,13 @@ WHERE tablename IN ('campaigns', 'track15_narrative_steps')
 ### Sample Data
 
 **Track15 Campaign:**
+
 ```json
 {
   "id": "c1a2b3c4-d5e6-7f8g-9h0i-1j2k3l4m5n6o",
   "client_id": "client-uuid-123",
   "name": "Spring Food Security 2025",
-  "goal_amount": 50000.00,
+  "goal_amount": 50000.0,
   "start_date": "2025-03-15",
   "end_date": "2025-03-29",
   "track15_enabled": true,
@@ -873,14 +912,15 @@ WHERE tablename IN ('campaigns', 'track15_narrative_steps')
     "value_proposition": "Your $50 gift provides tangible, measurable impact.",
     "donor_motivation": "Because every child deserves to go to bed with a full stomach."
   },
-  "track15_control_conversion": 0.0320,
-  "track15_test_conversion": 0.0480,
-  "track15_control_revenue": 45230.00,
-  "track15_test_revenue": 67845.00
+  "track15_control_conversion": 0.032,
+  "track15_test_conversion": 0.048,
+  "track15_control_revenue": 45230.0,
+  "track15_test_revenue": 67845.0
 }
 ```
 
 **Narrative Step:**
+
 ```json
 {
   "id": "step-uuid-123",
@@ -916,6 +956,6 @@ WHERE tablename IN ('campaigns', 'track15_narrative_steps')
 
 ---
 
-*Last Updated: 2025-01-14*
-*Version: 1.0*
-*© 2025 Nexus. All rights reserved.*
+_Last Updated: 2025-01-14_
+_Version: 1.0_
+_© 2025 Nexus. All rights reserved._

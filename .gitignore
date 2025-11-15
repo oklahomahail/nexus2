@@ -107,3 +107,11 @@ dist
 node_modules
 package-lock.json
 .vercel
+
+# Supabase temporary files
+supabase/.temp/
+
+# Office documents (use Google Docs instead)
+*.docx
+*.xlsx
+*.pptx
