@@ -79,6 +79,7 @@ export const ClientLayout: React.FC = () => {
               {link("campaigns", "Campaigns", "nav.campaigns")}
               {link("analytics", "Analytics", "nav.analytics")}
               {link("reports", "Reports", "nav.reports")}
+              {link("data-quality", "Data Quality", "nav.data-quality")}
             </>
           )}
         </nav>

@@ -17,6 +17,9 @@ const Track15Analytics = lazy(() => import("@/pages/client/Track15Analytics"));
 const Track15CampaignWizard = lazy(
   () => import("@/pages/client/Track15CampaignWizard"),
 );
+const ClientDataQuality = lazy(
+  () => import("@/pages/client/ClientDataQuality"),
+);
 
 // Loading component
 const PageLoader = () => (
@@ -105,6 +108,14 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageLoader />}>
               <Track15Analytics />
+            </Suspense>
+          }
+        />
+        <Route
+          path="data-quality"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ClientDataQuality />
             </Suspense>
           }
         />

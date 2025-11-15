@@ -192,6 +192,19 @@ ALTER TABLE brand_corpus ENABLE ROW LEVEL SECURITY;
 ALTER TABLE track15_narrative_steps ENABLE ROW LEVEL SECURITY;
 ALTER TABLE track15_campaign_metrics ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can view brand profiles for their clients" ON brand_profiles;
+DROP POLICY IF EXISTS "Users can insert brand profiles for their clients" ON brand_profiles;
+DROP POLICY IF EXISTS "Users can update brand profiles for their clients" ON brand_profiles;
+DROP POLICY IF EXISTS "Users can view brand assets for their clients" ON brand_assets;
+DROP POLICY IF EXISTS "Users can insert brand assets for their clients" ON brand_assets;
+DROP POLICY IF EXISTS "Users can view brand corpus for their clients" ON brand_corpus;
+DROP POLICY IF EXISTS "Users can insert brand corpus for their clients" ON brand_corpus;
+DROP POLICY IF EXISTS "Users can view narrative steps for their campaigns" ON track15_narrative_steps;
+DROP POLICY IF EXISTS "Users can insert narrative steps for their campaigns" ON track15_narrative_steps;
+DROP POLICY IF EXISTS "Users can update narrative steps for their campaigns" ON track15_narrative_steps;
+DROP POLICY IF EXISTS "Users can view metrics for their campaigns" ON track15_campaign_metrics;
+
 -- Brand profiles policies
 CREATE POLICY "Users can view brand profiles for their clients" ON brand_profiles
   FOR SELECT USING (
@@ -303,6 +316,9 @@ CREATE POLICY "Users can view metrics for their campaigns" ON track15_campaign_m
 -- ============================================================================
 -- TRIGGERS
 -- ============================================================================
+
+-- Drop existing trigger if it exists
+DROP TRIGGER IF EXISTS track15_narrative_steps_updated_at ON track15_narrative_steps;
 
 -- Updated_at trigger for narrative steps
 CREATE OR REPLACE FUNCTION update_track15_narrative_steps_updated_at()
