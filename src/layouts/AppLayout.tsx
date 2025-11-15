@@ -30,6 +30,17 @@ export const AppLayout: React.FC = () => {
   return (
     <div className="h-screen w-screen grid grid-cols-[260px_1fr] grid-rows-[56px_1fr]">
       <aside className="row-span-2 bg-zinc-950 text-zinc-100">
+        {/* Logo Section */}
+        <div className="p-4 border-b border-zinc-800">
+          <NavLink to="/" className="flex items-center gap-2">
+            <img
+              src="/brand/nexus_logo_transparent.svg"
+              alt="Nexus"
+              className="h-8 w-auto"
+            />
+          </NavLink>
+        </div>
+
         <nav className="p-3 space-y-2">
           <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
             Navigation
