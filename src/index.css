@@ -126,6 +126,20 @@
     --track15-text: 31 41 51; /* #1F2933 - Primary Text */
     --track15-muted: 107 114 128; /* #6B7280 - Muted Text */
 
+    /* Nexus Light Mode Palette - Professional Light Theme */
+    --nexus-blue-600: 20 99 255; /* #1463FF - Brand Blue */
+    --nexus-blue-700: 15 84 208; /* #0F54D0 - Hover State */
+    --nexus-blue-400: 96 165 250; /* #60A5FA - Lighter Blue */
+    --nexus-gold-500: 214 180 100; /* #D6B464 - Accent Gold */
+    --nexus-slate-50: 247 249 251; /* #F7F9FB - Page Background */
+    --nexus-slate-100: 238 242 246; /* #EEF2F6 - Card Background */
+    --nexus-slate-200: 227 231 237; /* #E3E7ED - Dividers */
+    --nexus-slate-300: 210 216 224; /* #D2D8E0 - Borders */
+    --nexus-slate-700: 59 71 84; /* #3B4754 - Primary Text */
+    --nexus-slate-900: 31 41 51; /* #1F2933 - Headings */
+    --nexus-green-500: 16 185 129; /* #10B981 - Success */
+    --nexus-red-500: 239 68 68; /* #EF4444 - Error/Alert */
+
     /* Legacy mappings for backwards compatibility */
     --bg-primary: var(--bg);
     --bg-secondary: var(--panel);
@@ -616,6 +630,106 @@
     border-color: rgb(var(--track15-border));
     background-color: rgb(var(--track15-bg));
     color: rgb(var(--track15-muted));
+  }
+
+  /* Nexus Light Mode Utilities - Professional Light Theme */
+  .nexus-light-bg {
+    background-color: rgb(var(--nexus-slate-50));
+  }
+  .nexus-light-surface {
+    background-color: rgb(var(--nexus-slate-100));
+  }
+  .nexus-light-card {
+    background-color: white;
+  }
+  .nexus-light-text {
+    color: rgb(var(--nexus-slate-700));
+  }
+  .nexus-light-heading {
+    color: rgb(var(--nexus-slate-900));
+  }
+  .nexus-light-muted {
+    color: rgb(var(--nexus-slate-700));
+  }
+  .nexus-light-border {
+    border-color: rgb(var(--nexus-slate-300));
+  }
+  .nexus-light-divider {
+    border-color: rgb(var(--nexus-slate-200));
+  }
+
+  /* Nexus Light Component Classes */
+  .nexus-card-light {
+    @apply bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow;
+    border-color: rgb(var(--nexus-slate-200));
+  }
+
+  .nexus-button-primary-light {
+    @apply inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: rgb(var(--nexus-blue-600));
+    color: white;
+  }
+  .nexus-button-primary-light:hover:not(:disabled) {
+    background-color: rgb(var(--nexus-blue-700));
+  }
+  .nexus-button-primary-light:focus {
+    --tw-ring-color: rgb(var(--nexus-blue-600));
+  }
+
+  .nexus-button-secondary-light {
+    @apply inline-flex items-center px-4 py-2 rounded-xl font-medium transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    background-color: white;
+    color: rgb(var(--nexus-slate-700));
+    border: 1px solid rgb(var(--nexus-slate-300));
+  }
+  .nexus-button-secondary-light:hover:not(:disabled) {
+    background-color: rgb(var(--nexus-slate-100));
+  }
+
+  .nexus-button-tertiary-light {
+    @apply font-medium transition-colors;
+    color: rgb(var(--nexus-blue-600));
+  }
+  .nexus-button-tertiary-light:hover:not(:disabled) {
+    color: rgb(var(--nexus-blue-700));
+  }
+
+  .nexus-input-light {
+    @apply px-3 py-2 rounded-xl border bg-white transition-colors;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-0;
+    border-color: rgb(var(--nexus-slate-300));
+    color: rgb(var(--nexus-slate-900));
+  }
+  .nexus-input-light::placeholder {
+    color: rgb(var(--nexus-slate-700));
+  }
+  .nexus-input-light:focus {
+    --tw-ring-color: rgb(var(--nexus-blue-600));
+    border-color: rgb(var(--nexus-blue-600));
+  }
+
+  .nexus-progress-light {
+    @apply h-2 rounded-full;
+    background-color: rgb(var(--nexus-slate-200));
+  }
+  .nexus-progress-light .progress-bar {
+    @apply h-full rounded-full transition-all;
+    background-color: rgb(var(--nexus-blue-600));
+  }
+
+  .nexus-metric-tile-light {
+    @apply bg-white border rounded-2xl p-5 shadow-sm;
+    border-color: rgb(var(--nexus-slate-200));
+  }
+  .nexus-metric-tile-light .metric-value {
+    @apply text-2xl font-semibold;
+    color: rgb(var(--nexus-blue-600));
+  }
+  .nexus-metric-tile-light .metric-label {
+    @apply text-sm;
+    color: rgb(var(--nexus-slate-700));
   }
 }
 

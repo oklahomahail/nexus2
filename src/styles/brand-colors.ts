@@ -7,21 +7,21 @@
  */
 
 export const brandColors = {
-  // Primary Brand Colors
+  // Primary Brand Colors (Dark Mode)
   primary: {
     indigo: "#3B36F4", // Indigo Nexus - Core brand tone
     cyan: "#72E4FC", // Electric Cyan - Energy + optimism
     violet: "#6B4DFF", // Deep Violet - Shadow glow and hover states
   },
 
-  // Backgrounds
+  // Backgrounds (Dark Mode)
   background: {
     dark: "#0D0D12", // Nexus Night - Primary background
     surface: "#1A1A22", // Slate Layer - Panels, cards, modals
     elevated: "#262631", // Elevated surfaces
   },
 
-  // Text
+  // Text (Dark Mode)
   text: {
     primary: "#FFFFFF", // White - On dark surfaces
     muted: "#A0A3B1", // Zinc Gray - Secondary labels
@@ -44,12 +44,41 @@ export const brandColors = {
       "linear-gradient(180deg, rgba(13, 13, 18, 0) 0%, rgba(13, 13, 18, 0.8) 100%)",
   },
 
-  // UI Elements
+  // UI Elements (Dark Mode)
   ui: {
     border: "#2D2D3A", // Subtle borders
     borderLight: "#3A3A4A", // Lighter borders
     hover: "#2A2A38", // Hover states
     active: "#323242", // Active states
+  },
+
+  // Light Mode Palette - Nexus Professional Light Theme
+  light: {
+    // Brand Colors
+    blue: {
+      600: "#1463FF", // Primary brand blue
+      700: "#0F54D0", // Hover state
+      400: "#60A5FA", // Lighter blue
+    },
+    gold: {
+      500: "#D6B464", // Accent gold
+    },
+    // Neutrals
+    slate: {
+      50: "#F7F9FB", // Page background
+      100: "#EEF2F6", // Card background
+      200: "#E3E7ED", // Dividers
+      300: "#D2D8E0", // Borders
+      700: "#3B4754", // Primary text
+      900: "#1F2933", // Headings
+    },
+    // Semantic
+    green: {
+      500: "#10B981", // Success
+    },
+    red: {
+      500: "#EF4444", // Error/Alert
+    },
   },
 } as const;
 
@@ -59,6 +88,7 @@ export const { primary, background, text, semantic, gradients, ui } =
 
 // Tailwind-compatible color export
 export const tailwindColors = {
+  // Dark mode colors
   "nexus-indigo": brandColors.primary.indigo,
   "nexus-cyan": brandColors.primary.cyan,
   "nexus-violet": brandColors.primary.violet,
@@ -73,4 +103,18 @@ export const tailwindColors = {
   "nexus-error": brandColors.semantic.error,
   "nexus-info": brandColors.semantic.info,
   "nexus-border": brandColors.ui.border,
+
+  // Light mode colors
+  "nexus-blue-600": brandColors.light.blue[600],
+  "nexus-blue-700": brandColors.light.blue[700],
+  "nexus-blue-400": brandColors.light.blue[400],
+  "nexus-gold-500": brandColors.light.gold[500],
+  "nexus-slate-50": brandColors.light.slate[50],
+  "nexus-slate-100": brandColors.light.slate[100],
+  "nexus-slate-200": brandColors.light.slate[200],
+  "nexus-slate-300": brandColors.light.slate[300],
+  "nexus-slate-700": brandColors.light.slate[700],
+  "nexus-slate-900": brandColors.light.slate[900],
+  "nexus-green-500": brandColors.light.green[500],
+  "nexus-red-500": brandColors.light.red[500],
 };

@@ -11,6 +11,7 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   variant?: "default" | "filled" | "outlined";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
+  theme?: "dark" | "light";
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -25,6 +26,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     variant = "default",
     size = "md",
     fullWidth = true,
+    theme = "light",
     id,
     ...rest
   },
@@ -33,9 +35,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const inputId = id || `input-${Math.random().toString(36).slice(2, 9)}`;
 
   const baseClasses =
-    "transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900";
+    "transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0";
 
-  const variantClasses = {
+  // Light mode variant classes
+  const lightVariantClasses = {
+    default:
+      "bg-white border border-[rgb(var(--nexus-slate-300))] text-[rgb(var(--nexus-slate-900))] placeholder-[rgb(var(--nexus-slate-700))] focus:ring-[rgb(var(--nexus-blue-600))] focus:border-[rgb(var(--nexus-blue-600))]",
+    filled:
+      "bg-[rgb(var(--nexus-slate-100))] border-transparent text-[rgb(var(--nexus-slate-900))] placeholder-[rgb(var(--nexus-slate-700))] focus:ring-[rgb(var(--nexus-blue-600))] focus:bg-white",
+    outlined:
+      "bg-transparent border-2 border-[rgb(var(--nexus-slate-300))] text-[rgb(var(--nexus-slate-900))] placeholder-[rgb(var(--nexus-slate-700))] focus:ring-[rgb(var(--nexus-blue-600))] focus:border-[rgb(var(--nexus-blue-600))]",
+  } as const;
+
+  // Dark mode variant classes
+  const darkVariantClasses = {
     default:
       "bg-slate-800 border border-slate-700 text-white placeholder-slate-400 focus:ring-blue-500 focus:border-blue-500",
     filled:
@@ -44,10 +57,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       "bg-transparent border-2 border-slate-600 text-white placeholder-slate-400 focus:ring-blue-500 focus:border-blue-500",
   } as const;
 
+  const variantClasses =
+    theme === "light" ? lightVariantClasses : darkVariantClasses;
+
   const sizeClasses = {
     sm: "px-3 py-1.5 text-sm rounded-md",
-    md: "px-4 py-2 text-sm rounded-lg",
-    lg: "px-4 py-3 text-base rounded-lg",
+    md: "px-3 py-2 text-sm rounded-xl",
+    lg: "px-4 py-3 text-base rounded-xl",
   } as const;
 
   const iconPadding = {
@@ -90,12 +106,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     lg: { left: "left-3", right: "right-3" },
   } as const;
 
+  const labelColor =
+    theme === "light" ? "text-[rgb(var(--nexus-slate-900))]" : "text-slate-200";
+  const iconColor =
+    theme === "light" ? "text-[rgb(var(--nexus-slate-700))]" : "text-slate-400";
+  const hintColor =
+    theme === "light" ? "text-[rgb(var(--nexus-slate-700))]" : "text-slate-400";
+  const errorColor =
+    theme === "light" ? "text-[rgb(var(--nexus-red-500))]" : "text-red-400";
+
   return (
     <div className={clsx(fullWidth && "w-full", wrapperClassName)}>
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium mb-2 text-slate-200"
+          className={`block text-sm font-medium mb-2 ${labelColor}`}
         >
           {label}
         </label>
@@ -105,7 +130,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {leftIcon && (
           <div
             className={clsx(
-              "absolute inset-y-0 flex items-center pointer-events-none text-slate-400",
+              "absolute inset-y-0 flex items-center pointer-events-none",
+              iconColor,
               iconPositions[size as keyof typeof iconPositions].left,
             )}
           >
@@ -129,7 +155,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         {rightIcon && (
           <div
             className={clsx(
-              "absolute inset-y-0 flex items-center text-slate-400",
+              "absolute inset-y-0 flex items-center",
+              iconColor,
               iconPositions[size as keyof typeof iconPositions].right,
             )}
           >
@@ -145,13 +172,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           {error ? (
             <p
               id={`${inputId}-error`}
-              className="text-xs text-red-400 flex items-center gap-1"
+              className={`text-xs ${errorColor} flex items-center gap-1`}
             >
               <span aria-hidden="true">⚠</span>
               {error}
             </p>
           ) : (
-            <p id={`${inputId}-hint`} className="text-xs text-slate-400">
+            <p id={`${inputId}-hint`} className={`text-xs ${hintColor}`}>
               {hint}
             </p>
           )}

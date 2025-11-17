@@ -35,14 +35,14 @@ export default function KnowledgeBaseSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Library className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+          <Library className="w-5 h-5 text-[rgb(var(--nexus-blue-600))]" />
+          <h2 className="text-xl font-bold text-[rgb(var(--nexus-slate-900))] tracking-tight">
             Knowledge Base
           </h2>
         </div>
         <button
           onClick={() => navigate(`/clients/${clientId}/knowledge`)}
-          className="flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+          className="flex items-center gap-1 text-sm text-[rgb(var(--nexus-blue-600))] hover:text-[rgb(var(--nexus-blue-700))] font-medium"
         >
           Open
           <ArrowRight className="w-4 h-4" />
@@ -51,69 +51,69 @@ export default function KnowledgeBaseSection() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-[rgb(var(--nexus-slate-200))] shadow-sm">
           <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+            <span className="text-xs font-medium text-[rgb(var(--nexus-slate-700))]">
               Brand Profile
             </span>
           </div>
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="text-sm font-semibold text-[rgb(var(--nexus-slate-900))]">
             {kbStats.brandProfile ? "Complete" : "Not Set"}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-[rgb(var(--nexus-slate-200))] shadow-sm">
           <div className="flex items-center gap-2 mb-1">
-            <MessageCircle className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <MessageCircle className="w-3.5 h-3.5 text-[rgb(var(--nexus-blue-600))]" />
+            <span className="text-xs font-medium text-[rgb(var(--nexus-slate-700))]">
               Voice & Tone
             </span>
           </div>
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="text-sm font-semibold text-[rgb(var(--nexus-slate-900))]">
             {kbStats.voiceGuidelines ? "Defined" : "Pending"}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-[rgb(var(--nexus-slate-200))] shadow-sm">
           <div className="flex items-center gap-2 mb-1">
-            <Target className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <Target className="w-3.5 h-3.5 text-[rgb(var(--nexus-green-500))]" />
+            <span className="text-xs font-medium text-[rgb(var(--nexus-slate-700))]">
               Messaging Pillars
             </span>
           </div>
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="text-sm font-semibold text-[rgb(var(--nexus-slate-900))]">
             {kbStats.messagingPillars} pillars
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white rounded-xl p-4 border border-[rgb(var(--nexus-slate-200))] shadow-sm">
           <div className="flex items-center gap-2 mb-1">
-            <Library className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <Library className="w-3.5 h-3.5 text-orange-600" />
+            <span className="text-xs font-medium text-[rgb(var(--nexus-slate-700))]">
               Donor Stories
             </span>
           </div>
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="text-sm font-semibold text-[rgb(var(--nexus-slate-900))]">
             {kbStats.donorStories} stories
           </div>
         </div>
       </div>
 
       {/* Content Summary */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+      <div className="bg-white rounded-2xl p-5 border border-[rgb(var(--nexus-slate-200))] shadow-sm">
+        <h3 className="text-sm font-semibold text-[rgb(var(--nexus-slate-900))] mb-3">
           Quick Access
         </h3>
         <div className="space-y-2">
           <button
             onClick={() => navigate(`/clients/${clientId}/knowledge?tab=voice`)}
-            className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full text-left p-3 rounded-xl hover:bg-[rgb(var(--nexus-slate-100))] transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">
+            <div className="text-sm text-[rgb(var(--nexus-slate-900))] font-medium">
               Voice & Tone
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs text-[rgb(var(--nexus-slate-700))]">
               Communication guidelines
             </div>
           </button>
@@ -121,12 +121,12 @@ export default function KnowledgeBaseSection() {
             onClick={() =>
               navigate(`/clients/${clientId}/knowledge?tab=messaging`)
             }
-            className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full text-left p-3 rounded-xl hover:bg-[rgb(var(--nexus-slate-100))] transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">
+            <div className="text-sm text-[rgb(var(--nexus-slate-900))] font-medium">
               Messaging Pillars
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs text-[rgb(var(--nexus-slate-700))]">
               Core narrative themes
             </div>
           </button>
@@ -134,12 +134,12 @@ export default function KnowledgeBaseSection() {
             onClick={() =>
               navigate(`/clients/${clientId}/knowledge?tab=narratives`)
             }
-            className="w-full text-left p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="w-full text-left p-3 rounded-xl hover:bg-[rgb(var(--nexus-slate-100))] transition-colors"
           >
-            <div className="text-sm text-gray-900 dark:text-white">
+            <div className="text-sm text-[rgb(var(--nexus-slate-900))] font-medium">
               Donor Narratives
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs text-[rgb(var(--nexus-slate-700))]">
               {kbStats.donorStories} impact stories
             </div>
           </button>
@@ -147,20 +147,20 @@ export default function KnowledgeBaseSection() {
       </div>
 
       {/* Call to Action */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-5 border border-purple-200">
         <div className="flex items-start gap-3">
-          <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
+          <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+            <h4 className="text-sm font-medium text-[rgb(var(--nexus-slate-900))] mb-1">
               Power Your Campaigns
             </h4>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+            <p className="text-xs text-[rgb(var(--nexus-slate-700))] mb-2">
               Your knowledge base feeds AI campaign generation with authentic
               brand voice and proven narratives.
             </p>
             <button
               onClick={() => navigate(`/clients/${clientId}/knowledge`)}
-              className="text-xs font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
+              className="text-xs font-medium text-purple-600 hover:text-purple-700"
             >
               Build Knowledge Base →
             </button>

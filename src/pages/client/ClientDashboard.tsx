@@ -19,14 +19,14 @@ export default function ClientDashboard() {
   const { currentClient } = useClient();
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
-      <div className="p-6" data-tutorial-step="dashboard.page">
+    <div className="h-full overflow-y-auto bg-[rgb(var(--nexus-slate-50))]">
+      <div className="p-8" data-tutorial-step="dashboard.page">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[rgb(var(--nexus-slate-900))] tracking-tight">
             {currentClient?.name || "Client"} Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-[rgb(var(--nexus-slate-700))] mt-1">
             Track15-powered campaign and donor management
           </p>
         </div>
