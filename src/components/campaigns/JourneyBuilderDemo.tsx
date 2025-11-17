@@ -20,18 +20,18 @@ import { GenerateJourneyWithAiButton } from "./GenerateJourneyWithAiButton";
 import { JourneyOverviewSidebar } from "./JourneyOverviewSidebar";
 import { JourneyTouchCard } from "./JourneyTouchCard";
 
-// Temporary types - replace with actual imports
-interface Deliverable {
+// Demo-specific types (not production types)
+interface DemoDeliverable {
   deliverableId: string;
   name: string;
   type: string;
   phase: string;
   scheduledSendAt: Date;
   status: string;
-  versions: DeliverableVersion[];
+  versions: DemoDeliverableVersion[];
 }
 
-interface DeliverableVersion {
+interface DemoDeliverableVersion {
   versionId: string;
   label: string;
   segmentCriteriaId: string;
@@ -41,7 +41,7 @@ interface DeliverableVersion {
   };
 }
 
-interface BehavioralSegment {
+interface DemoBehavioralSegment {
   segmentId: string;
   name: string;
   description?: string;
@@ -56,8 +56,8 @@ export function JourneyBuilderDemo() {
 
   // State
   const [journeyType, setJourneyType] = useState<JourneyType | null>(null);
-  const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
-  const [segments, setSegments] = useState<BehavioralSegment[]>([]);
+  const [deliverables, setDeliverables] = useState<DemoDeliverable[]>([]);
+  const [segments, setSegments] = useState<DemoBehavioralSegment[]>([]);
   const [labRun, setLabRun] = useState<LabRun | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -100,14 +100,14 @@ export function JourneyBuilderDemo() {
 
     // Create deliverables from template
     const baseDate = new Date();
-    const newDeliverables: Deliverable[] = template.touches.map((touch) => {
+    const newDeliverables: DemoDeliverable[] = template.touches.map((touch) => {
       const scheduledDate = new Date(
         baseDate.getTime() + touch.offsetDays * 24 * 60 * 60 * 1000,
       );
 
       // Create one version per relevant segment
       const relevantSegments = pickSegmentsForJourney(type, segments);
-      const versions: DeliverableVersion[] = relevantSegments.map((seg) => ({
+      const versions: DemoDeliverableVersion[] = relevantSegments.map((seg) => ({
         versionId: crypto.randomUUID(),
         label: seg.name,
         segmentCriteriaId: seg.segmentId,
@@ -149,7 +149,7 @@ export function JourneyBuilderDemo() {
   const handleUpdateVersion = (
     deliverableId: string,
     versionId: string,
-    patch: Partial<DeliverableVersion["content"]>,
+    patch: Partial<DemoDeliverableVersion["content"]>,
   ) => {
     setDeliverables((prev) =>
       prev.map((d) =>
@@ -232,7 +232,7 @@ export function JourneyBuilderDemo() {
                   labRun={labRun}
                   deliverables={deliverables}
                   segments={segments}
-                  onUpdateDeliverables={setDeliverables}
+                  onUpdateDeliverables={(ds) => setDeliverables(ds)}
                   onSuccess={(msg) => {
                     setSuccessMessage(msg);
                     setTimeout(() => setSuccessMessage(null), 3000);
@@ -335,9 +335,9 @@ export function JourneyBuilderDemo() {
  */
 function pickSegmentsForJourney(
   type: JourneyType,
-  segments: BehavioralSegment[],
-): BehavioralSegment[] {
-  const labRuleIncludes = (seg: BehavioralSegment, needle: string) =>
+  segments: DemoBehavioralSegment[],
+): DemoBehavioralSegment[] {
+  const labRuleIncludes = (seg: DemoBehavioralSegment, needle: string) =>
     typeof (seg.criteria as any)?.labRule === "string" &&
     (seg.criteria as any).labRule.includes(needle);
 

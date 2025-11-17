@@ -12,16 +12,16 @@ import type { LabRun } from "@/services/donorDataLabPersistence";
 import { draftEntireJourneyWithAi } from "@/services/journeyBulkDraftService";
 import type { JourneyTemplate, JourneyType } from "@/utils/journeyTemplates";
 
-// Temporary types - replace with actual imports when available
-interface Deliverable {
+// Generic types for flexible integration with different deliverable models
+interface BaseDeliverable {
   deliverableId: string;
   name: string;
   type: string;
-  versions: DeliverableVersion[];
+  versions: BaseDeliverableVersion[];
   [key: string]: any;
 }
 
-interface DeliverableVersion {
+interface BaseDeliverableVersion {
   versionId: string;
   label: string;
   segmentCriteriaId: string;
@@ -32,26 +32,26 @@ interface DeliverableVersion {
   [key: string]: any;
 }
 
-interface BehavioralSegment {
+interface BaseBehavioralSegment {
   segmentId: string;
   name: string;
   description?: string;
   criteria?: Record<string, any>;
 }
 
-interface GenerateJourneyWithAiButtonProps {
+interface GenerateJourneyWithAiButtonProps<T extends BaseDeliverable = BaseDeliverable> {
   clientId: string | undefined;
   journeyType: JourneyType | null;
   journeyTemplate: JourneyTemplate | null;
   labRun: LabRun | null;
-  deliverables: Deliverable[];
-  segments: BehavioralSegment[];
-  onUpdateDeliverables: (ds: Deliverable[]) => void;
+  deliverables: T[];
+  segments: BaseBehavioralSegment[];
+  onUpdateDeliverables: (ds: T[]) => void;
   onSuccess?: (message: string) => void;
   onError?: (message: string) => void;
 }
 
-export function GenerateJourneyWithAiButton({
+export function GenerateJourneyWithAiButton<T extends BaseDeliverable = BaseDeliverable>({
   clientId,
   journeyType,
   journeyTemplate,
@@ -61,7 +61,7 @@ export function GenerateJourneyWithAiButton({
   onUpdateDeliverables,
   onSuccess,
   onError,
-}: GenerateJourneyWithAiButtonProps) {
+}: GenerateJourneyWithAiButtonProps<T>) {
   const [loading, setLoading] = useState(false);
 
   const disabledReason = !clientId
@@ -95,7 +95,7 @@ export function GenerateJourneyWithAiButton({
         deliverables,
         segments,
       });
-      onUpdateDeliverables(updated);
+      onUpdateDeliverables(updated as T[]);
       if (onSuccess) {
         onSuccess("AI drafted content for your journey touches.");
       }

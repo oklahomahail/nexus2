@@ -63,14 +63,11 @@ export async function draftJourneyTouchContent(
     existingBody,
   });
 
-  // Enrich with Data Lab context (overview + relevant strategy slice)
-  const _enrichedPrompt = enrichPromptWithLabContext(
-    clientId,
-    basePrompt,
-    journeyType,
-  );
+  // TODO: Enrich with Data Lab context and call Claude API
+  // const enrichedPrompt = enrichPromptWithLabContext(clientId, basePrompt, journeyType);
+  // const apiResponse = await callClaudeApi(enrichedPrompt);
+  // return parseClaudeResponse(apiResponse);
 
-  // TODO: Replace with actual Claude API call
   // For now, return mock structured response
   // When implementing, use enrichedPrompt as the AI prompt
   const mockResponse = generateMockJourneyContent(journeyType, touch, segment);
