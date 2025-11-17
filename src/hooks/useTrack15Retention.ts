@@ -4,7 +4,7 @@
  * Fetches retention series data for Track15 campaigns
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { getRetentionSeries } from "@/services/track15Service";
 import { Track15RetentionSeries } from "@/types/track15.types";
@@ -23,7 +23,7 @@ export function useTrack15Retention(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRetention = async () => {
+  const fetchRetention = useCallback(async () => {
     if (!campaignId) {
       setData(null);
       return;
@@ -45,7 +45,7 @@ export function useTrack15Retention(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [campaignId]);
 
   useEffect(() => {
     void fetchRetention();

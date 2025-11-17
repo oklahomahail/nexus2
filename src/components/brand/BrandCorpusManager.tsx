@@ -16,7 +16,7 @@ import {
   ExternalLink,
   Loader2,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import type { BrandCorpusChunk } from "@/services/brandService";
@@ -75,7 +75,7 @@ export default function BrandCorpusManager({
   /**
    * Handle search
    */
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
       return;
@@ -87,7 +87,7 @@ export default function BrandCorpusManager({
     } catch (err) {
       console.error("Search failed:", err);
     }
-  };
+  }, [searchQuery, searchCorpus]);
 
   /**
    * Handle manual entry save

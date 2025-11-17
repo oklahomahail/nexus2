@@ -4,7 +4,7 @@
  * Fetches Track15 segment performance data for a campaign
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import {
   getSegmentPerformance,
@@ -25,7 +25,7 @@ export function useTrack15Segments(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSegments = async () => {
+  const fetchSegments = useCallback(async () => {
     if (!campaignId) {
       setSegments([]);
       return;
@@ -47,7 +47,7 @@ export function useTrack15Segments(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [campaignId]);
 
   useEffect(() => {
     void fetchSegments();

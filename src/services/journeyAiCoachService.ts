@@ -73,7 +73,6 @@ export async function draftJourneyTouchContent(
 
   // DEV logging: prompt preview (truncated)
   if (import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
     console.debug(
       "[JourneyAI] Prompt preview:",
       enrichedPrompt.slice(0, 800),
@@ -100,13 +99,11 @@ Return JSON like:
   });
 
   if (!response.ok) {
-    // eslint-disable-next-line no-console
     console.error("[JourneyAI] AI call failed:", response.error);
     throw new Error(response.error || "AI request failed");
   }
 
   if (import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
     console.debug(
       "[JourneyAI] Raw model output:",
       response.content.slice(0, 800),
@@ -119,7 +116,6 @@ Return JSON like:
   try {
     parsed = JSON.parse(response.content);
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error(
       "[JourneyAI] Failed to parse JSON from model:",
       err,

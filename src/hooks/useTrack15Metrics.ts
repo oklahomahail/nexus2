@@ -4,7 +4,7 @@
  * Fetches Track15 lift metrics for a campaign
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { getLiftMetrics } from "@/services/track15Service";
 import { Track15LiftMetrics } from "@/types/track15.types";
@@ -23,7 +23,7 @@ export function useTrack15Metrics(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchMetrics = async () => {
+  const fetchMetrics = useCallback(async () => {
     if (!campaignId) {
       setMetrics(null);
       return;
@@ -45,7 +45,7 @@ export function useTrack15Metrics(
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [campaignId]);
 
   useEffect(() => {
     void fetchMetrics();
