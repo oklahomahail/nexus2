@@ -49,7 +49,7 @@ alter table public.campaigns add column if not exists published_at timestamp wit
 -- ============================================================================
 
 create table if not exists public.campaign_emails (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns(id) on delete cascade,
 
   -- Email sequence
@@ -80,7 +80,7 @@ create index if not exists idx_campaign_emails_sequence
 -- ============================================================================
 
 create table if not exists public.campaign_social_posts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns(id) on delete cascade,
 
   -- Platform
@@ -117,7 +117,7 @@ create index if not exists idx_campaign_social_posts_status
 -- ============================================================================
 
 create table if not exists public.campaign_direct_mail (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   campaign_id uuid not null references public.campaigns(id) on delete cascade,
 
   -- Mail piece content
