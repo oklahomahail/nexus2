@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FlaskConical } from "lucide-react";
 
 import { LabRecommendationsPanel } from "@/components/donorDataLab/LabRecommendationsPanel";
 import { useClient } from "@/context/ClientContext";
@@ -349,16 +348,14 @@ export function NexusDonorDataLabPanel() {
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-3">
-              {/* Donor Lab Logo - Replace with actual logo when available */}
-              {/* TODO: Add Donor Lab logo image at /public/brand/nexus_donor_lab_logo.svg */}
-              {/* <img
+              {/* Donor Lab Logo */}
+              <img
                 src="/brand/nexus_donor_lab_logo.svg"
                 alt="Donor Lab"
                 className="h-12 w-auto"
-              /> */}
+              />
               <div>
-                <h1 className="text-base font-semibold text-slate-50 flex items-center gap-2">
-                  <FlaskConical size={20} className="text-cyan-400" />
+                <h1 className="text-base font-semibold text-slate-50">
                   Donor Lab
                 </h1>
                 {savedLabRun && (
