@@ -5,6 +5,7 @@ import AppLayout from "@/layouts/AppLayout";
 import ClientLayout from "@/layouts/ClientLayout";
 import ClientsPage from "@/pages/ClientsPage";
 import Dashboard from "@/pages/Dashboard";
+import TestIntakeUpload from "@/pages/TestIntakeUpload";
 
 // Lazy load heavy pages
 const ClientDashboard = lazy(() => import("@/pages/client/ClientDashboard"));
@@ -39,6 +40,7 @@ export default function AppRoutes() {
       <Route element={<AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="clients" element={<ClientsPage />} />
+        <Route path="test-intake-upload" element={<TestIntakeUpload />} />
       </Route>
 
       {/* Client-specific layout routes */}
