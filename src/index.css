@@ -7,6 +7,9 @@
 /* Track15 Fonts - Montserrat for headings, Source Sans 3 for body */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap");
 
+/* Premium Editorial Design System Tokens */
+@import "./styles/tokens.css";
+
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
@@ -93,6 +96,24 @@
   --animate-slide-up: slideUp 0.3s ease-out both;
   --animate-scale-in: scaleIn 0.2s ease-out both;
   --animate-shimmer: shimmer 2s infinite linear;
+
+  /* Premium Editorial Design System - Tailwind utilities */
+  --color-charcoal: var(--nx-charcoal);
+  --color-richblack: var(--nx-rich-black);
+  --color-offwhite: var(--nx-offwhite);
+  --color-gold: var(--nx-gold);
+  --color-goldsoft: var(--nx-gold-soft);
+  --color-bluedeep: var(--nx-blue-deep);
+  --color-bluesoft: var(--nx-blue-soft);
+  --color-border: var(--nx-border);
+  --color-muted: var(--nx-text-muted);
+
+  /* Typography utilities */
+  --font-size-h1: var(--nx-text-h1);
+  --font-size-h2: var(--nx-text-h2);
+  --font-size-h3: var(--nx-text-h3);
+  --font-size-body: var(--nx-text-body);
+  --font-size-small: var(--nx-text-small);
 }
 
 @layer base {
@@ -114,6 +135,19 @@
     --accent-3: 107 77 255; /* #6B4DFF - Deep Violet (Accent) */
     --warn: 250 204 21; /* #FACC15 - Insight Amber */
     --error: 248 113 113; /* #F87171 - Privacy Red */
+
+    /* Premium Editorial Design System - For Brand Profile & Client Areas */
+    --editorial-charcoal: 28 30 38; /* #1C1E26 - Primary Surface */
+    --editorial-rich-black: 15 17 21; /* #0F1115 - Deep Background */
+    --editorial-off-white: 250 250 248; /* #FAFAF8 - Light Surface */
+    --editorial-gold: 212 175 55; /* #D4AF37 - Primary Accent */
+    --editorial-soft-gold: 229 196 107; /* #E5C46B - Secondary Gold */
+    --editorial-deep-blue: 49 76 137; /* #314C89 - Action Blue */
+    --editorial-soft-blue: 230 236 247; /* #E6ECF7 - Light Blue */
+    --editorial-green: 62 142 109; /* #3E8E6D - Success */
+    --editorial-red: 179 67 67; /* #B34343 - Error */
+    --editorial-gray-border: 224 226 231; /* #E0E2E7 - Borders */
+    --editorial-gray-text: 76 79 87; /* #4C4F57 - Muted Text */
 
     /* Track15 Brand Colors - Light Theme Palette */
     --track15-primary: 13 95 168; /* #0D5FA8 - Professional Blue */

@@ -1,0 +1,124 @@
+/**
+ * Nexus Design System Tokens
+ * Premium Editorial Design Foundation
+ *
+ * This file defines the core visual identity for the Nexus platform,
+ * replacing the old heavy blue theme with a refined editorial aesthetic
+ * that aligns with Track15's professional brand standards.
+ */
+
+:root {
+  /* ========================================
+     BRAND COLORS
+     Core palette for the Nexus identity
+     ======================================== */
+
+  /* Primary Surfaces */
+  --nx-charcoal: #1C1E26;        /* Primary dark surface, sidebar backgrounds */
+  --nx-rich-black: #0F1115;      /* Deep backgrounds, active states */
+  --nx-offwhite: #FAFAF8;        /* Light surface, app backgrounds */
+
+  /* Accent Colors */
+  --nx-gold: #D4AF37;            /* Primary accent, active indicators, CTAs */
+  --nx-gold-soft: #E5C46B;       /* Hover states, secondary gold */
+
+  /* Action Blues */
+  --nx-blue-deep: #314C89;       /* Action buttons, links */
+  --nx-blue-soft: #E6ECF7;       /* Light blue backgrounds, hover states */
+
+  /* System Colors */
+  --nx-success: #3E8E6D;         /* Success states, positive feedback */
+  --nx-error: #B34343;           /* Error states, warnings */
+  --nx-border: #E0E2E7;          /* Dividers, card borders */
+  --nx-text-muted: #4C4F57;      /* Secondary text, labels */
+  --nx-text-primary: #1C1E26;    /* Primary text */
+
+  /* Background Variations */
+  --nx-bg-primary: #FFFFFF;      /* Card backgrounds */
+  --nx-bg-secondary: #F8F9FA;    /* Subtle surface variation */
+  --nx-bg-tertiary: #F4F5F7;     /* Deeper surface variation */
+
+  /* ========================================
+     TYPOGRAPHY
+     Editorial font system
+     ======================================== */
+
+  --nx-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --nx-font-serif: 'Libre Franklin', 'Inter', serif;
+  --nx-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Type Scale */
+  --nx-text-h1: 32px;            /* Page titles */
+  --nx-text-h2: 24px;            /* Section headers */
+  --nx-text-h3: 18px;            /* Subsection headers */
+  --nx-text-body: 15px;          /* Body text */
+  --nx-text-small: 13px;         /* Labels, captions */
+  --nx-text-xs: 12px;            /* Helper text */
+
+  /* Font Weights */
+  --nx-weight-normal: 400;
+  --nx-weight-medium: 500;
+  --nx-weight-semibold: 600;
+  --nx-weight-bold: 700;
+
+  /* Line Heights */
+  --nx-leading-tight: 1.2;
+  --nx-leading-normal: 1.5;
+  --nx-leading-relaxed: 1.75;
+
+  /* ========================================
+     SPACING SCALE
+     Consistent rhythm throughout the app
+     ======================================== */
+
+  --nx-space-xs: 4px;
+  --nx-space-sm: 8px;
+  --nx-space-md: 12px;
+  --nx-space-lg: 16px;
+  --nx-space-xl: 24px;
+  --nx-space-2xl: 32px;
+  --nx-space-3xl: 48px;
+
+  /* ========================================
+     RADII
+     Border radius values
+     ======================================== */
+
+  --nx-radius-sm: 4px;           /* Buttons, inputs */
+  --nx-radius-md: 6px;           /* Cards */
+  --nx-radius-lg: 10px;          /* Panels, large components */
+  --nx-radius-full: 9999px;      /* Pills, avatars */
+
+  /* ========================================
+     SHADOWS
+     Depth and elevation
+     ======================================== */
+
+  --nx-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);      /* Subtle depth */
+  --nx-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);      /* Cards */
+  --nx-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08);      /* Elevated panels */
+  --nx-shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.10);     /* Modals, popovers */
+
+  /* ========================================
+     TRANSITIONS
+     Smooth animations
+     ======================================== */
+
+  --nx-transition-fast: 150ms ease;
+  --nx-transition-normal: 250ms ease;
+  --nx-transition-slow: 350ms ease;
+
+  /* ========================================
+     Z-INDEX SCALE
+     Layering system
+     ======================================== */
+
+  --nx-z-base: 0;
+  --nx-z-dropdown: 10;
+  --nx-z-sticky: 20;
+  --nx-z-fixed: 30;
+  --nx-z-modal-backdrop: 40;
+  --nx-z-modal: 50;
+  --nx-z-popover: 60;
+  --nx-z-tooltip: 70;
+}

@@ -7,6 +7,7 @@ import {
   Database,
   FlaskConical,
   ChevronDown,
+  Palette,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Outlet, NavLink, useParams, useLocation } from "react-router-dom";
@@ -18,15 +19,21 @@ import { analytics } from "@/utils/analytics";
 export const ClientLayout: React.FC = () => {
   const { clientId } = useParams();
   const location = useLocation();
-  const { currentClient, setCurrentClientBySlug } = useClient();
+  const { currentClient, clients, setCurrentClientBySlug } = useClient();
   const [clientSwitcherOpen, setClientSwitcherOpen] = useState(false);
 
   // Automatically set the current client from the URL parameter
   useEffect(() => {
     if (clientId) {
-      void setCurrentClientBySlug(clientId);
+      // Only attempt to set client if we have clients loaded or if it's a UUID
+      // This prevents unnecessary API calls before the client list is ready
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId);
+
+      if (isUUID || clients.length > 0) {
+        void setCurrentClientBySlug(clientId);
+      }
     }
-  }, [clientId, setCurrentClientBySlug]);
+  }, [clientId, clients.length, setCurrentClientBySlug]);
 
   const link = (
     to: string,
@@ -37,29 +44,29 @@ export const ClientLayout: React.FC = () => {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        "flex items-center gap-3 px-4 py-2 rounded-md transition-colors " +
+        "flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors " +
         (isActive
-          ? "bg-zinc-800 text-white"
+          ? "bg-[#0F1115] text-white border-l-2 border-[#D4AF37]"
           : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
       }
       data-tutorial-step={testId}
       onClick={() => analytics.navigation(to, location.pathname)}
     >
       {icon}
-      <span className="text-sm">{label}</span>
+      <span className="text-sm font-medium">{label}</span>
     </NavLink>
   );
 
   return (
     <div className="h-screen w-screen grid grid-cols-[260px_1fr] grid-rows-[56px_1fr]">
-      <aside className="row-span-2 bg-zinc-950 text-zinc-100 flex flex-col">
+      <aside className="row-span-2 bg-[#1C1E26] text-zinc-100 flex flex-col">
         {/* Logo Section */}
-        <div className="flex justify-center px-6 pt-6 pb-4">
+        <div className="flex justify-center px-6 pt-8 pb-6">
           <NavLink to="/" className="flex items-center">
             <img
               src="/brand/nexus_logo_transparent.svg"
               alt="Nexus"
-              className="h-14 w-auto"
+              className="h-16 w-auto"
             />
           </NavLink>
         </div>
@@ -69,8 +76,8 @@ export const ClientLayout: React.FC = () => {
           <button
             onClick={() => setClientSwitcherOpen(true)}
             className="w-full flex items-center justify-between px-3 py-2
-                     bg-zinc-900 text-zinc-200 rounded-lg
-                     hover:bg-zinc-800 transition-colors
+                     bg-[#0F1115] text-zinc-200 rounded-lg
+                     hover:bg-zinc-900 transition-colors
                      border border-zinc-800 hover:border-zinc-700"
           >
             <span className="text-sm truncate">
@@ -129,6 +136,12 @@ export const ClientLayout: React.FC = () => {
                 "Data Quality",
                 <Database size={18} />,
                 "nav.data-quality",
+              )}
+              {link(
+                "brand",
+                "Brand Profile",
+                <Palette size={18} />,
+                "nav.brand",
               )}
             </>
           )}

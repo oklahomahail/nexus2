@@ -26,6 +26,7 @@ const ClientSegmentation = lazy(
 );
 const DonorDataLab = lazy(() => import("@/pages/client/DonorDataLab"));
 const BrandProfile = lazy(() => import("@/pages/client/BrandProfile"));
+const StyleGuide = lazy(() => import("@/features/style-guide/StyleGuidePage"));
 
 // Loading component
 const PageLoader = () => (
@@ -42,6 +43,14 @@ export default function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="clients" element={<ClientsPage />} />
         <Route path="test-intake-upload" element={<TestIntakeUpload />} />
+        <Route
+          path="style-guide"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <StyleGuide />
+            </Suspense>
+          }
+        />
       </Route>
 
       {/* Client-specific layout routes */}

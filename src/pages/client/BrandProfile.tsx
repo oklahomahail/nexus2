@@ -1,6 +1,4 @@
-import React from "react";
-
-import BrandProfilePanel from "@/panels/BrandProfilePanel";
+import BrandProfilePage from "@/features/brand-profile/BrandProfilePage";
 
 /**
  * Brand Profile Page
@@ -8,5 +6,5 @@ import BrandProfilePanel from "@/panels/BrandProfilePanel";
  * Manage organizational brand identity for AI-generated campaigns
  */
 export default function BrandProfile(): React.JSX.Element {
-  return <BrandProfilePanel />;
+  return <BrandProfilePage />;
 }
