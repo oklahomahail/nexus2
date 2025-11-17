@@ -29,8 +29,6 @@ export const Sidebar: React.FC = () => {
       <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
         Navigation
       </div>
-      {link("/", "Dashboard", "nav.dashboard.main", true)}
-      {link("/clients", "Clients", "nav.clients")}
       {clientId && (
         <>
           {link(`/clients/${clientId}`, "Dashboard", "nav.dashboard")}

@@ -59,7 +59,7 @@ export const ClientLayout: React.FC = () => {
             <img
               src="/brand/nexus_logo_transparent.svg"
               alt="Nexus"
-              className="h-11 w-auto"
+              className="h-14 w-auto"
             />
           </NavLink>
         </div>
@@ -86,34 +86,6 @@ export const ClientLayout: React.FC = () => {
           <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
             Navigation
           </div>
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              "flex items-center gap-3 px-4 py-2 rounded-md transition-colors " +
-              (isActive
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
-            }
-            data-tutorial-step="nav.dashboard.main"
-            onClick={() => analytics.navigation("/", location.pathname)}
-          >
-            <Home size={18} />
-            <span className="text-sm">Dashboard</span>
-          </NavLink>
-          <NavLink
-            to="/clients"
-            className={({ isActive }) =>
-              "flex items-center gap-3 px-4 py-2 rounded-md transition-colors " +
-              (isActive
-                ? "bg-zinc-800 text-white"
-                : "text-zinc-300 hover:bg-zinc-900 hover:text-white")
-            }
-            data-tutorial-step="nav.clients"
-            onClick={() => analytics.navigation("/clients", location.pathname)}
-          >
-            <Users size={18} />
-            <span className="text-sm">Clients</span>
-          </NavLink>
 
           {/* Client-specific links */}
           {clientId && currentClient && (
