@@ -10,6 +10,9 @@
 /* Premium Editorial Design System Tokens */
 @import "./styles/tokens.css";
 
+/* Editorial Layout System - Spacing Rhythm */
+@import "./styles/layout.css";
+
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";

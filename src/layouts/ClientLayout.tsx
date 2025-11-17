@@ -153,16 +153,21 @@ export const ClientLayout: React.FC = () => {
         </div>
       </aside>
 
-      <header className="bg-white border-b">
-        {/* You can add a client-specific header here if needed */}
-        <div className="h-14 flex items-center px-6">
-          <h1 className="text-lg font-semibold text-slate-900">
+      <header className="h-16 border-b border-[var(--nx-border)] bg-[var(--nx-offwhite)] flex items-center px-6 justify-between">
+        {/* Client name and breadcrumb */}
+        <div className="flex items-center gap-4">
+          <h1 className="text-[18px] font-semibold text-[var(--nx-charcoal)] tracking-tight">
             {currentClient?.name ? `${currentClient.name}` : "Client Dashboard"}
           </h1>
         </div>
+
+        {/* Future: Add client-specific actions or profile menu */}
+        <div className="flex items-center gap-3">
+          {/* Placeholder for future actions */}
+        </div>
       </header>
 
-      <main className="overflow-auto bg-white text-slate-900">
+      <main className="overflow-auto bg-[var(--nx-offwhite)] text-[var(--nx-charcoal)]">
         <Outlet />
       </main>
 

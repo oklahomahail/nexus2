@@ -1,0 +1,140 @@
+/**
+ * Nexus Editorial Layout System
+ * Consistent spacing rhythm across the platform
+ *
+ * This file defines the vertical spacing patterns that give Nexus
+ * its premium editorial feel. All spacing follows a systematic rhythm
+ * that matches high-end publishing platforms.
+ */
+
+/* ========================================
+   EDITORIAL FLOW
+   Automatic vertical spacing for page content
+   ======================================== */
+
+/**
+ * Apply to main content containers to get automatic
+ * 40px spacing between major sections
+ */
+.editorial-flow > * + * {
+  margin-top: 40px; /* Premium vertical rhythm */
+}
+
+/**
+ * Tighter spacing for consecutive section blocks
+ */
+.section-block + .section-block {
+  margin-top: 32px;
+}
+
+/**
+ * Optimal spacing between page heading and first section
+ */
+.page-heading + .section-block {
+  margin-top: 24px;
+}
+
+/**
+ * Spacing between page heading and other content
+ */
+.page-heading + * {
+  margin-top: 24px;
+}
+
+/* ========================================
+   CONTENT FLOW
+   Vertical rhythm within sections
+   ======================================== */
+
+/**
+ * Standard content spacing within cards and panels
+ */
+.content-flow > * + * {
+  margin-top: 16px;
+}
+
+/**
+ * Tight content spacing for dense layouts
+ */
+.content-flow-tight > * + * {
+  margin-top: 12px;
+}
+
+/**
+ * Relaxed content spacing for breathing room
+ */
+.content-flow-relaxed > * + * {
+  margin-top: 24px;
+}
+
+/* ========================================
+   GRID LAYOUTS
+   Consistent spacing for grid-based layouts
+   ======================================== */
+
+/**
+ * Standard grid gap for dashboard widgets
+ */
+.grid-standard {
+  display: grid;
+  gap: 24px;
+}
+
+/**
+ * Tight grid for compact layouts
+ */
+.grid-tight {
+  display: grid;
+  gap: 16px;
+}
+
+/**
+ * Relaxed grid for spacious layouts
+ */
+.grid-relaxed {
+  display: grid;
+  gap: 32px;
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   Adjust spacing for smaller screens
+   ======================================== */
+
+@media (max-width: 768px) {
+  .editorial-flow > * + * {
+    margin-top: 32px; /* Reduce spacing on mobile */
+  }
+
+  .section-block + .section-block {
+    margin-top: 24px;
+  }
+
+  .page-heading + .section-block,
+  .page-heading + * {
+    margin-top: 20px;
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   Quick spacing overrides when needed
+   ======================================== */
+
+.space-y-editorial {
+  & > * + * {
+    margin-top: 40px;
+  }
+}
+
+.space-y-section {
+  & > * + * {
+    margin-top: 32px;
+  }
+}
+
+.space-y-content {
+  & > * + * {
+    margin-top: 16px;
+  }
+}
