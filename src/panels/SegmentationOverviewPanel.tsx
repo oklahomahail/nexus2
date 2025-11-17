@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from "react";
 
+import { PageHeading } from "../components/ui/PageHeading";
+import { SectionBlock } from "../components/ui/SectionBlock";
+import Button from "../components/ui/Button";
 import {
   DEFAULT_SEGMENT_CATALOG,
   BehavioralSegment,
@@ -100,28 +103,21 @@ export function SegmentationOverviewPanel({
   };
 
   return (
-    <div className="flex h-full flex-col bg-gray-50">
+    <div className="px-8 py-10 editorial-flow">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
-              Segment Management
-            </h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Manage donor segments and analyze engagement patterns
-            </p>
-          </div>
-          <button
-            onClick={onCreateSegment}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
+      <PageHeading
+        title="Segment Management"
+        subtitle="Manage donor segments and analyze engagement patterns"
+        actions={
+          <Button variant="primary" onClick={onCreateSegment}>
             + New Segment
-          </button>
-        </div>
+          </Button>
+        }
+      />
 
-        {/* Summary Stats */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
+      {/* Summary Stats */}
+      <SectionBlock title="Overview">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
           <div className="rounded-lg bg-blue-50 p-4">
             <div className="text-sm font-medium text-blue-900">
               Total Segments
@@ -163,7 +159,7 @@ export function SegmentationOverviewPanel({
             </div>
           </div>
         </div>
-      </div>
+      </SectionBlock>
 
       {/* Filters & View Toggle */}
       <div className="border-b border-gray-200 bg-white px-6 py-3">

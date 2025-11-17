@@ -54,24 +54,36 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
   const setCurrentClientBySlug = useCallback(
     async (slugOrId: string | null) => {
       if (!slugOrId) {
-        setCurrentClient(null);
+        setCurrentId(null);
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("nexus_current_client");
+        }
         return;
       }
 
       try {
         const client = await clientService.getBySlug(slugOrId);
         if (client) {
-          setCurrentClient(client.id);
+          setCurrentId(client.id);
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem("nexus_current_client", client.id);
+          }
         } else {
           console.error(`Client not found for identifier: ${slugOrId}`);
-          setCurrentClient(null);
+          setCurrentId(null);
+          if (typeof window !== "undefined") {
+            window.localStorage.removeItem("nexus_current_client");
+          }
         }
       } catch (error) {
         console.error("Error setting current client by slug/ID:", error);
-        setCurrentClient(null);
+        setCurrentId(null);
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("nexus_current_client");
+        }
       }
     },
-    [setCurrentClient],
+    [],
   );
 
   useEffect(() => {

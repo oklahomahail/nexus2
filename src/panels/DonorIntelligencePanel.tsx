@@ -26,6 +26,8 @@ import {
   Line,
 } from "recharts";
 
+import { PageHeading } from "@/components/ui/PageHeading";
+import { SectionBlock } from "@/components/ui/SectionBlock";
 import { useClient } from "@/context/ClientContext";
 import {
   useRetainedDonors,
@@ -75,27 +77,30 @@ export default function DonorIntelligencePanel() {
 
   if (!clientId) {
     return (
-      <div className="h-full flex items-center justify-center text-gray-500">
-        <p>No client selected</p>
+      <div className="px-8 py-10 editorial-flow">
+        <PageHeading
+          title="Donor Intelligence"
+          subtitle="AI-powered analysis of anonymized donor behavior"
+        />
+        <SectionBlock>
+          <div className="text-center py-12 text-[var(--nx-text-muted)]">
+            <p>No client selected</p>
+          </div>
+        </SectionBlock>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+    <div className="px-8 py-10 editorial-flow">
       {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Donor Intelligence
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          AI-powered analysis of anonymized donor behavior (privacy-safe, N ≥
-          50)
-        </p>
-      </div>
+      <PageHeading
+        title="Donor Intelligence"
+        subtitle="AI-powered analysis of anonymized donor behavior (privacy-safe, N ≥ 50)"
+      />
 
       {/* Metric Selector */}
-      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <SectionBlock title="Select Metric">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <MetricCard
             icon={Activity}
@@ -126,50 +131,48 @@ export default function DonorIntelligencePanel() {
             onClick={() => setActiveView("seasonality")}
           />
         </div>
-      </div>
+      </SectionBlock>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-auto p-6">
-        {activeView === null && (
-          <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-            <div className="text-center">
-              <BarChart className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="text-lg">Select a metric above to get started</p>
-              <p className="text-sm mt-2">
-                All queries enforce privacy threshold (minimum 50 donors)
-              </p>
-            </div>
+      {activeView === null && (
+        <SectionBlock>
+          <div className="text-center py-12 text-[var(--nx-text-muted)]">
+            <BarChart className="w-16 h-16 mx-auto mb-4" />
+            <p className="text-[18px] mb-2">Select a metric above to get started</p>
+            <p className="text-[13px]">
+              All queries enforce privacy threshold (minimum 50 donors)
+            </p>
           </div>
-        )}
+        </SectionBlock>
+      )}
 
-        {activeView === "retention" && (
-          <RetentionView
-            clientId={clientId}
-            numYears={retentionYears}
-            onYearsChange={setRetentionYears}
-          />
-        )}
+      {activeView === "retention" && (
+        <RetentionView
+          clientId={clientId}
+          numYears={retentionYears}
+          onYearsChange={setRetentionYears}
+        />
+      )}
 
-        {activeView === "upgrade" && (
-          <UpgradeView
-            clientId={clientId}
-            yearFrom={upgradeYearFrom}
-            yearTo={upgradeYearTo}
-            onYearFromChange={setUpgradeYearFrom}
-            onYearToChange={setUpgradeYearTo}
-          />
-        )}
+      {activeView === "upgrade" && (
+        <UpgradeView
+          clientId={clientId}
+          yearFrom={upgradeYearFrom}
+          yearTo={upgradeYearTo}
+          onYearFromChange={setUpgradeYearFrom}
+          onYearToChange={setUpgradeYearTo}
+        />
+      )}
 
-        {activeView === "velocity" && <VelocityView clientId={clientId} />}
+      {activeView === "velocity" && <VelocityView clientId={clientId} />}
 
-        {activeView === "seasonality" && (
-          <SeasonalityView
-            clientId={clientId}
-            year={seasonalityYear}
-            onYearChange={setSeasonalityYear}
-          />
-        )}
-      </div>
+      {activeView === "seasonality" && (
+        <SeasonalityView
+          clientId={clientId}
+          year={seasonalityYear}
+          onYearChange={setSeasonalityYear}
+        />
+      )}
     </div>
   );
 }

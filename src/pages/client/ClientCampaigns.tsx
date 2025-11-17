@@ -1,6 +1,9 @@
 import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { PageHeading } from "@/components/ui/PageHeading";
+import { SectionBlock } from "@/components/ui/SectionBlock";
+import Button from "@/components/ui/Button";
 import { useClient } from "@/context/ClientContext";
 import { getClientSlug } from "@/types/client";
 
@@ -25,75 +28,82 @@ export default function ClientCampaigns() {
   // Show empty state when no campaigns (for demo purposes, you can set campaigns = [])
   if (campaigns.length === 0) {
     return (
-      <div className="p-6" data-tutorial-step="campaigns.page">
-        <div className="flex justify-between mb-4">
-          <h1 className="text-xl font-semibold">Campaigns</h1>
-          <button
-            className="px-3 py-1.5 border rounded-md bg-white"
-            onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
-            data-tutorial-step="campaigns.new"
-          >
-            New Campaign
-          </button>
-        </div>
-
-        <div className="text-center py-12">
-          <div className="max-w-md mx-auto">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              No campaigns yet
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Create your first campaign to start tracking performance and
-              engaging donors.
-            </p>
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+      <div className="px-8 py-10 editorial-flow" data-tutorial-step="campaigns.page">
+        <PageHeading
+          title="Campaigns"
+          subtitle="Manage your fundraising campaigns and track performance"
+          actions={
+            <Button
+              variant="primary"
               onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
               data-tutorial-step="campaigns.new"
             >
-              Create Your First Campaign
-            </button>
+              New Campaign
+            </Button>
+          }
+        />
+
+        <SectionBlock>
+          <div className="text-center py-12">
+            <div className="max-w-md mx-auto">
+              <h2 className="text-[18px] font-semibold text-[var(--nx-charcoal)] mb-2">
+                No campaigns yet
+              </h2>
+              <p className="text-[var(--nx-text-muted)] mb-6">
+                Create your first campaign to start tracking performance and
+                engaging donors.
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
+                data-tutorial-step="campaigns.new"
+              >
+                Create Your First Campaign
+              </Button>
+            </div>
           </div>
-        </div>
+        </SectionBlock>
       </div>
     );
   }
 
   return (
-    <div className="p-6" data-tutorial-step="campaigns.page">
-      <div className="flex justify-between mb-4">
-        <h1 className="text-xl font-semibold">Campaigns</h1>
-        <button
-          className="px-3 py-1.5 border rounded-md bg-white"
-          onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
-          data-tutorial-step="campaigns.new"
-        >
-          New Campaign
-        </button>
-      </div>
+    <div className="px-8 py-10 editorial-flow" data-tutorial-step="campaigns.page">
+      <PageHeading
+        title="Campaigns"
+        subtitle="Manage your fundraising campaigns and track performance"
+        actions={
+          <Button
+            variant="primary"
+            onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
+            data-tutorial-step="campaigns.new"
+          >
+            New Campaign
+          </Button>
+        }
+      />
 
-      <div
-        className="bg-white rounded-lg border"
-        data-tutorial-step="campaigns.list"
-      >
+      <SectionBlock title="Active Campaigns" noPadding data-tutorial-step="campaigns.list">
         <table className="w-full">
-          <thead className="border-b">
+          <thead className="border-b border-[var(--nx-border)]">
             <tr>
-              <th className="text-left p-4">Name</th>
-              <th className="text-left p-4">Status</th>
-              <th className="text-left p-4">Progress</th>
-              <th className="text-left p-4">Actions</th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Name</th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Status</th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Progress</th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Actions</th>
             </tr>
           </thead>
           <tbody>
             {campaigns.map((campaign) => (
-              <tr key={campaign.id} className="border-b">
+              <tr key={campaign.id} className="border-b border-[var(--nx-border)] last:border-0 hover:bg-[var(--nx-bg-secondary)] transition-colors">
                 <td className="p-4">
                   <div className="flex items-center gap-2">
-                    {campaign.name}
+                    <span className="text-[15px] font-medium text-[var(--nx-charcoal)]">
+                      {campaign.name}
+                    </span>
                     {campaign.track15_enabled && (
                       <span
-                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium bg-purple-100 text-purple-700"
                         title="Track15 Campaign"
                       >
                         <Sparkles className="w-3 h-3" />
@@ -108,13 +118,13 @@ export default function ClientCampaigns() {
                   </span>
                 </td>
                 <td className="p-4">
-                  <div className="text-sm">
-                    <div>
+                  <div className="text-[13px]">
+                    <div className="text-[var(--nx-charcoal)] font-medium mb-1">
                       {campaign.raised} / {campaign.goal}
                     </div>
-                    <div className="w-24 bg-gray-200 rounded-full h-2 mt-1">
+                    <div className="w-24 bg-[var(--nx-bg-tertiary)] rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full"
+                        className="bg-[var(--nx-blue-deep)] h-2 rounded-full transition-all"
                         style={{ width: "60%" }}
                       ></div>
                     </div>
@@ -123,7 +133,7 @@ export default function ClientCampaigns() {
                 <td className="p-4">
                   <div className="flex items-center gap-3">
                     <button
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-[13px] font-medium text-[var(--nx-blue-deep)] hover:text-[var(--nx-charcoal)] transition-colors"
                       onClick={() =>
                         navigate(
                           `/clients/${clientSlug}/campaigns/${campaign.id}`,
@@ -135,7 +145,7 @@ export default function ClientCampaigns() {
                     </button>
                     {campaign.track15_enabled && (
                       <button
-                        className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
+                        className="text-[13px] font-medium text-purple-600 hover:text-purple-800 transition-colors"
                         onClick={() =>
                           navigate(
                             `/clients/${clientSlug}/track15?campaign=${campaign.id}`,
@@ -152,7 +162,7 @@ export default function ClientCampaigns() {
             ))}
           </tbody>
         </table>
-      </div>
+      </SectionBlock>
     </div>
   );
 }
