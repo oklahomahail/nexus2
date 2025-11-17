@@ -15,7 +15,7 @@ interface ClientState {
   clients: Client[];
   currentClient: Client | null;
   setCurrentClient: (id: string | null) => void;
-  setCurrentClientBySlug: (slug: string | null) => Promise<void>;
+  setCurrentClientBySlug: (slugOrId: string | null) => Promise<void>;
   reload: () => Promise<void>;
 }
 
@@ -52,22 +52,22 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setCurrentClientBySlug = useCallback(
-    async (slug: string | null) => {
-      if (!slug) {
+    async (slugOrId: string | null) => {
+      if (!slugOrId) {
         setCurrentClient(null);
         return;
       }
 
       try {
-        const client = await clientService.getBySlug(slug);
+        const client = await clientService.getBySlug(slugOrId);
         if (client) {
           setCurrentClient(client.id);
         } else {
-          console.error(`Client not found for slug: ${slug}`);
+          console.error(`Client not found for identifier: ${slugOrId}`);
           setCurrentClient(null);
         }
       } catch (error) {
-        console.error("Error setting current client by slug:", error);
+        console.error("Error setting current client by slug/ID:", error);
         setCurrentClient(null);
       }
     },

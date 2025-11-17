@@ -131,22 +131,35 @@ export const clientService = {
   },
 
   /**
-   * Get a single client by slug (derived from name)
-   * Slug is the lowercase, hyphenated version of the client name
+   * Get a single client by slug or ID
+   * Accepts either:
+   * - A slug (lowercase, hyphenated version of client name, e.g., "regional-food-bank")
+   * - A UUID (e.g., "00000000-0000-0000-0000-000000000003")
    *
-   * @param slug - Client slug (e.g., "regional-food-bank")
+   * @param identifier - Client slug or UUID
    * @returns Client or null if not found
    * @throws Error if database query fails
    */
-  getBySlug: async (slug: string): Promise<Client | null> => {
-    if (!slug) {
-      console.error("Client not found for slug: undefined");
+  getBySlug: async (identifier: string): Promise<Client | null> => {
+    if (!identifier) {
+      console.error("Client not found for identifier: undefined");
       return null;
     }
 
-    // Convert slug back to name pattern for matching
+    // Check if identifier is a UUID (basic pattern check)
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        identifier,
+      );
+
+    // If it's a UUID, use getById for direct lookup
+    if (isUUID) {
+      return clientService.getById(identifier);
+    }
+
+    // Otherwise, treat it as a slug and convert to name pattern
     // "regional-food-bank" -> "Regional Food Bank"
-    const namePattern = slug
+    const namePattern = identifier
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
@@ -164,7 +177,7 @@ export const clientService = {
     }
 
     if (!data) {
-      console.error(`Client not found for slug: ${slug}`);
+      console.error(`Client not found for identifier: ${identifier}`);
       return null;
     }
 
