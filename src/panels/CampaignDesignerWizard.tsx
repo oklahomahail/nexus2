@@ -34,7 +34,7 @@ const usePostalAssumptions = (_params: any) => ({
 // ============================================================================
 
 export default function CampaignDesignerWizard() {
-  const { currentClient } = useClient();
+  const { currentClient, clients, setCurrentClient } = useClient();
   const clientId = currentClient?.id;
   const [searchParams] = useSearchParams();
 
@@ -77,24 +77,8 @@ export default function CampaignDesignerWizard() {
     nonprofitEligible: true,
   });
 
-  if (!clientId) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-        <p>No client selected</p>
-      </div>
-    );
-  }
-
-  if (!brandId) {
-    return (
-      <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
-        <div className="text-center">
-          <p className="text-lg">No brand profile found</p>
-          <p className="text-sm mt-2">Please create a brand profile first</p>
-        </div>
-      </div>
-    );
-  }
+  // Show client selector if no client is selected
+  const showClientSelector = !clientId;
 
   const qty = params.mail?.quantity ?? 5000;
   const format = (params.mail?.format ?? "letter") as any;
@@ -105,12 +89,35 @@ export default function CampaignDesignerWizard() {
     <div className="h-full flex flex-col bg-white dark:bg-gray-900">
       {/* Header */}
       <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Campaign Designer
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          Brand-aware generation of direct mail, email series, and social posts
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Campaign Designer
+            </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Brand-aware generation of direct mail, email series, and social posts
+            </p>
+          </div>
+
+          {/* Client Selector */}
+          <div className="flex-shrink-0 min-w-[240px]">
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Client
+            </label>
+            <select
+              value={currentClient?.id || ""}
+              onChange={(e) => setCurrentClient(e.target.value || null)}
+              className="w-full rounded-lg bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select a client...</option>
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {/* Source indicator from Data Lab */}
         {isFromDataLab && labRun && (
@@ -147,7 +154,30 @@ export default function CampaignDesignerWizard() {
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-6 space-y-6">
+        {/* Show message if no client selected */}
+        {showClientSelector && (
+          <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-6 text-center">
+            <p className="text-blue-800 dark:text-blue-200">
+              Please select a client from the dropdown above to begin designing a campaign.
+            </p>
+          </div>
+        )}
+
+        {/* Show form only when client is selected */}
+        {!showClientSelector && !brandId && (
+          <div className="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-6 text-center">
+            <p className="text-amber-800 dark:text-amber-200 text-lg mb-2">
+              No brand profile found
+            </p>
+            <p className="text-amber-700 dark:text-amber-300 text-sm">
+              Please create a brand profile first
+            </p>
+          </div>
+        )}
+
         {/* Step 1: Basics */}
+        {!showClientSelector && brandId && (
+        <>
         <section className="rounded-xl border border-gray-300 dark:border-gray-700 p-5 bg-gray-50 dark:bg-gray-800/50 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             1. Basics
@@ -415,6 +445,8 @@ export default function CampaignDesignerWizard() {
             )}
             <GeneratedOutputViewer outputs={result.outputs} />
           </section>
+        )}
+        </>
         )}
       </div>
     </div>

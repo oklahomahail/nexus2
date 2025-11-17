@@ -139,6 +139,11 @@ export const clientService = {
    * @throws Error if database query fails
    */
   getBySlug: async (slug: string): Promise<Client | null> => {
+    if (!slug) {
+      console.error("Client not found for slug: undefined");
+      return null;
+    }
+
     // Convert slug back to name pattern for matching
     // "regional-food-bank" -> "Regional Food Bank"
     const namePattern = slug
@@ -151,18 +156,19 @@ export const clientService = {
       .select("*")
       .ilike("name", namePattern)
       .is("deleted_at", null)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      if (error.code === "PGRST116") {
-        // Not found
-        return null;
-      }
       console.error("Error fetching client by slug:", error);
-      throw new Error(`Failed to fetch client by slug: ${error.message}`);
+      return null;
     }
 
-    return data ? mapRowToClient(data) : null;
+    if (!data) {
+      console.error(`Client not found for slug: ${slug}`);
+      return null;
+    }
+
+    return mapRowToClient(data);
   },
 
   /**
