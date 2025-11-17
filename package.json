@@ -28,8 +28,8 @@
     "check:paths": "pnpm lint && pnpm verify:barrels",
     "test": "vitest",
     "check:tailwind:dynamic": "node scripts/check-dynamic-classes.js",
-    "supabase:types": "supabase gen types typescript --linked > src/types/database.types.ts && prettier --write src/types/database.types.ts",
-    "supabase:types:check": "supabase gen types typescript --linked > src/types/database.types.tmp.ts && prettier --write src/types/database.types.tmp.ts && diff src/types/database.types.ts src/types/database.types.tmp.ts && rm src/types/database.types.tmp.ts"
+    "supabase:types": "supabase gen types typescript --project-id sdgkpehhzysjofcpvdbo > src/types/database.types.ts && prettier --write src/types/database.types.ts",
+    "supabase:types:check": "supabase gen types typescript --project-id sdgkpehhzysjofcpvdbo > src/types/database.types.tmp.ts && prettier --write src/types/database.types.tmp.ts && diff src/types/database.types.ts src/types/database.types.tmp.ts && rm src/types/database.types.tmp.ts"
   },
   "dependencies": {
     "@sentry/react": "^10.24.0",
