@@ -40,6 +40,21 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verify Supabase types are fresh
+        run: |
+          pnpm run supabase:types:check || {
+            echo "❌ Database types are out of sync with Supabase schema"
+            echo "Run 'pnpm supabase:types' locally and commit the changes"
+            exit 1
+          }
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
       - name: Lint
         run: pnpm run lint
 

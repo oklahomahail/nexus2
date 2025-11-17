@@ -102,6 +102,10 @@ pnpm test                   # Run tests with Vitest
 pnpm build                  # Build for production
 pnpm preview                # Preview production build
 
+# Database & Types
+pnpm supabase:types         # Regenerate TypeScript types from Supabase schema
+pnpm supabase:types:check   # Verify types are in sync with database (used in CI)
+
 # Quality Assurance
 pnpm check:paths            # Verify import paths and barrel exports
 pnpm verify:barrels         # Check barrel export integrity
