@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 
+import { VersionAiCoachingButton } from "./VersionAiCoachingButton";
 import {
   DEFAULT_SEGMENT_CATALOG,
   getDefaultVersionLabel,
@@ -144,6 +145,27 @@ export function DeliverableSegmentationEditor({
   const handlePreviewTextChange = (versionId: string, previewText: string) => {
     const updatedVersions = deliverable.versions.map((version) =>
       version.versionId === versionId ? { ...version, previewText } : version,
+    );
+
+    onChange({
+      ...deliverable,
+      versions: updatedVersions,
+    });
+  };
+
+  const handleApplyAiRewrite = (
+    versionId: string,
+    newContent: string,
+    newSubject?: string,
+  ) => {
+    const updatedVersions = deliverable.versions.map((version) =>
+      version.versionId === versionId
+        ? {
+            ...version,
+            contentDraft: newContent,
+            subjectLine: newSubject || version.subjectLine,
+          }
+        : version,
     );
 
     onChange({
@@ -359,6 +381,24 @@ export function DeliverableSegmentationEditor({
                   {/* Expanded Content */}
                   {isExpanded && (
                     <div className="space-y-4 p-5">
+                      {/* AI Coaching Button */}
+                      <div className="flex items-center justify-between rounded-lg border border-purple-100 bg-purple-50 p-3">
+                        <div className="flex-1">
+                          <p className="text-xs font-medium text-purple-900">
+                            AI Content Optimization
+                          </p>
+                          <p className="mt-0.5 text-xs text-purple-700">
+                            Let AI rewrite this content optimized for{" "}
+                            {segment?.name || "this segment"}
+                          </p>
+                        </div>
+                        <VersionAiCoachingButton
+                          version={version}
+                          deliverableType={deliverable.deliverableType}
+                          onApplyRewrite={handleApplyAiRewrite}
+                        />
+                      </div>
+
                       {/* Segment Selection */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700">
