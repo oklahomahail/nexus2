@@ -6,12 +6,12 @@
  * Nexus's standard SegmentCriteria model.
  */
 
-import { AnalysisResult } from './donorDataLab';
 import {
   BehavioralSegment,
   SegmentCriteria,
-} from './campaignComposer/defaultSegmentCatalog';
-import { createSegment } from './donorAnalyticsService';
+} from "./campaignComposer/defaultSegmentCatalog";
+import { createSegment } from "./donorAnalyticsService";
+import { AnalysisResult } from "./donorDataLab";
 
 /**
  * Map a Data Lab suggested segment ID to Nexus SegmentCriteria.
@@ -22,32 +22,34 @@ function buildCriteriaForSuggested(suggestedId: string): SegmentCriteria & {
   labRule?: string;
 } {
   switch (suggestedId) {
-    case 'high_value_at_risk':
+    case "high_value_at_risk":
       return {
-        recency: '365-730_days', // maps to at-risk/lapsed
-        engagement: 'medium',
-        labRule: 'valueTier in {large,major} && recencyTier in {at_risk,lapsed}',
+        recency: "365-730_days", // maps to at-risk/lapsed
+        engagement: "medium",
+        labRule:
+          "valueTier in {large,major} && recencyTier in {at_risk,lapsed}",
       };
 
-    case 'upgrade_ready_core':
+    case "upgrade_ready_core":
       return {
-        engagement: 'high',
-        frequency: 'repeat',
-        labRule: 'upgradeReady = true',
+        engagement: "high",
+        frequency: "repeat",
+        labRule: "upgradeReady = true",
       };
 
-    case 'monthly_candidates':
+    case "monthly_candidates":
       return {
-        frequency: 'repeat',
-        giving_type: 'annual', // candidates for conversion to monthly
-        labRule: 'monthlyProspect = true',
+        frequency: "repeat",
+        giving_type: "annual", // candidates for conversion to monthly
+        labRule: "monthlyProspect = true",
       };
 
-    case 'reactivation_value':
+    case "reactivation_value":
       return {
-        recency: '730+_days', // long-lapsed
-        engagement: 'dormant',
-        labRule: 'valueTier in {large,major} && recencyTier in {lapsed,long_lapsed}',
+        recency: "730+_days", // long-lapsed
+        engagement: "dormant",
+        labRule:
+          "valueTier in {large,major} && recencyTier in {lapsed,long_lapsed}",
       };
 
     default:
@@ -62,9 +64,9 @@ function buildCriteriaForSuggested(suggestedId: string): SegmentCriteria & {
  */
 function countDonorsForSuggestedSegment(
   analysis: AnalysisResult,
-  suggestedId: string
+  suggestedId: string,
 ): number {
-  const seg = analysis.suggestedSegments.find(s => s.id === suggestedId);
+  const seg = analysis.suggestedSegments.find((s) => s.id === suggestedId);
   if (!seg) return 0;
   return analysis.donors.filter(seg.filter).length;
 }
@@ -73,17 +75,17 @@ function countDonorsForSuggestedSegment(
  * Map suggested segment to category
  */
 function getCategoryForSuggested(
-  suggestedId: string
-): BehavioralSegment['category'] {
+  suggestedId: string,
+): BehavioralSegment["category"] {
   switch (suggestedId) {
-    case 'high_value_at_risk':
-    case 'reactivation_value':
-      return 'donor_status';
-    case 'upgrade_ready_core':
-    case 'monthly_candidates':
-      return 'giving_pattern';
+    case "high_value_at_risk":
+    case "reactivation_value":
+      return "donor_status";
+    case "upgrade_ready_core":
+    case "monthly_candidates":
+      return "giving_pattern";
     default:
-      return 'engagement';
+      return "engagement";
   }
 }
 
@@ -97,18 +99,21 @@ function getCategoryForSuggested(
 export function createBehavioralSegmentFromDataLab(params: {
   analysis: AnalysisResult;
   suggestedSegmentId: string;
-}): Omit<BehavioralSegment, 'segmentId'> {
+}): Omit<BehavioralSegment, "segmentId"> {
   const { analysis, suggestedSegmentId } = params;
 
   const suggested = analysis.suggestedSegments.find(
-    s => s.id === suggestedSegmentId
+    (s) => s.id === suggestedSegmentId,
   );
 
   if (!suggested) {
     throw new Error(`Suggested segment ${suggestedSegmentId} not found`);
   }
 
-  const donorCount = countDonorsForSuggestedSegment(analysis, suggestedSegmentId);
+  const donorCount = countDonorsForSuggestedSegment(
+    analysis,
+    suggestedSegmentId,
+  );
   const criteria = buildCriteriaForSuggested(suggested.id);
   const category = getCategoryForSuggested(suggested.id);
 

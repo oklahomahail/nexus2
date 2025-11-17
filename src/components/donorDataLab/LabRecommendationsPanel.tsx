@@ -1,4 +1,4 @@
-import { LabRecommendations } from '@/services/donorDataLab';
+import { LabRecommendations } from "@/services/donorDataLab";
 
 type Props = { recs: LabRecommendations };
 
@@ -14,9 +14,18 @@ export function LabRecommendationsPanel({ recs }: Props) {
 
       <Section title="Upgrade strategy" items={recs.upgradeStrategy} />
       <Section title="Monthly giving strategy" items={recs.monthlyStrategy} />
-      <Section title="Reactivation strategy" items={recs.reactivationStrategy} />
-      <Section title="Lookalike audience strategy" items={recs.lookalikeStrategy} />
-      <Section title="Channel & cadence notes" items={recs.channelAndCadenceNotes} />
+      <Section
+        title="Reactivation strategy"
+        items={recs.reactivationStrategy}
+      />
+      <Section
+        title="Lookalike audience strategy"
+        items={recs.lookalikeStrategy}
+      />
+      <Section
+        title="Channel & cadence notes"
+        items={recs.channelAndCadenceNotes}
+      />
     </div>
   );
 }

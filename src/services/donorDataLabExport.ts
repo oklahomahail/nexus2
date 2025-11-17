@@ -5,11 +5,12 @@
  * special cohort exports (upgrade-ready, monthly prospects, lookalikes).
  */
 
-import { AnalysisResult, DonorAnalysis } from './donorDataLab';
-import { downloadCsvFile } from '@/utils/csvExport';
+import { downloadCsvFile } from "@/utils/csvExport";
+
+import { AnalysisResult, DonorAnalysis } from "./donorDataLab";
 
 function formatAskLadder(ladder: number[]): string {
-  return ladder.map(a => `$${a}`).join(' | ');
+  return ladder.map((a) => `$${a}`).join(" | ");
 }
 
 function donorToBaseRow(d: DonorAnalysis): (string | number)[] {
@@ -17,11 +18,11 @@ function donorToBaseRow(d: DonorAnalysis): (string | number)[] {
     d.donorId,
     d.valueTier,
     d.recencyTier,
-    d.daysSinceLastGift ?? '',
-    d.mostRecentGift ?? '',
-    d.lifetimeGiving ?? '',
-    d.avgGift ?? '',
-    d.giftCount ?? '',
+    d.daysSinceLastGift ?? "",
+    d.mostRecentGift ?? "",
+    d.lifetimeGiving ?? "",
+    d.avgGift ?? "",
+    d.giftCount ?? "",
   ];
 }
 
@@ -30,28 +31,28 @@ function donorToBaseRow(d: DonorAnalysis): (string | number)[] {
  */
 export function exportDonorsCsv(
   filename: string,
-  donors: DonorAnalysis[]
+  donors: DonorAnalysis[],
 ): void {
   const headers = [
-    'donor_id',
-    'value_tier',
-    'recency_tier',
-    'days_since_last_gift',
-    'most_recent_gift',
-    'lifetime_giving_est',
-    'average_gift',
-    'gift_count',
-    'upgrade_ready',
-    'monthly_prospect',
-    'lookalike_cohorts',
-    'ask_ladder',
+    "donor_id",
+    "value_tier",
+    "recency_tier",
+    "days_since_last_gift",
+    "most_recent_gift",
+    "lifetime_giving_est",
+    "average_gift",
+    "gift_count",
+    "upgrade_ready",
+    "monthly_prospect",
+    "lookalike_cohorts",
+    "ask_ladder",
   ];
 
-  const rows = donors.map(d => [
+  const rows = donors.map((d) => [
     ...donorToBaseRow(d),
-    d.upgradeReady ? '1' : '0',
-    d.monthlyProspect ? '1' : '0',
-    d.lookalikeCohorts.join(';'),
+    d.upgradeReady ? "1" : "0",
+    d.monthlyProspect ? "1" : "0",
+    d.lookalikeCohorts.join(";"),
     formatAskLadder(d.askLadder),
   ]);
 
@@ -64,9 +65,9 @@ export function exportDonorsCsv(
 export function exportSuggestedSegmentCsv(
   analysis: AnalysisResult,
   suggestedId: string,
-  filename?: string
+  filename?: string,
 ): void {
-  const seg = analysis.suggestedSegments.find(s => s.id === suggestedId);
+  const seg = analysis.suggestedSegments.find((s) => s.id === suggestedId);
   if (!seg) {
     throw new Error(`Suggested segment ${suggestedId} not found`);
   }
@@ -81,9 +82,9 @@ export function exportSuggestedSegmentCsv(
  */
 export function exportUpgradeReadyCsv(
   analysis: AnalysisResult,
-  filename = 'upgrade_ready_donors.csv'
+  filename = "upgrade_ready_donors.csv",
 ): void {
-  const donors = analysis.donors.filter(d => d.upgradeReady);
+  const donors = analysis.donors.filter((d) => d.upgradeReady);
   exportDonorsCsv(filename, donors);
 }
 
@@ -92,9 +93,9 @@ export function exportUpgradeReadyCsv(
  */
 export function exportMonthlyProspectsCsv(
   analysis: AnalysisResult,
-  filename = 'monthly_prospect_donors.csv'
+  filename = "monthly_prospect_donors.csv",
 ): void {
-  const donors = analysis.donors.filter(d => d.monthlyProspect);
+  const donors = analysis.donors.filter((d) => d.monthlyProspect);
   exportDonorsCsv(filename, donors);
 }
 
@@ -103,14 +104,16 @@ export function exportMonthlyProspectsCsv(
  */
 export function exportLookalikeSeedCsv(
   analysis: AnalysisResult,
-  cohortId: 'core_high_value_seed' | 'monthly_lookalike_seed',
-  filename?: string
+  cohortId: "core_high_value_seed" | "monthly_lookalike_seed",
+  filename?: string,
 ): void {
-  const donors = analysis.donors.filter(d => d.lookalikeCohorts.includes(cohortId));
+  const donors = analysis.donors.filter((d) =>
+    d.lookalikeCohorts.includes(cohortId),
+  );
   const fallbackName =
-    cohortId === 'core_high_value_seed'
-      ? 'lookalike_seed_core_high_value.csv'
-      : 'lookalike_seed_monthly.csv';
+    cohortId === "core_high_value_seed"
+      ? "lookalike_seed_core_high_value.csv"
+      : "lookalike_seed_monthly.csv";
 
   exportDonorsCsv(filename ?? fallbackName, donors);
 }

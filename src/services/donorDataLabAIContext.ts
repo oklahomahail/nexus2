@@ -6,8 +6,8 @@
  * rather than generic fundraising advice.
  */
 
-import { LabRecommendations } from './donorDataLab';
-import { getLatestLabRun } from './donorDataLabPersistence';
+import { LabRecommendations } from "./donorDataLab";
+import { getLatestLabRun } from "./donorDataLabPersistence";
 
 /**
  * Build a context block from Lab recommendations that can be injected
@@ -15,7 +15,7 @@ import { getLatestLabRun } from './donorDataLabPersistence';
  */
 export function buildLabStrategyContext(
   recommendations: LabRecommendations,
-  focus?: 'upgrade' | 'monthly' | 'reactivation' | 'lookalike'
+  focus?: "upgrade" | "monthly" | "reactivation" | "lookalike",
 ): string {
   const sections: string[] = [];
 
@@ -24,28 +24,36 @@ export function buildLabStrategyContext(
 
   // Include focused section if specified
   switch (focus) {
-    case 'upgrade':
-      sections.push(`## Upgrade Strategy\n${recommendations.upgradeStrategy.join('\n')}`);
+    case "upgrade":
+      sections.push(
+        `## Upgrade Strategy\n${recommendations.upgradeStrategy.join("\n")}`,
+      );
       break;
-    case 'monthly':
-      sections.push(`## Monthly Giving Strategy\n${recommendations.monthlyStrategy.join('\n')}`);
+    case "monthly":
+      sections.push(
+        `## Monthly Giving Strategy\n${recommendations.monthlyStrategy.join("\n")}`,
+      );
       break;
-    case 'reactivation':
-      sections.push(`## Reactivation Strategy\n${recommendations.reactivationStrategy.join('\n')}`);
+    case "reactivation":
+      sections.push(
+        `## Reactivation Strategy\n${recommendations.reactivationStrategy.join("\n")}`,
+      );
       break;
-    case 'lookalike':
-      sections.push(`## Lookalike Audience Strategy\n${recommendations.lookalikeStrategy.join('\n')}`);
+    case "lookalike":
+      sections.push(
+        `## Lookalike Audience Strategy\n${recommendations.lookalikeStrategy.join("\n")}`,
+      );
       break;
     default:
       // Include all strategies for general context
       sections.push(
-        `## Upgrade Strategy\n${recommendations.upgradeStrategy.join('\n')}`,
-        `## Monthly Giving Strategy\n${recommendations.monthlyStrategy.join('\n')}`,
-        `## Channel & Cadence Notes\n${recommendations.channelAndCadenceNotes.join('\n')}`
+        `## Upgrade Strategy\n${recommendations.upgradeStrategy.join("\n")}`,
+        `## Monthly Giving Strategy\n${recommendations.monthlyStrategy.join("\n")}`,
+        `## Channel & Cadence Notes\n${recommendations.channelAndCadenceNotes.join("\n")}`,
       );
   }
 
-  return sections.join('\n\n');
+  return sections.join("\n\n");
 }
 
 /**
@@ -64,7 +72,7 @@ export function buildLabStrategyContext(
  */
 export function getLabContextForClient(
   clientId: string,
-  focus?: 'upgrade' | 'monthly' | 'reactivation' | 'lookalike'
+  focus?: "upgrade" | "monthly" | "reactivation" | "lookalike",
 ): string | null {
   const latestRun = getLatestLabRun(clientId);
 
@@ -74,7 +82,10 @@ export function getLabContextForClient(
 
   const contextHeader = `This organization recently analyzed their donor file (${latestRun.fileName}, ${latestRun.rowsProcessed.toLocaleString()} donors, analyzed on ${new Date(latestRun.runDate).toLocaleDateString()}).\n\n`;
 
-  const strategyContext = buildLabStrategyContext(latestRun.recommendations, focus);
+  const strategyContext = buildLabStrategyContext(
+    latestRun.recommendations,
+    focus,
+  );
 
   return contextHeader + strategyContext;
 }
@@ -93,7 +104,7 @@ export function getLabContextForClient(
 export function enrichPromptWithLabContext(
   clientId: string,
   basePrompt: string,
-  focus?: 'upgrade' | 'monthly' | 'reactivation' | 'lookalike'
+  focus?: "upgrade" | "monthly" | "reactivation" | "lookalike",
 ): string {
   const context = getLabContextForClient(clientId, focus);
 

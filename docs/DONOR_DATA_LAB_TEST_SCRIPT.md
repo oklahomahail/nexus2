@@ -1,9 +1,11 @@
 # Donor Data Lab End-to-End Test Script
 
 ## Overview
+
 This test script validates the complete "happy path" workflow from donor file upload through campaign creation with AI-enriched content.
 
 ## Prerequisites
+
 - Access to Nexus application
 - Sample donor CSV file with clear patterns (see sample data below)
 - Client account set up in the system
@@ -27,6 +29,7 @@ D010,200,3,100,2024-10-15
 ```
 
 **Expected patterns in this data:**
+
 - D005: Major donor, upgrade-ready (high value, recent, multiple gifts)
 - D001, D009: Large donors, upgrade-ready
 - D007: Strong monthly prospect (consistent giving, moderate amounts)
@@ -68,17 +71,20 @@ D010,200,3,100,2024-10-15
 ### Phase 2: Results Validation
 
 **Metadata Banner:**
+
 - **✓ Verify:** Shows "Analysis complete"
 - **✓ Verify:** Shows "10 donors analyzed from test_donors_2025.csv"
 - **✓ Verify:** Shows run timestamp (should be current time)
 - **✓ Verify:** Shows "0 rows ignored" (all donors have IDs)
 
 **Summary Tiles:**
+
 - **✓ Verify:** "Donors analyzed" = 10
 - **✓ Verify:** "Suggested segments" shows a number (typically 6-8)
 - **✓ Verify:** "Median lifetime giving" and "Median gift count" show reasonable values
 
 **Filter Pills:**
+
 - Click "All donors" (should be active by default)
   - **✓ Verify:** Shows all 10 donors
 - Click "Upgrade-ready"
@@ -91,6 +97,7 @@ D010,200,3,100,2024-10-15
   - **✓ Verify:** Shows at-risk donors (expect D003)
 
 **Donor Table:**
+
 - **✓ Verify:** Each row shows:
   - Donor ID (e.g., D001, D005)
   - Value tier badge (Small/Medium/Large/Major)
@@ -101,10 +108,12 @@ D010,200,3,100,2024-10-15
 
 **Sample Ask Ladder Validation:**
 For D001 (most recent gift $350):
+
 - **✓ Verify:** Ask ladder shows approximately: $350, $440, $525, $700
 - **✓ Verify:** Amounts are nicely rounded (nearest $5 or $10)
 
 **Export Buttons:**
+
 - **✓ Verify:** "Quick exports" section appears
 - **✓ Verify:** Each button shows correct count:
   - Upgrade-ready (3-4)
@@ -113,6 +122,7 @@ For D001 (most recent gift $350):
   - Monthly seed (2-3)
 
 **Strategy Recommendations:**
+
 - **✓ Verify:** "Strategy & Next Steps" panel appears
 - **✓ Verify:** Shows sections for:
   - Strategy Overview
@@ -126,6 +136,7 @@ For D001 (most recent gift $350):
 ### Phase 3: Segment Creation
 
 **Suggested Segments Panel:**
+
 - **✓ Verify:** Shows 6-8 suggested segments
 - **✓ Verify:** Each segment shows:
   - Name (e.g., "Upgrade-ready core donors")
@@ -195,31 +206,37 @@ For D001 (most recent gift $350):
 **Test AI Enrichment (Manual Verification):**
 
 1. In browser console, test AI context service:
-```javascript
-import { hasLabContext, getLabContextSummary, enrichPromptWithLabContext }
-  from '@/services/donorDataLabAIContext';
 
-const clientId = '[your-test-client-id]';
+```javascript
+import {
+  hasLabContext,
+  getLabContextSummary,
+  enrichPromptWithLabContext,
+} from "@/services/donorDataLabAIContext";
+
+const clientId = "[your-test-client-id]";
 
 // Should return true
-console.log('Has context:', hasLabContext(clientId));
+console.log("Has context:", hasLabContext(clientId));
 
 // Should show summary
-console.log('Summary:', getLabContextSummary(clientId));
+console.log("Summary:", getLabContextSummary(clientId));
 
 // Test enrichment
 const basePrompt = "Write a fundraising email for upgrade prospects.";
-const enriched = enrichPromptWithLabContext(clientId, basePrompt, 'upgrade');
-console.log('Enriched prompt:', enriched);
+const enriched = enrichPromptWithLabContext(clientId, basePrompt, "upgrade");
+console.log("Enriched prompt:", enriched);
 ```
 
 **Expected enriched prompt structure:**
+
 - Starts with context header (file name, donor count, analysis date)
 - Includes "Donor File Strategy Overview" section
 - Includes "Upgrade Strategy" section with specific recommendations
 - Ends with separator (`---`) then original prompt
 
 **✓ Verify:** Enriched prompt includes:
+
 - Specific donor counts from your test data (e.g., "10 donors analyzed")
 - File name "test_donors_2025.csv"
 - Today's date
@@ -255,18 +272,23 @@ console.log('Enriched prompt:', enriched);
 **Lab Run History:**
 
 1. In browser console:
-```javascript
-import { getLabRuns, getLatestLabRun } from '@/services/donorDataLabPersistence';
 
-const clientId = '[your-test-client-id]';
+```javascript
+import {
+  getLabRuns,
+  getLatestLabRun,
+} from "@/services/donorDataLabPersistence";
+
+const clientId = "[your-test-client-id]";
 const runs = getLabRuns(clientId);
-console.log('All runs:', runs);
+console.log("All runs:", runs);
 
 const latest = getLatestLabRun(clientId);
-console.log('Latest run:', latest);
+console.log("Latest run:", latest);
 ```
 
 **✓ Verify:**
+
 - `runs` array contains at least 1 entry
 - Latest run includes:
   - `runId`
@@ -288,10 +310,11 @@ console.log('Latest run:', latest);
    - **✓ Verify:** New run is saved (check console: `getLabRuns(clientId).length` increased)
 
 3. Check localStorage:
+
 ```javascript
 const storageKey = `nexus_lab_runs_${clientId}`;
 const stored = JSON.parse(localStorage.getItem(storageKey));
-console.log('Stored runs:', stored.length);
+console.log("Stored runs:", stored.length);
 ```
 
 **✓ Verify:** Multiple runs are stored (max 10)
@@ -303,6 +326,7 @@ console.log('Stored runs:', stored.length);
 ### Missing Data Handling
 
 **Test CSV with missing donor IDs:**
+
 ```csv
 donor_id,total_lifetime_giving,gift_count,most_recent_gift,last_gift_date
 D001,2500,8,350,2024-12-15
@@ -311,6 +335,7 @@ D003,5000,15,400,2023-08-10
 ```
 
 **✓ Verify:**
+
 - Analysis runs
 - Shows "1 row ignored (missing donor ID)"
 - Only 2 donors appear in results
@@ -318,18 +343,21 @@ D003,5000,15,400,2023-08-10
 ### Invalid Date Formats
 
 **Test CSV with bad dates:**
+
 ```csv
 donor_id,total_lifetime_giving,gift_count,most_recent_gift,last_gift_date
 D001,2500,8,350,invalid-date
 ```
 
 **✓ Verify:**
+
 - Analysis runs (gracefully handles invalid dates)
 - Donor is classified as "long_lapsed" (fallback behavior)
 
 ### Zero/Negative Values
 
 **Test CSV with edge case amounts:**
+
 ```csv
 donor_id,total_lifetime_giving,gift_count,most_recent_gift,last_gift_date
 D001,0,0,0,2024-01-01
@@ -337,6 +365,7 @@ D002,-100,5,50,2024-01-01
 ```
 
 **✓ Verify:**
+
 - Analysis handles edge cases without crashing
 - Ask ladders show sensible defaults (minimum amounts)
 
@@ -345,6 +374,7 @@ D002,-100,5,50,2024-01-01
 ## Performance Validation
 
 **Large File Test:**
+
 - Create CSV with 1,000+ donors
 - **✓ Verify:** Upload completes within 3 seconds
 - **✓ Verify:** Analysis completes within 5 seconds
@@ -352,6 +382,7 @@ D002,-100,5,50,2024-01-01
 - **✓ Verify:** Donor table shows pagination/scrolling
 
 **Browser Compatibility:**
+
 - Test in Chrome ✓
 - Test in Firefox ✓
 - Test in Safari ✓
@@ -364,12 +395,14 @@ After testing:
 
 1. **Clear created segments:**
    - In browser console:
+
    ```javascript
-   const clientId = '[your-test-client-id]';
+   const clientId = "[your-test-client-id]";
    localStorage.removeItem(`nexus_segments_${clientId}`);
    ```
 
 2. **Clear lab runs:**
+
    ```javascript
    localStorage.removeItem(`nexus_lab_runs_${clientId}`);
    ```
@@ -383,6 +416,7 @@ After testing:
 All checkmarks (✓) should pass for the feature to be considered production-ready.
 
 **Critical Path (Must Pass):**
+
 - ✓ Upload → Map → Analyze workflow completes
 - ✓ Results display correctly with metadata
 - ✓ Segments create and appear in Segmentation tab
@@ -390,6 +424,7 @@ All checkmarks (✓) should pass for the feature to be considered production-rea
 - ✓ AI context enrichment includes donor data
 
 **Polish (Nice to Have):**
+
 - ✓ Source indicator in Campaign Builder
 - ✓ "AI Boost Available" badges
 - ✓ All export buttons work correctly
@@ -400,19 +435,23 @@ All checkmarks (✓) should pass for the feature to be considered production-rea
 ## Troubleshooting
 
 **Issue:** Analysis doesn't run
+
 - **Check:** All required columns are mapped
 - **Check:** CSV has valid data in at least one row
 
 **Issue:** Segments don't appear in Segmentation tab
+
 - **Check:** localStorage is enabled
 - **Check:** Client ID is consistent across pages
 - **Check:** No console errors during segment creation
 
 **Issue:** "Start Campaign" button doesn't appear
+
 - **Check:** At least one segment was created
 - **Check:** `createdSegmentIds` state is populated (check React DevTools)
 
 **Issue:** AI context is empty
+
 - **Check:** Lab run was saved (check `getLatestLabRun(clientId)`)
 - **Check:** `clientId` parameter is correct
 - **Check:** Run date is recent
@@ -431,4 +470,5 @@ When reporting test failures, include:
 6. **Screenshot** of issue
 
 Example:
+
 > **Phase 3, Step 2:** Expected success toast for "Monthly giving prospects" segment creation, but received error toast "Failed to create segment". Chrome 120. Console shows: `TypeError: Cannot read property 'segmentId' of undefined`.

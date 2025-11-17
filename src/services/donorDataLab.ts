@@ -1,7 +1,7 @@
 // src/services/donorDataLab.ts
 
-export type ValueTier = 'small' | 'medium' | 'large' | 'major';
-export type RecencyTier = 'recent' | 'at_risk' | 'lapsed' | 'long_lapsed';
+export type ValueTier = "small" | "medium" | "large" | "major";
+export type RecencyTier = "recent" | "at_risk" | "lapsed" | "long_lapsed";
 
 export interface DonorRawRow {
   donorId: string;
@@ -92,18 +92,24 @@ function percentile(sorted: number[], p: number): number {
 
 function computeStats(rows: DonorRawRow[]): DatasetStats {
   const lifetime = rows
-    .map(r => r.lifetimeGiving ?? (r.mostRecentGift && r.giftCount ? r.mostRecentGift * r.giftCount : undefined))
-    .filter((v): v is number => typeof v === 'number')
+    .map(
+      (r) =>
+        r.lifetimeGiving ??
+        (r.mostRecentGift && r.giftCount
+          ? r.mostRecentGift * r.giftCount
+          : undefined),
+    )
+    .filter((v): v is number => typeof v === "number")
     .sort((a, b) => a - b);
 
   const avgGifts = rows
-    .map(r => r.avgGift ?? r.mostRecentGift)
-    .filter((v): v is number => typeof v === 'number')
+    .map((r) => r.avgGift ?? r.mostRecentGift)
+    .filter((v): v is number => typeof v === "number")
     .sort((a, b) => a - b);
 
   const giftCounts = rows
-    .map(r => r.giftCount)
-    .filter((v): v is number => typeof v === 'number')
+    .map((r) => r.giftCount)
+    .filter((v): v is number => typeof v === "number")
     .sort((a, b) => a - b);
 
   const giftPercentiles = {
@@ -130,27 +136,33 @@ function computeStats(rows: DonorRawRow[]): DatasetStats {
   return { giftPercentiles, avgGiftPercentiles, giftCountPercentiles };
 }
 
-function classifyValueTier(lifetime: number | undefined, stats: DatasetStats): ValueTier {
-  if (!lifetime || lifetime <= 0) return 'small';
+function classifyValueTier(
+  lifetime: number | undefined,
+  stats: DatasetStats,
+): ValueTier {
+  if (!lifetime || lifetime <= 0) return "small";
   const { p25, p75, p90 } = stats.giftPercentiles;
-  if (lifetime < p25) return 'small';
-  if (lifetime < p75) return 'medium';
-  if (lifetime < p90) return 'large';
-  return 'major';
+  if (lifetime < p25) return "small";
+  if (lifetime < p75) return "medium";
+  if (lifetime < p90) return "large";
+  return "major";
 }
 
-function classifyRecency(lastGiftDate?: string): { tier: RecencyTier; days?: number } {
-  if (!lastGiftDate) return { tier: 'long_lapsed', days: undefined };
+function classifyRecency(lastGiftDate?: string): {
+  tier: RecencyTier;
+  days?: number;
+} {
+  if (!lastGiftDate) return { tier: "long_lapsed", days: undefined };
   const last = new Date(lastGiftDate).getTime();
-  if (Number.isNaN(last)) return { tier: 'long_lapsed', days: undefined };
+  if (Number.isNaN(last)) return { tier: "long_lapsed", days: undefined };
 
   const now = Date.now();
   const diffDays = Math.round((now - last) / DAYS);
 
-  if (diffDays <= 90) return { tier: 'recent', days: diffDays };
-  if (diffDays <= 365) return { tier: 'at_risk', days: diffDays };
-  if (diffDays <= 730) return { tier: 'lapsed', days: diffDays };
-  return { tier: 'long_lapsed', days: diffDays };
+  if (diffDays <= 90) return { tier: "recent", days: diffDays };
+  if (diffDays <= 365) return { tier: "at_risk", days: diffDays };
+  if (diffDays <= 730) return { tier: "lapsed", days: diffDays };
+  return { tier: "long_lapsed", days: diffDays };
 }
 
 function roundAsk(amount: number): number {
@@ -188,11 +200,11 @@ function isUpgradeReady(
   recencyTier: RecencyTier,
   giftCount?: number,
   mostRecentGift?: number,
-  avgGift?: number
+  avgGift?: number,
 ): boolean {
   if (!giftCount || !mostRecentGift || !avgGift) return false;
-  if (!(valueTier === 'medium' || valueTier === 'large')) return false;
-  if (!(recencyTier === 'recent' || recencyTier === 'at_risk')) return false;
+  if (!(valueTier === "medium" || valueTier === "large")) return false;
+  if (!(recencyTier === "recent" || recencyTier === "at_risk")) return false;
   if (giftCount < 3) return false;
   if (mostRecentGift < avgGift * 0.9) return false;
   return true;
@@ -202,10 +214,10 @@ function isMonthlyProspect(
   recencyTier: RecencyTier,
   giftCount?: number,
   avgGift?: number,
-  stats?: DatasetStats
+  stats?: DatasetStats,
 ): boolean {
   if (!giftCount || !avgGift || !stats) return false;
-  if (!(recencyTier === 'recent' || recencyTier === 'at_risk')) return false;
+  if (!(recencyTier === "recent" || recencyTier === "at_risk")) return false;
   if (giftCount < 4) return false;
 
   const { p25, p75 } = stats.avgGiftPercentiles;
@@ -215,10 +227,12 @@ function isMonthlyProspect(
 export function analyzeDonorData(rows: DonorRawRow[]): AnalysisResult {
   const stats = computeStats(rows);
 
-  const donors: DonorAnalysis[] = rows.map(row => {
+  const donors: DonorAnalysis[] = rows.map((row) => {
     const lifetime =
       row.lifetimeGiving ??
-      (row.mostRecentGift && row.giftCount ? row.mostRecentGift * row.giftCount : undefined);
+      (row.mostRecentGift && row.giftCount
+        ? row.mostRecentGift * row.giftCount
+        : undefined);
 
     const { tier: recencyTier, days } = classifyRecency(row.lastGiftDate);
     const valueTier = classifyValueTier(lifetime, stats);
@@ -228,24 +242,24 @@ export function analyzeDonorData(rows: DonorRawRow[]): AnalysisResult {
       recencyTier,
       row.giftCount,
       row.mostRecentGift,
-      row.avgGift ?? row.mostRecentGift
+      row.avgGift ?? row.mostRecentGift,
     );
 
     const monthlyProspect = isMonthlyProspect(
       recencyTier,
       row.giftCount,
       row.avgGift ?? row.mostRecentGift,
-      stats
+      stats,
     );
 
     const askLadder = buildAskLadder(row.mostRecentGift);
 
     const lookalikeCohorts: string[] = [];
-    if (valueTier === 'major' && recencyTier === 'recent') {
-      lookalikeCohorts.push('core_high_value_seed');
+    if (valueTier === "major" && recencyTier === "recent") {
+      lookalikeCohorts.push("core_high_value_seed");
     }
     if (monthlyProspect) {
-      lookalikeCohorts.push('monthly_lookalike_seed');
+      lookalikeCohorts.push("monthly_lookalike_seed");
     }
 
     return {
@@ -266,32 +280,32 @@ export function analyzeDonorData(rows: DonorRawRow[]): AnalysisResult {
 
   const suggestedSegments = [
     {
-      id: 'high_value_at_risk',
-      name: 'High-value, at-risk donors',
-      description: 'Large/major donors who haven\'t given recently.',
+      id: "high_value_at_risk",
+      name: "High-value, at-risk donors",
+      description: "Large/major donors who haven't given recently.",
       filter: (d: DonorAnalysis) =>
-        (d.valueTier === 'large' || d.valueTier === 'major') &&
-        (d.recencyTier === 'at_risk' || d.recencyTier === 'lapsed'),
+        (d.valueTier === "large" || d.valueTier === "major") &&
+        (d.recencyTier === "at_risk" || d.recencyTier === "lapsed"),
     },
     {
-      id: 'upgrade_ready_core',
-      name: 'Upgrade-ready core donors',
-      description: 'Medium/large donors with recent gifts and strong patterns.',
+      id: "upgrade_ready_core",
+      name: "Upgrade-ready core donors",
+      description: "Medium/large donors with recent gifts and strong patterns.",
       filter: (d: DonorAnalysis) => d.upgradeReady,
     },
     {
-      id: 'monthly_candidates',
-      name: 'Monthly giving prospects',
-      description: 'Multi-gift donors likely to say yes to monthly giving.',
+      id: "monthly_candidates",
+      name: "Monthly giving prospects",
+      description: "Multi-gift donors likely to say yes to monthly giving.",
       filter: (d: DonorAnalysis) => d.monthlyProspect,
     },
     {
-      id: 'reactivation_value',
-      name: 'Lapsed high-value reactivation',
-      description: 'High-value donors who have gone quiet for a while.',
+      id: "reactivation_value",
+      name: "Lapsed high-value reactivation",
+      description: "High-value donors who have gone quiet for a while.",
       filter: (d: DonorAnalysis) =>
-        (d.valueTier === 'large' || d.valueTier === 'major') &&
-        (d.recencyTier === 'lapsed' || d.recencyTier === 'long_lapsed'),
+        (d.valueTier === "large" || d.valueTier === "major") &&
+        (d.recencyTier === "lapsed" || d.recencyTier === "long_lapsed"),
     },
   ];
 
@@ -300,7 +314,7 @@ export function analyzeDonorData(rows: DonorRawRow[]): AnalysisResult {
 
 function cohortSize(
   donors: DonorAnalysis[],
-  filter: (d: DonorAnalysis) => boolean
+  filter: (d: DonorAnalysis) => boolean,
 ): CohortSize {
   const total = donors.length || 1;
   const count = donors.filter(filter).length;
@@ -311,35 +325,35 @@ function cohortSize(
 }
 
 export function generateNaturalLanguageRecommendations(
-  analysis: AnalysisResult
+  analysis: AnalysisResult,
 ): LabRecommendations {
   const { donors } = analysis;
 
   const total = donors.length || 1;
 
-  const upgrade = cohortSize(donors, d => d.upgradeReady);
-  const monthly = cohortSize(donors, d => d.monthlyProspect);
+  const upgrade = cohortSize(donors, (d) => d.upgradeReady);
+  const monthly = cohortSize(donors, (d) => d.monthlyProspect);
   const highValueAtRisk = cohortSize(
     donors,
-    d =>
-      (d.valueTier === 'large' || d.valueTier === 'major') &&
-      (d.recencyTier === 'at_risk' || d.recencyTier === 'lapsed')
+    (d) =>
+      (d.valueTier === "large" || d.valueTier === "major") &&
+      (d.recencyTier === "at_risk" || d.recencyTier === "lapsed"),
   );
   const reactivation = cohortSize(
     donors,
-    d =>
-      (d.valueTier === 'large' || d.valueTier === 'major') &&
-      (d.recencyTier === 'lapsed' || d.recencyTier === 'long_lapsed')
+    (d) =>
+      (d.valueTier === "large" || d.valueTier === "major") &&
+      (d.recencyTier === "lapsed" || d.recencyTier === "long_lapsed"),
   );
   const highValueRecent = cohortSize(
     donors,
-    d =>
-      (d.valueTier === 'large' || d.valueTier === 'major') &&
-      d.recencyTier === 'recent'
+    (d) =>
+      (d.valueTier === "large" || d.valueTier === "major") &&
+      d.recencyTier === "recent",
   );
   const smallGiftsRecent = cohortSize(
     donors,
-    d => d.valueTier === 'small' && d.recencyTier === 'recent'
+    (d) => d.valueTier === "small" && d.recencyTier === "recent",
   );
 
   const overview = [
@@ -347,7 +361,7 @@ export function generateNaturalLanguageRecommendations(
     `${upgrade.count.toLocaleString()} donors (${upgrade.percentage}% of file) look ready for a targeted upgrade ask.`,
     `${monthly.count.toLocaleString()} donors (${monthly.percentage}%) show patterns consistent with monthly giving prospects.`,
     `${highValueAtRisk.count.toLocaleString()} high-value donors (${highValueAtRisk.percentage}%) are showing early signs of risk (recency slipping).`,
-  ].join(' ');
+  ].join(" ");
 
   const upgradeStrategy: string[] = [
     `Create a dedicated "Upgrade-ready core donors" segment targeting the ${upgrade.count.toLocaleString()} donors flagged as upgrade-ready.`,
@@ -397,9 +411,10 @@ export function generateNaturalLanguageRecommendations(
   };
 }
 
-export function runDonorDataLab(
-  rows: DonorRawRow[]
-): { analysis: AnalysisResult; recommendations: LabRecommendations } {
+export function runDonorDataLab(rows: DonorRawRow[]): {
+  analysis: AnalysisResult;
+  recommendations: LabRecommendations;
+} {
   const analysis = analyzeDonorData(rows);
   const recommendations = generateNaturalLanguageRecommendations(analysis);
   return { analysis, recommendations };

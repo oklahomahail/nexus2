@@ -8,7 +8,7 @@
  * - Re-opening previous analyses
  */
 
-import { AnalysisResult, LabRecommendations } from './donorDataLab';
+import { AnalysisResult, LabRecommendations } from "./donorDataLab";
 
 export interface LabRun {
   runId: string;
@@ -33,7 +33,14 @@ export function saveLabRun(params: {
   analysis: AnalysisResult;
   recommendations: LabRecommendations;
 }): LabRun {
-  const { clientId, fileName, rowsProcessed, rowsIgnored, analysis, recommendations } = params;
+  const {
+    clientId,
+    fileName,
+    rowsProcessed,
+    rowsIgnored,
+    analysis,
+    recommendations,
+  } = params;
 
   const runId = `run_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const labRun: LabRun = {
@@ -66,9 +73,10 @@ export function saveLabRun(params: {
 export function getLabRuns(clientId: string): LabRun[] {
   const storageKey = `nexus_lab_runs_${clientId}`;
   try {
-    const runs = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    return runs.sort((a: LabRun, b: LabRun) =>
-      new Date(b.runDate).getTime() - new Date(a.runDate).getTime()
+    const runs = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    return runs.sort(
+      (a: LabRun, b: LabRun) =>
+        new Date(b.runDate).getTime() - new Date(a.runDate).getTime(),
     );
   } catch {
     return [];
@@ -89,7 +97,7 @@ export function getLatestLabRun(clientId: string): LabRun | null {
  */
 export function getLabRunById(clientId: string, runId: string): LabRun | null {
   const runs = getLabRuns(clientId);
-  return runs.find(r => r.runId === runId) || null;
+  return runs.find((r) => r.runId === runId) || null;
 }
 
 /**
@@ -97,7 +105,7 @@ export function getLabRunById(clientId: string, runId: string): LabRun | null {
  */
 export function deleteLabRun(clientId: string, runId: string): void {
   const runs = getLabRuns(clientId);
-  const filtered = runs.filter(r => r.runId !== runId);
+  const filtered = runs.filter((r) => r.runId !== runId);
 
   const storageKey = `nexus_lab_runs_${clientId}`;
   localStorage.setItem(storageKey, JSON.stringify(filtered));

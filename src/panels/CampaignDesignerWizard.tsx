@@ -12,8 +12,8 @@ import { GeneratedOutputViewer } from "@/components/campaign/GeneratedOutputView
 import { useClient } from "@/context/ClientContext";
 import { useBrandProfile } from "@/hooks/useBrandProfile";
 import { useCampaignDesigner } from "@/hooks/useCampaignDesigner";
-import { getLatestLabRun } from "@/services/donorDataLabPersistence";
 import { hasLabContext } from "@/services/donorDataLabAIContext";
+import { getLatestLabRun } from "@/services/donorDataLabPersistence";
 // import { usePostalAssumptions } from '@/hooks/usePostalAssumptions' // TODO: Implement postal assumptions
 
 // Stub hook until postal assumptions are implemented
@@ -39,8 +39,8 @@ export default function CampaignDesignerWizard() {
   const brandId = profile?.id;
 
   // Detect if campaign was started from Donor Data Lab
-  const segmentParams = searchParams.get('segments');
-  const preSelectedSegments = segmentParams ? segmentParams.split(',') : [];
+  const segmentParams = searchParams.get("segments");
+  const preSelectedSegments = segmentParams ? segmentParams.split(",") : [];
   const latestLabRun = clientId ? getLatestLabRun(clientId) : null;
   const isFromDataLab = preSelectedSegments.length > 0 && latestLabRun;
   const hasAiBoost = clientId ? hasLabContext(clientId) : false;
@@ -105,9 +105,11 @@ export default function CampaignDesignerWizard() {
           <div className="mt-3 flex items-center gap-2 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 px-3 py-2">
             <Sparkles className="h-4 w-4 text-sky-600 dark:text-sky-400" />
             <p className="text-xs text-sky-700 dark:text-sky-300">
-              Pre-populated from <span className="font-semibold">Nexus Donor Data Lab</span> analysis on{' '}
-              {new Date(latestLabRun.runDate).toLocaleDateString()}
-              {' '}({preSelectedSegments.length} segment{preSelectedSegments.length !== 1 ? 's' : ''})
+              Pre-populated from{" "}
+              <span className="font-semibold">Nexus Donor Data Lab</span>{" "}
+              analysis on {new Date(latestLabRun.runDate).toLocaleDateString()}{" "}
+              ({preSelectedSegments.length} segment
+              {preSelectedSegments.length !== 1 ? "s" : ""})
             </p>
           </div>
         )}

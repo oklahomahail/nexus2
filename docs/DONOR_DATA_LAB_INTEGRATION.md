@@ -3,6 +3,7 @@
 ## Overview
 
 The Donor Data Lab is now fully integrated with Nexus's core systems:
+
 - **Segment creation** via donor analytics service
 - **Run persistence** for history and AI enrichment
 - **AI context enrichment** for grounded content generation
@@ -33,21 +34,22 @@ The Donor Data Lab is now fully integrated with Nexus's core systems:
 ## Services
 
 ### 1. Donor Analytics Service
+
 **File**: `src/services/donorAnalyticsService.ts`
 
 Central API for segment CRUD operations. Currently uses localStorage, ready for backend integration.
 
 ```typescript
-import { createSegment, getSegments } from '@/services/donorAnalyticsService';
+import { createSegment, getSegments } from "@/services/donorAnalyticsService";
 
 // Create a new segment
 const segment = await createSegment(clientId, {
-  name: 'Upgrade-ready donors',
-  description: 'Medium/large donors with strong patterns',
-  criteria: { engagement: 'high', frequency: 'repeat' },
+  name: "Upgrade-ready donors",
+  description: "Medium/large donors with strong patterns",
+  criteria: { engagement: "high", frequency: "repeat" },
   isActive: true,
   isDefault: false,
-  category: 'giving_pattern',
+  category: "giving_pattern",
 });
 
 // Get all segments for a client
@@ -55,20 +57,25 @@ const segments = getSegments(clientId);
 ```
 
 **Backend Integration**: Replace localStorage calls with:
+
 ```typescript
 const res = await fetch(`/api/clients/${clientId}/segments`, {
-  method: 'POST',
+  method: "POST",
   body: JSON.stringify(segmentData),
 });
 ```
 
 ### 2. Lab Run Persistence
+
 **File**: `src/services/donorDataLabPersistence.ts`
 
 Stores completed analyses for history and AI enrichment.
 
 ```typescript
-import { saveLabRun, getLatestLabRun } from '@/services/donorDataLabPersistence';
+import {
+  saveLabRun,
+  getLatestLabRun,
+} from "@/services/donorDataLabPersistence";
 
 // Automatically saved when analysis completes
 // Stored: last 10 runs per client
@@ -82,16 +89,20 @@ if (latest) {
 ```
 
 ### 3. AI Context Enrichment
+
 **File**: `src/services/donorDataLabAIContext.ts`
 
 Injects donor file strategy into AI prompts.
 
 ```typescript
-import { enrichPromptWithLabContext, hasLabContext } from '@/services/donorDataLabAIContext';
+import {
+  enrichPromptWithLabContext,
+  hasLabContext,
+} from "@/services/donorDataLabAIContext";
 
 // In your AI email drafting service:
 const basePrompt = "Write a fundraising email for upgrade prospects.";
-const enriched = enrichPromptWithLabContext(clientId, basePrompt, 'upgrade');
+const enriched = enrichPromptWithLabContext(clientId, basePrompt, "upgrade");
 
 // enriched now includes:
 // - Overview of donor file
@@ -101,6 +112,7 @@ const enriched = enrichPromptWithLabContext(clientId, basePrompt, 'upgrade');
 ```
 
 **Example enriched prompt**:
+
 ```
 This organization recently analyzed their donor file (donors_2024.csv, 1,234 donors, analyzed on 1/15/2025).
 
@@ -122,8 +134,11 @@ Write a fundraising email for upgrade prospects.
 
 ```typescript
 // In your content generation service
-import { hasLabContext, getLabContextSummary, enrichPromptWithLabContext }
-  from '@/services/donorDataLabAIContext';
+import {
+  hasLabContext,
+  getLabContextSummary,
+  enrichPromptWithLabContext,
+} from "@/services/donorDataLabAIContext";
 
 function generateUpgradeEmail(clientId: string, baseTone: string): string {
   // Check if we have Lab data
@@ -135,7 +150,11 @@ function generateUpgradeEmail(clientId: string, baseTone: string): string {
   const basePrompt = `Write a ${baseTone} fundraising email targeting upgrade-ready donors...`;
 
   // Automatically enrich with Lab strategy if available
-  const enrichedPrompt = enrichPromptWithLabContext(clientId, basePrompt, 'upgrade');
+  const enrichedPrompt = enrichPromptWithLabContext(
+    clientId,
+    basePrompt,
+    "upgrade",
+  );
 
   return callAI(enrichedPrompt);
 }
@@ -146,12 +165,12 @@ function generateUpgradeEmail(clientId: string, baseTone: string): string {
 ```typescript
 // Already wired in NexusDonorDataLabPanel
 // User clicks "Create segment" → segment appears in Segmentation tab
-import { promoteSuggestedSegmentToNexusSegment } from '@/services/donorDataLabSegmentPromotion';
+import { promoteSuggestedSegmentToNexusSegment } from "@/services/donorDataLabSegmentPromotion";
 
 const segment = await promoteSuggestedSegmentToNexusSegment({
   clientId,
   analysis,
-  suggestedSegmentId: 'upgrade_ready_core',
+  suggestedSegmentId: "upgrade_ready_core",
 });
 // segment is now available via getSegments(clientId)
 ```
@@ -159,14 +178,17 @@ const segment = await promoteSuggestedSegmentToNexusSegment({
 ### Exporting Cohorts
 
 ```typescript
-import { exportUpgradeReadyCsv, exportLookalikeSeedCsv } from '@/services/donorDataLabExport';
+import {
+  exportUpgradeReadyCsv,
+  exportLookalikeSeedCsv,
+} from "@/services/donorDataLabExport";
 
 // Export upgrade-ready donors
 exportUpgradeReadyCsv(analysis);
 // Downloads: upgrade_ready_donors.csv
 
 // Export lookalike seed for ads
-exportLookalikeSeedCsv(analysis, 'core_high_value_seed');
+exportLookalikeSeedCsv(analysis, "core_high_value_seed");
 // Downloads: lookalike_seed_core_high_value.csv
 ```
 
@@ -175,16 +197,19 @@ exportLookalikeSeedCsv(analysis, 'core_high_value_seed');
 When connecting to a real backend:
 
 ### 1. Segment API
+
 - [ ] Create `/api/clients/:clientId/segments` endpoints
 - [ ] Update `donorAnalyticsService.ts` fetch calls
 - [ ] Remove localStorage fallbacks
 
 ### 2. Lab Run API
+
 - [ ] Create `/api/clients/:clientId/data-lab-runs` endpoints
 - [ ] Update `donorDataLabPersistence.ts` fetch calls
 - [ ] Add pagination for history (>10 runs)
 
 ### 3. Data Sync
+
 - [ ] On segment creation, sync to database
 - [ ] On Lab run save, sync to database
 - [ ] Add error handling for offline mode
@@ -196,9 +221,9 @@ Consider adding feature flags for gradual rollout:
 ```typescript
 // In your feature config
 const FEATURES = {
-  DATA_LAB_SEGMENT_PROMOTION: true,  // Allow creating segments from Lab
-  DATA_LAB_AI_ENRICHMENT: true,      // Enrich AI with Lab context
-  DATA_LAB_RUN_HISTORY: false,       // Show past runs (coming soon)
+  DATA_LAB_SEGMENT_PROMOTION: true, // Allow creating segments from Lab
+  DATA_LAB_AI_ENRICHMENT: true, // Enrich AI with Lab context
+  DATA_LAB_RUN_HISTORY: false, // Show past runs (coming soon)
 };
 ```
 
@@ -222,6 +247,7 @@ pnpm build
 ## Monitoring
 
 Track these metrics:
+
 - Lab runs per client
 - Segments created from Lab
 - AI enrichment usage rate
@@ -237,6 +263,7 @@ Track these metrics:
 ## Support
 
 For questions or issues:
+
 - Check `/src/services/donorDataLab*.ts` for core logic
 - See `NexusDonorDataLabPanel.tsx` for UI integration
 - Review this guide for API patterns

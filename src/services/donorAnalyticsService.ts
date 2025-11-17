@@ -5,7 +5,7 @@
  * Handles CRUD operations for BehavioralSegments.
  */
 
-import { BehavioralSegment } from './campaignComposer/defaultSegmentCatalog';
+import { BehavioralSegment } from "./campaignComposer/defaultSegmentCatalog";
 
 /**
  * Create a new behavioral segment for a client.
@@ -13,7 +13,7 @@ import { BehavioralSegment } from './campaignComposer/defaultSegmentCatalog';
  */
 export async function createSegment(
   clientId: string,
-  segmentData: Omit<BehavioralSegment, 'segmentId'>
+  segmentData: Omit<BehavioralSegment, "segmentId">,
 ): Promise<BehavioralSegment> {
   // TODO: Replace with actual API call when backend is ready
   // const res = await fetch(`/api/clients/${clientId}/segments`, {
@@ -38,10 +38,7 @@ export async function createSegment(
   // Store in client-specific localStorage
   const storageKey = `nexus_segments_${clientId}`;
   const existing = getSegments(clientId);
-  localStorage.setItem(
-    storageKey,
-    JSON.stringify([...existing, fullSegment])
-  );
+  localStorage.setItem(storageKey, JSON.stringify([...existing, fullSegment]));
 
   return fullSegment;
 }
@@ -58,7 +55,7 @@ export function getSegments(clientId: string): BehavioralSegment[] {
 
   const storageKey = `nexus_segments_${clientId}`;
   try {
-    return JSON.parse(localStorage.getItem(storageKey) || '[]');
+    return JSON.parse(localStorage.getItem(storageKey) || "[]");
   } catch {
     return [];
   }
@@ -71,11 +68,11 @@ export function getSegments(clientId: string): BehavioralSegment[] {
 export async function updateSegment(
   clientId: string,
   segmentId: string,
-  updates: Partial<BehavioralSegment>
+  updates: Partial<BehavioralSegment>,
 ): Promise<BehavioralSegment> {
   // TODO: Replace with actual API call
   const segments = getSegments(clientId);
-  const index = segments.findIndex(s => s.segmentId === segmentId);
+  const index = segments.findIndex((s) => s.segmentId === segmentId);
 
   if (index === -1) {
     throw new Error(`Segment ${segmentId} not found`);
@@ -96,11 +93,11 @@ export async function updateSegment(
  */
 export async function deleteSegment(
   clientId: string,
-  segmentId: string
+  segmentId: string,
 ): Promise<void> {
   // TODO: Replace with actual API call
   const segments = getSegments(clientId);
-  const filtered = segments.filter(s => s.segmentId !== segmentId);
+  const filtered = segments.filter((s) => s.segmentId !== segmentId);
 
   const storageKey = `nexus_segments_${clientId}`;
   localStorage.setItem(storageKey, JSON.stringify(filtered));
@@ -111,8 +108,8 @@ export async function deleteSegment(
  */
 export function getSegmentById(
   clientId: string,
-  segmentId: string
+  segmentId: string,
 ): BehavioralSegment | undefined {
   const segments = getSegments(clientId);
-  return segments.find(s => s.segmentId === segmentId);
+  return segments.find((s) => s.segmentId === segmentId);
 }

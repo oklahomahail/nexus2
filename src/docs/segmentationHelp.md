@@ -5,6 +5,7 @@
 Segmentation allows you to send **different versions** of the same campaign to **different groups of donors**. Instead of one-size-fits-all messaging, you can tailor your content to specific donor behaviors and preferences.
 
 **Example:** For a year-end campaign, you might send:
+
 - A gratitude-focused message to active donors
 - A reactivation message to LYBUNT donors (gave last year, not this year)
 - A first-gift appeal to engaged non-donors
@@ -18,12 +19,13 @@ Each group receives content that speaks directly to their relationship with your
 ### 1. Understanding Segments
 
 A **segment** is a group of donors defined by behavioral criteria such as:
+
 - **Recency:** When they last gave (e.g., last 30 days, last year)
 - **Frequency:** How often they give (e.g., monthly, annually)
 - **Engagement:** How they interact with your organization (email opens, event attendance)
 - **Channel Preference:** How they prefer to be contacted (email, direct mail)
 
-**Important:** Segments use *only behavioral data* - no PII (personally identifiable information) or dollar amounts are stored.
+**Important:** Segments use _only behavioral data_ - no PII (personally identifiable information) or dollar amounts are stored.
 
 ### 2. Default Segments
 
@@ -72,6 +74,7 @@ When composing a campaign deliverable (email, direct mail, etc.):
 When donors appear in **multiple segments**, they receive content from the **highest version** in your list.
 
 **Example:**
+
 - Version 1: Major Donors
 - Version 2: Monthly Donors
 - Version 3: All Donors
@@ -87,6 +90,7 @@ A donor who is both a major donor AND a monthly donor will receive the Version 1
 ### 1. Content Recommendations
 
 Each segment has AI-generated messaging recommendations:
+
 - **Tone guidance:** How to write for this audience
 - **Timing notes:** When to send
 - **Key techniques:** What messaging strategies work best
@@ -96,12 +100,14 @@ Each segment has AI-generated messaging recommendations:
 ### 2. AI Content Coaching
 
 Get instant content optimization:
+
 1. Write your initial draft
 2. Click **"Rewrite for this segment"**
 3. Review the AI-optimized version
 4. Accept, edit, or keep your original
 
 **What it does:**
+
 - Adjusts tone for the segment
 - Adds segment-specific techniques (gratitude, urgency, etc.)
 - Optimizes for channel (email, SMS, direct mail)
@@ -109,12 +115,14 @@ Get instant content optimization:
 ### 3. Recommended Segmentation Wizard
 
 Not sure which segments to use? Let AI suggest:
+
 1. Click **"Apply recommended segmentation"**
 2. Review suggested segments based on campaign type
 3. Select which ones to include
 4. Versions are auto-created with proper labels and priority
 
 **Available for these campaign types:**
+
 - Year-End
 - Acquisition
 - Monthly Giving / Upgrade
@@ -131,6 +139,7 @@ Not sure which segments to use? Let AI suggest:
 **Overlap** occurs when a single donor matches criteria for multiple segments.
 
 **Example:** A monthly donor who gave last year is in both:
+
 - "Monthly Donors" segment
 - "All Donors" segment
 
@@ -143,11 +152,13 @@ Not sure which segments to use? Let AI suggest:
 ### Overlap Visualizations
 
 **Venn Diagram** (for top 3 segments):
+
 - Shows how your top segments intersect
 - Displays unique vs. overlapping recipients
 - Quick visual for understanding composition
 
 **Flow Diagram** (Sankey):
+
 - Shows overlap across ALL segments
 - Thicker flows = more overlap
 - Detailed view for complex campaigns
@@ -161,6 +172,7 @@ Not sure which segments to use? Let AI suggest:
 After your campaign launches, track results by segment version:
 
 ### Metrics Available
+
 - **Response Rate:** % who donated
 - **Total Revenue:** Money raised from this version
 - **Average Gift:** Mean donation amount
@@ -178,27 +190,33 @@ After your campaign launches, track results by segment version:
 ## Best Practices
 
 ### 1. Start Simple
+
 Begin with 2-3 versions for your first segmented campaign:
+
 - All Donors
 - LYBUNT (reactivation)
 - Non-Donors (if acquisition)
 
 ### 2. Test and Learn
+
 - Run A/B tests within segments
 - Track what messaging resonates
 - Iterate based on results
 
 ### 3. Mind Your Overlaps
+
 - Use overlap visualizations to understand composition
 - Ensure priority order reflects your strategy
 - Major donors > Monthly donors > All donors is a common pattern
 
 ### 4. Use AI Recommendations
+
 - Let AI guide your content for each segment
 - Start with recommended segmentation for campaign types
 - Review and customize - AI is a starting point, not a replacement
 
 ### 5. Keep Segments Behavioral
+
 - Avoid creating too many niche segments
 - Focus on behaviors, not demographics
 - 3-5 versions per deliverable is usually ideal
