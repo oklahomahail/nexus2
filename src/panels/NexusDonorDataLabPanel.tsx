@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { LabRecommendationsPanel } from "@/components/donorDataLab/LabRecommendationsPanel";
 import { useClient } from "@/context/ClientContext";
 import { useNotifications } from "@/context/notifications/NotificationsContext";
-import { getClientSlug } from "@/types/client";
 import {
   runDonorDataLab,
   DonorRawRow,
@@ -24,6 +23,7 @@ import {
   type LabRun,
 } from "@/services/donorDataLabPersistence";
 import { promoteSuggestedSegmentToNexusSegment } from "@/services/donorDataLabSegmentPromotion";
+import { getClientSlug } from "@/types/client";
 
 type LabStep = "upload" | "mapping" | "results";
 
