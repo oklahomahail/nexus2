@@ -15,6 +15,7 @@ The Nexus Editorial Layout System provides a **complete platform-level UI identi
 Universal topbar component with consistent navigation and user actions.
 
 **Features:**
+
 - 64px height (`h-16`)
 - Off-white background (`--nx-offwhite`)
 - Subtle border (`--nx-border`)
@@ -22,10 +23,11 @@ Universal topbar component with consistent navigation and user actions.
 - Profile placeholder (ready for dropdown)
 
 **Usage:**
+
 ```tsx
 import AppTopbar from "@/layouts/AppTopbar";
 
-<AppTopbar />
+<AppTopbar />;
 ```
 
 ---
@@ -37,6 +39,7 @@ import AppTopbar from "@/layouts/AppTopbar";
 Universal page wrapper that provides consistent structure for all authenticated pages.
 
 **Features:**
+
 - Automatic sidebar integration
 - Topbar included by default
 - Editorial spacing rhythm (`editorial-flow` class)
@@ -44,16 +47,18 @@ Universal page wrapper that provides consistent structure for all authenticated 
 - Flexible customization
 
 **Props:**
+
 ```tsx
 interface AppPageLayoutProps {
   children: ReactNode;
-  sidebar?: ReactNode;        // Optional custom sidebar
-  topbar?: ReactNode;          // Optional custom topbar
-  noPadding?: boolean;         // Disable default padding
+  sidebar?: ReactNode; // Optional custom sidebar
+  topbar?: ReactNode; // Optional custom topbar
+  noPadding?: boolean; // Disable default padding
 }
 ```
 
 **Usage:**
+
 ```tsx
 import AppPageLayout from "@/layouts/AppPageLayout";
 
@@ -82,15 +87,17 @@ import AppPageLayout from "@/layouts/AppPageLayout";
 Consistent page title pattern for all pages.
 
 **Props:**
+
 ```tsx
 interface PageHeadingProps {
-  title: string;              // Main page title
-  subtitle?: string;          // Optional description
-  actions?: ReactNode;        // Optional action buttons
+  title: string; // Main page title
+  subtitle?: string; // Optional description
+  actions?: ReactNode; // Optional action buttons
 }
 ```
 
 **Usage:**
+
 ```tsx
 import { PageHeading } from "@/components/ui/PageHeading";
 import Button from "@/components/ui/Button";
@@ -123,18 +130,20 @@ import Button from "@/components/ui/Button";
 Standardized content panel with optional title and actions.
 
 **Props:**
+
 ```tsx
 interface SectionBlockProps {
-  title?: string;             // Section title
-  description?: string;       // Optional subtitle
-  actions?: ReactNode;        // Optional action buttons
-  children: ReactNode;        // Section content
-  noPadding?: boolean;        // Remove padding for tables
-  className?: string;         // Custom classes
+  title?: string; // Section title
+  description?: string; // Optional subtitle
+  actions?: ReactNode; // Optional action buttons
+  children: ReactNode; // Section content
+  noPadding?: boolean; // Remove padding for tables
+  className?: string; // Custom classes
 }
 ```
 
 **Usage:**
+
 ```tsx
 import { SectionBlock } from "@/components/ui/SectionBlock";
 import Button from "@/components/ui/Button";
@@ -170,6 +179,7 @@ The spacing system creates automatic vertical rhythm that matches premium editor
 ### Key Classes
 
 #### `.editorial-flow`
+
 Applies 40px spacing between major sections (automatically applied in `AppPageLayout`)
 
 ```tsx
@@ -181,20 +191,23 @@ Applies 40px spacing between major sections (automatically applied in `AppPageLa
 ```
 
 #### `.content-flow`
+
 Standard 16px spacing within sections
 
 ```tsx
 <div className="content-flow">
-  <p>Paragraph 1</p>         {/* 16px gap */}
-  <p>Paragraph 2</p>         {/* 16px gap */}
+  <p>Paragraph 1</p> {/* 16px gap */}
+  <p>Paragraph 2</p> {/* 16px gap */}
   <p>Paragraph 3</p>
 </div>
 ```
 
 #### `.content-flow-tight`
+
 Compact 12px spacing for dense layouts
 
 #### `.content-flow-relaxed`
+
 Generous 24px spacing for breathing room
 
 ### Grid Utilities
@@ -206,6 +219,7 @@ Generous 24px spacing for breathing room
 ```
 
 **Usage:**
+
 ```tsx
 <div className="grid-standard grid-cols-3">
   <Card />
@@ -229,15 +243,18 @@ import Button from "@/components/ui/Button";
 export default function DashboardPage() {
   return (
     <div className="px-8 py-10 editorial-flow">
-
       {/* Page Title */}
       <PageHeading
         title="Client Dashboard"
         subtitle="Track15-powered campaign and donor management"
         actions={
           <>
-            <Button variant="secondary" size="sm">Export</Button>
-            <Button variant="primary" size="sm">New Campaign</Button>
+            <Button variant="secondary" size="sm">
+              Export
+            </Button>
+            <Button variant="primary" size="sm">
+              New Campaign
+            </Button>
           </>
         }
       />
@@ -254,7 +271,11 @@ export default function DashboardPage() {
       {/* Activity Section - 40px gap from previous section */}
       <SectionBlock
         title="Recent Activity"
-        actions={<Button variant="ghost" size="sm">View All</Button>}
+        actions={
+          <Button variant="ghost" size="sm">
+            View All
+          </Button>
+        }
       >
         <div className="content-flow">
           <ActivityItem title="Campaign Launch" time="2h ago" />
@@ -269,7 +290,6 @@ export default function DashboardPage() {
           <CampaignCard name="Monthly Giving" progress={77} />
         </div>
       </SectionBlock>
-
     </div>
   );
 }
@@ -294,6 +314,7 @@ The `ClientLayout` has been updated to use the new editorial design tokens:
 To migrate an existing page to the new system:
 
 **Before:**
+
 ```tsx
 export default function OldPage() {
   return (
@@ -309,6 +330,7 @@ export default function OldPage() {
 ```
 
 **After:**
+
 ```tsx
 import { PageHeading } from "@/components/ui/PageHeading";
 import { SectionBlock } from "@/components/ui/SectionBlock";
@@ -333,6 +355,7 @@ export default function NewPage() {
 All components use CSS custom properties from `/src/styles/tokens.css`:
 
 ### Colors
+
 - `--nx-charcoal`: #1C1E26 (primary dark)
 - `--nx-rich-black`: #0F1115 (deep backgrounds)
 - `--nx-offwhite`: #FAFAF8 (light surfaces)
@@ -342,6 +365,7 @@ All components use CSS custom properties from `/src/styles/tokens.css`:
 - `--nx-text-muted`: #4C4F57 (secondary text)
 
 ### Typography
+
 - `--nx-text-h1`: 32px (page titles)
 - `--nx-text-h2`: 24px (section headers)
 - `--nx-text-h3`: 18px (subsections)
@@ -349,6 +373,7 @@ All components use CSS custom properties from `/src/styles/tokens.css`:
 - `--nx-text-small`: 13px (labels)
 
 ### Spacing
+
 - `--nx-space-xs`: 4px
 - `--nx-space-sm`: 8px
 - `--nx-space-md`: 12px
@@ -358,6 +383,7 @@ All components use CSS custom properties from `/src/styles/tokens.css`:
 - `--nx-space-3xl`: 48px
 
 ### Radii
+
 - `--nx-radius-sm`: 4px (buttons)
 - `--nx-radius-md`: 6px (cards)
 - `--nx-radius-lg`: 10px (panels)
@@ -367,18 +393,23 @@ All components use CSS custom properties from `/src/styles/tokens.css`:
 ## Best Practices
 
 ### 1. Always Use PageHeading
+
 Every page should start with a `PageHeading` component for consistency.
 
 ### 2. Wrap Content in SectionBlocks
+
 Use `SectionBlock` for any distinct content area - charts, tables, lists, forms.
 
 ### 3. Leverage Editorial Flow
+
 Let the `.editorial-flow` class handle vertical spacing automatically. Don't add manual margins between major sections.
 
 ### 4. Use Design Tokens
+
 Always use CSS custom properties (`var(--nx-*)`) instead of hardcoded colors or sizes.
 
 ### 5. Maintain Hierarchy
+
 - Page title (h1): 32px
 - Section title (h2): 24px
 - Subsection (h3): 18px
@@ -410,6 +441,7 @@ See these files for complete working examples:
 ## Support
 
 For questions or issues with the layout system:
+
 - Review the Style Guide at `/style-guide`
 - Check design tokens in `/src/styles/tokens.css`
 - Reference layout utilities in `/src/styles/layout.css`

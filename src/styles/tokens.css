@@ -14,46 +14,47 @@
      ======================================== */
 
   /* Primary Surfaces */
-  --nx-charcoal: #1C1E26;        /* Primary dark surface, sidebar backgrounds */
-  --nx-rich-black: #0F1115;      /* Deep backgrounds, active states */
-  --nx-offwhite: #FAFAF8;        /* Light surface, app backgrounds */
+  --nx-charcoal: #1c1e26; /* Primary dark surface, sidebar backgrounds */
+  --nx-rich-black: #0f1115; /* Deep backgrounds, active states */
+  --nx-offwhite: #fafaf8; /* Light surface, app backgrounds */
 
   /* Accent Colors */
-  --nx-gold: #D4AF37;            /* Primary accent, active indicators, CTAs */
-  --nx-gold-soft: #E5C46B;       /* Hover states, secondary gold */
+  --nx-gold: #d4af37; /* Primary accent, active indicators, CTAs */
+  --nx-gold-soft: #e5c46b; /* Hover states, secondary gold */
 
   /* Action Blues */
-  --nx-blue-deep: #314C89;       /* Action buttons, links */
-  --nx-blue-soft: #E6ECF7;       /* Light blue backgrounds, hover states */
+  --nx-blue-deep: #314c89; /* Action buttons, links */
+  --nx-blue-soft: #e6ecf7; /* Light blue backgrounds, hover states */
 
   /* System Colors */
-  --nx-success: #3E8E6D;         /* Success states, positive feedback */
-  --nx-error: #B34343;           /* Error states, warnings */
-  --nx-border: #E0E2E7;          /* Dividers, card borders */
-  --nx-text-muted: #4C4F57;      /* Secondary text, labels */
-  --nx-text-primary: #1C1E26;    /* Primary text */
+  --nx-success: #3e8e6d; /* Success states, positive feedback */
+  --nx-error: #b34343; /* Error states, warnings */
+  --nx-border: #e0e2e7; /* Dividers, card borders */
+  --nx-text-muted: #4c4f57; /* Secondary text, labels */
+  --nx-text-primary: #1c1e26; /* Primary text */
 
   /* Background Variations */
-  --nx-bg-primary: #FFFFFF;      /* Card backgrounds */
-  --nx-bg-secondary: #F8F9FA;    /* Subtle surface variation */
-  --nx-bg-tertiary: #F4F5F7;     /* Deeper surface variation */
+  --nx-bg-primary: #ffffff; /* Card backgrounds */
+  --nx-bg-secondary: #f8f9fa; /* Subtle surface variation */
+  --nx-bg-tertiary: #f4f5f7; /* Deeper surface variation */
 
   /* ========================================
      TYPOGRAPHY
      Editorial font system
      ======================================== */
 
-  --nx-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --nx-font-serif: 'Libre Franklin', 'Inter', serif;
-  --nx-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --nx-font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --nx-font-serif: "Libre Franklin", "Inter", serif;
+  --nx-font-mono: "JetBrains Mono", "Courier New", monospace;
 
   /* Type Scale */
-  --nx-text-h1: 32px;            /* Page titles */
-  --nx-text-h2: 24px;            /* Section headers */
-  --nx-text-h3: 18px;            /* Subsection headers */
-  --nx-text-body: 15px;          /* Body text */
-  --nx-text-small: 13px;         /* Labels, captions */
-  --nx-text-xs: 12px;            /* Helper text */
+  --nx-text-h1: 32px; /* Page titles */
+  --nx-text-h2: 24px; /* Section headers */
+  --nx-text-h3: 18px; /* Subsection headers */
+  --nx-text-body: 15px; /* Body text */
+  --nx-text-small: 13px; /* Labels, captions */
+  --nx-text-xs: 12px; /* Helper text */
 
   /* Font Weights */
   --nx-weight-normal: 400;
@@ -84,20 +85,20 @@
      Border radius values
      ======================================== */
 
-  --nx-radius-sm: 4px;           /* Buttons, inputs */
-  --nx-radius-md: 6px;           /* Cards */
-  --nx-radius-lg: 10px;          /* Panels, large components */
-  --nx-radius-full: 9999px;      /* Pills, avatars */
+  --nx-radius-sm: 4px; /* Buttons, inputs */
+  --nx-radius-md: 6px; /* Cards */
+  --nx-radius-lg: 10px; /* Panels, large components */
+  --nx-radius-full: 9999px; /* Pills, avatars */
 
   /* ========================================
      SHADOWS
      Depth and elevation
      ======================================== */
 
-  --nx-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);      /* Subtle depth */
-  --nx-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06);      /* Cards */
-  --nx-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08);      /* Elevated panels */
-  --nx-shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.10);     /* Modals, popovers */
+  --nx-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04); /* Subtle depth */
+  --nx-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06); /* Cards */
+  --nx-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08); /* Elevated panels */
+  --nx-shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.1); /* Modals, popovers */
 
   /* ========================================
      TRANSITIONS

@@ -10,6 +10,7 @@
  */
 
 import { ReactNode } from "react";
+
 import AppTopbar from "./AppTopbar";
 
 export interface AppPageLayoutProps {
@@ -26,28 +27,25 @@ export default function AppPageLayout({
   children,
   sidebar,
   topbar,
-  noPadding = false
+  noPadding = false,
 }: AppPageLayoutProps) {
   return (
     <div className="flex h-screen bg-[var(--nx-offwhite)] text-[var(--nx-charcoal)]">
-
       {/* Sidebar (if provided) */}
       {sidebar && sidebar}
 
       {/* Main Area */}
       <div className="flex flex-col flex-1 overflow-hidden">
-
         {/* Topbar */}
         {topbar || <AppTopbar />}
 
         {/* Page Content with Editorial Flow */}
         <main
-          className={`flex-1 overflow-y-auto ${noPadding ? '' : 'px-8 py-10 space-y-10 editorial-flow'}`}
+          className={`flex-1 overflow-y-auto ${noPadding ? "" : "px-8 py-10 space-y-10 editorial-flow"}`}
         >
           {children}
         </main>
       </div>
-
     </div>
   );
 }

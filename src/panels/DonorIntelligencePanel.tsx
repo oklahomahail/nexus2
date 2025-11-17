@@ -26,8 +26,8 @@ import {
   Line,
 } from "recharts";
 
-import { PageHeading } from "@/components/ui/PageHeading";
-import { SectionBlock } from "@/components/ui/SectionBlock";
+import { PageHeading } from "@/components/ui-kit/PageHeading";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { useClient } from "@/context/ClientContext";
 import {
   useRetainedDonors,
@@ -138,7 +138,9 @@ export default function DonorIntelligencePanel() {
         <SectionBlock>
           <div className="text-center py-12 text-[var(--nx-text-muted)]">
             <BarChart className="w-16 h-16 mx-auto mb-4" />
-            <p className="text-[18px] mb-2">Select a metric above to get started</p>
+            <p className="text-[18px] mb-2">
+              Select a metric above to get started
+            </p>
             <p className="text-[13px]">
               All queries enforce privacy threshold (minimum 50 donors)
             </p>

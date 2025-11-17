@@ -7,6 +7,7 @@
 **Solution:** Single-source document upload where users drop a Word doc, PDF, or markdown file containing their brand brief, and Nexus parses everything using Claude AI to auto-populate the client profile.
 
 **Impact:**
+
 - ✅ Reduces onboarding time from 30+ minutes to < 5 minutes
 - ✅ Improves data completeness and quality
 - ✅ Showcases Nexus's AI-powered workflow
@@ -48,6 +49,7 @@
 ### Existing Tables (No Changes Required)
 
 #### `brand_profiles` ([20250110000003_brand_bible.sql](supabase/migrations/20250110000003_brand_bible.sql:13-42))
+
 ```sql
 - id, client_id, name, mission_statement
 - tone_of_voice, brand_personality, style_keywords
@@ -56,6 +58,7 @@
 ```
 
 #### `brand_corpus` ([20250110000003_brand_bible.sql](supabase/migrations/20250110000003_brand_bible.sql:78-104))
+
 ```sql
 - id, client_id, brand_id
 - source_type ('doc', 'pdf', 'manual')
@@ -64,6 +67,7 @@
 ```
 
 #### `brand_assets` ([20250110000003_brand_bible.sql](supabase/migrations/20250110000003_brand_bible.sql:49-70))
+
 ```sql
 - id, client_id, brand_id
 - asset_type ('logo', 'photo', 'template', etc.)
@@ -125,6 +129,7 @@ You are analyzing a brand brief, client intake document, or marketing strategy d
 Parse the document and extract the following structured data:
 
 ### 1. Organization Identity
+
 - name: Organization full name
 - mission: Mission statement (1-3 sentences)
 - vision: Vision statement (if present)
@@ -132,43 +137,53 @@ Parse the document and extract the following structured data:
 - website: Organization website URL
 
 ### 2. Voice & Tone
+
 - tone_of_voice: 3-5 descriptive keywords (e.g., "warm, urgent, plain-language")
 - brand_personality: Personality traits as bullet points or paragraph
 - style_keywords: Array of key stylistic terms
 - writing_guidelines: Any specific writing rules
 
 ### 3. Messaging Pillars
+
 Array of 3-5 core messages:
+
 - pillar_name: Short title
 - description: 2-3 sentence explanation
 - proof_points: Supporting evidence/stats
 
 ### 4. Donor Stories / Impact Stories
+
 Array of stories:
+
 - title: Story headline
 - narrative: Full story text
 - impact_metrics: Quantifiable outcomes
 - donor_segment: Target audience
 
 ### 5. Audience Segments
+
 Array of donor personas:
+
 - segment_name: Persona name (e.g., "Major Donors", "Monthly Sustainers")
 - description: Demographic/psychographic profile
 - motivations: Why they give
 - communication_preferences: Preferred channels/frequency
 
 ### 6. Visual Identity
+
 - primary_colors: Array of hex codes
 - typography: Font families and usage
 - logo_description: Description of logo/brand marks
 - style_references: Visual aesthetic keywords
 
 ### 7. Campaign Themes / Seasonality
+
 - year_end_themes: Key messages for year-end
 - spring_themes, summer_themes, fall_themes, winter_themes
 - evergreen_content: Always-relevant themes
 
 ### 8. Brand Assets Mentioned
+
 - logo_files: Mentioned logo variations
 - photo_descriptions: Key photography themes
 - template_types: Described templates
@@ -178,19 +193,20 @@ Array of donor personas:
 Return JSON matching this schema:
 
 {
-  "organization": { ... },
-  "voice_tone": { ... },
-  "messaging_pillars": [ ... ],
-  "donor_stories": [ ... ],
-  "audience_segments": [ ... ],
-  "visual_identity": { ... },
-  "campaign_themes": { ... },
-  "brand_assets": [ ... ],
-  "confidence_score": 0-100,
-  "missing_sections": [ ... ]
+"organization": { ... },
+"voice_tone": { ... },
+"messaging_pillars": [ ... ],
+"donor_stories": [ ... ],
+"audience_segments": [ ... ],
+"visual_identity": { ... },
+"campaign_themes": { ... },
+"brand_assets": [ ... ],
+"confidence_score": 0-100,
+"missing_sections": [ ... ]
 }
 
 ## Rules
+
 - Extract only information explicitly stated in the document
 - If a section is missing, note it in "missing_sections"
 - Preserve original language and tone in extracted text
@@ -250,6 +266,7 @@ Additional features:
 #### Frontend Components
 
 **1. ClientIntakeWizard.tsx**
+
 ```tsx
 interface ClientIntakeWizardProps {
   isOpen: boolean;
@@ -264,6 +281,7 @@ Steps:
 ```
 
 **2. BrandProfileReview.tsx**
+
 ```tsx
 interface BrandProfileReviewProps {
   extractedData: ExtractedBrandData;
@@ -279,6 +297,7 @@ Shows:
 ```
 
 **3. IntakeJobStatus.tsx**
+
 ```tsx
 // Real-time status component
 // Shows: "Uploading...", "Analyzing...", "Ready for review"
@@ -310,10 +329,12 @@ serve(async (req) => {
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-5-20250929",
     max_tokens: 4000,
-    messages: [{
-      role: "user",
-      content: `${BRAND_INTAKE_PROMPT}\n\nDocument:\n${extractedText}`
-    }]
+    messages: [
+      {
+        role: "user",
+        content: `${BRAND_INTAKE_PROMPT}\n\nDocument:\n${extractedText}`,
+      },
+    ],
   });
 
   const parsedData = JSON.parse(response.content[0].text);
@@ -324,7 +345,7 @@ serve(async (req) => {
     .update({
       status: "completed",
       extracted_data: parsedData,
-      completed_at: new Date().toISOString()
+      completed_at: new Date().toISOString(),
     })
     .eq("id", jobId);
 
@@ -335,6 +356,7 @@ serve(async (req) => {
 **Helper: Text Extraction**
 
 Use existing libraries:
+
 - **PDF**: `pdf-parse` or `pdfjs-dist`
 - **DOCX**: `mammoth` or `docx-parser`
 - **Markdown**: Direct text extraction
@@ -361,7 +383,7 @@ export const clientIntakeService = {
         uploaded_file_url: uploadData.path,
         uploaded_file_name: file.name,
         uploaded_file_type: file.type,
-        status: "pending"
+        status: "pending",
       })
       .select()
       .single();
@@ -371,8 +393,8 @@ export const clientIntakeService = {
       body: {
         fileUrl: uploadData.path,
         clientId,
-        jobId: job.id
-      }
+        jobId: job.id,
+      },
     });
 
     return job;
@@ -392,22 +414,20 @@ export const clientIntakeService = {
         tone_of_voice: editedData.voice_tone.tone_of_voice,
         brand_personality: editedData.voice_tone.brand_personality,
         style_keywords: editedData.voice_tone.style_keywords,
-        primary_colors: editedData.visual_identity.primary_colors
+        primary_colors: editedData.visual_identity.primary_colors,
       })
       .select()
       .single();
 
     // Insert corpus entry for original document
-    await supabase
-      .from("brand_corpus")
-      .insert({
-        client_id: job.client_id,
-        brand_id: profile.id,
-        source_type: "doc",
-        title: job.uploaded_file_name,
-        content: editedData.raw_text,
-        checksum: sha256(editedData.raw_text)
-      });
+    await supabase.from("brand_corpus").insert({
+      client_id: job.client_id,
+      brand_id: profile.id,
+      source_type: "doc",
+      title: job.uploaded_file_name,
+      content: editedData.raw_text,
+      checksum: sha256(editedData.raw_text),
+    });
 
     // Update job
     await supabase
@@ -416,7 +436,7 @@ export const clientIntakeService = {
       .eq("id", jobId);
 
     return profile;
-  }
+  },
 };
 ```
 
@@ -567,6 +587,7 @@ supabase/
 - ✅ Test with 3-5 real client briefs
 
 **Success Criteria:**
+
 - User can upload PDF/DOCX
 - System extracts 70%+ of brand profile data
 - User can edit and save extracted data
@@ -595,6 +616,7 @@ supabase/
 ## Testing Checklist
 
 ### Unit Tests
+
 - [ ] Text extraction (PDF, DOCX, MD)
 - [ ] Claude prompt returns valid JSON
 - [ ] Data mapping to database schema
@@ -602,12 +624,14 @@ supabase/
 - [ ] RLS policies for intake_jobs
 
 ### Integration Tests
+
 - [ ] End-to-end upload → parse → save flow
 - [ ] Error handling (bad file, API failure)
 - [ ] Realtime job status updates
 - [ ] Multi-step wizard navigation
 
 ### User Acceptance Tests
+
 - [ ] Upload real client brief → verify accuracy
 - [ ] Edit extracted data → save → verify persistence
 - [ ] Cancel mid-process → verify cleanup
@@ -617,26 +641,28 @@ supabase/
 
 ## Risks & Mitigation
 
-| Risk | Mitigation |
-|------|-----------|
-| **Claude API fails** | Graceful degradation: Allow manual entry, queue retry |
-| **Text extraction errors** | Show error + allow manual paste of text |
-| **Low extraction accuracy** | Provide clear editing UI, track confidence scores |
-| **Large files timeout** | Stream processing, background jobs, status polling |
-| **User uploads wrong file** | File type validation, preview extracted text |
-| **Privacy/security concerns** | Encrypted storage, auto-delete after 30 days, RLS |
+| Risk                          | Mitigation                                            |
+| ----------------------------- | ----------------------------------------------------- |
+| **Claude API fails**          | Graceful degradation: Allow manual entry, queue retry |
+| **Text extraction errors**    | Show error + allow manual paste of text               |
+| **Low extraction accuracy**   | Provide clear editing UI, track confidence scores     |
+| **Large files timeout**       | Stream processing, background jobs, status polling    |
+| **User uploads wrong file**   | File type validation, preview extracted text          |
+| **Privacy/security concerns** | Encrypted storage, auto-delete after 30 days, RLS     |
 
 ---
 
 ## Success Metrics
 
 ### Quantitative
+
 - **Onboarding Time**: Reduce from 30min → 5min (83% improvement)
 - **Data Completeness**: Increase from 40% → 85%+
 - **Adoption Rate**: 70%+ of new clients use upload vs manual
 - **Accuracy**: 80%+ of extracted fields require no edits
 
 ### Qualitative
+
 - User feedback: "This saved me so much time!"
 - Competitive advantage: "Other platforms don't have this"
 - Demo impact: Showcase AI-first platform vision
@@ -646,17 +672,20 @@ supabase/
 ## Dependencies
 
 ### External Libraries
+
 - **Frontend**: `react-dropzone` (if not using existing FileUpload)
 - **Backend**: `pdf-parse`, `mammoth` (docx), `pdf-lib`
 - **AI**: Anthropic SDK (`@anthropic-ai/sdk`)
 
 ### Supabase Features
+
 - Storage (buckets: `client-intakes`)
 - Edge Functions (Deno runtime)
 - Realtime (job status subscriptions)
 - RLS (secure file access)
 
 ### Environment Variables
+
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...
 SUPABASE_URL=https://...
@@ -700,7 +729,10 @@ SUPABASE_ANON_KEY=eyJh...
     {
       "pillar_name": "Every Child Deserves Nutrition",
       "description": "No child should experience hunger. Proper nutrition is a fundamental right.",
-      "proof_points": ["Served 50,000 meals last year", "98% of families report improved nutrition"]
+      "proof_points": [
+        "Served 50,000 meals last year",
+        "98% of families report improved nutrition"
+      ]
     }
   ],
   "donor_stories": [

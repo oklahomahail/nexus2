@@ -4,15 +4,16 @@
  * and automatically extract brand profile information using Claude
  */
 
-import { useRef, useState } from "react";
 import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react";
+import { useRef, useState } from "react";
+
 import {
   processBrandFile,
   validateFileSize,
   getSupportedExtensions,
 } from "./brandFileProcessor";
-import { extractBrandProfileFromText } from "./extractBrandProfileFromText";
 import { BrandProfile } from "./brandProfile.types";
+import { extractBrandProfileFromText } from "./extractBrandProfileFromText";
 
 interface UploadBrandFileProps {
   onAutoFill: (data: Partial<BrandProfile>) => void;
@@ -135,7 +136,7 @@ export const UploadBrandFile = ({ onAutoFill }: UploadBrandFileProps) => {
           accept={supportedExtensions.map((ext) => `.${ext}`).join(",")}
           onChange={(e) => {
             if (e.target.files?.[0]) {
-              handleFile(e.target.files[0]);
+              void handleFile(e.target.files[0]);
             }
           }}
         />
@@ -150,9 +151,15 @@ export const UploadBrandFile = ({ onAutoFill }: UploadBrandFileProps) => {
             ${isProcessing ? "bg-blue-50 text-blue-800" : ""}
           `}
           >
-            {status === "success" && <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />}
-            {status === "error" && <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />}
-            {isProcessing && <FileText size={16} className="mt-0.5 flex-shrink-0" />}
+            {status === "success" && (
+              <CheckCircle size={16} className="mt-0.5 flex-shrink-0" />
+            )}
+            {status === "error" && (
+              <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+            )}
+            {isProcessing && (
+              <FileText size={16} className="mt-0.5 flex-shrink-0" />
+            )}
             <div className="flex-1">
               {fileName && <div className="font-medium mb-1">{fileName}</div>}
               <div className="text-xs">{message}</div>

@@ -27,7 +27,10 @@ export const ClientLayout: React.FC = () => {
     if (clientId) {
       // Only attempt to set client if we have clients loaded or if it's a UUID
       // This prevents unnecessary API calls before the client list is ready
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId);
+      const isUUID =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          clientId,
+        );
 
       if (isUUID || clients.length > 0) {
         void setCurrentClientBySlug(clientId);

@@ -3,9 +3,11 @@
 ## Issue #1: Empty Client Selector ✓ DIAGNOSED
 
 ### Problem
+
 Client selector dropdown shows "Select client" but no clients appear.
 
 **Root Cause:**
+
 1. ❌ Clients table is empty (0 rows)
 2. ❌ RLS policy requires authenticated user with `client_memberships`
 
@@ -28,10 +30,12 @@ CREATE POLICY "Allow viewing demo clients"
 ```
 
 **Files Created:**
+
 - ✅ [fix_client_selector.sql](fix_client_selector.sql) - Copy/paste into Supabase
 - ✅ [CLIENT_SELECTOR_FIX.md](CLIENT_SELECTOR_FIX.md) - Full diagnostic report
 
 **Expected Result:**
+
 - Client selector shows: Hope Foundation, Green Earth Alliance, Education for All
 - No authentication required for demo clients
 
@@ -54,6 +58,7 @@ CREATE POLICY "Allow viewing demo clients"
 **Feature:** Single-file upload for client onboarding (PDF/DOCX brief → auto-populated brand profile)
 
 **Impact:**
+
 - Reduces onboarding time: 30min → 5min
 - Improves data completeness: 40% → 85%+
 - Showcases AI-powered platform
@@ -63,11 +68,13 @@ CREATE POLICY "Allow viewing demo clients"
 #### Phase 1: MVP (Next Steps)
 
 1. **Database Migration**
+
    ```bash
    # Create: supabase/migrations/20250117000000_client_intake_jobs.sql
    ```
 
 2. **Edge Function**
+
    ```bash
    # Create: supabase/functions/process-client-intake/index.ts
    # Handles: PDF extraction → Claude API → JSON response
@@ -82,6 +89,7 @@ CREATE POLICY "Allow viewing demo clients"
    - `clientIntakeService.ts` - Upload, process, save
 
 **Files Created:**
+
 - ✅ [CLIENT_ONBOARDING_UPLOAD_DESIGN.md](CLIENT_ONBOARDING_UPLOAD_DESIGN.md) - Full spec
   - Architecture diagrams
   - Database schema
@@ -143,18 +151,19 @@ graph LR
 
 ## Files Reference
 
-| File | Purpose |
-|------|---------|
-| [fix_client_selector.sql](fix_client_selector.sql) | Quick SQL fix for empty selector |
-| [CLIENT_SELECTOR_FIX.md](CLIENT_SELECTOR_FIX.md) | Diagnostic report + solutions |
-| [CLIENT_ONBOARDING_UPLOAD_DESIGN.md](CLIENT_ONBOARDING_UPLOAD_DESIGN.md) | Complete feature specification |
-| [quick_seed_clients.sql](quick_seed_clients.sql) | Alternate seed script (clients only) |
+| File                                                                     | Purpose                              |
+| ------------------------------------------------------------------------ | ------------------------------------ |
+| [fix_client_selector.sql](fix_client_selector.sql)                       | Quick SQL fix for empty selector     |
+| [CLIENT_SELECTOR_FIX.md](CLIENT_SELECTOR_FIX.md)                         | Diagnostic report + solutions        |
+| [CLIENT_ONBOARDING_UPLOAD_DESIGN.md](CLIENT_ONBOARDING_UPLOAD_DESIGN.md) | Complete feature specification       |
+| [quick_seed_clients.sql](quick_seed_clients.sql)                         | Alternate seed script (clients only) |
 
 ---
 
 ## Testing After Fixes
 
 ### Client Selector (After SQL Fix)
+
 - [ ] Open Nexus app
 - [ ] Click client selector in header or sidebar
 - [ ] Verify 3 clients show: Hope Foundation, Green Earth Alliance, Education for All
@@ -163,6 +172,7 @@ graph LR
 - [ ] Check browser console for errors (should be none)
 
 ### Onboarding Upload (After Implementation)
+
 - [ ] Upload sample PDF brief
 - [ ] Verify progress indicators work
 - [ ] Check extracted data accuracy (target: 80%+)
@@ -176,10 +186,12 @@ graph LR
 ## Questions?
 
 **Client Selector:**
+
 - If clients still don't appear, check RLS policies in Supabase Dashboard → Database → Policies
 - Verify anon key is correct in `.env`
 
 **Onboarding Upload:**
+
 - See full design doc for detailed implementation guide
 - Example extracted JSON included in appendix
 - Claude parsing prompt provided in design doc
@@ -188,5 +200,6 @@ graph LR
 
 **Status:** Ready to implement
 **Priority:**
+
 - Client Selector Fix: 🔴 High (blocking development)
 - Onboarding Upload: 🟡 Medium (feature enhancement)

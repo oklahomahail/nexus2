@@ -8,8 +8,8 @@
 import { Plus, Calendar, TrendingUp, Target, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { SectionBlock } from "@/components/ui/SectionBlock";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui-kit/Button";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { useClient } from "@/context/ClientContext";
 
 export default function CampaignEngineSection() {
@@ -69,7 +69,6 @@ export default function CampaignEngineSection() {
           </div>
         }
       >
-
         {/* Active Campaigns */}
         <div className="grid gap-4">
           {activeCampaigns.map((campaign) => (
@@ -141,7 +140,8 @@ export default function CampaignEngineSection() {
                 <div className="flex items-center gap-2">
                   <Target className="w-4 h-4 text-[var(--nx-text-muted)]" />
                   <span className="text-[13px] text-[var(--nx-text-muted)]">
-                    ${((campaign.goal - campaign.raised) / 1000).toFixed(1)}k to go
+                    ${((campaign.goal - campaign.raised) / 1000).toFixed(1)}k to
+                    go
                   </span>
                 </div>
               </div>

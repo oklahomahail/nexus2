@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from "react";
 
-import { PageHeading } from "../components/ui/PageHeading";
-import { SectionBlock } from "../components/ui/SectionBlock";
-import Button from "../components/ui/Button";
+import Button from "@/components/ui-kit/Button";
+import { PageHeading } from "@/components/ui-kit/PageHeading";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
+
 import {
   DEFAULT_SEGMENT_CATALOG,
   BehavioralSegment,

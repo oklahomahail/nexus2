@@ -3,11 +3,11 @@ import { BrandProfile } from "./brandProfile.types";
 export const BrandPreviewPanel = ({ profile }: { profile: BrandProfile }) => {
   return (
     <div className="bg-[#FAFAF8] border border-gray-300 rounded-md p-6 shadow-sm">
-
-      <h2 className="text-xl font-semibold mb-4 text-[#1C1E26]">Brand Preview</h2>
+      <h2 className="text-xl font-semibold mb-4 text-[#1C1E26]">
+        Brand Preview
+      </h2>
 
       <div className="space-y-6">
-
         {/* Brand Name */}
         <div>
           <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-1">
@@ -42,7 +42,6 @@ export const BrandPreviewPanel = ({ profile }: { profile: BrandProfile }) => {
             <li>Teddy Cares trauma-informed program for children</li>
           </ul>
         </div>
-
       </div>
     </div>
   );

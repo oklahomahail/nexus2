@@ -10,6 +10,15 @@ export { default as ToastContainer } from "./ToastContainer";
 export { default as Button } from "./Button";
 export { default as ConfirmModal } from "./ConfirmModal";
 
+// Layout components
+export { PageHeading } from "./PageHeading";
+export type { PageHeadingProps } from "./PageHeading";
+export { SectionBlock } from "./SectionBlock";
+export type { SectionBlockProps } from "./SectionBlock";
+export { SectionHeader } from "./SectionHeader";
+export { Tabs } from "./Tabs";
+export { default as TextArea } from "./TextArea";
+
 // Data components
 export { DataTable } from "./DataTable";
 export type { Column, DataTableProps } from "./DataTable";

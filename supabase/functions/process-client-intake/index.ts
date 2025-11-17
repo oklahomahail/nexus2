@@ -6,12 +6,16 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import Anthropic from "https://esm.sh/@anthropic-ai/sdk@0.20.9";
 
 import { extractTextFromPDF } from "./extractors/pdf.ts";
-import { extractTextFromPlainText, extractTextFromMarkdown } from "./extractors/text.ts";
+import {
+  extractTextFromPlainText,
+  extractTextFromMarkdown,
+} from "./extractors/text.ts";
 import { BRAND_INTAKE_PARSER_PROMPT } from "./prompts/brandIntakeParser.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 interface RequestBody {
@@ -38,7 +42,8 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { fileUrl, clientId, jobId, fileType }: RequestBody = await req.json();
+    const { fileUrl, clientId, jobId, fileType }: RequestBody =
+      await req.json();
 
     console.log(`Processing intake job ${jobId} for client ${clientId}`);
     console.log(`File: ${fileUrl}, Type: ${fileType}`);
@@ -77,13 +82,17 @@ serve(async (req) => {
     ) {
       extractedText = await extractTextFromPlainText(arrayBuffer);
     } else {
-      throw new Error(`Unsupported file type: ${fileType}. Supported types: PDF, TXT, MD`);
+      throw new Error(
+        `Unsupported file type: ${fileType}. Supported types: PDF, TXT, MD`,
+      );
     }
 
     console.log(`Extracted ${extractedText.length} characters of text`);
 
     if (extractedText.length < 100) {
-      throw new Error("Extracted text is too short. Document may be empty or corrupted.");
+      throw new Error(
+        "Extracted text is too short. Document may be empty or corrupted.",
+      );
     }
 
     // 3. Call Claude API to parse the document
@@ -103,9 +112,8 @@ serve(async (req) => {
     });
 
     // Extract the JSON response
-    const responseText = response.content[0].type === "text"
-      ? response.content[0].text
-      : "";
+    const responseText =
+      response.content[0].type === "text" ? response.content[0].text : "";
 
     console.log("Claude response received, parsing JSON...");
 
@@ -122,7 +130,9 @@ serve(async (req) => {
     } catch (parseError) {
       console.error("Failed to parse Claude response as JSON:", parseError);
       console.error("Raw response:", responseText);
-      throw new Error("Failed to parse AI response. The document may not contain valid brand information.");
+      throw new Error(
+        "Failed to parse AI response. The document may not contain valid brand information.",
+      );
     }
 
     // Validate required fields
@@ -130,13 +140,16 @@ serve(async (req) => {
       throw new Error("Failed to extract organization name from document");
     }
 
-    console.log(`Successfully parsed data. Confidence: ${parsedData.confidence_score}%`);
+    console.log(
+      `Successfully parsed data. Confidence: ${parsedData.confidence_score}%`,
+    );
 
     // 4. Update job with extracted data
     await supabase
       .from("client_intake_jobs")
       .update({
-        status: parsedData.confidence_score >= 50 ? "completed" : "review_required",
+        status:
+          parsedData.confidence_score >= 50 ? "completed" : "review_required",
         extracted_data: parsedData,
         completed_at: new Date().toISOString(),
       })
@@ -154,7 +167,7 @@ serve(async (req) => {
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (error) {
     console.error("Error processing intake:", error);
@@ -165,7 +178,7 @@ serve(async (req) => {
       if (jobId) {
         const supabase = createClient(
           Deno.env.get("SUPABASE_URL")!,
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
         );
 
         await supabase
@@ -188,7 +201,7 @@ serve(async (req) => {
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
-      }
+      },
     );
   }
 });

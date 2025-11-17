@@ -1,25 +1,16 @@
 /**
  * Nexus UI Component Library
  * Premium editorial design system components
+ *
+ * NOTE: This file is deprecated. All components have been moved to @/components/ui-kit
+ * Import from @/components/ui-kit instead
  */
 
-export { Button } from "./Button";
-export type { ButtonProps } from "./Button";
-
-export { Input } from "./Input";
-export type { InputProps } from "./Input";
-
-export { TextArea } from "./TextArea";
-export type { TextAreaProps } from "./TextArea";
-
-export { Card } from "./Card";
-export type { CardProps } from "./Card";
-
-export { Panel } from "./Panel";
-export type { PanelProps } from "./Panel";
-
-export { Tabs } from "./Tabs";
-export type { TabsProps, Tab } from "./Tabs";
-
-export { SectionHeader } from "./SectionHeader";
-export type { SectionHeaderProps } from "./SectionHeader";
+// Re-export from ui-kit for backwards compatibility
+export { default as Button } from "../ui-kit/Button";
+export { default as Input } from "../ui-kit/Input";
+export { default as TextArea } from "../ui-kit/TextArea";
+export { default as Card } from "../ui-kit/Card";
+export { default as Panel } from "../ui-kit/Panel";
+export { Tabs } from "../ui-kit/Tabs";
+export { SectionHeader } from "../ui-kit/SectionHeader";

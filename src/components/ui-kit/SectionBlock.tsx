@@ -36,7 +36,7 @@ export function SectionBlock({
   actions,
   children,
   noPadding = false,
-  className = ""
+  className = "",
 }: SectionBlockProps) {
   return (
     <section
@@ -44,7 +44,9 @@ export function SectionBlock({
     >
       {/* Header */}
       {(title || actions) && (
-        <div className={`flex items-start justify-between ${noPadding ? 'p-6 pb-0' : 'px-6 pt-6 pb-4'} border-b border-[var(--nx-border)]`}>
+        <div
+          className={`flex items-start justify-between ${noPadding ? "p-6 pb-0" : "px-6 pt-6 pb-4"} border-b border-[var(--nx-border)]`}
+        >
           <div>
             {title && (
               <h2 className="text-[24px] font-semibold text-[var(--nx-charcoal)] mb-1">
@@ -58,18 +60,12 @@ export function SectionBlock({
             )}
           </div>
 
-          {actions && (
-            <div className="flex items-center gap-2">
-              {actions}
-            </div>
-          )}
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       )}
 
       {/* Content */}
-      <div className={noPadding ? '' : 'p-6'}>
-        {children}
-      </div>
+      <div className={noPadding ? "" : "p-6"}>{children}</div>
     </section>
   );
 }

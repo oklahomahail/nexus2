@@ -9,18 +9,21 @@ All core components have been created. Follow this guide to deploy and test.
 ## Files Created
 
 ### Database
+
 - ✅ [supabase/migrations/20250117000000_client_intake_jobs.sql](supabase/migrations/20250117000000_client_intake_jobs.sql)
   - Creates `client_intake_jobs` table
   - Sets up storage bucket `client-intakes`
   - Configures RLS policies
 
 ### Edge Function
+
 - ✅ [supabase/functions/process-client-intake/index.ts](supabase/functions/process-client-intake/index.ts)
 - ✅ [supabase/functions/process-client-intake/extractors/pdf.ts](supabase/functions/process-client-intake/extractors/pdf.ts)
 - ✅ [supabase/functions/process-client-intake/extractors/text.ts](supabase/functions/process-client-intake/extractors/text.ts)
 - ✅ [supabase/functions/process-client-intake/prompts/brandIntakeParser.ts](supabase/functions/process-client-intake/prompts/brandIntakeParser.ts)
 
 ### Frontend
+
 - ✅ [src/types/clientIntake.ts](src/types/clientIntake.ts)
 - ✅ [src/services/clientIntakeService.ts](src/services/clientIntakeService.ts)
 - ✅ [src/hooks/useIntakeJob.ts](src/hooks/useIntakeJob.ts)
@@ -49,6 +52,7 @@ npx supabase db push
 ```
 
 **Verify:**
+
 - Table `client_intake_jobs` exists
 - Storage bucket `client-intakes` created
 - RLS policies applied
@@ -64,6 +68,7 @@ npx supabase secrets set ANTHROPIC_API_KEY=your_key_here
 ```
 
 **Environment Variables Required:**
+
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...
 SUPABASE_URL=https://sdgkpehhzysjofcpvdbo.supabase.co
@@ -71,6 +76,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 **Verify:**
+
 - Function shows in Supabase Dashboard → Edge Functions
 - Environment variables set
 - Function invocable
@@ -152,18 +158,21 @@ Modify existing client creation flow to include upload option:
 ### Manual Testing
 
 #### 1. Database Setup
+
 - [ ] Migration applied successfully
 - [ ] `client_intake_jobs` table exists
 - [ ] Storage bucket `client-intakes` created
 - [ ] Can query table: `SELECT * FROM client_intake_jobs LIMIT 1;`
 
 #### 2. Edge Function
+
 - [ ] Function deployed
 - [ ] Environment variables set (ANTHROPIC_API_KEY)
 - [ ] Function shows in Dashboard
 - [ ] No deployment errors
 
 #### 3. Upload Flow (PDF)
+
 - [ ] Open ClientIntakeWizard
 - [ ] Upload a sample PDF brand brief
 - [ ] File uploads to storage successfully
@@ -173,6 +182,7 @@ Modify existing client creation flow to include upload option:
 - [ ] Extracted data shown in review UI
 
 #### 4. Edit & Save
+
 - [ ] Can edit extracted fields
 - [ ] Collapsible sections work
 - [ ] Save creates brand_profile record
@@ -181,6 +191,7 @@ Modify existing client creation flow to include upload option:
 - [ ] Client contact info updated
 
 #### 5. Error Handling
+
 - [ ] Invalid file type rejected
 - [ ] File too large rejected
 - [ ] Processing failure shows error message
@@ -191,6 +202,7 @@ Modify existing client creation flow to include upload option:
 Create test PDFs with varying content:
 
 **Test 1: Complete Brief**
+
 ```
 Organization: Test Nonprofit
 Mission: Helping communities thrive through education and support.
@@ -203,6 +215,7 @@ Messaging Pillars:
 ```
 
 **Test 2: Minimal Brief**
+
 ```
 Organization: Simple Org
 Mission: We help people.
@@ -219,7 +232,7 @@ Mission: We help people.
 In [ClientIntakeWizard.tsx](src/components/client/ClientIntakeWizard.tsx:78):
 
 ```tsx
-status: parsedData.confidence_score >= 50 ? "completed" : "review_required"
+status: parsedData.confidence_score >= 50 ? "completed" : "review_required";
 ```
 
 Change `50` to adjust when jobs require manual review.
@@ -227,6 +240,7 @@ Change `50` to adjust when jobs require manual review.
 ### Customize Claude Prompt
 
 Edit [brandIntakeParser.ts](supabase/functions/process-client-intake/prompts/brandIntakeParser.ts) to:
+
 - Add new extraction fields
 - Change extraction rules
 - Adjust confidence scoring
@@ -250,6 +264,7 @@ Increase for larger files (consider Claude API token limits).
 **Cause:** ANTHROPIC_API_KEY not set in Edge Function environment
 
 **Fix:**
+
 ```bash
 npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-your-key
 ```
@@ -259,6 +274,7 @@ npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-your-key
 **Cause:** `pdfjs-dist` not loading properly
 
 **Fix:** Check Edge Function logs:
+
 ```bash
 npx supabase functions logs process-client-intake
 ```
@@ -268,6 +284,7 @@ npx supabase functions logs process-client-intake
 **Cause:** Realtime subscription not working
 
 **Fix:**
+
 - Check Supabase Realtime is enabled
 - Verify RLS policies allow reading job
 - Check browser console for errors
@@ -277,6 +294,7 @@ npx supabase functions logs process-client-intake
 **Cause:** RLS policies or missing fields
 
 **Fix:**
+
 - Check user is authenticated
 - Verify user has membership for client
 - Check required fields in brand_profiles table
@@ -286,6 +304,7 @@ npx supabase functions logs process-client-intake
 **Cause:** Prompt needs tuning for your document format
 
 **Fix:**
+
 - Review Claude response in Edge Function logs
 - Adjust prompt in `brandIntakeParser.ts`
 - Add more examples to prompt
@@ -323,6 +342,7 @@ GROUP BY status;
 ### Claude API Usage
 
 Track tokens and costs:
+
 ```sql
 -- Estimate tokens used (rough calculation)
 SELECT

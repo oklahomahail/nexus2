@@ -1,9 +1,9 @@
 import { Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import { PageHeading } from "@/components/ui/PageHeading";
-import { SectionBlock } from "@/components/ui/SectionBlock";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui-kit/Button";
+import { PageHeading } from "@/components/ui-kit/PageHeading";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { useClient } from "@/context/ClientContext";
 import { getClientSlug } from "@/types/client";
 
@@ -28,7 +28,10 @@ export default function ClientCampaigns() {
   // Show empty state when no campaigns (for demo purposes, you can set campaigns = [])
   if (campaigns.length === 0) {
     return (
-      <div className="px-8 py-10 editorial-flow" data-tutorial-step="campaigns.page">
+      <div
+        className="px-8 py-10 editorial-flow"
+        data-tutorial-step="campaigns.page"
+      >
         <PageHeading
           title="Campaigns"
           subtitle="Manage your fundraising campaigns and track performance"
@@ -68,7 +71,10 @@ export default function ClientCampaigns() {
   }
 
   return (
-    <div className="px-8 py-10 editorial-flow" data-tutorial-step="campaigns.page">
+    <div
+      className="px-8 py-10 editorial-flow"
+      data-tutorial-step="campaigns.page"
+    >
       <PageHeading
         title="Campaigns"
         subtitle="Manage your fundraising campaigns and track performance"
@@ -83,19 +89,34 @@ export default function ClientCampaigns() {
         }
       />
 
-      <SectionBlock title="Active Campaigns" noPadding data-tutorial-step="campaigns.list">
+      <SectionBlock
+        title="Active Campaigns"
+        noPadding
+        data-tutorial-step="campaigns.list"
+      >
         <table className="w-full">
           <thead className="border-b border-[var(--nx-border)]">
             <tr>
-              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Name</th>
-              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Status</th>
-              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Progress</th>
-              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">Actions</th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">
+                Name
+              </th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">
+                Status
+              </th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">
+                Progress
+              </th>
+              <th className="text-left p-4 text-[13px] font-semibold text-[var(--nx-charcoal)]">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {campaigns.map((campaign) => (
-              <tr key={campaign.id} className="border-b border-[var(--nx-border)] last:border-0 hover:bg-[var(--nx-bg-secondary)] transition-colors">
+              <tr
+                key={campaign.id}
+                className="border-b border-[var(--nx-border)] last:border-0 hover:bg-[var(--nx-bg-secondary)] transition-colors"
+              >
                 <td className="p-4">
                   <div className="flex items-center gap-2">
                     <span className="text-[15px] font-medium text-[var(--nx-charcoal)]">

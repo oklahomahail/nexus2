@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
 import CampaignEngineSection from "@/components/dashboard/CampaignEngineSection";
 import KnowledgeBaseSection from "@/components/dashboard/KnowledgeBaseSection";
-import { PageHeading } from "@/components/ui/PageHeading";
+import { PageHeading } from "@/components/ui-kit/PageHeading";
 import { useClient } from "@/context/ClientContext";
 
 export default function ClientDashboard() {
@@ -20,7 +20,10 @@ export default function ClientDashboard() {
   const { currentClient } = useClient();
 
   return (
-    <div className="px-8 py-10 editorial-flow" data-tutorial-step="dashboard.page">
+    <div
+      className="px-8 py-10 editorial-flow"
+      data-tutorial-step="dashboard.page"
+    >
       {/* Page Header with Editorial Design */}
       <PageHeading
         title={`${currentClient?.name || "Client"} Dashboard`}

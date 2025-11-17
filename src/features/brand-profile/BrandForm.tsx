@@ -13,7 +13,6 @@ export const BrandForm = ({ profile, setProfile }: BrandFormProps) => {
 
   return (
     <div className="space-y-10">
-
       {/* Page Title */}
       <div>
         <h1 className="text-3xl font-semibold tracking-tight text-[#1C1E26] mb-4">
@@ -62,7 +61,9 @@ export const BrandForm = ({ profile, setProfile }: BrandFormProps) => {
         <input
           type="url"
           value={profile.guidelinesUrl ?? ""}
-          onChange={(e) => setProfile({ ...profile, guidelinesUrl: e.target.value })}
+          onChange={(e) =>
+            setProfile({ ...profile, guidelinesUrl: e.target.value })
+          }
           className="w-full border border-gray-300 rounded-sm px-3 py-2 text-sm"
           placeholder="https://your-brand-guide.com"
         />
@@ -74,7 +75,6 @@ export const BrandForm = ({ profile, setProfile }: BrandFormProps) => {
           Save Changes
         </button>
       </div>
-
     </div>
   );
 };

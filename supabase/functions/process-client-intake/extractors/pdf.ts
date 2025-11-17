@@ -3,7 +3,9 @@
 
 import { getDocument } from "npm:pdfjs-dist@4.0.379";
 
-export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
+export async function extractTextFromPDF(
+  arrayBuffer: ArrayBuffer,
+): Promise<string> {
   try {
     // Load the PDF document
     const pdf = await getDocument({
@@ -18,22 +20,20 @@ export async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<stri
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
 
-      const pageText = textContent.items
-        .map((item: any) => item.str)
-        .join(' ');
+      const pageText = textContent.items.map((item: any) => item.str).join(" ");
 
       textParts.push(pageText);
     }
 
-    const fullText = textParts.join('\n\n');
+    const fullText = textParts.join("\n\n");
 
     // Clean up excessive whitespace
     return fullText
-      .replace(/\s+/g, ' ')
-      .replace(/\n\s*\n\s*\n/g, '\n\n')
+      .replace(/\s+/g, " ")
+      .replace(/\n\s*\n\s*\n/g, "\n\n")
       .trim();
   } catch (error) {
-    console.error('Error extracting text from PDF:', error);
+    console.error("Error extracting text from PDF:", error);
     throw new Error(`Failed to extract text from PDF: ${error.message}`);
   }
 }

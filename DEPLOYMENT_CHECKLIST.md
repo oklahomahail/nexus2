@@ -3,12 +3,14 @@
 ## Pre-Deployment
 
 ### 1. Environment Setup
+
 - [ ] Anthropic API key obtained (https://console.anthropic.com/)
 - [ ] `.env` file contains all required variables
 - [ ] Supabase project accessible
 - [ ] Database has demo clients (Hope Foundation, etc.)
 
 ### 2. Code Review
+
 - [ ] All TypeScript files compile without errors
 - [ ] No console.error statements in production code
 - [ ] All TODO comments addressed or documented
@@ -19,6 +21,7 @@
 ## Database Deployment
 
 ### 3. Run Migration
+
 ```bash
 # Option A: Via Supabase Dashboard
 # 1. Go to: https://supabase.com/dashboard/project/sdgkpehhzysjofcpvdbo/sql/new
@@ -30,6 +33,7 @@ npx supabase db push
 ```
 
 **Verify:**
+
 - [ ] Query succeeds: `SELECT * FROM client_intake_jobs LIMIT 1;`
 - [ ] Table has correct columns (id, client_id, uploaded_file_url, status, etc.)
 - [ ] Storage bucket exists: Check Dashboard → Storage → client-intakes
@@ -40,6 +44,7 @@ npx supabase db push
 ## Edge Function Deployment
 
 ### 4. Deploy Function
+
 ```bash
 # Deploy the function
 npx supabase functions deploy process-client-intake
@@ -49,11 +54,13 @@ npx supabase functions deploy process-client-intake
 ```
 
 **Verify:**
+
 - [ ] Function appears in Dashboard → Edge Functions
 - [ ] No deployment errors in output
 - [ ] Function status shows "Healthy"
 
 ### 5. Set Environment Variables
+
 ```bash
 # Set Anthropic API key
 npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-your_key_here
@@ -63,10 +70,12 @@ npx supabase secrets list
 ```
 
 **Verify:**
+
 - [ ] ANTHROPIC_API_KEY listed in secrets
 - [ ] Key starts with `sk-ant-`
 
 ### 6. Test Edge Function
+
 ```bash
 # View logs (open in separate terminal)
 npx supabase functions logs process-client-intake --tail
@@ -85,6 +94,7 @@ curl -i --location --request POST \
 ```
 
 **Verify:**
+
 - [ ] Function responds (even if with error - that's expected for test)
 - [ ] Logs show function invoked
 - [ ] No authentication errors
@@ -94,6 +104,7 @@ curl -i --location --request POST \
 ## Frontend Integration
 
 ### 7. Build & Test Locally
+
 ```bash
 # Install dependencies (if needed)
 npm install
@@ -109,6 +120,7 @@ npm run dev
 ```
 
 **Verify:**
+
 - [ ] No TypeScript errors
 - [ ] App builds successfully
 - [ ] Dev server starts without errors
@@ -119,6 +131,7 @@ npm run dev
 **Manual Test Steps:**
 
 #### Test 1: Basic Upload Flow
+
 1. [ ] Open app in browser
 2. [ ] Navigate to client dashboard
 3. [ ] Trigger ClientIntakeWizard (add button to trigger it for testing)
@@ -134,6 +147,7 @@ npm run dev
 13. [ ] Verify success and redirect
 
 #### Test 2: Error Handling
+
 1. [ ] Try uploading invalid file type (e.g., .jpg)
 2. [ ] See error message: "Please upload a PDF, TXT, MD, or DOCX file"
 3. [ ] Try uploading file > 10MB
@@ -142,6 +156,7 @@ npm run dev
 6. [ ] See error handling (retry option or clear error message)
 
 #### Test 3: Data Persistence
+
 1. [ ] Complete full upload flow
 2. [ ] Check database: `SELECT * FROM brand_profiles ORDER BY created_at DESC LIMIT 1;`
 3. [ ] Verify brand profile created
@@ -228,6 +243,7 @@ export default function TestIntakeUpload() {
 Add route in your router config.
 
 **Verify:**
+
 - [ ] Button/entry point visible in UI
 - [ ] Clicking triggers modal
 - [ ] Modal displays correctly
@@ -237,6 +253,7 @@ Add route in your router config.
 ## Production Deployment
 
 ### 10. Deploy to Production
+
 ```bash
 # Build production bundle
 npm run build
@@ -247,11 +264,13 @@ vercel --prod
 ```
 
 **Verify:**
+
 - [ ] Production site loads
 - [ ] Upload wizard accessible
 - [ ] No console errors in production
 
 ### 11. Smoke Test in Production
+
 1. [ ] Upload test document in production
 2. [ ] Verify processing completes
 3. [ ] Check database in production
@@ -262,6 +281,7 @@ vercel --prod
 ## Post-Deployment
 
 ### 12. Monitoring Setup
+
 ```bash
 # Set up alerts in Supabase Dashboard
 # 1. Go to: Dashboard → Database → Logs
@@ -271,6 +291,7 @@ vercel --prod
 ```
 
 **Set up queries:**
+
 ```sql
 -- Monitor success rate
 SELECT
@@ -289,17 +310,20 @@ WHERE status = 'completed'
 ```
 
 **Verify:**
+
 - [ ] Can query jobs in production
 - [ ] Logs accessible
 - [ ] Alerts configured (if desired)
 
 ### 13. Documentation
+
 - [ ] Update README with new feature
 - [ ] Add to user documentation
 - [ ] Create internal runbook for troubleshooting
 - [ ] Document known limitations
 
 ### 14. User Communication
+
 - [ ] Announce feature to beta users
 - [ ] Create tutorial video or guide
 - [ ] Set up feedback collection
@@ -312,11 +336,13 @@ WHERE status = 'completed'
 If critical issues arise:
 
 ### Quick Rollback Steps
+
 1. Disable feature in UI (remove entry point button)
 2. Disable Edge Function in Dashboard
 3. Monitor for any database issues
 
 ### Database Rollback
+
 ```sql
 -- If needed, drop the table (only if absolutely necessary)
 DROP TABLE IF EXISTS client_intake_jobs CASCADE;
@@ -332,12 +358,14 @@ DROP TABLE IF EXISTS client_intake_jobs CASCADE;
 ## Success Criteria
 
 ### Minimum Viable Success (Week 1)
+
 - [ ] 5+ successful uploads
 - [ ] 70%+ confidence scores
 - [ ] 80%+ success rate (not failed)
 - [ ] Zero critical bugs
 
 ### Adoption Success (Month 1)
+
 - [ ] 30%+ of new clients use upload
 - [ ] Average time savings > 50%
 - [ ] Positive user feedback
@@ -350,21 +378,25 @@ DROP TABLE IF EXISTS client_intake_jobs CASCADE;
 ### Common Issues & Fixes
 
 **"Processing failed"**
+
 - Check Edge Function logs
 - Verify ANTHROPIC_API_KEY set
 - Ensure file is valid PDF/DOCX
 
 **"No data extracted"**
+
 - Document may be empty or corrupted
 - Check Claude API response in logs
 - Verify document contains brand information
 
 **"Permission denied"**
+
 - Check RLS policies
 - Verify user authenticated
 - Ensure user has client membership
 
 ### Getting Help
+
 1. Check Edge Function logs: `npx supabase functions logs process-client-intake`
 2. Check browser console errors
 3. Query database for job status
@@ -374,15 +406,18 @@ DROP TABLE IF EXISTS client_intake_jobs CASCADE;
 
 ## Final Sign-Off
 
-**Deployed By:** _________________
-**Date:** _________________
-**Production URL:** _________________
-**Edge Function URL:** _________________
+**Deployed By:** ********\_********
+**Date:** ********\_********
+**Production URL:** ********\_********
+**Edge Function URL:** ********\_********
 
 **Notes:**
-_________________________________________________________________
-_________________________________________________________________
-_________________________________________________________________
+
+---
+
+---
+
+---
 
 ---
 
