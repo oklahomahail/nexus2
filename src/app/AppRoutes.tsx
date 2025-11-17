@@ -25,6 +25,7 @@ const ClientSegmentation = lazy(
   () => import("@/pages/client/ClientSegmentation"),
 );
 const DonorDataLab = lazy(() => import("@/pages/client/DonorDataLab"));
+const BrandProfile = lazy(() => import("@/pages/client/BrandProfile"));
 
 // Loading component
 const PageLoader = () => (
@@ -138,6 +139,14 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageLoader />}>
               <DonorDataLab />
+            </Suspense>
+          }
+        />
+        <Route
+          path="brand"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <BrandProfile />
             </Suspense>
           }
         />

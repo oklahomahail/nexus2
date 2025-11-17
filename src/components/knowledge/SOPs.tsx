@@ -237,7 +237,7 @@ export default function SOPs({ clientId, onSaveSuccess }: SOPsProps) {
           referenced by AI when generating campaigns. For detailed corpus
           management, visit the{" "}
           <a
-            href="/brand"
+            href={`/clients/${clientId}/brand`}
             className="underline hover:text-blue-900 dark:hover:text-blue-100"
           >
             Brand Profile section

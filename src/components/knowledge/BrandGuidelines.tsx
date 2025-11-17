@@ -40,7 +40,7 @@ export default function BrandGuidelines({
             Create a brand profile to define your organization's identity
           </p>
           <a
-            href={`/brand`}
+            href={`/clients/${clientId}/brand`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
           >
             <Sparkles className="w-4 h-4" />
@@ -66,7 +66,7 @@ export default function BrandGuidelines({
             </p>
           </div>
           <a
-            href={`/brand`}
+            href={`/clients/${clientId}/brand`}
             className="inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             Edit Full Profile

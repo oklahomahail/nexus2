@@ -304,7 +304,7 @@ export default function ClientAssets({
           <strong>Note:</strong> Assets are stored in your Brand Profile. For
           advanced asset management and file uploads, visit the{" "}
           <a
-            href="/brand"
+            href={`/clients/${clientId}/brand`}
             className="underline hover:text-blue-900 dark:hover:text-blue-100"
           >
             Brand Profile section
