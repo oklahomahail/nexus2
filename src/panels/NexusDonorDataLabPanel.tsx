@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useCallback, useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { LabRecommendationsPanel } from "@/components/donorDataLab/LabRecommendationsPanel";
 import { useNotifications } from "@/context/notifications/NotificationsContext";
@@ -16,7 +16,11 @@ import {
   exportMonthlyProspectsCsv,
   exportLookalikeSeedCsv,
 } from "@/services/donorDataLabExport";
-import { saveLabRun } from "@/services/donorDataLabPersistence";
+import {
+  saveLabRun,
+  getLabRunById,
+  type LabRun,
+} from "@/services/donorDataLabPersistence";
 import { promoteSuggestedSegmentToNexusSegment } from "@/services/donorDataLabSegmentPromotion";
 
 type LabStep = "upload" | "mapping" | "results";
@@ -29,6 +33,7 @@ interface ParsedCsv {
 export function NexusDonorDataLabPanel() {
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addNotification } = useNotifications();
   const [step, setStep] = useState<LabStep>("upload");
 
@@ -45,12 +50,33 @@ export function NexusDonorDataLabPanel() {
   const [analysisDate, setAnalysisDate] = useState<Date | null>(null);
   const [rowsProcessed, setRowsProcessed] = useState<number>(0);
   const [rowsIgnored, setRowsIgnored] = useState<number>(0);
+  const [savedLabRun, setSavedLabRun] = useState<LabRun | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<
     "all" | "upgrade" | "monthly" | "at-risk"
   >("all");
   const [createdSegmentIds, setCreatedSegmentIds] = useState<string[]>([]);
+
+  // Load specific lab run if runId is in URL (view mode)
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const runId = searchParams.get("runId");
+
+    if (runId && clientId) {
+      const saved = getLabRunById(clientId, runId);
+      if (saved) {
+        setFileName(saved.fileName);
+        setAnalysis(saved.analysis);
+        setRecommendations(saved.recommendations);
+        setAnalysisDate(new Date(saved.runDate));
+        setRowsProcessed(saved.rowsProcessed);
+        setRowsIgnored(saved.rowsIgnored);
+        setSavedLabRun(saved);
+        setStep("results");
+      }
+    }
+  }, [clientId, location.search]);
 
   const showError = useCallback(
     (message: string) => {
@@ -140,7 +166,7 @@ export function NexusDonorDataLabPanel() {
 
       // Save the Lab run for history and AI context enrichment
       if (clientId && fileName) {
-        saveLabRun({
+        const saved = saveLabRun({
           clientId,
           fileName,
           rowsProcessed: validRows.length,
@@ -148,6 +174,7 @@ export function NexusDonorDataLabPanel() {
           analysis,
           recommendations,
         });
+        setSavedLabRun(saved);
       }
 
       setStep("results");
@@ -293,13 +320,19 @@ export function NexusDonorDataLabPanel() {
   const handleStartCampaign = () => {
     if (!clientId) return;
 
-    // Navigate to campaign builder with pre-selected segments
-    const segmentParams =
-      createdSegmentIds.length > 0
-        ? `?segments=${createdSegmentIds.join(",")}`
-        : "";
+    // Navigate to campaign builder with pre-selected segments and Lab run ID
+    const params = new URLSearchParams();
+    if (createdSegmentIds.length > 0) {
+      params.set("segments", createdSegmentIds.join(","));
+    }
+    if (savedLabRun?.runId) {
+      params.set("labRunId", savedLabRun.runId);
+    }
 
-    void navigate(`/clients/${clientId}/campaigns/new${segmentParams}`);
+    const queryString = params.toString();
+    void navigate(
+      `/clients/${clientId}/campaigns/new${queryString ? `?${queryString}` : ""}`,
+    );
   };
 
   return (
@@ -308,9 +341,17 @@ export function NexusDonorDataLabPanel() {
         {/* Header */}
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-base font-semibold text-slate-50">
-              The Nexus Donor Data Lab
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-semibold text-slate-50">
+                The Nexus Donor Data Lab
+              </h1>
+              {savedLabRun && (
+                <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300 ring-1 ring-amber-500/20">
+                  Viewing saved analysis from{" "}
+                  {new Date(savedLabRun.runDate).toLocaleDateString()}
+                </span>
+              )}
+            </div>
             <p className="text-xs text-slate-400">
               Upload anonymized giving data. Get upgrade, monthly, reactivation,
               and acquisition strategy in minutes.

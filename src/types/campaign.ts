@@ -54,6 +54,8 @@ export interface CampaignWithDeliverables {
   goalAmount?: number;
   startDate?: string;
   endDate?: string;
+  originLabRunId?: string; // Reference to Data Lab run that generated segments
+  originLabRunSummary?: string; // Human-readable description of origin
   deliverables: Deliverable[];
   createdAt: string;
   updatedAt: string;
