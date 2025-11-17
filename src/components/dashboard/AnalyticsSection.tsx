@@ -172,7 +172,9 @@ export default function AnalyticsSection() {
             </span>
           </div>
           <div className="flex items-center justify-between text-sm">
-            <span className="text-[rgb(var(--nexus-slate-700))]">High Value</span>
+            <span className="text-[rgb(var(--nexus-slate-700))]">
+              High Value
+            </span>
             <span className="font-semibold text-[rgb(var(--nexus-slate-900))]">
               48
             </span>
