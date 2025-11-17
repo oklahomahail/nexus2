@@ -2,10 +2,12 @@
 // Multi-step wizard for uploading and processing client brand briefs
 
 import React, { useState } from "react";
-import { Modal, Button, FileUpload, Input } from "@/components/ui-kit";
-import { clientIntakeService } from "@/services/clientIntakeService";
+
+import { Modal, Button, FileUpload } from "@/components/ui-kit";
 import { useIntakeJob } from "@/hooks/useIntakeJob";
+import { clientIntakeService } from "@/services/clientIntakeService";
 import type { ExtractedBrandData } from "@/types/clientIntake";
+
 import { BrandProfileReview } from "./BrandProfileReview";
 import { IntakeJobStatus } from "./IntakeJobStatus";
 
@@ -54,7 +56,10 @@ export function ClientIntakeWizard({
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
-    if (!validTypes.includes(file.type) && !file.name.match(/\.(pdf|txt|md|docx)$/i)) {
+    if (
+      !validTypes.includes(file.type) &&
+      !file.name.match(/\.(pdf|txt|md|docx)$/i)
+    ) {
       setUploadError("Please upload a PDF, TXT, MD, or DOCX file");
       return;
     }
@@ -124,8 +129,9 @@ export function ClientIntakeWizard({
                 Upload Client Brief
               </h3>
               <p className="text-sm text-slate-400">
-                Upload a brand brief, client intake document, or marketing strategy document.
-                Our AI will extract and structure the key information.
+                Upload a brand brief, client intake document, or marketing
+                strategy document. Our AI will extract and structure the key
+                information.
               </p>
             </div>
 
@@ -153,8 +159,8 @@ export function ClientIntakeWizard({
                 />
               </svg>
               <span>
-                The document will be processed with AI to extract brand voice, messaging,
-                and other key information.
+                The document will be processed with AI to extract brand voice,
+                messaging, and other key information.
               </span>
             </div>
           </div>
@@ -185,7 +191,9 @@ export function ClientIntakeWizard({
         return (
           <div className="text-center py-12">
             <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-slate-200 font-medium">Saving brand profile...</p>
+            <p className="text-slate-200 font-medium">
+              Saving brand profile...
+            </p>
             <p className="text-sm text-slate-400 mt-2">
               Creating brand profile and storing extracted data
             </p>
@@ -229,9 +237,7 @@ export function ClientIntakeWizard({
             >
               Start Over
             </Button>
-            <Button onClick={handleCommit}>
-              Create Brand Profile
-            </Button>
+            <Button onClick={handleCommit}>Create Brand Profile</Button>
           </>
         );
 
@@ -243,7 +249,9 @@ export function ClientIntakeWizard({
   return (
     <Modal
       open={isOpen}
-      onClose={step === "processing" || step === "saving" ? () => {} : handleClose}
+      onClose={
+        step === "processing" || step === "saving" ? () => {} : handleClose
+      }
       title="Client Onboarding"
       size="xl"
       closeOnOverlayClick={step !== "processing" && step !== "saving"}

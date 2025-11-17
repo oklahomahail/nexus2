@@ -2,8 +2,9 @@
 // Editable review UI for extracted brand data
 
 import React, { useState } from "react";
-import type { ExtractedBrandData } from "@/types/clientIntake";
+
 import { Input } from "@/components/ui-kit";
+import type { ExtractedBrandData } from "@/types/clientIntake";
 
 interface BrandProfileReviewProps {
   extractedData: ExtractedBrandData;
@@ -121,15 +122,19 @@ export function BrandProfileReview({
         hasData={!!extractedData.voice_tone.tone_of_voice}
       >
         <div className="space-y-3">
-          <Input
-            label="Tone of Voice"
-            value={extractedData.voice_tone.tone_of_voice || ""}
-            onChange={(e) =>
-              updateField(["voice_tone", "tone_of_voice"], e.target.value)
-            }
-            placeholder="warm, urgent, plain-language"
-            description="3-5 descriptive keywords, comma-separated"
-          />
+          <div>
+            <Input
+              label="Tone of Voice"
+              value={extractedData.voice_tone.tone_of_voice || ""}
+              onChange={(e) =>
+                updateField(["voice_tone", "tone_of_voice"], e.target.value)
+              }
+              placeholder="warm, urgent, plain-language"
+            />
+            <p className="text-xs text-slate-500 mt-1">
+              3-5 descriptive keywords, comma-separated
+            </p>
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-1">
               Brand Personality
@@ -158,7 +163,9 @@ export function BrandProfileReview({
               }
               placeholder="impact, community, hope"
             />
-            <p className="text-xs text-slate-500 mt-1">Comma-separated keywords</p>
+            <p className="text-xs text-slate-500 mt-1">
+              Comma-separated keywords
+            </p>
           </div>
         </div>
       </CollapsibleSection>
@@ -211,7 +218,9 @@ export function BrandProfileReview({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No messaging pillars extracted</p>
+          <p className="text-sm text-slate-500">
+            No messaging pillars extracted
+          </p>
         )}
       </CollapsibleSection>
 
@@ -234,9 +243,9 @@ export function BrandProfileReview({
             </label>
             <input
               className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={
-                (extractedData.visual_identity.primary_colors || []).join(", ")
-              }
+              value={(extractedData.visual_identity.primary_colors || []).join(
+                ", ",
+              )}
               onChange={(e) =>
                 updateField(
                   ["visual_identity", "primary_colors"],
@@ -295,7 +304,9 @@ export function BrandProfileReview({
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No audience segments extracted</p>
+          <p className="text-sm text-slate-500">
+            No audience segments extracted
+          </p>
         )}
       </CollapsibleSection>
 
@@ -324,7 +335,9 @@ export function BrandProfileReview({
           <Input
             label="Primary Contact Email"
             type="email"
-            value={extractedData.contact_information.primary_contact_email || ""}
+            value={
+              extractedData.contact_information.primary_contact_email || ""
+            }
             onChange={(e) =>
               updateField(
                 ["contact_information", "primary_contact_email"],
@@ -409,7 +422,9 @@ function CollapsibleSection({
           />
         </svg>
       </button>
-      {isExpanded && <div className="px-4 py-3 border-t border-slate-700">{children}</div>}
+      {isExpanded && (
+        <div className="px-4 py-3 border-t border-slate-700">{children}</div>
+      )}
     </div>
   );
 }

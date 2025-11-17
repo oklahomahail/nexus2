@@ -2,8 +2,9 @@
 // Real-time subscription to intake job status updates
 
 import { useEffect, useState, useCallback } from "react";
-import type { ClientIntakeJob } from "@/types/clientIntake";
+
 import { clientIntakeService } from "@/services/clientIntakeService";
+import type { ClientIntakeJob } from "@/types/clientIntake";
 
 export function useIntakeJob(jobId: string | null) {
   const [job, setJob] = useState<ClientIntakeJob | null>(null);
@@ -41,7 +42,7 @@ export function useIntakeJob(jobId: string | null) {
     if (!jobId) return;
 
     // Initial fetch
-    fetchJob();
+    void fetchJob();
 
     // Set up real-time subscription
     const unsubscribe = clientIntakeService.subscribeToIntakeJob(
@@ -58,7 +59,8 @@ export function useIntakeJob(jobId: string | null) {
   }, [jobId, fetchJob]);
 
   // Helper computed values
-  const isProcessing = job?.status === "pending" || job?.status === "processing";
+  const isProcessing =
+    job?.status === "pending" || job?.status === "processing";
   const isComplete = job?.status === "completed";
   const isFailed = job?.status === "failed";
   const needsReview = job?.status === "review_required";

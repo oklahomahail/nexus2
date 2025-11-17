@@ -7,7 +7,6 @@ import type {
   ExtractedBrandData,
   IntakeJobStatus,
 } from "@/types/clientIntake";
-import type { Client } from "@/types/client";
 
 /**
  * Upload a file and create an intake job for processing
@@ -98,7 +97,9 @@ export async function uploadClientBrief(
 /**
  * Get intake job by ID
  */
-export async function getIntakeJob(jobId: string): Promise<ClientIntakeJob | null> {
+export async function getIntakeJob(
+  jobId: string,
+): Promise<ClientIntakeJob | null> {
   const { data, error } = await supabase
     .from("client_intake_jobs")
     .select("*")
@@ -157,7 +158,7 @@ export function subscribeToIntakeJob(
     .subscribe();
 
   return () => {
-    supabase.removeChannel(channel);
+    void supabase.removeChannel(channel);
   };
 }
 
@@ -176,7 +177,9 @@ export async function commitIntakeData(
     }
 
     // Get current user ID
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       throw new Error("User not authenticated");
     }

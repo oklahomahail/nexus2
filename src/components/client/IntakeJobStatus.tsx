@@ -1,7 +1,6 @@
 // Intake Job Status Component
 // Real-time status display during document processing
 
-import React from "react";
 import type { ClientIntakeJob } from "@/types/clientIntake";
 
 interface IntakeJobStatusProps {
@@ -73,9 +72,7 @@ export function IntakeJobStatus({
               ? "Processing failed"
               : "Processing complete!"}
         </h3>
-        <p className="text-sm text-slate-400">
-          {job.uploaded_file_name}
-        </p>
+        <p className="text-sm text-slate-400">{job.uploaded_file_name}</p>
       </div>
 
       {/* Progress stages */}
