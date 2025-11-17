@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FlaskConical } from "lucide-react";
 
 import { LabRecommendationsPanel } from "@/components/donorDataLab/LabRecommendationsPanel";
 import { useClient } from "@/context/ClientContext";
@@ -347,18 +348,28 @@ export function NexusDonorDataLabPanel() {
         {/* Header */}
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-semibold text-slate-50">
-                The Nexus Donor Data Lab
-              </h1>
-              {savedLabRun && (
-                <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300 ring-1 ring-amber-500/20">
-                  Viewing saved analysis from{" "}
-                  {new Date(savedLabRun.runDate).toLocaleDateString()}
-                </span>
-              )}
+            <div className="flex items-center gap-3">
+              {/* Donor Lab Logo - Replace with actual logo when available */}
+              {/* TODO: Add Donor Lab logo image at /public/brand/nexus_donor_lab_logo.svg */}
+              {/* <img
+                src="/brand/nexus_donor_lab_logo.svg"
+                alt="Donor Lab"
+                className="h-12 w-auto"
+              /> */}
+              <div>
+                <h1 className="text-base font-semibold text-slate-50 flex items-center gap-2">
+                  <FlaskConical size={20} className="text-cyan-400" />
+                  Donor Lab
+                </h1>
+                {savedLabRun && (
+                  <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300 ring-1 ring-amber-500/20 mt-1 inline-block">
+                    Viewing saved analysis from{" "}
+                    {new Date(savedLabRun.runDate).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 mt-2">
               Upload anonymized giving data. Get upgrade, monthly, reactivation,
               and acquisition strategy in minutes.
             </p>
