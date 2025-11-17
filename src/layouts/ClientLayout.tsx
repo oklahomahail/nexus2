@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, NavLink, useParams, useLocation } from "react-router-dom";
 
+import { useClient } from "@/context/ClientContext";
 import { analytics } from "@/utils/analytics";
 
 export const ClientLayout: React.FC = () => {
   const { clientId } = useParams();
   const location = useLocation();
+  const { setCurrentClientBySlug } = useClient();
+
+  // Automatically set the current client from the URL parameter
+  useEffect(() => {
+    if (clientId) {
+      void setCurrentClientBySlug(clientId);
+    }
+  }, [clientId, setCurrentClientBySlug]);
 
   const link = (to: string, label: string, testId?: string) => (
     <NavLink

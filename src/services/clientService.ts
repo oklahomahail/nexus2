@@ -131,6 +131,41 @@ export const clientService = {
   },
 
   /**
+   * Get a single client by slug (derived from name)
+   * Slug is the lowercase, hyphenated version of the client name
+   *
+   * @param slug - Client slug (e.g., "regional-food-bank")
+   * @returns Client or null if not found
+   * @throws Error if database query fails
+   */
+  getBySlug: async (slug: string): Promise<Client | null> => {
+    // Convert slug back to name pattern for matching
+    // "regional-food-bank" -> "Regional Food Bank"
+    const namePattern = slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .ilike("name", namePattern)
+      .is("deleted_at", null)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        // Not found
+        return null;
+      }
+      console.error("Error fetching client by slug:", error);
+      throw new Error(`Failed to fetch client by slug: ${error.message}`);
+    }
+
+    return data ? mapRowToClient(data) : null;
+  },
+
+  /**
    * Create a new client
    *
    * @param clientData - Client data (without id, createdAt, updatedAt)

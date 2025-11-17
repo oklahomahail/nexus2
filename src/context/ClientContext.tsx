@@ -14,6 +14,7 @@ interface ClientState {
   clients: Client[];
   currentClient: Client | null;
   setCurrentClient: (id: string | null) => void;
+  setCurrentClientBySlug: (slug: string | null) => Promise<void>;
   reload: () => Promise<void>;
 }
 
@@ -49,12 +50,38 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function setCurrentClientBySlug(slug: string | null) {
+    if (!slug) {
+      setCurrentClient(null);
+      return;
+    }
+
+    try {
+      const client = await clientService.getBySlug(slug);
+      if (client) {
+        setCurrentClient(client.id);
+      } else {
+        console.error(`Client not found for slug: ${slug}`);
+        setCurrentClient(null);
+      }
+    } catch (error) {
+      console.error("Error setting current client by slug:", error);
+      setCurrentClient(null);
+    }
+  }
+
   useEffect(() => {
     void reload().catch(console.error);
   }, []);
 
   const value = useMemo(
-    () => ({ clients, currentClient, setCurrentClient, reload }),
+    () => ({
+      clients,
+      currentClient,
+      setCurrentClient,
+      setCurrentClientBySlug,
+      reload,
+    }),
     [clients, currentClient],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

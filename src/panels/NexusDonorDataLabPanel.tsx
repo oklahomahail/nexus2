@@ -1,8 +1,10 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { LabRecommendationsPanel } from "@/components/donorDataLab/LabRecommendationsPanel";
+import { useClient } from "@/context/ClientContext";
 import { useNotifications } from "@/context/notifications/NotificationsContext";
+import { getClientSlug } from "@/types/client";
 import {
   runDonorDataLab,
   DonorRawRow,
@@ -31,10 +33,14 @@ interface ParsedCsv {
 }
 
 export function NexusDonorDataLabPanel() {
-  const { clientId } = useParams<{ clientId: string }>();
+  const { currentClient } = useClient();
   const navigate = useNavigate();
   const location = useLocation();
   const { addNotification } = useNotifications();
+
+  // Get clientId (UUID) and clientSlug for different purposes
+  const clientId = currentClient?.id || "";
+  const clientSlug = currentClient ? getClientSlug(currentClient) : "";
   const [step, setStep] = useState<LabStep>("upload");
 
   const [fileName, setFileName] = useState<string | null>(null);
@@ -331,7 +337,7 @@ export function NexusDonorDataLabPanel() {
 
     const queryString = params.toString();
     void navigate(
-      `/clients/${clientId}/campaigns/new${queryString ? `?${queryString}` : ""}`,
+      `/clients/${clientSlug}/campaigns/new${queryString ? `?${queryString}` : ""}`,
     );
   };
 

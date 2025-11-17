@@ -8,8 +8,8 @@
  */
 
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 
+import { useClient } from "@/context/ClientContext";
 import type { LabRun } from "@/services/donorDataLabPersistence";
 import { getLatestLabRun } from "@/services/donorDataLabPersistence";
 import type { JourneyType } from "@/utils/journeyTemplates";
@@ -52,7 +52,7 @@ interface DemoBehavioralSegment {
  * Example: How to integrate journey components into a campaign builder
  */
 export function JourneyBuilderDemo() {
-  const { clientId } = useParams<{ clientId: string }>();
+  const { currentClient } = useClient();
 
   // State
   const [journeyType, setJourneyType] = useState<JourneyType | null>(null);
@@ -64,8 +64,8 @@ export function JourneyBuilderDemo() {
 
   // Load Data Lab run
   useEffect(() => {
-    if (clientId) {
-      const run = getLatestLabRun(clientId);
+    if (currentClient?.id) {
+      const run = getLatestLabRun(currentClient.id);
       setLabRun(run);
 
       // Load mock segments (replace with actual segment loading)
@@ -86,7 +86,7 @@ export function JourneyBuilderDemo() {
         ]);
       }
     }
-  }, [clientId]);
+  }, [currentClient?.id]);
 
   // Get journey template
   const journeyTemplate = journeyType ? getJourneyTemplate(journeyType) : null;
@@ -228,7 +228,7 @@ export function JourneyBuilderDemo() {
                   </p>
                 </div>
                 <GenerateJourneyWithAiButton
-                  clientId={clientId}
+                  clientId={currentClient?.id || ""}
                   journeyType={journeyType}
                   journeyTemplate={journeyTemplate}
                   labRun={labRun}
@@ -264,7 +264,7 @@ export function JourneyBuilderDemo() {
                       return (
                         <JourneyTouchCard
                           key={version.versionId}
-                          clientId={clientId}
+                          clientId={currentClient?.id || ""}
                           journeyType={journeyType}
                           touch={touch}
                           labRun={labRun}

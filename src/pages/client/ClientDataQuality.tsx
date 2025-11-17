@@ -19,15 +19,15 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
 
 import { useClient } from "@/context/ClientContext";
 import { useDataQuality } from "@/hooks/useDataQuality";
 
 export default function ClientDataQuality() {
-  const { clientId } = useParams<{ clientId: string }>();
   const { currentClient } = useClient();
-  const { metrics, loading, error, refresh } = useDataQuality(clientId || "");
+  const { metrics, loading, error, refresh } = useDataQuality(
+    currentClient?.id || "",
+  );
 
   if (loading) {
     return (

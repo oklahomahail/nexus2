@@ -1,9 +1,15 @@
 import { Sparkles } from "lucide-react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useClient } from "@/context/ClientContext";
+import { getClientSlug } from "@/types/client";
 
 export default function ClientCampaigns() {
-  const { clientId } = useParams();
+  const { currentClient } = useClient();
   const navigate = useNavigate();
+
+  // Get the client slug for URL construction
+  const clientSlug = currentClient ? getClientSlug(currentClient) : "";
 
   const campaigns = [
     {
@@ -24,7 +30,7 @@ export default function ClientCampaigns() {
           <h1 className="text-xl font-semibold">Campaigns</h1>
           <button
             className="px-3 py-1.5 border rounded-md bg-white"
-            onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+            onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
             data-tutorial-step="campaigns.new"
           >
             New Campaign
@@ -42,7 +48,7 @@ export default function ClientCampaigns() {
             </p>
             <button
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+              onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
               data-tutorial-step="campaigns.new"
             >
               Create Your First Campaign
@@ -59,7 +65,7 @@ export default function ClientCampaigns() {
         <h1 className="text-xl font-semibold">Campaigns</h1>
         <button
           className="px-3 py-1.5 border rounded-md bg-white"
-          onClick={() => navigate(`/clients/${clientId}/campaigns/new`)}
+          onClick={() => navigate(`/clients/${clientSlug}/campaigns/new`)}
           data-tutorial-step="campaigns.new"
         >
           New Campaign
@@ -120,7 +126,7 @@ export default function ClientCampaigns() {
                       className="text-blue-600 hover:text-blue-800"
                       onClick={() =>
                         navigate(
-                          `/clients/${clientId}/campaigns/${campaign.id}`,
+                          `/clients/${clientSlug}/campaigns/${campaign.id}`,
                         )
                       }
                       data-tutorial-step="campaigns.row"
@@ -132,7 +138,7 @@ export default function ClientCampaigns() {
                         className="text-purple-600 hover:text-purple-800 dark:text-purple-400 dark:hover:text-purple-300 font-medium"
                         onClick={() =>
                           navigate(
-                            `/clients/${clientId}/track15?campaign=${campaign.id}`,
+                            `/clients/${clientSlug}/track15?campaign=${campaign.id}`,
                           )
                         }
                         title="View Track15 Analytics"
