@@ -178,7 +178,7 @@ create policy "Users can view campaign emails for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_emails.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -191,7 +191,7 @@ create policy "Users can insert campaign emails for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_emails.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -204,7 +204,7 @@ create policy "Users can update campaign emails for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_emails.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -217,7 +217,7 @@ create policy "Users can delete campaign emails for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_emails.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -231,7 +231,7 @@ create policy "Users can view campaign social posts for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_social_posts.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -244,7 +244,7 @@ create policy "Users can insert campaign social posts for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_social_posts.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -257,7 +257,7 @@ create policy "Users can update campaign social posts for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_social_posts.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -270,7 +270,7 @@ create policy "Users can delete campaign social posts for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_social_posts.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -284,7 +284,7 @@ create policy "Users can view campaign direct mail for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_direct_mail.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -297,7 +297,7 @@ create policy "Users can insert campaign direct mail for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_direct_mail.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -310,7 +310,7 @@ create policy "Users can update campaign direct mail for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_direct_mail.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
@@ -323,7 +323,7 @@ create policy "Users can delete campaign direct mail for their clients"
       select 1 from public.campaigns c
       where c.id = campaign_direct_mail.campaign_id
       and c.client_id in (
-        select client_id from public.client_users
+        select client_id from public.client_memberships
         where user_id = auth.uid()
       )
     )
