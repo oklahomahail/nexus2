@@ -851,3 +851,6 @@
       bg-blue-900/15 border-blue-800/50;
   }
 }
+
+/* Campaign Editor Styles */
+@import "./styles/campaign-editor.css";
