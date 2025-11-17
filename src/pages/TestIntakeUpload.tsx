@@ -63,7 +63,9 @@ export default function TestIntakeUpload() {
             <div className="flex items-start gap-3">
               <span className="text-green-400 mt-0.5">✓</span>
               <div>
-                <p className="text-slate-200 font-medium">Anthropic API Key Set</p>
+                <p className="text-slate-200 font-medium">
+                  Anthropic API Key Set
+                </p>
                 <p className="text-slate-400">
                   Claude Sonnet 4.5 ready for extraction
                 </p>
@@ -90,7 +92,8 @@ export default function TestIntakeUpload() {
             📄 Sample Document Available
           </h3>
           <p className="text-sm text-slate-300 mb-3">
-            Use the <span className="font-mono text-blue-400">Client Template.pdf</span>{" "}
+            Use the{" "}
+            <span className="font-mono text-blue-400">Client Template.pdf</span>{" "}
             you have attached - it contains:
           </p>
           <ul className="text-sm text-slate-300 space-y-1 ml-4">
@@ -130,15 +133,9 @@ export default function TestIntakeUpload() {
             <div className="mt-4 pt-4 border-t border-green-500/20">
               <p className="text-sm text-slate-300 mb-2">Next steps:</p>
               <ul className="text-sm text-slate-400 space-y-1 ml-4">
-                <li>
-                  • Check the brand_profiles table in Supabase
-                </li>
-                <li>
-                  • View the brand_corpus entry with original document
-                </li>
-                <li>
-                  • Integrate ClientIntakeWizard into your production UI
-                </li>
+                <li>• Check the brand_profiles table in Supabase</li>
+                <li>• View the brand_corpus entry with original document</li>
+                <li>• Integrate ClientIntakeWizard into your production UI</li>
               </ul>
             </div>
           </div>
@@ -155,7 +152,9 @@ export default function TestIntakeUpload() {
                 1
               </span>
               <div>
-                <p className="font-medium mb-1">Click "Test Client Intake Upload"</p>
+                <p className="font-medium mb-1">
+                  Click "Test Client Intake Upload"
+                </p>
                 <p className="text-slate-400 text-xs">
                   This opens the 3-step wizard modal
                 </p>
@@ -177,7 +176,9 @@ export default function TestIntakeUpload() {
                 3
               </span>
               <div>
-                <p className="font-medium mb-1">Watch the processing (30-60s)</p>
+                <p className="font-medium mb-1">
+                  Watch the processing (30-60s)
+                </p>
                 <p className="text-slate-400 text-xs">
                   Real-time status updates as Claude extracts data
                 </p>
@@ -223,8 +224,8 @@ export default function TestIntakeUpload() {
               Anthropic API key is set correctly
             </p>
             <p>
-              <span className="font-medium">If extraction looks wrong:</span> Check
-              the Claude prompt in brandIntakeParser.ts
+              <span className="font-medium">If extraction looks wrong:</span>{" "}
+              Check the Claude prompt in brandIntakeParser.ts
             </p>
             <p className="text-xs text-slate-400 mt-3">
               View logs: npx supabase functions logs process-client-intake
