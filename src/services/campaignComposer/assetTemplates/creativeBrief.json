@@ -1,0 +1,309 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Track15 Creative Brief Template",
+  "description": "Canonical structure for campaign creative briefs following Track15 methodology",
+  "type": "object",
+  "required": [
+    "theme",
+    "centralNarrative",
+    "brandVoiceProfile",
+    "audienceSegments",
+    "expectedOutcomes",
+    "messagingPillars",
+    "emotionalTriggers"
+  ],
+  "properties": {
+    "theme": {
+      "type": "string",
+      "description": "Overarching campaign theme (e.g., 'Hope Through Action', 'Together We Rise')",
+      "minLength": 10,
+      "maxLength": 100
+    },
+    "centralNarrative": {
+      "type": "object",
+      "description": "Core story concept that drives the campaign",
+      "required": ["headline", "summary", "donorRole"],
+      "properties": {
+        "headline": {
+          "type": "string",
+          "description": "Compelling headline that captures the narrative",
+          "minLength": 10,
+          "maxLength": 150
+        },
+        "summary": {
+          "type": "string",
+          "description": "2-3 sentence narrative summary",
+          "minLength": 50,
+          "maxLength": 500
+        },
+        "donorRole": {
+          "type": "string",
+          "description": "How the donor fits into the story (e.g., 'hero', 'partner', 'catalyst')",
+          "minLength": 20,
+          "maxLength": 200
+        }
+      }
+    },
+    "brandVoiceProfile": {
+      "type": "object",
+      "description": "Voice and tone parameters for this campaign",
+      "required": ["tone", "voiceTraits", "styleGuidelines"],
+      "properties": {
+        "tone": {
+          "type": "string",
+          "enum": [
+            "warm",
+            "professional",
+            "urgent",
+            "inspirational",
+            "grateful",
+            "empowering"
+          ],
+          "description": "Primary tone for campaign communications"
+        },
+        "voiceTraits": {
+          "type": "array",
+          "description": "Key voice characteristics (e.g., 'conversational', 'authentic', 'hopeful')",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3,
+          "maxItems": 7
+        },
+        "styleGuidelines": {
+          "type": "array",
+          "description": "Specific style rules (e.g., 'No em dashes', 'Use en dashes for ranges only')",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "bannedPhrases": {
+          "type": "array",
+          "description": "Phrases to avoid in this campaign",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "audienceSegments": {
+      "type": "object",
+      "description": "Target audience breakdown",
+      "required": ["primary", "secondary"],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "description": "Primary donor segments to target",
+          "items": {
+            "type": "object",
+            "required": ["segment", "size", "priority"],
+            "properties": {
+              "segment": {
+                "type": "string",
+                "enum": [
+                  "current_donors",
+                  "lapsed_donors",
+                  "high_value",
+                  "prospects",
+                  "monthly_supporters",
+                  "major_gift",
+                  "planned_giving"
+                ]
+              },
+              "size": {
+                "type": "string",
+                "description": "Estimated segment size or percentage"
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "characteristics": {
+                "type": "string",
+                "description": "Key characteristics of this segment"
+              }
+            }
+          },
+          "minItems": 1
+        },
+        "secondary": {
+          "type": "array",
+          "description": "Secondary donor segments",
+          "items": {
+            "type": "object",
+            "required": ["segment", "priority"],
+            "properties": {
+              "segment": {
+                "type": "string",
+                "enum": [
+                  "current_donors",
+                  "lapsed_donors",
+                  "high_value",
+                  "prospects",
+                  "monthly_supporters",
+                  "major_gift",
+                  "planned_giving"
+                ]
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "expectedOutcomes": {
+      "type": "object",
+      "description": "Performance targets and expected results",
+      "required": ["goalAmount", "estimatedROI"],
+      "properties": {
+        "goalAmount": {
+          "type": "number",
+          "description": "Fundraising goal in dollars",
+          "minimum": 0
+        },
+        "estimatedROI": {
+          "type": "string",
+          "description": "Expected return on investment (e.g., '3:1', '400%')"
+        },
+        "segmentUplift": {
+          "type": "object",
+          "description": "Expected performance lift by segment",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "conversionTargets": {
+          "type": "object",
+          "description": "Conversion rate targets by channel",
+          "properties": {
+            "directMail": {
+              "type": "string",
+              "description": "DM response rate target (e.g., '1.5%')"
+            },
+            "email": {
+              "type": "string",
+              "description": "Email conversion rate target (e.g., '0.5%')"
+            },
+            "social": {
+              "type": "string",
+              "description": "Social engagement target (e.g., '3% CTR')"
+            }
+          }
+        }
+      }
+    },
+    "messagingPillars": {
+      "type": "array",
+      "description": "Core messages that support the campaign theme",
+      "items": {
+        "type": "object",
+        "required": ["pillar", "description", "supportingPoints"],
+        "properties": {
+          "pillar": {
+            "type": "string",
+            "description": "Name of messaging pillar (e.g., 'Impact', 'Urgency', 'Community')",
+            "minLength": 3,
+            "maxLength": 50
+          },
+          "description": {
+            "type": "string",
+            "description": "What this pillar communicates",
+            "minLength": 20,
+            "maxLength": 300
+          },
+          "supportingPoints": {
+            "type": "array",
+            "description": "Key supporting points for this pillar",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2,
+            "maxItems": 5
+          }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "emotionalTriggers": {
+      "type": "array",
+      "description": "Emotional motivations based on Track15 methodology",
+      "items": {
+        "type": "object",
+        "required": ["trigger", "application"],
+        "properties": {
+          "trigger": {
+            "type": "string",
+            "enum": [
+              "hope",
+              "urgency",
+              "gratitude",
+              "belonging",
+              "empowerment",
+              "compassion",
+              "justice",
+              "celebration",
+              "legacy",
+              "impact"
+            ],
+            "description": "Primary emotional trigger from Track15 framework"
+          },
+          "application": {
+            "type": "string",
+            "description": "How this trigger is applied in messaging",
+            "minLength": 30,
+            "maxLength": 300
+          },
+          "channels": {
+            "type": "array",
+            "description": "Which channels emphasize this trigger",
+            "items": {
+              "type": "string",
+              "enum": ["direct_mail", "email", "social", "web", "all"]
+            },
+            "default": ["all"]
+          }
+        }
+      },
+      "minItems": 2,
+      "maxItems": 4
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional campaign metadata",
+      "properties": {
+        "campaignId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "season": {
+          "type": "string",
+          "enum": [
+            "spring",
+            "summer",
+            "fall",
+            "winter",
+            "ntxgd",
+            "eoy",
+            "custom"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,465 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Track15 Social Media Campaign Template",
+  "description": "Canonical structure for social media campaigns (Meta + LinkedIn, 10-15 posts)",
+  "type": "object",
+  "required": ["campaignName", "platforms", "posts"],
+  "properties": {
+    "campaignName": {
+      "type": "string",
+      "description": "Social campaign name",
+      "minLength": 5,
+      "maxLength": 100
+    },
+    "platforms": {
+      "type": "array",
+      "description": "Target social platforms",
+      "items": {
+        "type": "string",
+        "enum": ["facebook", "instagram", "linkedin", "twitter", "threads"]
+      },
+      "minItems": 1
+    },
+    "posts": {
+      "type": "array",
+      "description": "10-15 social media posts with platform-specific variants",
+      "items": {
+        "type": "object",
+        "required": ["postNumber", "platform", "format", "content"],
+        "properties": {
+          "postNumber": {
+            "type": "number",
+            "description": "Post sequence number (1-15)",
+            "minimum": 1,
+            "maximum": 15
+          },
+          "postName": {
+            "type": "string",
+            "description": "Descriptive post name",
+            "examples": [
+              "Launch - Impact Story",
+              "Urgency - Countdown",
+              "Testimonial - Beneficiary Quote"
+            ]
+          },
+          "platform": {
+            "type": "array",
+            "description": "Which platform(s) this post is optimized for",
+            "items": {
+              "type": "string",
+              "enum": [
+                "facebook",
+                "instagram",
+                "linkedin",
+                "twitter",
+                "threads",
+                "all"
+              ]
+            },
+            "minItems": 1
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "short_form",
+              "long_form",
+              "carousel",
+              "video",
+              "story",
+              "reel"
+            ],
+            "description": "Post format type"
+          },
+          "content": {
+            "type": "object",
+            "description": "Post content by platform",
+            "required": ["copy"],
+            "properties": {
+              "copy": {
+                "type": "object",
+                "description": "Platform-specific copy variants",
+                "properties": {
+                  "facebook": {
+                    "type": "string",
+                    "description": "Facebook/Instagram short-form (≤75 chars headline, 125-250 total)",
+                    "minLength": 50,
+                    "maxLength": 300
+                  },
+                  "instagram": {
+                    "type": "string",
+                    "description": "Instagram caption (≤2200 chars, optimal 125-150)",
+                    "minLength": 50,
+                    "maxLength": 2200
+                  },
+                  "linkedin": {
+                    "type": "string",
+                    "description": "LinkedIn long-form (400-900 words for article-style posts)",
+                    "minLength": 100,
+                    "maxLength": 5000
+                  },
+                  "twitter": {
+                    "type": "string",
+                    "description": "Twitter/X (≤280 chars)",
+                    "minLength": 50,
+                    "maxLength": 280
+                  },
+                  "threads": {
+                    "type": "string",
+                    "description": "Threads (≤500 chars per post)",
+                    "minLength": 50,
+                    "maxLength": 500
+                  }
+                }
+              },
+              "headline": {
+                "type": "string",
+                "description": "Attention-grabbing headline (≤75 chars for Meta)",
+                "maxLength": 75
+              },
+              "hook": {
+                "type": "string",
+                "description": "Opening hook for long-form posts (first 1-2 sentences)",
+                "minLength": 20,
+                "maxLength": 200
+              },
+              "bodyText": {
+                "type": "string",
+                "description": "Main body for long-form (LinkedIn)",
+                "maxLength": 4000
+              },
+              "cta": {
+                "type": "string",
+                "description": "Call-to-action text",
+                "minLength": 10,
+                "maxLength": 100,
+                "examples": [
+                  "Donate now: [link]",
+                  "Learn more and give: [link]",
+                  "Join us in making a difference: [link]"
+                ]
+              },
+              "link": {
+                "type": "string",
+                "description": "Donation or campaign landing page URL",
+                "format": "uri"
+              }
+            }
+          },
+          "hashtags": {
+            "type": "object",
+            "description": "Platform-specific hashtag strategy",
+            "properties": {
+              "primary": {
+                "type": "array",
+                "description": "Campaign-specific branded hashtags",
+                "items": {
+                  "type": "string",
+                  "pattern": "^#"
+                },
+                "maxItems": 3,
+                "examples": [["#GiveHope2024", "#TogetherWeRise"]]
+              },
+              "secondary": {
+                "type": "array",
+                "description": "Industry/cause hashtags",
+                "items": {
+                  "type": "string",
+                  "pattern": "^#"
+                },
+                "maxItems": 5,
+                "examples": [
+                  ["#Nonprofit", "#Philanthropy", "#MakeADifference"]
+                ]
+              },
+              "platformSpecific": {
+                "type": "object",
+                "description": "Platform-specific hashtag recommendations",
+                "properties": {
+                  "instagram": {
+                    "type": "array",
+                    "description": "Instagram allows up to 30, optimal 5-10 relevant",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 10
+                  },
+                  "linkedin": {
+                    "type": "array",
+                    "description": "LinkedIn optimal 3-5 professional hashtags",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 5
+                  },
+                  "twitter": {
+                    "type": "array",
+                    "description": "Twitter optimal 1-2 hashtags",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 2
+                  }
+                }
+              }
+            }
+          },
+          "visualDirection": {
+            "type": "object",
+            "description": "Visual content recommendations",
+            "required": ["mediaType"],
+            "properties": {
+              "mediaType": {
+                "type": "string",
+                "enum": [
+                  "photo",
+                  "carousel",
+                  "video",
+                  "infographic",
+                  "quote_graphic",
+                  "behind_the_scenes"
+                ],
+                "description": "Primary media type"
+              },
+              "imagePrompt": {
+                "type": "string",
+                "description": "AI image generation prompt or photo description",
+                "minLength": 20,
+                "maxLength": 500
+              },
+              "carouselSlides": {
+                "type": "array",
+                "description": "Individual slide prompts for carousel posts",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "slideNumber": {
+                      "type": "number"
+                    },
+                    "imagePrompt": {
+                      "type": "string"
+                    },
+                    "overlayText": {
+                      "type": "string",
+                      "maxLength": 100
+                    }
+                  }
+                },
+                "maxItems": 10
+              },
+              "videoPrompt": {
+                "type": "object",
+                "description": "Video content description",
+                "properties": {
+                  "duration": {
+                    "type": "string",
+                    "examples": ["15-30 seconds", "1-2 minutes", "3-5 minutes"]
+                  },
+                  "style": {
+                    "type": "string",
+                    "enum": [
+                      "testimonial",
+                      "behind_the_scenes",
+                      "impact_story",
+                      "animated",
+                      "b_roll"
+                    ],
+                    "description": "Video style"
+                  },
+                  "scriptOutline": {
+                    "type": "string",
+                    "description": "Brief video script or shot list",
+                    "maxLength": 1000
+                  },
+                  "captionText": {
+                    "type": "string",
+                    "description": "On-screen text/captions",
+                    "maxLength": 500
+                  }
+                }
+              },
+              "altText": {
+                "type": "string",
+                "description": "Accessibility alt text for images",
+                "minLength": 10,
+                "maxLength": 200
+              },
+              "designNotes": {
+                "type": "string",
+                "description": "Additional design guidance (colors, composition, brand elements)",
+                "maxLength": 300
+              }
+            }
+          },
+          "schedulingRecommendation": {
+            "type": "object",
+            "description": "When and how to post",
+            "properties": {
+              "postDate": {
+                "type": "string",
+                "description": "Relative timing (e.g., 'Week 1, Day 2', 'Launch day', '3 days before deadline')",
+                "examples": ["Week 1, Monday", "Day 5", "Final 48 hours"]
+              },
+              "optimalTime": {
+                "type": "string",
+                "description": "Best time to post for platform",
+                "examples": [
+                  "9am-11am EST",
+                  "Lunch hour (12-1pm)",
+                  "Evening (6-8pm)"
+                ]
+              },
+              "boosting": {
+                "type": "object",
+                "description": "Paid promotion recommendations",
+                "properties": {
+                  "recommended": {
+                    "type": "boolean",
+                    "description": "Should this post be boosted?"
+                  },
+                  "budget": {
+                    "type": "string",
+                    "examples": ["$25-50", "$100-200", "10% of ad budget"]
+                  },
+                  "targeting": {
+                    "type": "string",
+                    "description": "Audience targeting notes",
+                    "examples": [
+                      "Lookalike of current donors",
+                      "Local supporters age 35-65"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "engagement": {
+            "type": "object",
+            "description": "Engagement strategy for this post",
+            "properties": {
+              "tone": {
+                "type": "string",
+                "enum": [
+                  "inspirational",
+                  "urgent",
+                  "grateful",
+                  "celebratory",
+                  "educational",
+                  "conversational"
+                ],
+                "description": "Emotional tone"
+              },
+              "engagementGoal": {
+                "type": "string",
+                "enum": [
+                  "awareness",
+                  "clicks",
+                  "shares",
+                  "comments",
+                  "conversions"
+                ],
+                "description": "Primary engagement objective"
+              },
+              "conversationStarters": {
+                "type": "array",
+                "description": "Questions or prompts to encourage comments",
+                "items": {
+                  "type": "string"
+                },
+                "examples": [
+                  [
+                    "What inspires you to give back?",
+                    "Tag someone who makes a difference!"
+                  ]
+                ]
+              }
+            }
+          }
+        }
+      },
+      "minItems": 10,
+      "maxItems": 15
+    },
+    "campaignStrategy": {
+      "type": "object",
+      "description": "Overall social campaign strategy",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Campaign duration",
+          "examples": ["2 weeks", "30 days", "Year-end season (Nov-Dec)"]
+        },
+        "postingCadence": {
+          "type": "object",
+          "description": "Posting frequency by platform",
+          "properties": {
+            "facebook": {
+              "type": "string",
+              "examples": ["Daily", "3-5x/week", "Mon/Wed/Fri"]
+            },
+            "instagram": {
+              "type": "string",
+              "examples": ["Daily", "Stories 2x/day + Feed 1x/day"]
+            },
+            "linkedin": {
+              "type": "string",
+              "examples": ["2-3x/week", "Tue/Thu"]
+            }
+          }
+        },
+        "contentMix": {
+          "type": "object",
+          "description": "Distribution of content types",
+          "properties": {
+            "stories": {
+              "type": "string",
+              "examples": ["40%", "6 posts"]
+            },
+            "urgency": {
+              "type": "string",
+              "examples": ["30%", "4 posts"]
+            },
+            "testimonials": {
+              "type": "string",
+              "examples": ["20%", "3 posts"]
+            },
+            "educational": {
+              "type": "string",
+              "examples": ["10%", "2 posts"]
+            }
+          }
+        },
+        "hashtagStrategy": {
+          "type": "string",
+          "description": "Overall hashtag approach",
+          "maxLength": 500
+        },
+        "communityManagement": {
+          "type": "string",
+          "description": "How to handle comments, shares, questions",
+          "maxLength": 500
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Campaign metadata",
+      "properties": {
+        "campaignId": {
+          "type": "string"
+        },
+        "estimatedReach": {
+          "type": "number",
+          "description": "Expected organic reach"
+        },
+        "paidBudget": {
+          "type": "number",
+          "description": "Total paid promotion budget"
+        },
+        "targetEngagementRate": {
+          "type": "string",
+          "examples": ["3-5%", "500 total engagements"]
+        }
+      }
+    }
+  }
+}

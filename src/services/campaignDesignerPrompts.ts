@@ -71,6 +71,167 @@ COMPLIANCE CONSTRAINTS:
 }
 
 // ============================================================================
+// CREATIVE BRIEF PROMPT (Track15 Methodology)
+// ============================================================================
+
+export interface CreativeBriefInput {
+  campaignType: "appeal" | "event" | "program_launch" | "capital" | "endowment";
+  season?: "spring" | "summer" | "fall" | "winter" | "ntxgd" | "eoy" | "custom";
+  targetAudience: string;
+  goal: string;
+  goalAmount?: number;
+  tone:
+    | "urgent"
+    | "inspiring"
+    | "reflective"
+    | "celebratory"
+    | "grateful"
+    | "empowering";
+  channels: Array<
+    "direct_mail" | "email" | "social" | "phone" | "personal_outreach"
+  >;
+  duration?: number; // campaign duration in weeks
+}
+
+/**
+ * Generate a comprehensive creative brief following Track15 methodology
+ * This should be the FIRST step in campaign generation
+ */
+export function buildCreativeBriefPrompt(
+  brandContext: string,
+  input: CreativeBriefInput,
+): string {
+  return `${brandContext}
+
+CAMPAIGN PARAMETERS:
+- Type: ${input.campaignType}
+- Season: ${input.season || "Not specified"}
+- Target Audience: ${input.targetAudience}
+- Goal: ${input.goal}
+${input.goalAmount ? `- Goal Amount: $${input.goalAmount.toLocaleString()}` : ""}
+- Primary Tone: ${input.tone}
+- Channels: ${input.channels.join(", ")}
+${input.duration ? `- Duration: ${input.duration} weeks` : ""}
+
+TASK:
+Create a comprehensive CREATIVE BRIEF aligned to the BRAND CONTEXT above. This brief will guide all campaign asset development (direct mail, email, social media).
+
+OUTPUT FORMAT (JSON):
+\`\`\`json
+{
+  "theme": "2-5 word overarching campaign theme (e.g., 'Hope Through Action', 'Together We Rise')",
+  "centralNarrative": {
+    "headline": "Compelling headline that captures the narrative (10-15 words)",
+    "summary": "2-3 sentence narrative summary that tells the core story",
+    "donorRole": "How the donor fits into the story (e.g., 'hero', 'partner', 'catalyst') with 1-2 sentence explanation"
+  },
+  "brandVoiceProfile": {
+    "tone": "${input.tone}",
+    "voiceTraits": ["trait1", "trait2", "trait3", "trait4", "trait5"],
+    "styleGuidelines": [
+      "No em dashes (use en dashes for ranges only)",
+      "Short paragraphs (2-3 sentences)",
+      "Active voice preferred",
+      "Other specific style rules from brand context"
+    ],
+    "bannedPhrases": ["Any phrases to avoid based on brand context"]
+  },
+  "audienceSegments": {
+    "primary": [
+      {
+        "segment": "current_donors|lapsed_donors|high_value|prospects|monthly_supporters|major_gift|planned_giving",
+        "size": "Estimated size or percentage",
+        "priority": "high",
+        "characteristics": "Key characteristics of this segment"
+      }
+    ],
+    "secondary": [
+      {
+        "segment": "segment_type",
+        "priority": "medium|low"
+      }
+    ]
+  },
+  "expectedOutcomes": {
+    "goalAmount": ${input.goalAmount || 0},
+    "estimatedROI": "Expected return (e.g., '3:1', '400%')",
+    "segmentUplift": {
+      "primary_segment": "Expected lift (e.g., '+15% vs last campaign')",
+      "secondary_segment": "Expected lift"
+    },
+    "conversionTargets": {
+      "directMail": "Response rate target (e.g., '1.5%')",
+      "email": "Conversion rate target (e.g., '0.5%')",
+      "social": "Engagement target (e.g., '3% CTR')"
+    }
+  },
+  "messagingPillars": [
+    {
+      "pillar": "Impact",
+      "description": "What this pillar communicates (1-2 sentences)",
+      "supportingPoints": [
+        "Specific proof point or statistic",
+        "Story or testimonial example",
+        "Evidence-based impact statement"
+      ]
+    },
+    {
+      "pillar": "Urgency",
+      "description": "Why donors should give now",
+      "supportingPoints": ["Time-sensitive reason", "Deadline or matching gift", "Capacity constraint"]
+    },
+    {
+      "pillar": "Community",
+      "description": "How donors are part of something bigger",
+      "supportingPoints": ["Collective impact", "Donor stories", "Movement building"]
+    }
+  ],
+  "emotionalTriggers": [
+    {
+      "trigger": "hope|urgency|gratitude|belonging|empowerment|compassion|justice|celebration|legacy|impact",
+      "application": "How this emotional trigger is applied in messaging (2-3 sentences)",
+      "channels": ["direct_mail", "email", "social", "all"]
+    },
+    {
+      "trigger": "second_primary_trigger",
+      "application": "Application description",
+      "channels": ["channels_where_emphasized"]
+    }
+  ],
+  "metadata": {
+    "campaignId": "",
+    "clientId": "",
+    "season": "${input.season || "custom"}",
+    "createdAt": "${new Date().toISOString()}"
+  }
+}
+\`\`\`
+
+REQUIREMENTS:
+1. Theme must be memorable, concise, and emotionally resonant
+2. Central narrative should follow classic storytelling: problem → solution → donor's role
+3. Include 3-5 messaging pillars with concrete supporting points
+4. Include 2-4 emotional triggers from Track15 methodology
+5. Voice traits should reflect brand personality from BRAND CONTEXT
+6. Expected outcomes should be realistic based on campaign type and audience
+7. Segment targeting should prioritize based on recency, engagement, and giving capacity
+
+Then provide a 200-300 word prose summary of the creative brief that could be shared with stakeholders, summarizing:
+- Campaign vision and theme
+- Target audience approach
+- Key messages and emotional drivers
+- Expected impact and outcomes
+
+IMPORTANT TRACK15 STYLE GUIDELINES:
+- No em dashes (—) - use en dashes (–) for ranges only
+- Warm but professional tone
+- Evidence-based impact framing
+- Donor-respectful language (avoid guilt, pressure, or manipulation)
+- Clear, accessible writing (8th-10th grade reading level)
+- Use merge fields for personalization: {{FirstName}}, {{GiftImpact}}, {{ReplyByDate}}`;
+}
+
+// ============================================================================
 // CAMPAIGN BLUEPRINT PROMPT
 // ============================================================================
 

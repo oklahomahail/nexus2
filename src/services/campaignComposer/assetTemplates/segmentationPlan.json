@@ -1,0 +1,691 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Track15 Smart Segmentation Plan Template",
+  "description": "Canonical structure combining industry best practices with client-specific donor reality",
+  "type": "object",
+  "required": ["planName", "segments", "messageVariants", "executionPlan"],
+  "properties": {
+    "planName": {
+      "type": "string",
+      "description": "Name of segmentation plan",
+      "minLength": 5,
+      "maxLength": 100
+    },
+    "segments": {
+      "type": "array",
+      "description": "Donor segments with targeting rules",
+      "items": {
+        "type": "object",
+        "required": ["segmentName", "priority", "criteria", "targetingRules"],
+        "properties": {
+          "segmentName": {
+            "type": "string",
+            "description": "Segment identifier",
+            "examples": [
+              "Primary: Recent High-Engagement",
+              "Secondary: Lapsed Reactivation",
+              "Major Donor Cultivation"
+            ]
+          },
+          "segmentType": {
+            "type": "string",
+            "enum": [
+              "current_donors",
+              "lapsed_donors",
+              "high_value",
+              "prospects",
+              "monthly_supporters",
+              "major_gift",
+              "planned_giving",
+              "custom"
+            ],
+            "description": "Base segment category"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "secondary",
+              "tertiary",
+              "reactivation",
+              "cultivation"
+            ],
+            "description": "Segment priority level"
+          },
+          "criteria": {
+            "type": "object",
+            "description": "Segment definition criteria",
+            "properties": {
+              "industryStandard": {
+                "type": "object",
+                "description": "General fundraising best practice rules",
+                "properties": {
+                  "recency": {
+                    "type": "string",
+                    "description": "Days since last gift",
+                    "examples": [
+                      "0-90 days",
+                      "91-365 days",
+                      "366-730 days",
+                      "731+ days"
+                    ]
+                  },
+                  "frequency": {
+                    "type": "string",
+                    "description": "Number of gifts in period",
+                    "examples": [
+                      "3+ gifts/year",
+                      "1-2 gifts/year",
+                      "First-time donor"
+                    ]
+                  },
+                  "monetary": {
+                    "type": "string",
+                    "description": "Lifetime or recent giving amount",
+                    "examples": [
+                      "$1000+ lifetime",
+                      "$100-999 lifetime",
+                      "<$100 lifetime"
+                    ]
+                  },
+                  "engagement": {
+                    "type": "string",
+                    "enum": ["high", "medium", "low", "none"],
+                    "description": "Email opens, event attendance, volunteer activity"
+                  },
+                  "loyaltyScore": {
+                    "type": "number",
+                    "description": "Consecutive years giving (0-10+)",
+                    "minimum": 0
+                  }
+                }
+              },
+              "clientSpecific": {
+                "type": "object",
+                "description": "Client-specific donor reality",
+                "properties": {
+                  "averageGift": {
+                    "type": "number",
+                    "description": "Client's average gift size for this segment"
+                  },
+                  "medianGift": {
+                    "type": "number",
+                    "description": "Client's median gift size for this segment"
+                  },
+                  "giftRange": {
+                    "type": "object",
+                    "properties": {
+                      "min": {
+                        "type": "number"
+                      },
+                      "max": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "typicalUpgradePath": {
+                    "type": "string",
+                    "description": "Historical upgrade pattern for this client",
+                    "examples": [
+                      "$50 → $100 (2 years)",
+                      "$100 → $250 (3-4 years)",
+                      "$250 → $500 → Monthly"
+                    ]
+                  },
+                  "conversionRate": {
+                    "type": "string",
+                    "description": "Historical response rate for this segment",
+                    "examples": ["2.5% DM response", "0.8% email conversion"]
+                  },
+                  "pipelineStatus": {
+                    "type": "string",
+                    "enum": [
+                      "active",
+                      "cultivation",
+                      "lapsed_recent",
+                      "lapsed_long",
+                      "prospect",
+                      "major_gift_qualified"
+                    ],
+                    "description": "Current pipeline position"
+                  }
+                }
+              },
+              "customRules": {
+                "type": "array",
+                "description": "Additional custom segmentation logic",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "rule": {
+                      "type": "string",
+                      "description": "Rule description"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Rule value or threshold"
+                    }
+                  }
+                },
+                "examples": [
+                  [
+                    {
+                      "rule": "Gave to EOY campaign last 2 years",
+                      "value": "true"
+                    },
+                    {
+                      "rule": "Attended gala in last 12 months",
+                      "value": "true"
+                    }
+                  ]
+                ]
+              }
+            }
+          },
+          "targetingRules": {
+            "type": "object",
+            "description": "How to target this segment in campaign",
+            "required": ["include"],
+            "properties": {
+              "include": {
+                "type": "boolean",
+                "description": "Include this segment in campaign",
+                "default": true
+              },
+              "channels": {
+                "type": "array",
+                "description": "Which channels to use for this segment",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "direct_mail",
+                    "email",
+                    "social",
+                    "phone",
+                    "personal_outreach"
+                  ]
+                },
+                "minItems": 1
+              },
+              "messageVariant": {
+                "type": "string",
+                "description": "Which message variant to use (references messageVariants below)",
+                "examples": [
+                  "upgrade_impact",
+                  "urgency_deadline",
+                  "gratitude_renewal",
+                  "reactivation_wemissyou"
+                ]
+              },
+              "suppressionRules": {
+                "type": "array",
+                "description": "When NOT to include someone from this segment",
+                "items": {
+                  "type": "string"
+                },
+                "examples": [
+                  [
+                    "Already gave this quarter",
+                    "Marked do-not-solicit",
+                    "In major gift pipeline"
+                  ]
+                ]
+              }
+            }
+          },
+          "estimatedSize": {
+            "type": "number",
+            "description": "Expected number of people in this segment"
+          },
+          "estimatedRevenue": {
+            "type": "object",
+            "description": "Revenue projections for this segment",
+            "properties": {
+              "conservative": {
+                "type": "number"
+              },
+              "moderate": {
+                "type": "number"
+              },
+              "optimistic": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "messageVariants": {
+      "type": "array",
+      "description": "Message variants tailored to segment characteristics",
+      "items": {
+        "type": "object",
+        "required": [
+          "variantName",
+          "targetSegments",
+          "messagingApproach",
+          "askStrategy"
+        ],
+        "properties": {
+          "variantName": {
+            "type": "string",
+            "description": "Unique identifier for this variant",
+            "examples": [
+              "upgrade_impact",
+              "urgency_deadline",
+              "gratitude_renewal",
+              "reactivation_wemissyou"
+            ]
+          },
+          "targetSegments": {
+            "type": "array",
+            "description": "Which segments use this variant",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "messagingApproach": {
+            "type": "object",
+            "description": "Messaging strategy for this variant",
+            "properties": {
+              "primaryTheme": {
+                "type": "string",
+                "description": "Main message theme",
+                "examples": [
+                  "Impact amplification",
+                  "Deadline urgency",
+                  "Donor gratitude",
+                  "We miss you"
+                ]
+              },
+              "emotionalTrigger": {
+                "type": "string",
+                "enum": [
+                  "hope",
+                  "urgency",
+                  "gratitude",
+                  "belonging",
+                  "empowerment",
+                  "compassion",
+                  "justice",
+                  "celebration",
+                  "legacy",
+                  "impact"
+                ],
+                "description": "Primary emotional driver"
+              },
+              "voiceTone": {
+                "type": "string",
+                "enum": [
+                  "warm",
+                  "urgent",
+                  "grateful",
+                  "inspirational",
+                  "conversational",
+                  "professional"
+                ],
+                "description": "Tone adjustment for segment"
+              },
+              "keyMessages": {
+                "type": "array",
+                "description": "Core messages for this variant",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 2,
+                "maxItems": 5
+              }
+            }
+          },
+          "askStrategy": {
+            "type": "object",
+            "description": "How to ask this segment for support",
+            "required": ["askType", "askCalculation"],
+            "properties": {
+              "askType": {
+                "type": "string",
+                "enum": [
+                  "upgrade",
+                  "renewal",
+                  "reactivation",
+                  "acquisition",
+                  "monthly_conversion",
+                  "major_gift"
+                ],
+                "description": "Type of ask for this segment"
+              },
+              "askCalculation": {
+                "type": "object",
+                "description": "How to calculate suggested ask amounts",
+                "properties": {
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "last_gift_plus",
+                      "highest_gift_plus",
+                      "average_times",
+                      "fixed_ladder",
+                      "custom"
+                    ],
+                    "description": "Calculation method"
+                  },
+                  "formula": {
+                    "type": "string",
+                    "description": "Specific formula",
+                    "examples": [
+                      "Last gift × 1.25, 1.5, 2.0",
+                      "Highest gift + $50, + $100, + $250",
+                      "Fixed: $50, $100, $250, $500",
+                      "Median × 1.5, Median × 2, Median × 3"
+                    ]
+                  },
+                  "minimumAsk": {
+                    "type": "number",
+                    "description": "Floor for ask amount"
+                  },
+                  "maximumAsk": {
+                    "type": "number",
+                    "description": "Ceiling for ask amount (before major gift threshold)"
+                  }
+                }
+              },
+              "askAmountOptions": {
+                "type": "array",
+                "description": "Number of ask amount options to present",
+                "items": {
+                  "type": "string"
+                },
+                "examples": [
+                  [
+                    "3 ascending options",
+                    "4 options + 'Other'",
+                    "5 options with recommended highlighted"
+                  ]
+                ]
+              },
+              "monthlyAskVariant": {
+                "type": "string",
+                "description": "How to present monthly giving option for this segment",
+                "examples": [
+                  "Highlight: '$25/month = $300/year impact'",
+                  "Soft option: Checkbox below one-time",
+                  "Emphasized: 'Join our monthly community'"
+                ]
+              },
+              "ctaLanguage": {
+                "type": "string",
+                "description": "Call-to-action phrasing for this segment",
+                "examples": [
+                  "Renew your support today",
+                  "Increase your impact this year",
+                  "Welcome back—we've missed you",
+                  "Join us for the first time"
+                ]
+              }
+            }
+          },
+          "contentAdjustments": {
+            "type": "object",
+            "description": "How content differs for this variant",
+            "properties": {
+              "directMail": {
+                "type": "string",
+                "description": "DM-specific adjustments",
+                "examples": [
+                  "Emphasize past impact in P.S.",
+                  "Add urgency deadline in opening",
+                  "Include testimonial insert"
+                ]
+              },
+              "email": {
+                "type": "string",
+                "description": "Email-specific adjustments",
+                "examples": [
+                  "Shorter body, emphasize CTA",
+                  "Add donor spotlight",
+                  "Include impact infographic"
+                ]
+              },
+              "social": {
+                "type": "string",
+                "description": "Social-specific adjustments",
+                "examples": [
+                  "Celebratory tone, tag past supporters",
+                  "Urgency countdown posts",
+                  "Behind-the-scenes content"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "executionPlan": {
+      "type": "object",
+      "description": "How to execute this segmentation plan across channels",
+      "required": ["timeline", "channelStrategy"],
+      "properties": {
+        "timeline": {
+          "type": "object",
+          "description": "Campaign timeline by segment",
+          "properties": {
+            "launchDate": {
+              "type": "string",
+              "description": "Campaign start date",
+              "examples": [
+                "2024-11-15",
+                "First week of December",
+                "30 days before year-end"
+              ]
+            },
+            "duration": {
+              "type": "string",
+              "description": "Campaign duration",
+              "examples": ["4 weeks", "Through Dec 31", "60 days"]
+            },
+            "phasing": {
+              "type": "array",
+              "description": "Segment rollout schedule",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phase": {
+                    "type": "string",
+                    "examples": [
+                      "Week 1",
+                      "Launch",
+                      "Mid-campaign",
+                      "Final push"
+                    ]
+                  },
+                  "segments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "channels": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "channelStrategy": {
+          "type": "object",
+          "description": "Multichannel execution pattern",
+          "properties": {
+            "directMail": {
+              "type": "object",
+              "properties": {
+                "mailDate": {
+                  "type": "string"
+                },
+                "segments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "estimatedCost": {
+                  "type": "number"
+                }
+              }
+            },
+            "email": {
+              "type": "object",
+              "properties": {
+                "numberOfEmails": {
+                  "type": "number",
+                  "description": "Total emails in sequence"
+                },
+                "cadence": {
+                  "type": "string",
+                  "examples": ["3x/week", "Mon/Wed/Fri", "Daily for 10 days"]
+                },
+                "segments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "estimatedReach": {
+                  "type": "number"
+                }
+              }
+            },
+            "social": {
+              "type": "object",
+              "properties": {
+                "platforms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "postFrequency": {
+                  "type": "string"
+                },
+                "paidBudget": {
+                  "type": "number"
+                },
+                "organicReach": {
+                  "type": "number"
+                }
+              }
+            },
+            "touchPattern": {
+              "type": "string",
+              "description": "Ideal multichannel touch sequence",
+              "examples": [
+                "DM (Week 1) → Email (Week 2) → Social (ongoing) → Email reminder (Week 3)",
+                "Email launch → DM drop (Day 3) → Social burst (Days 5-10) → Email final ask (Day 14)"
+              ]
+            }
+          }
+        },
+        "kpiChecklist": {
+          "type": "array",
+          "description": "Key performance indicators to track",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "examples": [
+                  "Overall response rate",
+                  "Revenue by segment",
+                  "Average gift by segment",
+                  "Upgrade rate",
+                  "New monthly conversions",
+                  "Reactivation rate",
+                  "ROI by channel"
+                ]
+              },
+              "target": {
+                "type": "string",
+                "description": "Target value for this KPI"
+              },
+              "trackingMethod": {
+                "type": "string",
+                "description": "How this will be measured"
+              }
+            }
+          },
+          "minItems": 3
+        },
+        "testingStrategy": {
+          "type": "object",
+          "description": "A/B tests and experiments",
+          "properties": {
+            "tests": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "testName": {
+                    "type": "string"
+                  },
+                  "hypothesis": {
+                    "type": "string"
+                  },
+                  "segment": {
+                    "type": "string"
+                  },
+                  "variable": {
+                    "type": "string",
+                    "examples": [
+                      "Ask amount",
+                      "Subject line",
+                      "CTA placement",
+                      "Image vs no image"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Plan metadata",
+      "properties": {
+        "campaignId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "totalEstimatedRevenue": {
+          "type": "number",
+          "description": "Sum of all segment projections (moderate scenario)"
+        },
+        "totalEstimatedCost": {
+          "type": "number",
+          "description": "All-in campaign costs (production, postage, platform fees, ads)"
+        },
+        "projectedROI": {
+          "type": "string",
+          "description": "Revenue / Cost ratio",
+          "examples": ["3.5:1", "450%"]
+        }
+      }
+    }
+  }
+}

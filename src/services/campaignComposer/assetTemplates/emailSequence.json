@@ -1,0 +1,341 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Track15 Email Campaign Sequence Template",
+  "description": "Canonical structure for email fundraising sequences (10-12 drafts)",
+  "type": "object",
+  "required": ["sequenceName", "emails"],
+  "properties": {
+    "sequenceName": {
+      "type": "string",
+      "description": "Name of email sequence",
+      "minLength": 5,
+      "maxLength": 100
+    },
+    "sequenceType": {
+      "type": "string",
+      "enum": [
+        "acquisition",
+        "cultivation",
+        "solicitation",
+        "stewardship",
+        "reactivation",
+        "year_end",
+        "multichannel"
+      ],
+      "description": "Primary purpose of sequence"
+    },
+    "emails": {
+      "type": "array",
+      "description": "10-12 email drafts with varied CTAs and messaging",
+      "items": {
+        "type": "object",
+        "required": [
+          "emailNumber",
+          "subjectLine",
+          "previewText",
+          "body",
+          "cta"
+        ],
+        "properties": {
+          "emailNumber": {
+            "type": "number",
+            "description": "Position in sequence (1-12)",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "emailName": {
+            "type": "string",
+            "description": "Descriptive name for this email variant",
+            "examples": [
+              "Launch - Story Lead",
+              "Urgency - Deadline Approaching",
+              "Impact - Testimonial"
+            ]
+          },
+          "subjectLine": {
+            "type": "string",
+            "description": "Subject line (30-60 characters optimal)",
+            "minLength": 10,
+            "maxLength": 80
+          },
+          "previewText": {
+            "type": "string",
+            "description": "Preview text / preheader (40-100 characters)",
+            "minLength": 20,
+            "maxLength": 130
+          },
+          "body": {
+            "type": "object",
+            "description": "Email body content",
+            "required": ["opening", "bodyParagraphs", "closing"],
+            "properties": {
+              "greeting": {
+                "type": "string",
+                "description": "Personalized greeting",
+                "examples": [
+                  "Hi {{FirstName}},",
+                  "Dear {{FirstName}},",
+                  "{{FirstName}} —"
+                ]
+              },
+              "opening": {
+                "type": "string",
+                "description": "Opening hook (1-2 sentences)",
+                "minLength": 20,
+                "maxLength": 300
+              },
+              "bodyParagraphs": {
+                "type": "array",
+                "description": "Email body (2-5 short paragraphs, 200-400 words total)",
+                "items": {
+                  "type": "string",
+                  "minLength": 30,
+                  "maxLength": 400
+                },
+                "minItems": 2,
+                "maxItems": 5
+              },
+              "closing": {
+                "type": "string",
+                "description": "Closing statement before CTA",
+                "minLength": 20,
+                "maxLength": 200
+              },
+              "signoff": {
+                "type": "string",
+                "description": "Sign-off and signature",
+                "examples": ["Thank you,\n[Name]\n[Title]"]
+              },
+              "wordCount": {
+                "type": "number",
+                "description": "Total body word count (target 200-400)",
+                "minimum": 100,
+                "maximum": 600
+              }
+            }
+          },
+          "cta": {
+            "type": "object",
+            "description": "Call-to-action elements",
+            "required": ["primaryButton", "buttonText", "ctaPlacement"],
+            "properties": {
+              "primaryButton": {
+                "type": "string",
+                "description": "Primary CTA button text",
+                "minLength": 5,
+                "maxLength": 40,
+                "examples": [
+                  "Give Now",
+                  "Make Your Gift",
+                  "Donate Today",
+                  "Join Us",
+                  "Support Our Mission"
+                ]
+              },
+              "buttonText": {
+                "type": "string",
+                "description": "Alternative CTA text for variety",
+                "minLength": 5,
+                "maxLength": 40
+              },
+              "ctaPlacement": {
+                "type": "array",
+                "description": "Where CTAs appear in email",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "after_opening",
+                    "mid_body",
+                    "before_closing",
+                    "after_signoff",
+                    "sidebar"
+                  ]
+                },
+                "minItems": 1
+              },
+              "secondaryCta": {
+                "type": "string",
+                "description": "Optional secondary action (e.g., 'Learn More', 'Share This')",
+                "maxLength": 40
+              }
+            }
+          },
+          "visualDirection": {
+            "type": "object",
+            "description": "Visual and design guidance",
+            "properties": {
+              "heroImage": {
+                "type": "object",
+                "description": "Hero image prompt/description",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "description": "Image description or AI prompt"
+                  },
+                  "style": {
+                    "type": "string",
+                    "examples": [
+                      "photojournalistic",
+                      "illustration",
+                      "abstract",
+                      "brand_graphic"
+                    ]
+                  },
+                  "altText": {
+                    "type": "string",
+                    "description": "Accessibility alt text"
+                  }
+                }
+              },
+              "layout": {
+                "type": "string",
+                "enum": [
+                  "single_column",
+                  "two_column",
+                  "hero_plus_text",
+                  "text_only"
+                ],
+                "default": "single_column"
+              },
+              "tone": {
+                "type": "string",
+                "enum": [
+                  "urgent",
+                  "warm",
+                  "grateful",
+                  "celebratory",
+                  "informative",
+                  "inspirational"
+                ],
+                "description": "Visual tone for this email"
+              }
+            }
+          },
+          "segmentVariant": {
+            "type": "string",
+            "enum": [
+              "general",
+              "high_value",
+              "recent_donor",
+              "lapsed",
+              "monthly_giver",
+              "prospect"
+            ],
+            "description": "Which segment this variant is optimized for",
+            "default": "general"
+          },
+          "schedulingNotes": {
+            "type": "string",
+            "description": "When this email should be sent in sequence (e.g., 'Day 1', 'Day 3', 'Week 2')",
+            "maxLength": 100
+          }
+        }
+      },
+      "minItems": 10,
+      "maxItems": 12
+    },
+    "abTestingVariants": {
+      "type": "array",
+      "description": "A/B test variants for key emails",
+      "items": {
+        "type": "object",
+        "properties": {
+          "emailNumber": {
+            "type": "number",
+            "description": "Which email this test applies to"
+          },
+          "testElement": {
+            "type": "string",
+            "enum": [
+              "subject_line",
+              "cta_button",
+              "opening_hook",
+              "image",
+              "send_time"
+            ],
+            "description": "What element is being tested"
+          },
+          "variantA": {
+            "type": "string",
+            "description": "Control version"
+          },
+          "variantB": {
+            "type": "string",
+            "description": "Test version"
+          }
+        }
+      }
+    },
+    "sequenceStrategy": {
+      "type": "object",
+      "description": "Overall sequence strategy and cadence",
+      "properties": {
+        "duration": {
+          "type": "string",
+          "description": "Total sequence duration",
+          "examples": ["2 weeks", "30 days", "Through end of month"]
+        },
+        "sendCadence": {
+          "type": "string",
+          "description": "Email frequency pattern",
+          "examples": ["3x/week", "Mon/Wed/Fri", "Daily for 10 days"]
+        },
+        "segmentationRules": {
+          "type": "array",
+          "description": "Which segments get which emails",
+          "items": {
+            "type": "object",
+            "properties": {
+              "segment": {
+                "type": "string"
+              },
+              "emailsToSend": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "skipReason": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "suppressionRules": {
+          "type": "array",
+          "description": "When to stop sending to a recipient",
+          "items": {
+            "type": "string"
+          },
+          "examples": [
+            ["After donation", "After 3 non-opens", "After unsubscribe"]
+          ]
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Sequence metadata",
+      "properties": {
+        "campaignId": {
+          "type": "string"
+        },
+        "season": {
+          "type": "string"
+        },
+        "primaryGoal": {
+          "type": "string",
+          "examples": [
+            "Raise $50,000",
+            "Acquire 200 new donors",
+            "Reactivate 500 lapsed donors"
+          ]
+        },
+        "estimatedReach": {
+          "type": "number",
+          "description": "Total recipients across all segments"
+        }
+      }
+    }
+  }
+}

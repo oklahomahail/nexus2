@@ -1,0 +1,338 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Track15 Direct Mail Package Template",
+  "description": "Canonical structure for direct mail campaigns following Track15 and industry best practices",
+  "type": "object",
+  "required": ["letter", "replyDevice"],
+  "properties": {
+    "letter": {
+      "type": "object",
+      "description": "Main fundraising letter",
+      "required": [
+        "salutation",
+        "openingHook",
+        "story",
+        "ask",
+        "urgency",
+        "closing",
+        "postscript"
+      ],
+      "properties": {
+        "salutation": {
+          "type": "string",
+          "description": "Personalized greeting (use merge field {{FirstName}})",
+          "pattern": "^Dear ",
+          "examples": ["Dear {{FirstName}}", "Dear Friend"]
+        },
+        "openingHook": {
+          "type": "string",
+          "description": "Emotional opening hook (1-2 sentences, max 50 words)",
+          "minLength": 30,
+          "maxLength": 300
+        },
+        "story": {
+          "type": "object",
+          "description": "Story engine - narrative body of letter",
+          "required": ["paragraphs"],
+          "properties": {
+            "paragraphs": {
+              "type": "array",
+              "description": "2-4 story paragraphs, 2-3 sentences each",
+              "items": {
+                "type": "string",
+                "minLength": 50,
+                "maxLength": 400
+              },
+              "minItems": 2,
+              "maxItems": 4
+            },
+            "wordCount": {
+              "type": "number",
+              "description": "Total word count (must be ≤ 850)",
+              "maximum": 850
+            }
+          }
+        },
+        "programBridge": {
+          "type": "string",
+          "description": "Transition from story to program/solution (1-2 sentences)",
+          "minLength": 30,
+          "maxLength": 250
+        },
+        "ask": {
+          "type": "object",
+          "description": "The fundraising ask",
+          "required": ["primaryAsk", "urgencyFraming"],
+          "properties": {
+            "primaryAsk": {
+              "type": "string",
+              "description": "Clear, direct ask statement",
+              "minLength": 20,
+              "maxLength": 200
+            },
+            "urgencyFraming": {
+              "type": "string",
+              "description": "Why the donor should give now",
+              "minLength": 20,
+              "maxLength": 200
+            },
+            "askAmounts": {
+              "type": "array",
+              "description": "Suggested giving amounts (use merge field {{SuggestedAsk}})",
+              "items": {
+                "type": "string"
+              },
+              "examples": [["$50", "$100", "$250", "$500"]]
+            }
+          }
+        },
+        "urgency": {
+          "type": "string",
+          "description": "Urgency reinforcement (deadline, matching gift, limited capacity)",
+          "minLength": 20,
+          "maxLength": 250
+        },
+        "closing": {
+          "type": "object",
+          "description": "Letter closing",
+          "required": ["finalParagraph", "signoff", "signature"],
+          "properties": {
+            "finalParagraph": {
+              "type": "string",
+              "description": "Gratitude and vision (1-2 sentences)",
+              "minLength": 20,
+              "maxLength": 200
+            },
+            "signoff": {
+              "type": "string",
+              "description": "Sign-off phrase",
+              "examples": ["Gratefully,", "With hope,", "In partnership,"]
+            },
+            "signature": {
+              "type": "string",
+              "description": "Signer name and title"
+            }
+          }
+        },
+        "postscript": {
+          "type": "string",
+          "description": "P.S. with additional urgency or impact statement",
+          "pattern": "^P\\.S\\.",
+          "minLength": 20,
+          "maxLength": 200
+        },
+        "styleGuidelines": {
+          "type": "object",
+          "description": "Formatting and style requirements",
+          "properties": {
+            "font": {
+              "type": "string",
+              "default": "12pt serif (Times New Roman, Georgia, or similar)"
+            },
+            "paragraphLength": {
+              "type": "string",
+              "default": "2-3 sentences per paragraph"
+            },
+            "sentenceLength": {
+              "type": "string",
+              "default": "Vary between short (8-12 words) and medium (15-20 words)"
+            },
+            "emphasis": {
+              "type": "string",
+              "default": "Use underline or bold sparingly, italics for emphasis"
+            }
+          }
+        }
+      }
+    },
+    "liftNote": {
+      "type": "object",
+      "description": "Optional lift note (additional insert for added response lift)",
+      "properties": {
+        "headline": {
+          "type": "string",
+          "description": "Attention-grabbing headline",
+          "minLength": 10,
+          "maxLength": 100
+        },
+        "body": {
+          "type": "string",
+          "description": "Brief message (100-200 words)",
+          "minLength": 100,
+          "maxLength": 1000
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "urgency",
+            "social_proof",
+            "impact_story",
+            "special_offer",
+            "donor_recognition"
+          ],
+          "description": "Primary purpose of the lift note"
+        }
+      }
+    },
+    "replyDevice": {
+      "type": "object",
+      "description": "Reply card/form copy",
+      "required": ["headline", "yesStatement", "giftOptions"],
+      "properties": {
+        "headline": {
+          "type": "string",
+          "description": "Reply device headline",
+          "minLength": 10,
+          "maxLength": 100
+        },
+        "yesStatement": {
+          "type": "string",
+          "description": "'Yes, I want to...' commitment statement",
+          "pattern": "^Yes[,!]",
+          "minLength": 20,
+          "maxLength": 150
+        },
+        "giftOptions": {
+          "type": "array",
+          "description": "Suggested gift amounts in ascending order",
+          "items": {
+            "type": "object",
+            "required": ["amount", "impact"],
+            "properties": {
+              "amount": {
+                "type": "string",
+                "description": "Dollar amount or merge field",
+                "examples": ["$50", "$100", "{{SuggestedAsk}}", "Other: $_____"]
+              },
+              "impact": {
+                "type": "string",
+                "description": "What this gift accomplishes",
+                "minLength": 10,
+                "maxLength": 100
+              }
+            }
+          },
+          "minItems": 3,
+          "maxItems": 6
+        },
+        "recurringOption": {
+          "type": "string",
+          "description": "Monthly giving checkbox copy",
+          "examples": ["☐ Yes! Make this a monthly gift"]
+        },
+        "tributeOption": {
+          "type": "boolean",
+          "description": "Include honor/memorial gift option",
+          "default": false
+        }
+      }
+    },
+    "buckSlip": {
+      "type": "object",
+      "description": "Optional small insert (buck slip)",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Brief, impactful message (50-100 words)",
+          "minLength": 50,
+          "maxLength": 500
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "testimonial",
+            "stats",
+            "urgency",
+            "matching_gift",
+            "impact_snapshot"
+          ],
+          "description": "Purpose of buck slip"
+        }
+      }
+    },
+    "visualDirection": {
+      "type": "object",
+      "description": "Suggested visual design and layout",
+      "properties": {
+        "envelopeTeaser": {
+          "type": "string",
+          "description": "Outer envelope teaser copy (if not live stamp/blank)",
+          "maxLength": 100
+        },
+        "letterhead": {
+          "type": "string",
+          "description": "Letterhead style (full-color, 2-color, simple logo, etc.)"
+        },
+        "imagery": {
+          "type": "array",
+          "description": "Image prompts or descriptions for photos/illustrations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "placement": {
+                "type": "string",
+                "enum": [
+                  "letter_top",
+                  "letter_margin",
+                  "insert",
+                  "reply_device",
+                  "envelope"
+                ]
+              },
+              "description": {
+                "type": "string",
+                "description": "Visual description or AI image prompt"
+              },
+              "style": {
+                "type": "string",
+                "examples": [
+                  "photojournalistic",
+                  "illustration",
+                  "infographic",
+                  "headshot"
+                ]
+              }
+            }
+          }
+        },
+        "colorScheme": {
+          "type": "array",
+          "description": "Suggested colors for package",
+          "items": {
+            "type": "string"
+          },
+          "examples": [["warm earth tones", "brand primary + accent"]]
+        },
+        "layoutNotes": {
+          "type": "string",
+          "description": "Additional layout or design guidance",
+          "maxLength": 500
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Package metadata",
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["letter", "postcard", "self_mailer", "flat"],
+          "description": "Mail format type"
+        },
+        "class": {
+          "type": "string",
+          "enum": ["first_class", "nonprofit_standard", "presorted_first"],
+          "description": "Postage class"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Print quantity"
+        },
+        "estimatedCost": {
+          "type": "number",
+          "description": "Estimated cost per piece (production + postage)"
+        }
+      }
+    }
+  }
+}

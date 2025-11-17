@@ -246,17 +246,211 @@ export async function generateCampaign(
   const aiText = data.data.content?.[0]?.text || "";
 
   // Extract structured outputs from AI response
-  // Note: The actual campaign-designer function would parse this differently
-  // For now, return raw text as placeholder
-  const outputs = {
+  const outputs = parseAIResponse(aiText, params.channels);
+
+  return { ctx, params, postage, outputs };
+}
+
+// ============================================================================
+// OUTPUT PARSING
+// ============================================================================
+
+/**
+ * Parse AI-generated campaign content into structured sections
+ */
+function parseAIResponse(
+  aiText: string,
+  channels: CampaignParams["channels"],
+): CampaignGenerationResult["outputs"] {
+  const outputs: CampaignGenerationResult["outputs"] = {
     blueprint_json: undefined,
-    blueprint_prose: aiText,
+    blueprint_prose: undefined,
     direct_mail_md: undefined,
     digital_json: undefined,
     digital_md: undefined,
   };
 
-  return { ctx, params, postage, outputs };
+  // Split response into sections based on common AI output patterns
+  const sections = splitIntoSections(aiText);
+
+  // Parse blueprint (first section, typically contains JSON + prose)
+  const blueprintSection = sections[0] || "";
+  const blueprintParsed = parseBlueprint(blueprintSection);
+  outputs.blueprint_json = blueprintParsed.json;
+  outputs.blueprint_prose = blueprintParsed.prose;
+
+  // Parse direct mail (second section if DM channel enabled)
+  if (channels.direct_mail && sections[1]) {
+    outputs.direct_mail_md = parseDirectMail(sections[1]);
+  }
+
+  // Parse digital (third section or second if no DM)
+  const digitalSectionIndex = channels.direct_mail ? 2 : 1;
+  if ((channels.email || channels.social) && sections[digitalSectionIndex]) {
+    const digitalParsed = parseDigital(sections[digitalSectionIndex]);
+    outputs.digital_json = digitalParsed.json;
+    outputs.digital_md = digitalParsed.markdown;
+  }
+
+  return outputs;
+}
+
+/**
+ * Split AI response into logical sections
+ */
+function splitIntoSections(text: string): string[] {
+  // Claude often separates sections with clear markers or multiple line breaks
+  // Try to identify section boundaries intelligently
+
+  const sections: string[] = [];
+  let currentSection = "";
+  const lines = text.split("\n");
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Section boundary indicators
+    const isSectionBreak =
+      line.trim() === "" &&
+      lines[i + 1]?.trim() === "" && // Double line break
+      lines[i + 2]?.match(/^(##|DIRECT MAIL|EMAIL|SOCIAL|Digital)/i); // Followed by header
+
+    if (isSectionBreak && currentSection.trim()) {
+      sections.push(currentSection.trim());
+      currentSection = "";
+      continue;
+    }
+
+    currentSection += line + "\n";
+  }
+
+  // Add final section
+  if (currentSection.trim()) {
+    sections.push(currentSection.trim());
+  }
+
+  // Fallback: if no clear sections, treat entire response as one section
+  return sections.length > 0 ? sections : [text];
+}
+
+/**
+ * Parse blueprint section (JSON + prose)
+ */
+function parseBlueprint(section: string): { json?: any; prose?: string } {
+  const result: { json?: any; prose?: string } = {};
+
+  // Extract JSON (look for code blocks or raw JSON objects)
+  const jsonMatch =
+    section.match(/```json\s*([\s\S]*?)\s*```/) || // Markdown code block
+    section.match(/```\s*([\s\S]*?)\s*```/) || // Generic code block
+    section.match(/(\{[\s\S]*\})/); // Raw JSON object
+
+  if (jsonMatch) {
+    try {
+      result.json = JSON.parse(jsonMatch[1].trim());
+    } catch (e) {
+      console.warn("Failed to parse blueprint JSON:", e);
+      result.json = { raw: jsonMatch[1].trim(), parseError: true };
+    }
+  }
+
+  // Extract prose (everything after JSON block or entire section if no JSON)
+  if (jsonMatch) {
+    const jsonEnd = (jsonMatch.index || 0) + jsonMatch[0].length;
+    result.prose = section.slice(jsonEnd).trim();
+  } else {
+    result.prose = section.trim();
+  }
+
+  // Clean up prose (remove leading headers, extra whitespace)
+  if (result.prose) {
+    result.prose = result.prose
+      .replace(/^#+\s*Campaign Blueprint.*$/gim, "")
+      .replace(/^#+\s*Summary.*$/gim, "")
+      .trim();
+  }
+
+  return result;
+}
+
+/**
+ * Parse direct mail section
+ */
+function parseDirectMail(section: string): string {
+  // Direct mail is typically already in markdown format
+  // Clean up any extraneous headers or formatting
+
+  let cleaned = section;
+
+  // Ensure proper markdown structure
+  if (!cleaned.match(/^#+/m)) {
+    // No headers - add them
+    cleaned = `## Direct Mail Package\n\n${cleaned}`;
+  }
+
+  return cleaned.trim();
+}
+
+/**
+ * Parse digital section (emails + social)
+ */
+function parseDigital(section: string): {
+  json?: CampaignGenerationResult["outputs"]["digital_json"];
+  markdown?: string;
+} {
+  const result: {
+    json?: CampaignGenerationResult["outputs"]["digital_json"];
+    markdown?: string;
+  } = {};
+
+  // Extract JSON
+  const jsonMatch =
+    section.match(/```json\s*([\s\S]*?)\s*```/) ||
+    section.match(/```\s*([\s\S]*?)\s*```/) ||
+    section.match(/(\{[\s\S]*\})/);
+
+  if (jsonMatch) {
+    try {
+      const parsed = JSON.parse(jsonMatch[1].trim());
+
+      // Validate and normalize structure
+      result.json = {
+        emails: Array.isArray(parsed.emails)
+          ? parsed.emails.map((e: any, idx: number) => ({
+              id: e.id || idx + 1,
+              subject: e.subject || e.subjectLine || "",
+              preheader: e.preheader || e.previewText || "",
+              body: e.body || "",
+              cta: e.cta || e.callToAction || "",
+            }))
+          : [],
+        social: Array.isArray(parsed.social)
+          ? parsed.social.map((s: any, idx: number) => ({
+              id: s.id || idx + 1,
+              short: s.short || s.shortForm || "",
+              long: s.long || s.longForm || "",
+              imagePrompt: s.imagePrompt || s.visual || "",
+            }))
+          : [],
+      };
+    } catch (e) {
+      console.warn("Failed to parse digital JSON:", e);
+      result.json = {
+        emails: [],
+        social: [],
+      };
+    }
+  }
+
+  // Extract markdown (everything after JSON)
+  if (jsonMatch) {
+    const jsonEnd = (jsonMatch.index || 0) + jsonMatch[0].length;
+    result.markdown = section.slice(jsonEnd).trim();
+  } else {
+    result.markdown = section.trim();
+  }
+
+  return result;
 }
 
 // ============================================================================
