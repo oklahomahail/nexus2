@@ -47,6 +47,12 @@ jobs:
 
       - name: Verify Supabase types are fresh
         run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "⚠️  SUPABASE_ACCESS_TOKEN secret not set - skipping type check"
+            echo "To enable this check, add SUPABASE_ACCESS_TOKEN to repository secrets"
+            echo "Get your token from: https://supabase.com/dashboard/account/tokens"
+            exit 0
+          fi
           pnpm run supabase:types:check || {
             echo "❌ Database types are out of sync with Supabase schema"
             echo "Run 'pnpm supabase:types' locally and commit the changes"
