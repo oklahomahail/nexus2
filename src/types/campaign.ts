@@ -5,6 +5,11 @@
  */
 
 /**
+ * Journey Type for multi-touch campaigns
+ */
+export type JourneyType = "upgrade" | "monthly" | "reactivation";
+
+/**
  * Deliverable - A single campaign asset (email, DM, social, etc.)
  * with multiple versions targeting different segments
  */
@@ -14,6 +19,9 @@ export interface Deliverable {
   deliverableType: "direct_mail" | "email" | "sms" | "social" | "phone";
   deliverableName: string;
   versions: DeliverableVersion[];
+  phase?: string; // Journey template phase name
+  scheduledSendAt?: string | Date;
+  status?: "draft" | "scheduled" | "sent";
   createdAt: string;
   updatedAt: string;
 }
@@ -56,6 +64,7 @@ export interface CampaignWithDeliverables {
   endDate?: string;
   originLabRunId?: string; // Reference to Data Lab run that generated segments
   originLabRunSummary?: string; // Human-readable description of origin
+  journeyType?: JourneyType; // For multi-touch journey campaigns
   deliverables: Deliverable[];
   createdAt: string;
   updatedAt: string;

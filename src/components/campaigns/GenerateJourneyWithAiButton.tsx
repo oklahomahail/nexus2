@@ -39,7 +39,9 @@ interface BaseBehavioralSegment {
   criteria?: Record<string, any>;
 }
 
-interface GenerateJourneyWithAiButtonProps<T extends BaseDeliverable = BaseDeliverable> {
+interface GenerateJourneyWithAiButtonProps<
+  T extends BaseDeliverable = BaseDeliverable,
+> {
   clientId: string | undefined;
   journeyType: JourneyType | null;
   journeyTemplate: JourneyTemplate | null;
@@ -51,7 +53,9 @@ interface GenerateJourneyWithAiButtonProps<T extends BaseDeliverable = BaseDeliv
   onError?: (message: string) => void;
 }
 
-export function GenerateJourneyWithAiButton<T extends BaseDeliverable = BaseDeliverable>({
+export function GenerateJourneyWithAiButton<
+  T extends BaseDeliverable = BaseDeliverable,
+>({
   clientId,
   journeyType,
   journeyTemplate,
@@ -110,22 +114,27 @@ export function GenerateJourneyWithAiButton<T extends BaseDeliverable = BaseDeli
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading || !!disabledReason}
-      className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[11px] ${
-        disabledReason
-          ? "cursor-not-allowed border border-slate-700 text-slate-500"
-          : "border border-purple-500/70 text-purple-100 hover:bg-purple-500/10"
-      }`}
-      title={
-        disabledReason ??
-        "Use AI to draft content for all journey touches and segments at once."
-      }
-    >
-      <Sparkles className="h-3 w-3" />
-      {loading ? "Drafting full journey…" : "Generate journey with AI"}
-    </button>
+    <div className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading || !!disabledReason}
+        className={`inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[11px] ${
+          disabledReason
+            ? "cursor-not-allowed border border-slate-700 text-slate-500"
+            : "border border-purple-500/70 text-purple-100 hover:bg-purple-500/10"
+        }`}
+        title={
+          disabledReason ??
+          "Use AI to draft content for all journey touches and segments at once."
+        }
+      >
+        <Sparkles className="h-3 w-3" />
+        {loading ? "Drafting full journey…" : "Generate journey with AI"}
+      </button>
+      <p className="text-[10px] text-slate-500">
+        AI may be imperfect. Please review all content before launch.
+      </p>
+    </div>
   );
 }

@@ -10,6 +10,7 @@ import type {
   JourneyType,
 } from "@/utils/journeyTemplates";
 
+import { callClaudeSafely } from "./ai/privacyAwareClaudeService";
 import { enrichPromptWithLabContext } from "./donorDataLabAIContext";
 
 import type { LabRun } from "./donorDataLabPersistence";
@@ -63,16 +64,74 @@ export async function draftJourneyTouchContent(
     existingBody,
   });
 
-  // TODO: Enrich with Data Lab context and call Claude API
-  // const enrichedPrompt = enrichPromptWithLabContext(clientId, basePrompt, journeyType);
-  // const apiResponse = await callClaudeApi(enrichedPrompt);
-  // return parseClaudeResponse(apiResponse);
+  // Enrich with Data Lab context
+  const enrichedPrompt = enrichPromptWithLabContext(
+    clientId,
+    basePrompt,
+    journeyType,
+  );
 
-  // For now, return mock structured response
-  // When implementing, use enrichedPrompt as the AI prompt
-  const mockResponse = generateMockJourneyContent(journeyType, touch, segment);
+  // DEV logging: prompt preview (truncated)
+  if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console
+    console.debug(
+      "[JourneyAI] Prompt preview:",
+      enrichedPrompt.slice(0, 800),
+      enrichedPrompt.length > 800 ? "...[truncated]" : "",
+    );
+  }
 
-  return mockResponse;
+  // Call Claude through privacy gateway
+  const response = await callClaudeSafely({
+    category: "campaign",
+    system:
+      "You are an expert nonprofit fundraising copywriter. Return only valid JSON.",
+    prompt: `
+${enrichedPrompt}
+
+Return JSON like:
+{
+  "subject": string | null,
+  "body": string
+}
+    `.trim(),
+    maxTokens: 1500,
+    temperature: 0.7,
+  });
+
+  if (!response.ok) {
+    // eslint-disable-next-line no-console
+    console.error("[JourneyAI] AI call failed:", response.error);
+    throw new Error(response.error || "AI request failed");
+  }
+
+  if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console
+    console.debug(
+      "[JourneyAI] Raw model output:",
+      response.content.slice(0, 800),
+      response.content.length > 800 ? "...[truncated]" : "",
+    );
+  }
+
+  // Parse JSON response
+  let parsed: any;
+  try {
+    parsed = JSON.parse(response.content);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(
+      "[JourneyAI] Failed to parse JSON from model:",
+      err,
+      response.content,
+    );
+    throw new Error("Failed to parse AI response as JSON");
+  }
+
+  return {
+    subject: parsed.subject ?? existingSubject,
+    body: parsed.body,
+  };
 }
 
 /**
@@ -174,87 +233,4 @@ Write:
 
 Do not mention "Data Lab" or internal systems. Write as if you are a human fundraiser speaking to a real donor.
 `.trim();
-}
-
-/**
- * Mock content generator (replace with actual Claude API call)
- */
-function generateMockJourneyContent(
-  journeyType: JourneyType,
-  touch: JourneyTouchTemplate,
-  segment: BehavioralSegment,
-): JourneyDraftResponse {
-  // Generate realistic mock content based on journey type and touch
-  const touchIndex = parseInt(touch.id.split("_").pop() || "1");
-
-  if (journeyType === "upgrade") {
-    const subjects = [
-      "You've already made a difference — here's what's next",
-      "Here's the project your increased support could fuel",
-      "Last chance to help us expand before the deadline",
-    ];
-    const bodies = [
-      `Hi [Name],
-
-I've been looking over the impact that supporters like you made this year, and I wanted to pause and say thank you. Your generosity has already helped expand access to programs that families in our community rely on every single day.
-
-Your support comes at a moment when demand for our services is growing. This spring, we are preparing to open additional program slots so more people can get the help they need — but doing that well requires committed partners stepping forward.
-
-Would you consider increasing your support this season? Even a modest step up can create an outsized impact right now.
-
-Supporters who recently gave $100 are choosing to renew generously at levels like:
-• $100 to keep essential services steady
-• $125 to help open new program slots
-• $150 to accelerate expansion where it's needed most
-
-Whatever you choose, please know that your continued commitment truly matters.
-
-Thank you again for everything you make possible.
-
-Warmly,
-[Organization]`,
-      `Hi [Name],
-
-I wanted to follow up because something meaningful is happening, and I immediately thought of you. We're finalizing plans to expand our programs to serve at least 30 more families this quarter.
-
-To move forward, we need to close a small funding gap — and increased support from our most committed partners will make the difference.
-
-Many supporters who recently gave $100 are stretching to:
-• $100 to sustain ongoing services
-• $125 to open new program spots
-• $150 to accelerate program expansion
-
-Your renewed and increased gift would directly fuel this growth at a moment when the opportunity is real and urgent.
-
-Would you consider stepping up today?
-
-Gratefully,
-[Organization]`,
-      `Hi [Name],
-
-A quick reminder: our expansion deadline is just a few days away. We're close — very close — to opening additional program slots, and we're trying to secure the last commitments needed to move forward.
-
-You've been one of our most steady partners, and I wanted to make sure you didn't miss the chance to help us cross the finish line.
-
-If you're able, would you consider renewing with a little extra this time?
-
-Every single step up counts right now.
-
-Thank you for standing with us.
-
-Warm gratitude,
-[Organization]`,
-    ];
-
-    return {
-      subject: subjects[touchIndex - 1] || subjects[0],
-      body: bodies[touchIndex - 1] || bodies[0],
-    };
-  }
-
-  // Add monthly and reactivation mock content similarly
-  return {
-    subject: `${touch.label} - ${segment.name}`,
-    body: `[AI-generated content for ${journeyType} journey, ${touch.label}]\n\nTargeting: ${segment.name}\n\nThis is a placeholder. Replace with actual Claude API integration.`,
-  };
 }

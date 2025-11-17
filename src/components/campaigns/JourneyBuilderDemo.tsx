@@ -107,15 +107,17 @@ export function JourneyBuilderDemo() {
 
       // Create one version per relevant segment
       const relevantSegments = pickSegmentsForJourney(type, segments);
-      const versions: DemoDeliverableVersion[] = relevantSegments.map((seg) => ({
-        versionId: crypto.randomUUID(),
-        label: seg.name,
-        segmentCriteriaId: seg.segmentId,
-        content: {
-          subject: "",
-          body: "",
-        },
-      }));
+      const versions: DemoDeliverableVersion[] = relevantSegments.map(
+        (seg) => ({
+          versionId: crypto.randomUUID(),
+          label: seg.name,
+          segmentCriteriaId: seg.segmentId,
+          content: {
+            subject: "",
+            body: "",
+          },
+        }),
+      );
 
       return {
         deliverableId: crypto.randomUUID(),

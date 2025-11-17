@@ -51,6 +51,9 @@ export interface BulkDraftParams {
   segments: BehavioralSegment[];
 }
 
+// Limit bulk AI drafts to prevent token quota abuse
+const MAX_TOUCHES_FOR_BULK_DRAFT = 10;
+
 /**
  * Draft content for all touches and all versions in a journey
  */
@@ -64,6 +67,20 @@ export async function draftEntireJourneyWithAi({
 }: BulkDraftParams): Promise<Deliverable[]> {
   const touchByLabel = new Map<string, JourneyTouchTemplate>();
   journeyTemplate.touches.forEach((t) => touchByLabel.set(t.label, t));
+
+  // Count how many versions we would draft
+  let plannedDrafts = 0;
+  for (const d of deliverables) {
+    const touch = touchByLabel.get(d.name);
+    if (!touch || d.type !== touch.channel) continue;
+    plannedDrafts += d.versions.length;
+  }
+
+  if (plannedDrafts > MAX_TOUCHES_FOR_BULK_DRAFT) {
+    throw new Error(
+      `Bulk AI draft limited to ${MAX_TOUCHES_FOR_BULK_DRAFT} versions at once. Currently: ${plannedDrafts}. Try drafting fewer segments or touches.`,
+    );
+  }
 
   const updatedDeliverables: Deliverable[] = [];
 

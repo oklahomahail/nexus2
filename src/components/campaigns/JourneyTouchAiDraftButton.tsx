@@ -91,22 +91,27 @@ export function JourneyTouchAiDraftButton({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading || !!disabledReason}
-      className={`mt-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] ${
-        disabledReason
-          ? "cursor-not-allowed border border-slate-700 text-slate-500"
-          : "border border-purple-500/70 text-purple-100 hover:bg-purple-500/10"
-      }`}
-      title={
-        disabledReason ??
-        "Use AI to draft this touch using your Data Lab insights."
-      }
-    >
-      <Sparkles className="h-3 w-3" />
-      {loading ? "Drafting…" : "Draft with AI for this journey"}
-    </button>
+    <div className="mt-2 space-y-1">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={loading || !!disabledReason}
+        className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] ${
+          disabledReason
+            ? "cursor-not-allowed border border-slate-700 text-slate-500"
+            : "border border-purple-500/70 text-purple-100 hover:bg-purple-500/10"
+        }`}
+        title={
+          disabledReason ??
+          "Use AI to draft this touch using your Data Lab insights."
+        }
+      >
+        <Sparkles className="h-3 w-3" />
+        {loading ? "Drafting…" : "Draft with AI for this journey"}
+      </button>
+      <p className="text-[10px] text-slate-500">
+        AI can make mistakes. Always review and edit before sending.
+      </p>
+    </div>
   );
 }
