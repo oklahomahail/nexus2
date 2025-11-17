@@ -23,6 +23,7 @@ const ClientDataQuality = lazy(
 const ClientSegmentation = lazy(
   () => import("@/pages/client/ClientSegmentation"),
 );
+const DonorDataLab = lazy(() => import("@/pages/client/DonorDataLab"));
 
 // Loading component
 const PageLoader = () => (
@@ -127,6 +128,14 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientSegmentation />
+            </Suspense>
+          }
+        />
+        <Route
+          path="data-lab"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <DonorDataLab />
             </Suspense>
           }
         />
