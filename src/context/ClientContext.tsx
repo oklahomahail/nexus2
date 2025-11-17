@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  useCallback,
 } from "react";
 
 import { clientService, type Client } from "@/services/clientService";
@@ -42,33 +43,36 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  function setCurrentClient(id: string | null) {
+  const setCurrentClient = useCallback((id: string | null) => {
     setCurrentId(id);
     if (typeof window !== "undefined") {
       if (id) window.localStorage.setItem("nexus_current_client", id);
       else window.localStorage.removeItem("nexus_current_client");
     }
-  }
+  }, []);
 
-  async function setCurrentClientBySlug(slug: string | null) {
-    if (!slug) {
-      setCurrentClient(null);
-      return;
-    }
+  const setCurrentClientBySlug = useCallback(
+    async (slug: string | null) => {
+      if (!slug) {
+        setCurrentClient(null);
+        return;
+      }
 
-    try {
-      const client = await clientService.getBySlug(slug);
-      if (client) {
-        setCurrentClient(client.id);
-      } else {
-        console.error(`Client not found for slug: ${slug}`);
+      try {
+        const client = await clientService.getBySlug(slug);
+        if (client) {
+          setCurrentClient(client.id);
+        } else {
+          console.error(`Client not found for slug: ${slug}`);
+          setCurrentClient(null);
+        }
+      } catch (error) {
+        console.error("Error setting current client by slug:", error);
         setCurrentClient(null);
       }
-    } catch (error) {
-      console.error("Error setting current client by slug:", error);
-      setCurrentClient(null);
-    }
-  }
+    },
+    [setCurrentClient],
+  );
 
   useEffect(() => {
     void reload().catch(console.error);
@@ -82,7 +86,7 @@ export function ClientProvider({ children }: { children: React.ReactNode }) {
       setCurrentClientBySlug,
       reload,
     }),
-    [clients, currentClient],
+    [clients, currentClient, setCurrentClient, setCurrentClientBySlug],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

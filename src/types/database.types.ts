@@ -1346,4 +1346,52 @@ export type Database = {
           error_details?: Json | null
           error_message?: string | null
           finished_at?: string | null
-          id?: 
+          id?: string
+          metadata?: Json | null
+          outcome?: string | null
+          row_count?: number | null
+          scheduled_export_id?: string | null
+          started_at?: string | null
+          status: string
+        }
+        Update: {
+          artifact_size_bytes?: number | null
+          artifact_url?: string | null
+          client_id?: string
+          created_at?: string
+          error_details?: Json | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          metadata?: Json | null
+          outcome?: string | null
+          row_count?: number | null
+          scheduled_export_id?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "export_jobs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
