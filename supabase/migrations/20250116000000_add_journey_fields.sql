@@ -93,95 +93,143 @@ ALTER TABLE campaign_deliverables ENABLE ROW LEVEL SECURITY;
 ALTER TABLE campaign_deliverable_versions ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies for campaign_deliverables
-CREATE POLICY "Users can view deliverables for their campaigns"
-  ON campaign_deliverables FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaigns c
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE c.id = campaign_deliverables.campaign_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverables' AND policyname = 'Users can view deliverables for their campaigns'
+  ) THEN
+    CREATE POLICY "Users can view deliverables for their campaigns"
+      ON campaign_deliverables FOR SELECT
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaigns c
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE c.id = campaign_deliverables.campaign_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can insert deliverables for their campaigns"
-  ON campaign_deliverables FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM campaigns c
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE c.id = campaign_deliverables.campaign_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverables' AND policyname = 'Users can insert deliverables for their campaigns'
+  ) THEN
+    CREATE POLICY "Users can insert deliverables for their campaigns"
+      ON campaign_deliverables FOR INSERT
+      WITH CHECK (
+        EXISTS (
+          SELECT 1 FROM campaigns c
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE c.id = campaign_deliverables.campaign_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can update deliverables for their campaigns"
-  ON campaign_deliverables FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaigns c
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE c.id = campaign_deliverables.campaign_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverables' AND policyname = 'Users can update deliverables for their campaigns'
+  ) THEN
+    CREATE POLICY "Users can update deliverables for their campaigns"
+      ON campaign_deliverables FOR UPDATE
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaigns c
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE c.id = campaign_deliverables.campaign_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can delete deliverables for their campaigns"
-  ON campaign_deliverables FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaigns c
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE c.id = campaign_deliverables.campaign_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverables' AND policyname = 'Users can delete deliverables for their campaigns'
+  ) THEN
+    CREATE POLICY "Users can delete deliverables for their campaigns"
+      ON campaign_deliverables FOR DELETE
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaigns c
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE c.id = campaign_deliverables.campaign_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
 -- RLS policies for campaign_deliverable_versions
-CREATE POLICY "Users can view versions for their campaign deliverables"
-  ON campaign_deliverable_versions FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaign_deliverables d
-      JOIN campaigns c ON c.id = d.campaign_id
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE d.id = campaign_deliverable_versions.deliverable_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverable_versions' AND policyname = 'Users can view versions for their campaign deliverables'
+  ) THEN
+    CREATE POLICY "Users can view versions for their campaign deliverables"
+      ON campaign_deliverable_versions FOR SELECT
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaign_deliverables d
+          JOIN campaigns c ON c.id = d.campaign_id
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE d.id = campaign_deliverable_versions.deliverable_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can insert versions for their campaign deliverables"
-  ON campaign_deliverable_versions FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM campaign_deliverables d
-      JOIN campaigns c ON c.id = d.campaign_id
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE d.id = campaign_deliverable_versions.deliverable_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverable_versions' AND policyname = 'Users can insert versions for their campaign deliverables'
+  ) THEN
+    CREATE POLICY "Users can insert versions for their campaign deliverables"
+      ON campaign_deliverable_versions FOR INSERT
+      WITH CHECK (
+        EXISTS (
+          SELECT 1 FROM campaign_deliverables d
+          JOIN campaigns c ON c.id = d.campaign_id
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE d.id = campaign_deliverable_versions.deliverable_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can update versions for their campaign deliverables"
-  ON campaign_deliverable_versions FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaign_deliverables d
-      JOIN campaigns c ON c.id = d.campaign_id
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE d.id = campaign_deliverable_versions.deliverable_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverable_versions' AND policyname = 'Users can update versions for their campaign deliverables'
+  ) THEN
+    CREATE POLICY "Users can update versions for their campaign deliverables"
+      ON campaign_deliverable_versions FOR UPDATE
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaign_deliverables d
+          JOIN campaigns c ON c.id = d.campaign_id
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE d.id = campaign_deliverable_versions.deliverable_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;
 
-CREATE POLICY "Users can delete versions for their campaign deliverables"
-  ON campaign_deliverable_versions FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM campaign_deliverables d
-      JOIN campaigns c ON c.id = d.campaign_id
-      JOIN client_memberships cm ON cm.client_id = c.client_id
-      WHERE d.id = campaign_deliverable_versions.deliverable_id
-      AND cm.user_id = auth.uid()
-    )
-  );
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'campaign_deliverable_versions' AND policyname = 'Users can delete versions for their campaign deliverables'
+  ) THEN
+    CREATE POLICY "Users can delete versions for their campaign deliverables"
+      ON campaign_deliverable_versions FOR DELETE
+      USING (
+        EXISTS (
+          SELECT 1 FROM campaign_deliverables d
+          JOIN campaigns c ON c.id = d.campaign_id
+          JOIN client_memberships cm ON cm.client_id = c.client_id
+          WHERE d.id = campaign_deliverable_versions.deliverable_id
+          AND cm.user_id = auth.uid()
+        )
+      );
+  END IF;
+END $$;

@@ -1352,7 +1352,7 @@ export type Database = {
           row_count?: number | null;
           scheduled_export_id?: string | null;
           started_at?: string | null;
-          status: string;
+          status?: string;
         };
         Update: {
           artifact_size_bytes?: number | null;
@@ -1378,6 +1378,404 @@ export type Database = {
             referencedRelation: "clients";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "export_jobs_scheduled_export_id_fkey";
+            columns: ["scheduled_export_id"];
+            isOneToOne: false;
+            referencedRelation: "scheduled_exports";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      giving_patterns: {
+        Row: {
+          anon_id: string;
+          average_response_time_days: number | null;
+          client_id: string;
+          created_at: string;
+          engagement_score: number | null;
+          frequency_score: number | null;
+          giving_size_category: string | null;
+          id: string;
+          last_engagement_date: string | null;
+          loyalty_score: number | null;
+          primary_campaign_types: string[] | null;
+          seasonality_pattern: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          anon_id: string;
+          average_response_time_days?: number | null;
+          client_id: string;
+          created_at?: string;
+          engagement_score?: number | null;
+          frequency_score?: number | null;
+          giving_size_category?: string | null;
+          id?: string;
+          last_engagement_date?: string | null;
+          loyalty_score?: number | null;
+          primary_campaign_types?: string[] | null;
+          seasonality_pattern?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          anon_id?: string;
+          average_response_time_days?: number | null;
+          client_id?: string;
+          created_at?: string;
+          engagement_score?: number | null;
+          frequency_score?: number | null;
+          giving_size_category?: string | null;
+          id?: string;
+          last_engagement_date?: string | null;
+          loyalty_score?: number | null;
+          primary_campaign_types?: string[] | null;
+          seasonality_pattern?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "giving_patterns_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          client_id: string | null;
+          created_at: string;
+          dismissed_at: string | null;
+          entity_id: string | null;
+          entity_type: string | null;
+          id: string;
+          message: string;
+          metadata: Json | null;
+          read_at: string | null;
+          severity: string | null;
+          title: string;
+          type: string;
+          user_id: string | null;
+        };
+        Insert: {
+          client_id?: string | null;
+          created_at?: string;
+          dismissed_at?: string | null;
+          entity_id?: string | null;
+          entity_type?: string | null;
+          id?: string;
+          message: string;
+          metadata?: Json | null;
+          read_at?: string | null;
+          severity?: string | null;
+          title: string;
+          type?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          client_id?: string | null;
+          created_at?: string;
+          dismissed_at?: string | null;
+          entity_id?: string | null;
+          entity_type?: string | null;
+          id?: string;
+          message?: string;
+          metadata?: Json | null;
+          read_at?: string | null;
+          severity?: string | null;
+          title?: string;
+          type?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      profiles: {
+        Row: {
+          avatar_url: string | null;
+          created_at: string;
+          display_name: string | null;
+          email: string;
+          first_name: string | null;
+          id: string;
+          last_name: string | null;
+          preferences: Json | null;
+          updated_at: string;
+        };
+        Insert: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name?: string | null;
+          email: string;
+          first_name?: string | null;
+          id: string;
+          last_name?: string | null;
+          preferences?: Json | null;
+          updated_at?: string;
+        };
+        Update: {
+          avatar_url?: string | null;
+          created_at?: string;
+          display_name?: string | null;
+          email?: string;
+          first_name?: string | null;
+          id?: string;
+          last_name?: string | null;
+          preferences?: Json | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      scheduled_exports: {
+        Row: {
+          cadence: string;
+          client_id: string;
+          created_at: string;
+          created_by: string;
+          cron_expression: string | null;
+          deleted_at: string | null;
+          delivery_config: Json | null;
+          delivery_method: string | null;
+          description: string | null;
+          export_type: string;
+          format: string;
+          id: string;
+          is_active: boolean | null;
+          last_run_at: string | null;
+          name: string;
+          next_run_at: string | null;
+          spec: Json;
+          timezone: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          cadence: string;
+          client_id: string;
+          created_at?: string;
+          created_by: string;
+          cron_expression?: string | null;
+          deleted_at?: string | null;
+          delivery_config?: Json | null;
+          delivery_method?: string | null;
+          description?: string | null;
+          export_type: string;
+          format?: string;
+          id?: string;
+          is_active?: boolean | null;
+          last_run_at?: string | null;
+          name: string;
+          next_run_at?: string | null;
+          spec?: Json;
+          timezone?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          cadence?: string;
+          client_id?: string;
+          created_at?: string;
+          created_by?: string;
+          cron_expression?: string | null;
+          deleted_at?: string | null;
+          delivery_config?: Json | null;
+          delivery_method?: string | null;
+          description?: string | null;
+          export_type?: string;
+          format?: string;
+          id?: string;
+          is_active?: boolean | null;
+          last_run_at?: string | null;
+          name?: string;
+          next_run_at?: string | null;
+          spec?: Json;
+          timezone?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_exports_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "scheduled_exports_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      segment_memberships: {
+        Row: {
+          added_at: string;
+          client_id: string;
+          donor_id: string;
+          id: string;
+          score: number | null;
+          segment_id: string;
+        };
+        Insert: {
+          added_at?: string;
+          client_id: string;
+          donor_id: string;
+          id?: string;
+          score?: number | null;
+          segment_id: string;
+        };
+        Update: {
+          added_at?: string;
+          client_id?: string;
+          donor_id?: string;
+          id?: string;
+          score?: number | null;
+          segment_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "segment_memberships_client_id_fkey";
+            columns: ["client_id"];
+            isOneToOne: false;
+            referencedRelation: "clients";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "segment_memberships_donor_id_fkey";
+            columns: ["donor_id"];
+            isOneToOne: false;
+            referencedRelation: "donors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "segment_memberships_segment_id_fkey";
+            columns: ["segment_id"];
+            isOneToOne: false;
+            referencedRelation: "audience_segments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      track15_campaign_metrics: {
+        Row: {
+          baseline_engagement_score: number | null;
+          baseline_response_rate: number | null;
+          baseline_velocity: number | null;
+          calculated_at: string;
+          campaign_id: string;
+          current_engagement_score: number | null;
+          current_response_rate: number | null;
+          current_velocity: number | null;
+          engagement_lift: number | null;
+          id: string;
+          response_rate_lift: number | null;
+          velocity_lift: number | null;
+        };
+        Insert: {
+          baseline_engagement_score?: number | null;
+          baseline_response_rate?: number | null;
+          baseline_velocity?: number | null;
+          calculated_at?: string;
+          campaign_id: string;
+          current_engagement_score?: number | null;
+          current_response_rate?: number | null;
+          current_velocity?: number | null;
+          engagement_lift?: number | null;
+          id?: string;
+          response_rate_lift?: number | null;
+          velocity_lift?: number | null;
+        };
+        Update: {
+          baseline_engagement_score?: number | null;
+          baseline_response_rate?: number | null;
+          baseline_velocity?: number | null;
+          calculated_at?: string;
+          campaign_id?: string;
+          current_engagement_score?: number | null;
+          current_response_rate?: number | null;
+          current_velocity?: number | null;
+          engagement_lift?: number | null;
+          id?: string;
+          response_rate_lift?: number | null;
+          velocity_lift?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "track15_campaign_metrics_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: true;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      track15_narrative_steps: {
+        Row: {
+          body: string;
+          call_to_action: string | null;
+          campaign_id: string;
+          channels: string[];
+          created_at: string;
+          id: string;
+          is_active: boolean;
+          primary_segment: string | null;
+          sequence: number;
+          stage: string;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          body: string;
+          call_to_action?: string | null;
+          campaign_id: string;
+          channels?: string[];
+          created_at?: string;
+          id?: string;
+          is_active?: boolean;
+          primary_segment?: string | null;
+          sequence?: number;
+          stage: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          body?: string;
+          call_to_action?: string | null;
+          campaign_id?: string;
+          channels?: string[];
+          created_at?: string;
+          id?: string;
+          is_active?: boolean;
+          primary_segment?: string | null;
+          sequence?: number;
+          stage?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "track15_narrative_steps_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
         ];
       };
     };
@@ -1385,7 +1783,46 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      can_access_client: {
+        Args: { target_client_id: string };
+        Returns: boolean;
+      };
+      can_write_client: {
+        Args: { target_client_id: string };
+        Returns: boolean;
+      };
+      fn_data_quality_score: { Args: { p_client_id: string }; Returns: Json };
+      fn_detect_duplicate_donors: {
+        Args: { p_client_id: string };
+        Returns: {
+          details: Json;
+          donor_id_1: string;
+          donor_id_2: string;
+          match_score: number;
+          match_type: string;
+        }[];
+      };
+      fn_detect_missing_fields: {
+        Args: { p_client_id: string };
+        Returns: {
+          field_name: string;
+          missing_count: number;
+          missing_percent: number;
+          table_name: string;
+          total_count: number;
+        }[];
+      };
+      fn_detect_outliers: {
+        Args: { p_client_id: string };
+        Returns: {
+          details: Json;
+          outlier_type: string;
+          record_count: number;
+          severity: string;
+        }[];
+      };
+      is_client_admin: { Args: { target_client_id: string }; Returns: boolean };
+      is_client_owner: { Args: { target_client_id: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
@@ -1395,3 +1832,129 @@ export type Database = {
     };
   };
 };
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<
+  keyof Database,
+  "public"
+>];
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I;
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I;
+      }
+      ? I
+      : never
+    : never;
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U;
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U;
+      }
+      ? U
+      : never
+    : never;
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never;
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals;
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals;
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never;
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const;
