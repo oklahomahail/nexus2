@@ -5,6 +5,7 @@
 Located in `/public/brand/`:
 
 ### Primary Logos (In Use)
+
 - ✅ `nexus_logo_transparent.svg` - **CURRENTLY USED** in sidebar
 - ✅ `nexus_logo_dark.svg` - Available for dark mode hero sections
 - ✅ `nexus_logo_blue_bg.svg` - Available for marketing materials
@@ -30,6 +31,7 @@ Based on your design images, you mentioned these logo variants:
 ## Logo File Naming Convention
 
 All logo files should follow this pattern:
+
 ```
 /public/brand/
   nexus_logo_transparent.svg       # Main logo (light bg)
@@ -42,7 +44,9 @@ All logo files should follow this pattern:
 ## Where Logos Appear in the App
 
 ### 1. Sidebar (Both Layouts)
+
 **File:** `src/layouts/AppLayout.tsx` and `src/layouts/ClientLayout.tsx`
+
 ```tsx
 <img
   src="/brand/nexus_logo_transparent.svg"
@@ -50,12 +54,15 @@ All logo files should follow this pattern:
   className="h-11 w-auto"
 />
 ```
+
 **Size:** 44px (h-11 = 44px in Tailwind)
 
 ### 2. Donor Lab Panel Header
+
 **File:** `src/panels/NexusDonorDataLabPanel.tsx`
 
 **Current (temporary icon):**
+
 ```tsx
 <h1 className="text-base font-semibold text-slate-50 flex items-center gap-2">
   <FlaskConical size={20} className="text-cyan-400" />
@@ -64,6 +71,7 @@ All logo files should follow this pattern:
 ```
 
 **When logo is available (uncomment this):**
+
 ```tsx
 <img
   src="/brand/nexus_donor_lab_logo.svg"
@@ -75,7 +83,9 @@ All logo files should follow this pattern:
 ### 3. Future Placements (Not Yet Implemented)
 
 #### Dashboard Hero
+
 When dashboard becomes the default home:
+
 ```tsx
 <div className="flex items-center gap-2">
   <img
@@ -88,7 +98,9 @@ When dashboard becomes the default home:
 ```
 
 #### Auth Screens
+
 Login, signup, magic link pages:
+
 ```tsx
 <img
   src="/brand/nexus_logo_transparent.svg"
@@ -98,7 +110,9 @@ Login, signup, magic link pages:
 ```
 
 #### Empty States
+
 When no data exists:
+
 ```tsx
 <img
   src="/brand/nexus_logo_transparent.svg"
@@ -108,37 +122,37 @@ When no data exists:
 ```
 
 #### Splash Screen (Dark)
+
 Full-screen loading:
+
 ```tsx
 <div className="bg-slate-950">
-  <img
-    src="/brand/nexus_logo_dark.svg"
-    alt="Nexus"
-    className="h-32 w-auto"
-  />
+  <img src="/brand/nexus_logo_dark.svg" alt="Nexus" className="h-32 w-auto" />
 </div>
 ```
 
 ## Logo Sizing Reference
 
-| Context | Tailwind Class | Actual Size | Use Case |
-|---------|---------------|-------------|----------|
-| Sidebar | `h-11` | 44px | Main navigation anchor |
-| Donor Lab Header | `h-12` | 48px | Panel branding |
-| Dashboard Hero | `h-8` | 32px | Section header |
-| Auth Screens | `h-20` | 80px | Centered branding |
-| Empty States | `h-24` | 96px | Watermark |
-| Splash Screen | `h-32` | 128px | Full-screen hero |
+| Context          | Tailwind Class | Actual Size | Use Case               |
+| ---------------- | -------------- | ----------- | ---------------------- |
+| Sidebar          | `h-11`         | 44px        | Main navigation anchor |
+| Donor Lab Header | `h-12`         | 48px        | Panel branding         |
+| Dashboard Hero   | `h-8`          | 32px        | Section header         |
+| Auth Screens     | `h-20`         | 80px        | Centered branding      |
+| Empty States     | `h-24`         | 96px        | Watermark              |
+| Splash Screen    | `h-32`         | 128px       | Full-screen hero       |
 
 ## Design Specifications
 
 ### Primary Nexus Logo
+
 - **Format:** SVG (vector)
 - **Colors:** Gradient (pink to orange to cyan) + "nexus" text
 - **Aspect Ratio:** Square icon + wordmark
 - **Background:** Transparent (for light backgrounds) or Dark variant
 
 ### Donor Lab Logo
+
 - **Format:** SVG (vector)
 - **Theme:** Should complement Track15 aesthetic
 - **Color Palette:** Suggest cyan/blue tones to match Flask icon currently used
@@ -148,6 +162,7 @@ Full-screen loading:
 ## To Add Donor Lab Logo
 
 1. **Save the file:**
+
    ```bash
    # Save your Donor Lab logo to:
    /Users/davehail/Developer/Nexus/public/brand/nexus_donor_lab_logo.svg
@@ -155,6 +170,7 @@ Full-screen loading:
 
 2. **Update the component:**
    Open `src/panels/NexusDonorDataLabPanel.tsx` and uncomment lines 353-357:
+
    ```tsx
    <img
      src="/brand/nexus_donor_lab_logo.svg"
@@ -174,6 +190,7 @@ Full-screen loading:
 ## Logo Usage Rules (Quick Reference)
 
 ### ✅ DO:
+
 - Use the transparent logo on light backgrounds
 - Use the dark logo on dark backgrounds
 - Maintain aspect ratio (never stretch)
@@ -181,6 +198,7 @@ Full-screen loading:
 - Use Donor Lab logo ONLY in Donor Lab panel
 
 ### ❌ DON'T:
+
 - Mix logo variants (light logo on dark background)
 - Scale logos smaller than 32px
 - Repeat logos on every panel
@@ -192,6 +210,7 @@ Full-screen loading:
 When you add support for client-specific logos:
 
 1. **Storage location:**
+
    ```
    /public/clients/[client-id]/logo.svg
    ```

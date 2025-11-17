@@ -11,6 +11,7 @@ This is the canonical internal guide for Nexus branding and logo placement acros
 **Use this variant when:** The background is white or very light.
 
 **Approved placements:**
+
 - Sidebar top (app anchor position)
 - Login / signup screens
 - Empty states
@@ -18,6 +19,7 @@ This is the canonical internal guide for Nexus branding and logo placement acros
 - Onboarding screens
 
 **Sizing:**
+
 - Sidebar: 44px height
 - Panel headers: 32px height
 - Empty states: 64–96px height
@@ -30,6 +32,7 @@ This is the canonical internal guide for Nexus branding and logo placement acros
 **Use this variant when:** Background is dark or in dark mode contexts.
 
 **Approved placements:**
+
 - Splash screen (centered, dark background)
 - Dark mode sidebar
 - Command palette header
@@ -41,6 +44,7 @@ This is the canonical internal guide for Nexus branding and logo placement acros
 **Purpose:** Special sub-brand identity for the Donor Lab panel only.
 
 **Use exclusively for:**
+
 - Donor Lab panel header (48–56px)
 - Donor Lab empty states (large, 96px)
 - Donor Lab help/tutorial modals
@@ -57,6 +61,7 @@ Avoid repeating the Nexus logo on every panel header or card.
 ### Anchor areas only
 
 A logo should appear only at:
+
 - **Upper left** (app anchor)
 - **Centered on full-page experiences** (onboarding, auth, splash)
 - **Feature-specific headers** (Donor Lab only)
@@ -64,6 +69,7 @@ A logo should appear only at:
 ### When NOT to use logos
 
 **Do not place logos:**
+
 - Inside sidebar nav items
 - On every panel header
 - On list views
@@ -117,27 +123,32 @@ The sidebar follows this hierarchy:
 The Donor Lab panel uses custom branding to distinguish it from other features.
 
 **Header layout:**
+
 ```
 [Donor Lab Logo]   Donor Lab   [Filters] [Actions]
 ```
 
 **Typography:**
+
 - Main heading: Use "Donor Lab" or "The Nexus Donor Data Lab"
 - Keep consistent with the Track15 aesthetic
 
 ## Client Switcher
 
 ### Placement
+
 - Directly under the main Nexus logo in the sidebar
 - Full width of the sidebar
 
 ### Interaction
+
 - Opens a full modal with grid layout
 - Each client card shows client name and logo (or fallback)
 - Include search functionality
 - Show "Recently visited clients" section
 
 ### Modal Layout
+
 - Grid layout (2 columns)
 - Each card uses white-background Nexus logo as fallback if no client logo exists
 - Search bar at the top
@@ -146,11 +157,14 @@ The Donor Lab panel uses custom branding to distinguish it from other features.
 ## Dashboard as Home
 
 ### Default Landing Page
+
 - Dashboard is the default landing page after login or client change
 - Always redirect to dashboard instead of leaving users where they last were
 
 ### Dashboard Hero
+
 Include small Nexus logo (32px) at top with client name:
+
 ```
 [Nexus Logo]  Regional Food Bank Dashboard
 ```
@@ -171,12 +185,14 @@ Include small Nexus logo (32px) at top with client name:
 ## Examples
 
 ### Good Examples
+
 ✓ Single Nexus logo at top-left of sidebar
 ✓ Donor Lab logo in Donor Lab panel header only
 ✓ Client switcher directly under main logo
 ✓ Dashboard as default home screen
 
 ### Bad Examples
+
 ✗ Nexus logo repeated in every panel header
 ✗ Donor Lab logo used outside Donor Lab panel
 ✗ Client logos taking precedence over Nexus branding

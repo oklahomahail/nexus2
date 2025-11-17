@@ -1,12 +1,12 @@
+import { Home, Users, ChevronDown } from "lucide-react";
 import React, { useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Home, Users, ChevronDown } from "lucide-react";
 
+import { ClientSwitcherModal } from "@/components/nav/client/ClientSwitcherModal";
 import DemoBanner from "@/components/nav/DemoBanner";
 import GlobalShortcuts from "@/components/nav/GlobalShortcuts";
 import { LastLocationRedirector } from "@/components/nav/LastLocationRedirector";
 import { Topbar } from "@/components/nav/Topbar";
-import { ClientSwitcherModal } from "@/components/nav/client/ClientSwitcherModal";
 import { useClient } from "@/context/ClientContext";
 import { analytics } from "@/utils/analytics";
 
@@ -74,7 +74,13 @@ export const AppLayout: React.FC = () => {
           <div className="px-4 py-3 text-xs uppercase tracking-wide text-zinc-400">
             Navigation
           </div>
-          {link("/", "Dashboard", <Home size={18} />, "nav.dashboard.main", true)}
+          {link(
+            "/",
+            "Dashboard",
+            <Home size={18} />,
+            "nav.dashboard.main",
+            true,
+          )}
           {link("/clients", "Clients", <Users size={18} />, "nav.clients")}
         </nav>
 

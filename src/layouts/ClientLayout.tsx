@@ -1,5 +1,3 @@
-import React, { useEffect, useState } from "react";
-import { Outlet, NavLink, useParams, useLocation } from "react-router-dom";
 import {
   Home,
   Users,
@@ -10,6 +8,8 @@ import {
   FlaskConical,
   ChevronDown,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Outlet, NavLink, useParams, useLocation } from "react-router-dom";
 
 import { ClientSwitcherModal } from "@/components/nav/client/ClientSwitcherModal";
 import { useClient } from "@/context/ClientContext";
@@ -122,12 +122,42 @@ export const ClientLayout: React.FC = () => {
                 {currentClient.name}
               </div>
               {link(".", "Dashboard", <Home size={18} />, "nav.dashboard")}
-              {link("campaigns", "Campaigns", <Megaphone size={18} />, "nav.campaigns")}
-              {link("segmentation", "Segmentation", <Users size={18} />, "nav.segmentation")}
-              {link("data-lab", "Donor Data Lab", <FlaskConical size={18} />, "nav.data-lab")}
-              {link("analytics", "Analytics", <BarChart3 size={18} />, "nav.analytics")}
-              {link("reports", "Reports", <FileText size={18} />, "nav.reports")}
-              {link("data-quality", "Data Quality", <Database size={18} />, "nav.data-quality")}
+              {link(
+                "campaigns",
+                "Campaigns",
+                <Megaphone size={18} />,
+                "nav.campaigns",
+              )}
+              {link(
+                "segmentation",
+                "Segmentation",
+                <Users size={18} />,
+                "nav.segmentation",
+              )}
+              {link(
+                "data-lab",
+                "Donor Data Lab",
+                <FlaskConical size={18} />,
+                "nav.data-lab",
+              )}
+              {link(
+                "analytics",
+                "Analytics",
+                <BarChart3 size={18} />,
+                "nav.analytics",
+              )}
+              {link(
+                "reports",
+                "Reports",
+                <FileText size={18} />,
+                "nav.reports",
+              )}
+              {link(
+                "data-quality",
+                "Data Quality",
+                <Database size={18} />,
+                "nav.data-quality",
+              )}
             </>
           )}
         </nav>
@@ -142,9 +172,7 @@ export const ClientLayout: React.FC = () => {
         {/* You can add a client-specific header here if needed */}
         <div className="h-14 flex items-center px-6">
           <h1 className="text-lg font-semibold text-slate-900">
-            {currentClient?.name
-              ? `${currentClient.name}`
-              : "Client Dashboard"}
+            {currentClient?.name ? `${currentClient.name}` : "Client Dashboard"}
           </h1>
         </div>
       </header>

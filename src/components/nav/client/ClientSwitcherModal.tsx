@@ -1,6 +1,6 @@
+import { Search, X } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X } from "lucide-react";
 
 import { useClient } from "@/context/ClientContext";
 import { getClientSlug } from "@/types/client";
@@ -22,9 +22,7 @@ export function ClientSwitcherModal({
   const filteredClients = useMemo(() => {
     if (!query.trim()) return clients;
     const lowerQuery = query.toLowerCase();
-    return clients.filter((c) =>
-      c.name.toLowerCase().includes(lowerQuery),
-    );
+    return clients.filter((c) => c.name.toLowerCase().includes(lowerQuery));
   }, [clients, query]);
 
   const handleSelectClient = (clientId: string) => {

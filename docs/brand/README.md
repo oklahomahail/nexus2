@@ -12,32 +12,35 @@ Welcome to the Nexus branding documentation. This directory contains all brand g
 
 All logo files are located in `/public/brand/`:
 
-| File | Purpose | Status | Size |
-|------|---------|--------|------|
-| `nexus_logo_transparent.svg` | Main logo (light backgrounds) | ✅ In use | Variable |
-| `nexus_logo_transparent.png` | PNG fallback | ✅ Available | 256x256 |
-| `nexus_logo_dark.svg` | Main logo (dark backgrounds) | ✅ Available | Variable |
-| `nexus_logo_blue_bg.svg` | Marketing variant | ✅ Available | Variable |
-| `nexus_logo_blue_bg.png` | PNG fallback | ✅ Available | 256x256 |
-| `nexus_icon_dark.svg` | Icon only (no wordmark) | ✅ Available | 64x64 |
-| `nexus_tagline_lockup.svg` | Logo + tagline | ✅ Available | Variable |
-| `nexus_donor_lab_logo.svg` | Donor Lab sub-brand | ❌ **Needed** | 48-96px |
+| File                         | Purpose                       | Status        | Size     |
+| ---------------------------- | ----------------------------- | ------------- | -------- |
+| `nexus_logo_transparent.svg` | Main logo (light backgrounds) | ✅ In use     | Variable |
+| `nexus_logo_transparent.png` | PNG fallback                  | ✅ Available  | 256x256  |
+| `nexus_logo_dark.svg`        | Main logo (dark backgrounds)  | ✅ Available  | Variable |
+| `nexus_logo_blue_bg.svg`     | Marketing variant             | ✅ Available  | Variable |
+| `nexus_logo_blue_bg.png`     | PNG fallback                  | ✅ Available  | 256x256  |
+| `nexus_icon_dark.svg`        | Icon only (no wordmark)       | ✅ Available  | 64x64    |
+| `nexus_tagline_lockup.svg`   | Logo + tagline                | ✅ Available  | Variable |
+| `nexus_donor_lab_logo.svg`   | Donor Lab sub-brand           | ❌ **Needed** | 48-96px  |
 
 ## Visual Identity
 
 ### Primary Nexus Logo
+
 - **Style:** Geometric "N" with gradient (pink → orange → cyan)
 - **Wordmark:** "nexus" in modern sans-serif (orange)
 - **Background:** Transparent or dark variant
 - **Format:** SVG (vector) for scalability
 
 ### Donor Lab Sub-Brand
+
 - **Purpose:** Distinguish the Donor Data Lab feature
 - **Style:** Should complement Track15 aesthetic
 - **Suggestion:** Lab/scientific theme with cyan/blue tones
 - **Status:** ❌ Logo not yet created
 
 ### Color Palette
+
 - **Primary Gradient:** `#FF1B6B` → `#FF6B1B` → `#00D4FF`
 - **Background Dark:** `#0A0A0F` (zinc-950)
 - **Background Light:** `#FFFFFF`
@@ -47,23 +50,27 @@ All logo files are located in `/public/brand/`:
 ## Where Branding Appears
 
 ### 1. Sidebar (Every Page)
+
 - **Component:** `AppLayout.tsx`, `ClientLayout.tsx`
 - **Logo:** Nexus primary logo (44px)
 - **Position:** Top center of sidebar
 - **Always visible:** Yes
 
 ### 2. Client Switcher Modal
+
 - **Component:** `ClientSwitcherModal.tsx`
 - **Client Branding:** First letter fallback (future: client logos)
 - **Position:** Triggered from sidebar button
 
 ### 3. Donor Lab Panel
+
 - **Component:** `NexusDonorDataLabPanel.tsx`
 - **Logo:** Donor Lab logo (when available)
 - **Position:** Panel header
 - **Currently:** Using Flask icon placeholder
 
 ### 4. Future Placements
+
 - Dashboard hero section
 - Authentication screens
 - Empty states
@@ -72,6 +79,7 @@ All logo files are located in `/public/brand/`:
 ## Brand Guidelines Summary
 
 ### Logo Sizing
+
 - **Minimum size:** 32px (legibility threshold)
 - **Sidebar:** 44px
 - **Panel headers:** 32-48px
@@ -79,6 +87,7 @@ All logo files are located in `/public/brand/`:
 - **Empty states:** 64-96px
 
 ### Spacing
+
 - **Minimum padding:** 20px around logo
 - **Optical alignment:** Center in containers
 - **Breathing room:** Never crowd with other elements
@@ -86,6 +95,7 @@ All logo files are located in `/public/brand/`:
 ### Usage Rules
 
 #### ✅ DO:
+
 - Use correct logo variant for background color
 - Maintain aspect ratio
 - Provide adequate spacing
@@ -93,6 +103,7 @@ All logo files are located in `/public/brand/`:
 - Follow the established hierarchy
 
 #### ❌ DON'T:
+
 - Repeat logos unnecessarily
 - Scale below 32px
 - Modify colors or gradients
@@ -102,6 +113,7 @@ All logo files are located in `/public/brand/`:
 ## Implementation Status
 
 ### ✅ Completed
+
 - [x] Brand usage documentation
 - [x] Logo placement guide
 - [x] Sidebar redesign (both layouts)
@@ -111,6 +123,7 @@ All logo files are located in `/public/brand/`:
 - [x] Type checking and verification
 
 ### ⏳ Pending (Optional)
+
 - [ ] Create Donor Lab logo
 - [ ] Dashboard as default landing page
 - [ ] User profile component in sidebar footer
@@ -151,24 +164,28 @@ src/
 ## Design Principles
 
 ### 1. Professional Polish
+
 - Clean, minimal interfaces
 - Consistent spacing and typography
 - Smooth transitions
 - High contrast for accessibility
 
 ### 2. Track15 Aesthetic
+
 - Dark sidebar (zinc-950)
 - White content areas
 - Subtle color accents
 - Professional, enterprise-grade feel
 
 ### 3. Clear Hierarchy
+
 - Logo anchors the brand
 - Client switcher is prominent
 - Navigation is scannable
 - Sub-brands are contained
 
 ### 4. User Experience
+
 - Predictable navigation
 - Clear visual affordances
 - Keyboard shortcuts
@@ -177,6 +194,7 @@ src/
 ## For Designers
 
 ### Adding a New Logo
+
 1. Export as SVG (vector format)
 2. Optimize with SVGO or similar
 3. Save to `/public/brand/`
@@ -185,6 +203,7 @@ src/
 6. Update LOGO_PLACEMENT_GUIDE.md
 
 ### Logo Design Requirements
+
 - **Format:** SVG (preferred) or PNG (fallback)
 - **Transparency:** Yes (except blue_bg variant)
 - **Optimization:** Remove unnecessary metadata
@@ -194,6 +213,7 @@ src/
 ## For Developers
 
 ### Using Logos in Components
+
 ```tsx
 // Sidebar logo (standard)
 <img
@@ -218,7 +238,9 @@ src/
 ```
 
 ### Adding Client Logos
+
 When implementing client-specific logos:
+
 1. Store in `/public/clients/[client-id]/logo.svg`
 2. Update Client type to include `logoUrl?: string`
 3. Update ClientSwitcherModal to render client logos
@@ -253,6 +275,7 @@ A: No, maintain the original gradient and colors for brand consistency.
 ## Recent Changes
 
 ### 2024-11-17: Initial Branding Implementation
+
 - Created comprehensive brand guidelines
 - Redesigned sidebar with prominent logo
 - Implemented production-grade client switcher modal

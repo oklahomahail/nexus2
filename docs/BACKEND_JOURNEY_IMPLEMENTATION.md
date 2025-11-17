@@ -10,6 +10,7 @@ This guide walks through the backend changes needed to support journey campaign 
 ## 🎯 Overview
 
 You need to:
+
 1. Update database schema (add journey fields)
 2. Update API endpoints (accept/return journey data)
 3. Verify AI Privacy Gateway handles campaign requests
@@ -91,7 +92,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -106,7 +108,7 @@ serve(async (req) => {
       global: {
         headers: { Authorization: req.headers.get("Authorization")! },
       },
-    }
+    },
   );
 
   try {
@@ -152,10 +154,11 @@ serve(async (req) => {
           status: d.status || "draft",
         }));
 
-        const { data: insertedDeliverables, error: delError } = await supabaseClient
-          .from("campaign_deliverables")
-          .insert(deliverableRows)
-          .select();
+        const { data: insertedDeliverables, error: delError } =
+          await supabaseClient
+            .from("campaign_deliverables")
+            .insert(deliverableRows)
+            .select();
 
         if (delError) throw delError;
 
@@ -185,17 +188,17 @@ serve(async (req) => {
         }
       }
 
-      return new Response(
-        JSON.stringify({ success: true, campaign }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, campaign }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     if (method === "GET") {
       // Get campaign by ID
       const url = new URL(req.url);
       const campaignId = url.searchParams.get("id");
-      const includeDeliverables = url.searchParams.get("include") === "deliverables";
+      const includeDeliverables =
+        url.searchParams.get("include") === "deliverables";
 
       if (!campaignId) {
         throw new Error("Campaign ID required");
@@ -214,10 +217,12 @@ serve(async (req) => {
         // Fetch deliverables
         const { data: deliverables, error: delError } = await supabaseClient
           .from("campaign_deliverables")
-          .select(`
+          .select(
+            `
             *,
             versions:campaign_deliverable_versions(*)
-          `)
+          `,
+          )
           .eq("campaign_id", campaignId)
           .order("created_at", { ascending: true });
 
@@ -226,21 +231,20 @@ serve(async (req) => {
         campaign.deliverables = deliverables;
       }
 
-      return new Response(
-        JSON.stringify({ success: true, campaign }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, campaign }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
 ```
@@ -255,22 +259,34 @@ const createCampaignSchema = baseCampaignSchema.extend({
   journeyType: z.enum(["upgrade", "monthly", "reactivation"]).optional(),
   originLabRunId: z.string().optional(),
   originLabRunSummary: z.string().optional(),
-  deliverables: z.array(z.object({
-    deliverableType: z.enum(["direct_mail", "email", "sms", "social", "phone"]),
-    deliverableName: z.string(),
-    phase: z.string().optional(),
-    scheduledSendAt: z.string().datetime().optional(),
-    status: z.enum(["draft", "scheduled", "sent"]).default("draft"),
-    versions: z.array(z.object({
-      versionLabel: z.string(),
-      segmentCriteriaId: z.string(),
-      contentDraft: z.string(),
-      subjectLine: z.string().optional(),
-      previewText: z.string().optional(),
-      estimatedRecipients: z.number().optional(),
-      sortOrder: z.number().default(1),
-    })),
-  })).optional(),
+  deliverables: z
+    .array(
+      z.object({
+        deliverableType: z.enum([
+          "direct_mail",
+          "email",
+          "sms",
+          "social",
+          "phone",
+        ]),
+        deliverableName: z.string(),
+        phase: z.string().optional(),
+        scheduledSendAt: z.string().datetime().optional(),
+        status: z.enum(["draft", "scheduled", "sent"]).default("draft"),
+        versions: z.array(
+          z.object({
+            versionLabel: z.string(),
+            segmentCriteriaId: z.string(),
+            contentDraft: z.string(),
+            subjectLine: z.string().optional(),
+            previewText: z.string().optional(),
+            estimatedRecipients: z.number().optional(),
+            sortOrder: z.number().default(1),
+          }),
+        ),
+      }),
+    )
+    .optional(),
 });
 
 // POST /campaigns - Create campaign with deliverables
@@ -302,7 +318,9 @@ router.post(
             deliverableType: d.deliverableType,
             deliverableName: d.deliverableName,
             phase: d.phase,
-            scheduledSendAt: d.scheduledSendAt ? new Date(d.scheduledSendAt) : null,
+            scheduledSendAt: d.scheduledSendAt
+              ? new Date(d.scheduledSendAt)
+              : null,
             status: d.status,
           },
         });
@@ -310,7 +328,7 @@ router.post(
         // Create versions
         if (d.versions) {
           await prisma.campaignDeliverableVersion.createMany({
-            data: d.versions.map(v => ({
+            data: d.versions.map((v) => ({
               deliverableId: deliverable.id,
               versionLabel: v.versionLabel,
               segmentCriteriaId: v.segmentCriteriaId,
@@ -326,7 +344,7 @@ router.post(
     }
 
     res.json({ success: true, data: { campaign } });
-  })
+  }),
 );
 ```
 
