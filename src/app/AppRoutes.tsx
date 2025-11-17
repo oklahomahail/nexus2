@@ -20,6 +20,9 @@ const Track15CampaignWizard = lazy(
 const ClientDataQuality = lazy(
   () => import("@/pages/client/ClientDataQuality"),
 );
+const ClientSegmentation = lazy(
+  () => import("@/pages/client/ClientSegmentation"),
+);
 
 // Loading component
 const PageLoader = () => (
@@ -116,6 +119,14 @@ export default function AppRoutes() {
           element={
             <Suspense fallback={<PageLoader />}>
               <ClientDataQuality />
+            </Suspense>
+          }
+        />
+        <Route
+          path="segmentation"
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <ClientSegmentation />
             </Suspense>
           }
         />
