@@ -161,9 +161,10 @@ export const clientService = {
     // "regional-food-bank" -> "Regional Food Bank"
     const namePattern = identifier
       .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
 
+    // Use case-insensitive match to handle variations in capitalization
     const { data, error } = await supabase
       .from("clients")
       .select("*")

@@ -1,12 +1,15 @@
 // src/App.tsx
 import AppRoutes from "@/app/AppRoutes";
 import { ClientProvider } from "@/context/ClientContext";
+import { NotificationsProvider } from "@/context/notifications/NotificationsContext";
 
 const App: React.FC = () => {
   return (
-    <ClientProvider>
-      <AppRoutes />
-    </ClientProvider>
+    <NotificationsProvider>
+      <ClientProvider>
+        <AppRoutes />
+      </ClientProvider>
+    </NotificationsProvider>
   );
 };
 
