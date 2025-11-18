@@ -25,15 +25,15 @@ BEGIN
     END IF;
 END $$;
 
--- Add unique constraint to prevent multiple brand profiles per client
+-- Add unique index to prevent multiple brand profiles per client
 -- This ensures data integrity and prevents the UI bug where wrong profiles load
-ALTER TABLE brand_profiles
-ADD CONSTRAINT unique_brand_profile_per_client
-UNIQUE (client_id)
-WHERE deleted_at IS NULL;
+-- Note: Using a partial unique index instead of a constraint to support WHERE clause
+CREATE UNIQUE INDEX unique_brand_profile_per_client
+    ON brand_profiles(client_id)
+    WHERE deleted_at IS NULL;
 
 -- Add helpful comment
-COMMENT ON CONSTRAINT unique_brand_profile_per_client ON brand_profiles IS
+COMMENT ON INDEX unique_brand_profile_per_client IS
     'Ensures each client has at most one active brand profile. Soft-deleted profiles are excluded from this constraint.';
 
 -- ============================================================================
