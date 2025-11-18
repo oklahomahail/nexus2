@@ -16,6 +16,10 @@ export function initSentry() {
     environment: ENVIRONMENT,
     // Sample 10% of transactions in production for performance monitoring
     tracesSampleRate: ENVIRONMENT === "production" ? 0.1 : 1.0,
+    // Sample 10% of sessions for replay in production
+    replaysSessionSampleRate: ENVIRONMENT === "production" ? 0.1 : 0,
+    // Capture 100% of sessions with errors for replay
+    replaysOnErrorSampleRate: 1.0,
     // Don't send errors in development
     enabled: ENVIRONMENT !== "development",
 

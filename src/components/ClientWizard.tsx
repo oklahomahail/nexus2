@@ -25,7 +25,7 @@ interface ClientFormData {
   };
 
   // Step 3: Segmentation
-  segment: "small-business" | "enterprise" | "nonprofit" | "government" | "";
+  segment: "nonprofit" | "education" | "government" | "";
   budget?: string;
   notes?: string;
 }
@@ -230,9 +230,8 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { value: "small-business", label: "Small Business" },
-                    { value: "enterprise", label: "Enterprise" },
                     { value: "nonprofit", label: "Nonprofit" },
+                    { value: "education", label: "Education" },
                     { value: "government", label: "Government" },
                   ].map((option) => (
                     <button
