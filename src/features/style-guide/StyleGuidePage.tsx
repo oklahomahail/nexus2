@@ -98,13 +98,12 @@ export default function StyleGuidePage() {
         <Input
           placeholder="With helper text"
           label="Username"
-          helperText="Choose a unique username"
+          hint="Choose a unique username"
         />
         <Input
           placeholder="Error state"
           label="Password"
-          error
-          helperText="Password is required"
+          error="Password is required"
         />
         <TextArea placeholder="Text area input" label="Description" rows={4} />
       </div>
@@ -123,7 +122,7 @@ export default function StyleGuidePage() {
           </p>
         </Card>
 
-        <Card hover>
+        <Card shadow="md">
           <h3 className="text-h3 font-semibold mb-2">Hover Card</h3>
           <p className="text-body text-muted">
             Simple, clean, editorial containers with subtle elevation and hover

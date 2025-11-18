@@ -77,7 +77,7 @@ class CampaignPersistenceService {
 
     // Schedule save after delay
     this.debounceTimer = setTimeout(() => {
-      this.saveDraft(draft);
+      void this.saveDraft(draft);
     }, this.debounceDelay);
 
     // Also save to local storage immediately as backup
@@ -100,18 +100,17 @@ class CampaignPersistenceService {
     this.updateStatus({ saving: true, error: null });
 
     try {
-      const { error } = await supabase
-        .from("campaigns")
-        .upsert({
-          id: draft.id,
-          client_id: draft.clientId,
-          overview: draft.overview || {},
-          theme: draft.theme || {},
-          audience: draft.audience || {},
-          deliverables: draft.deliverables || {},
-          draft_preview: draft.draftPreview,
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await supabase.from("campaigns").upsert({
+        id: draft.id,
+        client_id: draft.clientId,
+        name: draft.overview?.title || "Untitled Campaign",
+        overview: draft.overview || {},
+        theme: draft.theme || {},
+        audience: draft.audience || {},
+        deliverables: draft.deliverables || {},
+        draft_preview: draft.draftPreview,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw error;
@@ -174,11 +173,11 @@ class CampaignPersistenceService {
       return {
         id: data.id,
         clientId: data.client_id,
-        overview: data.overview || {},
-        theme: data.theme || {},
-        audience: data.audience || {},
-        deliverables: data.deliverables || {},
-        draftPreview: data.draft_preview,
+        overview: (data.overview as any) || {},
+        theme: (data.theme as any) || {},
+        audience: (data.audience as any) || {},
+        deliverables: (data.deliverables as any) || {},
+        draftPreview: data.draft_preview ?? undefined,
       };
     } catch (error) {
       console.error("Failed to load campaign draft:", error);

@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui-kit/Input";
-import { TextArea } from "@/components/ui-kit/TextArea";
 import { SectionBlock } from "@/components/ui-kit/SectionBlock";
+import { TextArea } from "@/components/ui-kit/TextArea";
+
 import { CampaignDraft } from "../campaignEditor.types";
 
 interface Props {
@@ -13,10 +14,11 @@ export default function OverviewStep({ campaign, updateCampaign }: Props) {
 
   return (
     <div className="space-y-10">
-
-      <SectionBlock title="Campaign Overview" description="Give your campaign a clear foundation that guides all deliverables.">
+      <SectionBlock
+        title="Campaign Overview"
+        description="Give your campaign a clear foundation that guides all deliverables."
+      >
         <div className="space-y-6">
-
           <Input
             label="Campaign Title"
             placeholder="Example: Summer Hope Campaign"
@@ -50,7 +52,6 @@ export default function OverviewStep({ campaign, updateCampaign }: Props) {
               })
             }
           />
-
         </div>
       </SectionBlock>
     </div>

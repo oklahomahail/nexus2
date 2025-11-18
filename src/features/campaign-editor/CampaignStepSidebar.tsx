@@ -17,7 +17,6 @@ const steps: { id: CampaignStep; label: string }[] = [
 export default function CampaignStepSidebar({ step, onNavigate }: Props) {
   return (
     <div className="p-6 space-y-4">
-
       <div className="font-semibold text-[var(--nx-charcoal)] text-lg">
         Campaign Builder
       </div>

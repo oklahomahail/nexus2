@@ -1,9 +1,11 @@
 import { useState } from "react";
+
+import { Button } from "@/components/ui-kit/Button";
 import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { TextArea } from "@/components/ui-kit/TextArea";
-import { Button } from "@/components/ui-kit/Button";
-import { CampaignDraft } from "../campaignEditor.types";
 import { campaignAiService } from "@/services/campaignAiService";
+
+import { CampaignDraft } from "../campaignEditor.types";
 
 interface Props {
   campaign: CampaignDraft;
@@ -75,9 +77,7 @@ export default function ReviewDraftStep({ campaign, updateCampaign }: Props) {
         )}
 
         {error && (
-          <div className="bg-red-50 text-red-800 p-4 rounded mt-4">
-            {error}
-          </div>
+          <div className="bg-red-50 text-red-800 p-4 rounded mt-4">{error}</div>
         )}
       </SectionBlock>
     </div>

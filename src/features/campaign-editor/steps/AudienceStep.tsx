@@ -1,6 +1,7 @@
-import { TextArea } from "@/components/ui-kit/TextArea";
-import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { Input } from "@/components/ui-kit/Input";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
+import { TextArea } from "@/components/ui-kit/TextArea";
+
 import { CampaignDraft } from "../campaignEditor.types";
 
 interface Props {
@@ -13,13 +14,11 @@ export default function AudienceStep({ campaign, updateCampaign }: Props) {
 
   return (
     <div className="space-y-10">
-
       <SectionBlock
         title="Target Audience"
         description="Identify who this campaign is designed for and how you'll speak to them."
       >
         <div className="space-y-6">
-
           <Input
             label="Key Segments"
             placeholder="Example: Current donors, lapsed donors, major donors, volunteers"
@@ -45,7 +44,6 @@ export default function AudienceStep({ campaign, updateCampaign }: Props) {
               })
             }
           />
-
         </div>
       </SectionBlock>
     </div>

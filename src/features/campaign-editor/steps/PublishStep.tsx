@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SectionBlock } from "@/components/ui-kit/SectionBlock";
+
 import { Button } from "@/components/ui-kit/Button";
-import { CampaignDraft } from "../campaignEditor.types";
+import { SectionBlock } from "@/components/ui-kit/SectionBlock";
 import { campaignAiService } from "@/services/campaignAiService";
 import { campaignPersistenceService } from "@/services/campaignPersistenceService";
+
+import { CampaignDraft } from "../campaignEditor.types";
 
 interface Props {
   campaign: CampaignDraft;
@@ -77,7 +79,7 @@ export default function PublishStep({ campaign, onPublish }: Props) {
       if (onPublish) {
         onPublish();
       } else {
-        navigate(`/clients/${campaign.clientId}/campaigns/${campaign.id}`);
+        void navigate(`/clients/${campaign.clientId}/campaigns/${campaign.id}`);
       }
     } catch (err) {
       setError(

@@ -1,18 +1,18 @@
 import { useParams } from "react-router-dom";
-import { useCampaignEditor } from "./hooks/useCampaignEditor";
-import CampaignEditorLayout from "./CampaignEditorLayout";
-import CampaignStepContent from "./CampaignStepContent";
-import CampaignStepActions from "./CampaignStepActions";
-
-import OverviewStep from "./steps/OverviewStep";
-import ThemeStep from "./steps/ThemeStep";
-import AudienceStep from "./steps/AudienceStep";
-import DeliverablesStep from "./steps/DeliverablesStep";
-import ReviewDraftStep from "./steps/ReviewDraftStep";
-import PublishStep from "./steps/PublishStep";
 
 import { PageHeading } from "@/components/ui-kit/PageHeading";
+
+import CampaignEditorLayout from "./CampaignEditorLayout";
+import CampaignStepActions from "./CampaignStepActions";
+import CampaignStepContent from "./CampaignStepContent";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
+import { useCampaignEditor } from "./hooks/useCampaignEditor";
+import AudienceStep from "./steps/AudienceStep";
+import DeliverablesStep from "./steps/DeliverablesStep";
+import OverviewStep from "./steps/OverviewStep";
+import PublishStep from "./steps/PublishStep";
+import ReviewDraftStep from "./steps/ReviewDraftStep";
+import ThemeStep from "./steps/ThemeStep";
 
 export default function CampaignEditorPage() {
   const { clientId, campaignId } = useParams();
@@ -23,48 +23,25 @@ export default function CampaignEditorPage() {
     clientId: clientId!,
   };
 
-  const {
-    step,
-    campaign,
-    updateCampaign,
-    goNext,
-    goBack,
-    saveStatus,
-  } = useCampaignEditor(initialDraft);
+  const { step, campaign, updateCampaign, goNext, goBack, saveStatus } =
+    useCampaignEditor(initialDraft);
 
   function renderStep() {
     return {
-      "overview": (
-        <OverviewStep
-          campaign={campaign}
-          updateCampaign={updateCampaign}
-        />
+      overview: (
+        <OverviewStep campaign={campaign} updateCampaign={updateCampaign} />
       ),
-      "theme": (
-        <ThemeStep
-          campaign={campaign}
-          updateCampaign={updateCampaign}
-        />
+      theme: <ThemeStep campaign={campaign} updateCampaign={updateCampaign} />,
+      audience: (
+        <AudienceStep campaign={campaign} updateCampaign={updateCampaign} />
       ),
-      "audience": (
-        <AudienceStep
-          campaign={campaign}
-          updateCampaign={updateCampaign}
-        />
-      ),
-      "deliverables": (
-        <DeliverablesStep
-          campaign={campaign}
-          updateCampaign={updateCampaign}
-        />
+      deliverables: (
+        <DeliverablesStep campaign={campaign} updateCampaign={updateCampaign} />
       ),
       "review-draft": (
-        <ReviewDraftStep
-          campaign={campaign}
-          updateCampaign={updateCampaign}
-        />
+        <ReviewDraftStep campaign={campaign} updateCampaign={updateCampaign} />
       ),
-      "publish": (
+      publish: (
         <PublishStep
           campaign={campaign}
           onPublish={() => {

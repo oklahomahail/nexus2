@@ -32,18 +32,12 @@ export default function CampaignStepMobileSidebar({
           <div className="text-lg font-semibold text-[var(--nx-charcoal)]">
             Steps
           </div>
-          <button
-            onClick={onClose}
-            className="text-[var(--nx-charcoal)]"
-          >
+          <button onClick={onClose} className="text-[var(--nx-charcoal)]">
             Close
           </button>
         </div>
 
-        <CampaignStepSidebar
-          step={activeStep}
-          onNavigate={() => onClose()}
-        />
+        <CampaignStepSidebar step={activeStep} onNavigate={() => onClose()} />
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui-kit/Input";
-import { TextArea } from "@/components/ui-kit/TextArea";
 import { SectionBlock } from "@/components/ui-kit/SectionBlock";
+import { TextArea } from "@/components/ui-kit/TextArea";
+
 import { CampaignDraft } from "../campaignEditor.types";
 
 interface Props {
@@ -13,13 +14,11 @@ export default function ThemeStep({ campaign, updateCampaign }: Props) {
 
   return (
     <div className="space-y-10">
-
       <SectionBlock
         title="Campaign Theme"
         description="Define the central story idea, tone, and creative direction that drive your message."
       >
         <div className="space-y-6">
-
           <Input
             label="Central Idea"
             placeholder="Example: No one thrives alone this summer"
@@ -53,7 +52,6 @@ export default function ThemeStep({ campaign, updateCampaign }: Props) {
               })
             }
           />
-
         </div>
       </SectionBlock>
     </div>

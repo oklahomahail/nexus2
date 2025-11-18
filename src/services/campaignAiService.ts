@@ -2,8 +2,8 @@
 // Central AI integration for Campaign Engine
 // Routes all Claude calls through privacy gateway for PII protection
 
-import { generateCampaignContent } from "@/services/ai/privacyAwareClaudeService";
 import { CampaignDraft } from "@/features/campaign-editor/campaignEditor.types";
+import { generateCampaignContent } from "@/services/ai/privacyAwareClaudeService";
 
 /**
  * Track15 Campaign AI Service

@@ -406,10 +406,10 @@ DROP TABLE IF EXISTS client_intake_jobs CASCADE;
 
 ## Final Sign-Off
 
-**Deployed By:** ********\_********
-**Date:** ********\_********
-**Production URL:** ********\_********
-**Edge Function URL:** ********\_********
+**Deployed By:** **\*\*\*\***\_**\*\*\*\***
+**Date:** **\*\*\*\***\_**\*\*\*\***
+**Production URL:** **\*\*\*\***\_**\*\*\*\***
+**Edge Function URL:** **\*\*\*\***\_**\*\*\*\***
 
 **Notes:**
 

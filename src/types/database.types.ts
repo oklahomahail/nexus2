@@ -526,9 +526,142 @@ export type Database = {
           },
         ];
       };
+      campaign_direct_mail: {
+        Row: {
+          campaign_id: string;
+          copy: string;
+          created_at: string | null;
+          id: string;
+          mail_date: string | null;
+          mail_type: string | null;
+          status: string | null;
+          updated_at: string | null;
+          version: number | null;
+        };
+        Insert: {
+          campaign_id: string;
+          copy: string;
+          created_at?: string | null;
+          id?: string;
+          mail_date?: string | null;
+          mail_type?: string | null;
+          status?: string | null;
+          updated_at?: string | null;
+          version?: number | null;
+        };
+        Update: {
+          campaign_id?: string;
+          copy?: string;
+          created_at?: string | null;
+          id?: string;
+          mail_date?: string | null;
+          mail_type?: string | null;
+          status?: string | null;
+          updated_at?: string | null;
+          version?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "campaign_direct_mail_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      campaign_emails: {
+        Row: {
+          body: string;
+          campaign_id: string;
+          created_at: string | null;
+          id: string;
+          preheader: string | null;
+          sequence_number: number;
+          subject: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          body: string;
+          campaign_id: string;
+          created_at?: string | null;
+          id?: string;
+          preheader?: string | null;
+          sequence_number: number;
+          subject: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          body?: string;
+          campaign_id?: string;
+          created_at?: string | null;
+          id?: string;
+          preheader?: string | null;
+          sequence_number?: number;
+          subject?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "campaign_emails_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      campaign_social_posts: {
+        Row: {
+          body: string;
+          campaign_id: string;
+          created_at: string | null;
+          cta: string | null;
+          id: string;
+          platform: string;
+          posted_at: string | null;
+          scheduled_for: string | null;
+          status: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          body: string;
+          campaign_id: string;
+          created_at?: string | null;
+          cta?: string | null;
+          id?: string;
+          platform: string;
+          posted_at?: string | null;
+          scheduled_for?: string | null;
+          status?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          body?: string;
+          campaign_id?: string;
+          created_at?: string | null;
+          cta?: string | null;
+          id?: string;
+          platform?: string;
+          posted_at?: string | null;
+          scheduled_for?: string | null;
+          status?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "campaign_social_posts_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       campaigns: {
         Row: {
           assets_required: Json | null;
+          audience: Json | null;
           budget: Json | null;
           category: string | null;
           channel_plan: Json | null;
@@ -536,8 +669,11 @@ export type Database = {
           core_story: Json | null;
           created_at: string;
           created_by: string | null;
+          creative_brief: string | null;
           deleted_at: string | null;
+          deliverables: Json | null;
           description: string | null;
+          draft_preview: string | null;
           end_date: string | null;
           goal_amount: number | null;
           goals_config: Json | null;
@@ -550,7 +686,9 @@ export type Database = {
           narrative_arc: Json | null;
           origin_lab_run_id: string | null;
           origin_lab_run_summary: string | null;
+          overview: Json | null;
           performance: Json | null;
+          published_at: string | null;
           raised_amount: number | null;
           season: string | null;
           segmentation_rules: Json | null;
@@ -558,6 +696,7 @@ export type Database = {
           status: string;
           tags: string[] | null;
           target_audience: Json | null;
+          theme: Json | null;
           track15_core_headline: string | null;
           track15_core_summary: string | null;
           track15_donor_motivation: string | null;
@@ -571,6 +710,7 @@ export type Database = {
         };
         Insert: {
           assets_required?: Json | null;
+          audience?: Json | null;
           budget?: Json | null;
           category?: string | null;
           channel_plan?: Json | null;
@@ -578,8 +718,11 @@ export type Database = {
           core_story?: Json | null;
           created_at?: string;
           created_by?: string | null;
+          creative_brief?: string | null;
           deleted_at?: string | null;
+          deliverables?: Json | null;
           description?: string | null;
+          draft_preview?: string | null;
           end_date?: string | null;
           goal_amount?: number | null;
           goals_config?: Json | null;
@@ -592,7 +735,9 @@ export type Database = {
           narrative_arc?: Json | null;
           origin_lab_run_id?: string | null;
           origin_lab_run_summary?: string | null;
+          overview?: Json | null;
           performance?: Json | null;
+          published_at?: string | null;
           raised_amount?: number | null;
           season?: string | null;
           segmentation_rules?: Json | null;
@@ -600,6 +745,7 @@ export type Database = {
           status?: string;
           tags?: string[] | null;
           target_audience?: Json | null;
+          theme?: Json | null;
           track15_core_headline?: string | null;
           track15_core_summary?: string | null;
           track15_donor_motivation?: string | null;
@@ -613,6 +759,7 @@ export type Database = {
         };
         Update: {
           assets_required?: Json | null;
+          audience?: Json | null;
           budget?: Json | null;
           category?: string | null;
           channel_plan?: Json | null;
@@ -620,8 +767,11 @@ export type Database = {
           core_story?: Json | null;
           created_at?: string;
           created_by?: string | null;
+          creative_brief?: string | null;
           deleted_at?: string | null;
+          deliverables?: Json | null;
           description?: string | null;
+          draft_preview?: string | null;
           end_date?: string | null;
           goal_amount?: number | null;
           goals_config?: Json | null;
@@ -634,7 +784,9 @@ export type Database = {
           narrative_arc?: Json | null;
           origin_lab_run_id?: string | null;
           origin_lab_run_summary?: string | null;
+          overview?: Json | null;
           performance?: Json | null;
+          published_at?: string | null;
           raised_amount?: number | null;
           season?: string | null;
           segmentation_rules?: Json | null;
@@ -642,6 +794,7 @@ export type Database = {
           status?: string;
           tags?: string[] | null;
           target_audience?: Json | null;
+          theme?: Json | null;
           track15_core_headline?: string | null;
           track15_core_summary?: string | null;
           track15_donor_motivation?: string | null;

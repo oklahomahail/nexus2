@@ -1,7 +1,8 @@
 import { useState } from "react";
+
 import { CampaignStep } from "./campaignEditor.types";
-import CampaignStepSidebar from "./CampaignStepSidebar";
 import CampaignStepMobileSidebar from "./CampaignStepMobileSidebar";
+import CampaignStepSidebar from "./CampaignStepSidebar";
 
 interface Props {
   step: CampaignStep;
@@ -13,7 +14,6 @@ export default function CampaignEditorLayout({ step, children }: Props) {
 
   return (
     <div className="flex h-full">
-
       {/* Desktop sidebar */}
       <div className="hidden lg:block w-64 border-r border-[var(--nx-border)] bg-[var(--nx-offwhite)]">
         <CampaignStepSidebar step={step} onNavigate={() => {}} />

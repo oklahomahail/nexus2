@@ -7,6 +7,7 @@ This guide shows how to integrate the Campaign AI Service and Persistence Servic
 ### 1. Campaign AI Service (`campaignAiService.ts`)
 
 Privacy-aware AI service for generating campaign content:
+
 - Campaign narratives
 - Email series
 - Social media posts
@@ -18,6 +19,7 @@ All requests route through the AI Privacy Gateway to ensure PII protection.
 ### 2. Campaign Persistence Service (`campaignPersistenceService.ts`)
 
 Autosave and persistence layer:
+
 - Debounced autosave (500ms)
 - Local storage backup
 - Save status tracking
@@ -29,6 +31,7 @@ Autosave and persistence layer:
 ### In useCampaignEditor Hook
 
 The hook is already wired with:
+
 - Automatic local draft recovery on mount
 - Autosave on every `updateCampaign` call
 - Save status tracking
@@ -41,8 +44,8 @@ const {
   step,
   goNext,
   goBack,
-  saveStatus,      // { saving, lastSaved, error }
-  forceSave,       // async function
+  saveStatus, // { saving, lastSaved, error }
+  forceSave, // async function
 } = useCampaignEditor(initialDraft);
 ```
 
@@ -57,11 +60,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   }
 
   if (status.error) {
-    return (
-      <span className="text-red-600">
-        Error: {status.error}
-      </span>
-    );
+    return <span className="text-red-600">Error: {status.error}</span>;
   }
 
   if (status.lastSaved) {
@@ -117,10 +116,7 @@ export function ReviewDraftStep({ campaign, updateCampaign, goNext, goBack }) {
       {!campaign.draftPreview && (
         <div className="text-center py-8">
           <p className="mb-4">Generate your campaign narrative to continue</p>
-          <Button
-            onClick={generateDraft}
-            disabled={generating}
-          >
+          <Button onClick={generateDraft} disabled={generating}>
             {generating ? "Generating..." : "Generate Draft"}
           </Button>
         </div>
@@ -128,9 +124,7 @@ export function ReviewDraftStep({ campaign, updateCampaign, goNext, goBack }) {
 
       {campaign.draftPreview && (
         <>
-          <div className="prose max-w-none">
-            {campaign.draftPreview}
-          </div>
+          <div className="prose max-w-none">{campaign.draftPreview}</div>
 
           <div className="flex gap-3">
             <Button
@@ -140,17 +134,13 @@ export function ReviewDraftStep({ campaign, updateCampaign, goNext, goBack }) {
             >
               Regenerate
             </Button>
-            <Button onClick={goNext}>
-              Continue to Publish
-            </Button>
+            <Button onClick={goNext}>Continue to Publish</Button>
           </div>
         </>
       )}
 
       {error && (
-        <div className="bg-red-50 text-red-800 p-4 rounded">
-          {error}
-        </div>
+        <div className="bg-red-50 text-red-800 p-4 rounded">{error}</div>
       )}
     </div>
   );
@@ -185,7 +175,7 @@ export function PublishStep({ campaign, goBack }) {
       const emailCount = campaign.deliverables?.emailCount || 10;
       const emailResult = await campaignAiService.generateEmailSeries(
         campaign,
-        emailCount
+        emailCount,
       );
 
       if (emailResult.error) {
@@ -197,7 +187,7 @@ export function PublishStep({ campaign, goBack }) {
       const socialCount = campaign.deliverables?.socialCount || 10;
       const socialResult = await campaignAiService.generateSocialPosts(
         campaign,
-        socialCount
+        socialCount,
       );
 
       if (socialResult.error) {
@@ -219,9 +209,8 @@ export function PublishStep({ campaign, goBack }) {
 
       // 4. Generate creative brief
       setProgress("Generating creative brief...");
-      const creativeBrief = await campaignAiService.generateCreativeBrief(
-        campaign
-      );
+      const creativeBrief =
+        await campaignAiService.generateCreativeBrief(campaign);
 
       // 5. Publish everything
       setProgress("Publishing campaign...");
@@ -235,7 +224,9 @@ export function PublishStep({ campaign, goBack }) {
       // 6. Navigate to campaign detail page
       navigate(`/clients/${campaign.clientId}/campaigns/${campaign.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to publish campaign");
+      setError(
+        err instanceof Error ? err.message : "Failed to publish campaign",
+      );
     } finally {
       setPublishing(false);
       setProgress("");
@@ -272,17 +263,15 @@ export function PublishStep({ campaign, goBack }) {
           </div>
           <div>
             <dt className="text-sm text-gray-600">Direct Mail</dt>
-            <dd className="font-medium">
-              {includeDirectMail ? "Yes" : "No"}
-            </dd>
+            <dd className="font-medium">{includeDirectMail ? "Yes" : "No"}</dd>
           </div>
         </dl>
       </div>
 
       <div className="bg-blue-50 p-4 rounded">
         <p className="text-sm">
-          Publishing will generate all campaign deliverables using AI.
-          This may take 30-60 seconds.
+          Publishing will generate all campaign deliverables using AI. This may
+          take 30-60 seconds.
         </p>
       </div>
 
@@ -293,24 +282,14 @@ export function PublishStep({ campaign, goBack }) {
       )}
 
       {error && (
-        <div className="bg-red-50 text-red-800 p-4 rounded">
-          {error}
-        </div>
+        <div className="bg-red-50 text-red-800 p-4 rounded">{error}</div>
       )}
 
       <div className="flex gap-3">
-        <Button
-          variant="outline"
-          onClick={goBack}
-          disabled={publishing}
-        >
+        <Button variant="outline" onClick={goBack} disabled={publishing}>
           Back
         </Button>
-        <Button
-          variant="primary"
-          onClick={handlePublish}
-          disabled={publishing}
-        >
+        <Button variant="primary" onClick={handlePublish} disabled={publishing}>
           {publishing ? "Publishing..." : "Publish Campaign"}
         </Button>
       </div>
@@ -421,6 +400,7 @@ try {
 ### AI Privacy Gateway
 
 All AI requests automatically:
+
 - Strip PII before sending to Claude
 - Validate privacy compliance
 - Log requests for audit trail
@@ -429,6 +409,7 @@ All AI requests automatically:
 ### Local Storage
 
 Drafts are saved to local storage as backup:
+
 - Automatically on every change
 - Cleared on successful publish
 - Recoverable after browser crash
