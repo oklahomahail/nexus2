@@ -111,7 +111,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
         {/* Header with Progress */}
         <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold text-slate-900">Add New Client</h2>
+            <h2 className="text-2xl font-semibold text-slate-900">
+              Add New Client
+            </h2>
             <button
               onClick={onClose}
               className="text-slate-400 hover:text-slate-600 transition-colors p-1 text-3xl leading-none"
@@ -142,9 +144,13 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
                     )}
                   </div>
                   <div className="ml-3">
-                    <div className={`text-sm font-semibold ${
-                      currentStep >= step.number ? "text-slate-900" : "text-slate-500"
-                    }`}>
+                    <div
+                      className={`text-sm font-semibold ${
+                        currentStep >= step.number
+                          ? "text-slate-900"
+                          : "text-slate-500"
+                      }`}
+                    >
                       {step.title}
                     </div>
                     <div className="text-xs text-slate-500">
@@ -164,7 +170,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
         <div className="px-6 py-6 bg-white">
           {currentStep === 1 && (
             <div className="space-y-5">
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Organization Details</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Organization Details
+              </h3>
               <Input
                 label="Organization Name"
                 value={formData.name}
@@ -190,7 +198,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
 
           {currentStep === 2 && (
             <div className="space-y-5">
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Primary Contact</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Primary Contact
+              </h3>
               <Input
                 label="Contact Name"
                 value={formData.primaryContact.name}
@@ -224,7 +234,9 @@ const ClientWizard: React.FC<ClientWizardProps> = ({
 
           {currentStep === 3 && (
             <div className="space-y-5">
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Classification</h3>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                Classification
+              </h3>
 
               <div className="space-y-3">
                 <label className="block text-sm font-semibold text-slate-700">
