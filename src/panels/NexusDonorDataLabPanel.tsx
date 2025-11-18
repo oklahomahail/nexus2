@@ -352,7 +352,8 @@ export function NexusDonorDataLabPanel() {
               <img
                 src="/brand/nexus_donor_lab_logo.svg"
                 alt="Donor Lab"
-                className="h-12 w-auto"
+                className="h-12 w-12 object-contain"
+                style={{ objectPosition: 'center' }}
               />
               <div>
                 <h1 className="text-base font-semibold text-slate-50">

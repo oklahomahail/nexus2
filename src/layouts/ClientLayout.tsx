@@ -69,7 +69,8 @@ export const ClientLayout: React.FC = () => {
             <img
               src="/brand/nexus_logo_transparent.svg"
               alt="Nexus"
-              className="h-16 w-auto"
+              className="h-16 w-16 object-contain"
+              style={{ objectPosition: 'center' }}
             />
           </NavLink>
         </div>
