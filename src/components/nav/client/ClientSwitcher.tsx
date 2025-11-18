@@ -79,7 +79,7 @@ export const ClientSwitcher: React.FC = () => {
               <button
                 className="w-full text-left px-2 py-1 hover:bg-zinc-100 rounded text-sm"
                 onClick={() => {
-                  void navigate("/clients");
+                  void navigate("/clients?new=true");
                   setIsOpen(false);
                 }}
                 data-tutorial-step="clients.add"

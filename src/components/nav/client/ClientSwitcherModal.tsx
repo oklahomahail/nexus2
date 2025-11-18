@@ -46,7 +46,7 @@ export function ClientSwitcherModal({
   };
 
   const handleNewClient = () => {
-    void navigate("/clients");
+    void navigate("/clients?new=true");
     onClose();
     setQuery("");
   };

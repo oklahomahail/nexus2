@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import ClientWizard from "@/components/ClientWizard";
+import { useClient } from "@/context/ClientContext";
 import { supabase } from "@/lib/supabaseClient";
 import type { Tables } from "@/lib/supabaseClient";
 
@@ -9,7 +10,16 @@ type Client = Tables<"clients">;
 
 export default function ClientsPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { reload: reloadClientContext } = useClient();
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+
+  // Open wizard when URL has ?new=true parameter
+  useEffect(() => {
+    if (searchParams.get("new") === "true") {
+      setIsWizardOpen(true);
+    }
+  }, [searchParams]);
   const [clients, setClients] = useState<Client[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +48,13 @@ export default function ClientsPage() {
     void fetchClients();
   }, []);
 
+  const handleCloseWizard = () => {
+    setIsWizardOpen(false);
+    if (searchParams.get("new")) {
+      setSearchParams({});
+    }
+  };
+
   const handleCreateClient = async (clientData: any) => {
     try {
       console.log("Creating client:", clientData);
@@ -60,9 +77,14 @@ export default function ClientsPage() {
 
       if (error) throw error;
 
-      // Add the new client to the list
+      // Add the new client to the local list
       setClients((prev) => [data, ...prev]);
-      setIsWizardOpen(false);
+
+      // Reload the ClientContext to update global client list
+      await reloadClientContext();
+
+      // Close wizard and clear URL params
+      handleCloseWizard();
 
       // Navigate to the new client's page
       if (data?.id) {
@@ -151,7 +173,7 @@ export default function ClientsPage() {
 
         <ClientWizard
           open={isWizardOpen}
-          onClose={() => setIsWizardOpen(false)}
+          onClose={handleCloseWizard}
           onComplete={handleCreateClient}
         />
       </>
@@ -220,7 +242,7 @@ export default function ClientsPage() {
 
       <ClientWizard
         open={isWizardOpen}
-        onClose={() => setIsWizardOpen(false)}
+        onClose={handleCloseWizard}
         onComplete={handleCreateClient}
       />
     </>
