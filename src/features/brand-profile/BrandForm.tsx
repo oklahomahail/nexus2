@@ -1,12 +1,23 @@
+import { Check } from "lucide-react";
+
 import { BrandProfile } from "./brandProfile.types";
 import { UploadBrandFile } from "./UploadBrandFile";
 
 interface BrandFormProps {
   profile: BrandProfile;
   setProfile: (p: BrandProfile) => void;
+  onSave?: () => void;
+  isSaving?: boolean;
+  saveSuccess?: boolean;
 }
 
-export const BrandForm = ({ profile, setProfile }: BrandFormProps) => {
+export const BrandForm = ({
+  profile,
+  setProfile,
+  onSave,
+  isSaving = false,
+  saveSuccess = false,
+}: BrandFormProps) => {
   const handleAutoFill = (data: Partial<BrandProfile>) => {
     setProfile({ ...profile, ...data });
   };
@@ -70,10 +81,21 @@ export const BrandForm = ({ profile, setProfile }: BrandFormProps) => {
       </div>
 
       {/* Save Button */}
-      <div className="pt-4">
-        <button className="bg-[#1C1E26] text-white px-5 py-2 rounded-sm text-sm font-medium hover:bg-black">
-          Save Changes
+      <div className="pt-4 flex items-center gap-3">
+        <button
+          onClick={onSave}
+          disabled={isSaving}
+          className="bg-[#1C1E26] text-white px-5 py-2 rounded-sm text-sm font-medium hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        >
+          {isSaving ? "Saving..." : "Save Changes"}
         </button>
+
+        {saveSuccess && (
+          <span className="flex items-center gap-1 text-sm text-green-600 animate-fade-in">
+            <Check size={16} />
+            Saved successfully
+          </span>
+        )}
       </div>
     </div>
   );

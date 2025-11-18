@@ -23,7 +23,7 @@ export const AppLayout: React.FC = () => {
               src="/brand/nexus_logo_transparent.svg"
               alt="Nexus"
               className="h-14 w-14 object-contain"
-              style={{ objectPosition: 'center' }}
+              style={{ objectPosition: "center" }}
             />
           </NavLink>
         </div>

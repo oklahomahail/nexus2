@@ -14,7 +14,9 @@ export const BrandPreviewPanel = ({ profile }: { profile: BrandProfile }) => {
             Organization
           </h3>
           <p className="text-lg font-medium text-[#1C1E26]">
-            {profile.name || "Dallas LIFE"}
+            {profile.name || (
+              <span className="text-gray-400 italic">Not set</span>
+            )}
           </p>
         </div>
 
@@ -24,24 +26,32 @@ export const BrandPreviewPanel = ({ profile }: { profile: BrandProfile }) => {
             Mission Summary
           </h3>
           <p className="text-sm leading-relaxed text-gray-700">
-            {profile.mission ||
-              "Dallas LIFE provides a Christ-centered pathway to recovery and long-term transformation through a comprehensive four-phase residential program that addresses addiction, trauma, mental health, and family stability."}
+            {profile.mission || (
+              <span className="text-gray-400 italic">
+                No mission statement provided yet. Add your organization's
+                mission to help AI generate campaigns that align with your
+                values.
+              </span>
+            )}
           </p>
         </div>
 
-        {/* Distinctives */}
-        <div>
-          <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-1">
-            Distinctives
-          </h3>
-          <ul className="text-sm list-disc ml-5 text-gray-700 space-y-1">
-            <li>Longest residential recovery program in North Texas</li>
-            <li>Four-phase, ten-month model addressing root causes</li>
-            <li>Private rooms for single fathers with children</li>
-            <li>Support for intact families and seniors</li>
-            <li>Teddy Cares trauma-informed program for children</li>
-          </ul>
-        </div>
+        {/* Guidelines URL */}
+        {profile.guidelinesUrl && (
+          <div>
+            <h3 className="text-sm uppercase tracking-wide text-gray-500 mb-1">
+              Brand Guidelines
+            </h3>
+            <a
+              href={profile.guidelinesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              View Guidelines →
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
